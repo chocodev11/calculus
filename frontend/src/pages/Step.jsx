@@ -41,6 +41,7 @@ export default function Step() {
   const [totalXpEarned, setTotalXpEarned] = useState(0)
 
   const [showCompleteScreen, setShowCompleteScreen] = useState(false)
+  const [newAchievements, setNewAchievements] = useState([])
 
   useEffect(() => { loadData() }, [id, slug])
 
@@ -97,26 +98,28 @@ export default function Step() {
   const awardSlideXp = useCallback(async (slideId, xp) => {
     if (!slideId || !xp) return
     if (completedSlideIds.includes(slideId)) return
+    // Mark locally first so duplicate calls are blocked immediately
+    setCompletedSlideIds(prev => [...prev, slideId])
     try {
       const res = await api.post(`/steps/${id}/slides/${slideId}/complete`, { xp })
       if (res) {
-        setCompletedSlideIds(prev => [...prev, slideId])
         setTotalXpEarned(prev => prev + (res.xp_earned || 0))
-        if (res) updateUserStats(res)
-        await fetchUser()
+        // Patch local store – no second fetchUser round-trip needed
+        updateUserStats(res)
       }
     } catch (e) {
       console.error('Error awarding slide xp', e)
     }
-  }, [id, completedSlideIds, updateUserStats, fetchUser])
+  }, [id, completedSlideIds, updateUserStats])
 
-  const goNext = useCallback(async () => {
+  const goNext = useCallback(() => {
     if (currentSlideIndex < slides.length - 1) {
+      // Fire slide-xp in background – don't block navigation on it
       try {
         const blocks = currentSlide?.blocks || []
         const quizBlocks = blocks.filter(b => (b.type || b.block_type) === 'quiz')
         const xp = quizBlocks.reduce((sum, b) => sum + (quizResults[b.id]?.xp || 0), 0)
-        await awardSlideXp(currentSlide?.id, xp)
+        awardSlideXp(currentSlide?.id, xp)
       } catch (e) {
         console.error('Error computing slide xp on next', e)
       }
@@ -174,13 +177,15 @@ export default function Step() {
     try {
       const result = await api.post(`/steps/${id}/complete`, { score: 100 })
 
-      // Update user XP and streak in store immediately
-      if (result) {
-        updateUserStats(result)
-      }
+      // Patch store immediately
+      if (result) updateUserStats(result)
 
-      // Also fetch fresh user data from server to ensure sync
-      await fetchUser()
+      // If new achievements were unlocked, stay on complete screen to show them
+      const unlocked = result?.newly_earned_achievements || []
+      if (unlocked.length > 0) {
+        setNewAchievements(unlocked)
+        return   // user taps Continue again to actually navigate
+      }
 
       const currentIdx = allSteps.findIndex(s => s.id === parseInt(id))
       if (currentIdx < allSteps.length - 1) {
@@ -189,9 +194,22 @@ export default function Step() {
       } else {
         navigate(`/course/${slug}`)
       }
+      fetchUser().catch(() => {})
     } catch {
       navigate(`/course/${slug}`)
     }
+  }
+
+  const handleNavigateAfterAchievements = () => {
+    setNewAchievements([])
+    const currentIdx = allSteps.findIndex(s => s.id === parseInt(id))
+    if (currentIdx < allSteps.length - 1) {
+      const next = allSteps[currentIdx + 1]
+      navigate(`/course/${slug}/step/${encodeStepId(next.id)}`)
+    } else {
+      navigate(`/course/${slug}`)
+    }
+    fetchUser().catch(() => {})
   }
 
   // ── LOADING ──
@@ -226,7 +244,8 @@ export default function Step() {
       <CompleteScreen
         xpEarned={totalXpEarned || (step?.xp_reward || 10)}
         stepTitle={step?.title}
-        onContinue={handleCompleteAndNavigate}
+        newAchievements={newAchievements}
+        onContinue={newAchievements.length > 0 ? handleNavigateAfterAchievements : handleCompleteAndNavigate}
       />
     )
   }
@@ -246,17 +265,16 @@ export default function Step() {
     }
     // Continue / Complete (works for both correct and incorrect)
     if (isLastSlide) {
-      ; (async () => {
-        try {
-          const blocks = currentSlide?.blocks || []
-          const quizBlocks = blocks.filter(b => (b.type || b.block_type) === 'quiz')
-          const xp = quizBlocks.reduce((sum, b) => sum + (quizResults[b.id]?.xp || 0), 0)
-          await awardSlideXp(currentSlide?.id, xp)
-        } catch (e) {
-          console.error('Error computing slide xp on complete', e)
-        }
-        handleComplete()
-      })()
+      // Fire slide-xp in background, show complete screen immediately
+      try {
+        const blocks = currentSlide?.blocks || []
+        const quizBlocks = blocks.filter(b => (b.type || b.block_type) === 'quiz')
+        const xp = quizBlocks.reduce((sum, b) => sum + (quizResults[b.id]?.xp || 0), 0)
+        awardSlideXp(currentSlide?.id, xp)
+      } catch (e) {
+        console.error('Error computing slide xp on complete', e)
+      }
+      handleComplete()
     } else {
       goNext()
     }
@@ -1166,7 +1184,8 @@ function InteractiveGraphBlock({ block }) {
 // COMPLETION SCREEN
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function CompleteScreen({ xpEarned, stepTitle, onContinue }) {
+function CompleteScreen({ xpEarned, stepTitle, newAchievements = [], onContinue }) {
+  const hasAchievements = newAchievements.length > 0
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -1190,7 +1209,7 @@ function CompleteScreen({ xpEarned, stepTitle, onContinue }) {
         ))}
       </div>
 
-      <div className="relative z-10 text-center space-y-8">
+      <div className="relative z-10 text-center space-y-8 w-full max-w-sm">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -1226,7 +1245,35 @@ function CompleteScreen({ xpEarned, stepTitle, onContinue }) {
           </motion.div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+        {/* Newly unlocked achievements */}
+        {hasAchievements && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="space-y-2 text-left"
+          >
+            <p className="text-center text-xs font-bold tracking-widest text-amber-500 uppercase mb-3">🏆 Thành tích mới mở khoá!</p>
+            {newAchievements.map((ach, i) => (
+              <motion.div
+                key={ach.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.0 + i * 0.15 }}
+                className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl px-4 py-3"
+              >
+                <span className="text-2xl">{ach.icon || '🏅'}</span>
+                <div className="flex-1">
+                  <p className="font-bold text-slate-800 text-sm">{ach.title}</p>
+                  <p className="text-xs text-amber-600 font-semibold">+{ach.xp_reward} XP thưởng</p>
+                </div>
+                <span className="text-lg">✨</span>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: hasAchievements ? 1.3 : 0.6 }}>
           <Button
             onClick={onContinue}
             className="h-14 px-12 text-lg font-bold bg-stone-900 hover:bg-stone-800 text-white rounded-2xl shadow-sm"

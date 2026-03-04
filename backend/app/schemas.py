@@ -122,7 +122,9 @@ class AchievementResponse(BaseModel):
     xp_reward: int
     is_earned: bool = False
     earned_at: Optional[datetime] = None
-    
+    requirement_type: Optional[str] = None
+    requirement_value: Optional[int] = None
+
     class Config:
         from_attributes = True
 

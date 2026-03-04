@@ -546,7 +546,9 @@ async def get_user_progress(
             rarity=ach.rarity,
             xp_reward=ach.xp_reward,
             is_earned=ach.id in earned_achievements,
-            earned_at=earned_achievements.get(ach.id)
+            earned_at=earned_achievements.get(ach.id),
+            requirement_type=ach.requirement_type,
+            requirement_value=ach.requirement_value,
         ))
     
     # Recent activity (last 10 completed steps)

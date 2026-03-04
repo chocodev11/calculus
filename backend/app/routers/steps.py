@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from datetime import datetime, date, timedelta
 from app.database import get_db
-from app.models import Step, Slide, StepProgress, Chapter, Story, User, Enrollment, SlideProgress, StreakWeek
+from app.models import Step, Slide, StepProgress, Chapter, Story, User, Enrollment, SlideProgress, StreakWeek, Achievement, UserAchievement
 from app.schemas import StepDetailResponse, SlideResponse, StepCompleteRequest, SlideCompleteRequest
 from app.auth import get_current_user
 
@@ -200,12 +200,77 @@ async def complete_step(
         pass
 
     await db.commit()
-    
+
+    # ── Auto-check and award achievements ─────────────────────────────────
+    newly_earned = []
+    try:
+        # Grab all achievements the user hasn't earned yet
+        subq = select(UserAchievement.achievement_id).where(
+            UserAchievement.user_id == current_user.id
+        )
+        unearned_res = await db.execute(
+            select(Achievement).where(Achievement.id.notin_(subq))
+        )
+        unearned = unearned_res.scalars().all()
+
+        if unearned:
+            # Count completed steps for this user
+            steps_res = await db.execute(
+                select(func.count(StepProgress.id)).where(
+                    StepProgress.user_id == current_user.id,
+                    StepProgress.is_completed == True
+                )
+            )
+            completed_steps = steps_res.scalar() or 0
+
+            # Count completed stories
+            completed_stories = 0
+            enroll_res2 = await db.execute(
+                select(Enrollment).where(Enrollment.user_id == current_user.id)
+            )
+            from app.routers.stories import calculate_story_progress
+            for enr in enroll_res2.scalars().all():
+                prog = await calculate_story_progress(db, current_user.id, enr.story_id)
+                if prog >= 100:
+                    completed_stories += 1
+
+            for ach in unearned:
+                earned = False
+                if ach.requirement_type == "xp" and current_user.xp >= ach.requirement_value:
+                    earned = True
+                elif ach.requirement_type == "steps" and completed_steps >= ach.requirement_value:
+                    earned = True
+                elif ach.requirement_type == "streak" and current_user.current_streak >= ach.requirement_value:
+                    earned = True
+                elif ach.requirement_type == "stories" and completed_stories >= ach.requirement_value:
+                    earned = True
+
+                if earned:
+                    db.add(UserAchievement(
+                        user_id=current_user.id,
+                        achievement_id=ach.id
+                    ))
+                    current_user.xp += ach.xp_reward
+                    newly_earned.append({
+                        "id": ach.id,
+                        "title": ach.title,
+                        "icon": ach.icon,
+                        "xp_reward": ach.xp_reward
+                    })
+
+            if newly_earned:
+                await db.commit()
+    except Exception as e:
+        # Don't break step completion if achievement check fails
+        import logging
+        logging.getLogger(__name__).warning("Achievement check failed: %s", e)
+
     return {
         "success": True,
         "xp_earned": xp_earned,
         "total_xp": current_user.xp,
-        "streak": streak_info
+        "streak": streak_info,
+        "newly_earned_achievements": newly_earned
     }
 
 
@@ -263,7 +328,8 @@ async def complete_slide(
         db.add(sp)
         xp_earned = data.xp or 0
         current_user.xp += xp_earned
-        # Update streak (in-memory) and persist to streak_weeks
+
+        # Only update streak once per day: skip if user was already active today
         tz_offset = None
         try:
             hdr = request.headers.get('x-user-tz-offset') or request.headers.get('x-tz-offset')
@@ -272,35 +338,50 @@ async def complete_slide(
         except Exception:
             tz_offset = None
 
+        if tz_offset is not None:
+            now_local = datetime.utcnow() + timedelta(minutes=tz_offset)
+            today_local = now_local.date()
+        else:
+            today_local = date.today()
+
+        already_active_today = False
+        if current_user.last_activity_date:
+            try:
+                lad = current_user.last_activity_date
+                lad_local = (lad + timedelta(minutes=tz_offset)).date() if tz_offset is not None else lad.date()
+                already_active_today = (lad_local == today_local)
+            except Exception:
+                pass
+
         streak_info = update_streak(current_user, tz_offset)
-        try:
-            if tz_offset is not None:
-                now = datetime.utcnow() + timedelta(minutes=tz_offset)
-                today_local = now.date()
-            else:
-                today_local = date.today()
-            monday = today_local - timedelta(days=today_local.weekday())
-            week_start = monday.isoformat()
-            today_idx = today_local.weekday()
-            sw_res = await db.execute(select(StreakWeek).where(StreakWeek.user_id == current_user.id, StreakWeek.week_start == week_start))
-            sw_entry = sw_res.scalar_one_or_none()
-            if sw_entry:
-                days = sw_entry.days or [False]*7
-                if 0 <= today_idx < 7:
-                    days[today_idx] = True
-                sw_entry.days = days
-            else:
-                days = [False]*7
-                if 0 <= today_idx < 7:
-                    days[today_idx] = True
-                sw_entry = StreakWeek(user_id=current_user.id, week_start=week_start, days=days)
-                db.add(sw_entry)
-        except Exception:
-            pass
+
+        if not already_active_today:
+            # Persist StreakWeek entry only when it's a new day
+            try:
+                monday = today_local - timedelta(days=today_local.weekday())
+                week_start = monday.isoformat()
+                today_idx = today_local.weekday()
+                sw_res = await db.execute(select(StreakWeek).where(StreakWeek.user_id == current_user.id, StreakWeek.week_start == week_start))
+                sw_entry = sw_res.scalar_one_or_none()
+                if sw_entry:
+                    days = sw_entry.days or [False]*7
+                    if 0 <= today_idx < 7:
+                        days[today_idx] = True
+                    sw_entry.days = days
+                else:
+                    days = [False]*7
+                    if 0 <= today_idx < 7:
+                        days[today_idx] = True
+                    sw_entry = StreakWeek(user_id=current_user.id, week_start=week_start, days=days)
+                    db.add(sw_entry)
+            except Exception:
+                pass
+
         await db.commit()
     else:
         # already completed — idempotent
         xp_earned = 0
+        streak_info = {"current_streak": current_user.current_streak, "longest_streak": current_user.longest_streak}
 
     return {
         "success": True,

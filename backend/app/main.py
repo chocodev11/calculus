@@ -311,7 +311,7 @@ async def seed_achievements():
         
         achievements_data = [
             # XP milestones
-            {"title": "Người mới bắt đầu", "description": "Đạt 100 XP đầu tiên", "icon": "🌱", "category": "xp", "rarity": "common", "xp_reward": 10, "requirement_type": "xp", "requirement_value": 100},
+            {"title": "Người mới bắt đầu", "description": "Đạt 100 XP đầu tiên", "icon": "🌱", "category": "xp", "rarity": "common", "xp_reward": 10, "requirement_type": "xp", "requirement_value": 100, "test": True},
             {"title": "Sinh viên chăm chỉ", "description": "Đạt 500 XP", "icon": "📚", "category": "xp", "rarity": "common", "xp_reward": 25, "requirement_type": "xp", "requirement_value": 500},
             {"title": "Nhà toán học trẻ", "description": "Đạt 1000 XP", "icon": "🎓", "category": "xp", "rarity": "uncommon", "xp_reward": 50, "requirement_type": "xp", "requirement_value": 1000},
             {"title": "Bậc thầy giải tích", "description": "Đạt 5000 XP", "icon": "🏆", "category": "xp", "rarity": "rare", "xp_reward": 100, "requirement_type": "xp", "requirement_value": 5000},
