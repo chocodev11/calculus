@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { User, Settings, LogOut, Trophy, Flame, Star, X, ChevronRight, Bell, Lock, Sparkles, KeyRound } from 'lucide-react'
+import { User, Settings, LogOut, Trophy, Flame, Star, X, ChevronRight, ChevronDown, Bell, Lock, Sparkles, KeyRound, Medal } from 'lucide-react'
 import { useAuthStore, useShopStore } from '../lib/store'
 import { useState, useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import api from '../lib/api'
 
 export default function Profile() {
@@ -24,15 +25,43 @@ export default function Profile() {
   })
   const [passwordError, setPasswordError] = useState('')
 
+  // Achievements state
+  const [statsData, setStatsData] = useState(null)
+  const [loadingStats, setLoadingStats] = useState(false)
+  const [achFilter, setAchFilter] = useState('all') // 'all' | 'earned' | 'locked'
+  const [activeTab, setActiveTab] = useState('overview') // 'overview' | 'achievements'
+  const [tabDirection, setTabDirection] = useState(0)
+
+  const TABS = ['overview', 'achievements']
+  const switchTab = (tab) => {
+    if (tab === activeTab) return
+    setTabDirection(TABS.indexOf(tab) > TABS.indexOf(activeTab) ? 1 : -1)
+    setActiveTab(tab)
+  }
+
+  // Fetch fresh user data + achievements when profile page loads
   // Fetch fresh user data when profile page loads
   const { items, fetchItems } = useShopStore()
 
   useEffect(() => {
     if (isAuthenticated()) {
       fetchUser()
+      fetchStats()
       if (items.length === 0) fetchItems()
     }
   }, [])
+
+  const fetchStats = async () => {
+    setLoadingStats(true)
+    try {
+      const data = await api.get('/progress/stats')
+      setStatsData(data)
+    } catch (err) {
+      console.error('Failed to fetch stats:', err)
+    } finally {
+      setLoadingStats(false)
+    }
+  }
 
   if (!isAuthenticated()) {
     navigate('/login')
@@ -148,56 +177,173 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* ================= STATS with Tabs (Overview / Streak) ================= */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <button className={`px-4 py-2 rounded-lg ${true ? 'bg-slate-900 text-white' : 'bg-white'}`}>
-            Overview
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="md:col-span-1">
-            <StatCard icon={<Star />} value={xp} label="XP" color="yellow" />
-          </div>
-          <div className="md:col-span-1">
-            <StatCard icon={<Trophy />} value={12} label="Badges" color="purple" />
-          </div>
-          <div className="md:col-span-1">
-            {/* Placeholder: Streak tab will surface a larger streak widget in full tab view. Keep small summary here. */}
-            <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
-              <div className="w-12 h-12 mx-auto bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center mb-2">
-                <Flame />
-              </div>
-              <div className="text-xl font-extrabold text-slate-800">{user?.current_streak || 0}</div>
-              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Streak</div>
-            </div>
-          </div>
-        </div>
+      {/* ================= TAB BAR ================= */}
+      <div className="flex bg-slate-100 rounded-2xl p-1 gap-1">
+        <button
+          onClick={() => switchTab('overview')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-bold transition-all duration-200 ${activeTab === 'overview'
+              ? 'bg-white text-slate-800 shadow-sm'
+              : 'text-slate-500 hover:text-slate-700'
+            }`}
+        >
+          <Star className={
+            activeTab === 'overview' ? 'w-4 h-4 text-yellow-500' : 'w-4 h-4 text-slate-400'
+          } />
+          Overview
+        </button>
+        <button
+          onClick={() => switchTab('achievements')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-bold transition-all duration-200 ${activeTab === 'achievements'
+              ? 'bg-white text-slate-800 shadow-sm'
+              : 'text-slate-500 hover:text-slate-700'
+            }`}
+        >
+          <Medal className={
+            activeTab === 'achievements' ? 'w-4 h-4 text-purple-500' : 'w-4 h-4 text-slate-400'
+          } />
+          Achievements
+          {statsData && (
+            <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${activeTab === 'achievements' ? 'bg-purple-100 text-purple-600' : 'bg-slate-200 text-slate-500'
+              }`}>
+              {statsData.stats.achievements_earned}/{statsData.stats.total_achievements}
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* ================= MENU ================= */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <MenuItem
-          icon={<User className="w-5 h-5" />}
-          label="Chỉnh sửa hồ sơ"
-          desc="Cập nhật thông tin"
-          onClick={() => { setDisplayName(user?.display_name || ""); setShowEditProfile(true) }}
-        />
-        <MenuItem
-          icon={<Settings className="w-5 h-5" />}
-          label="Cài đặt"
-          desc="Thông báo & Bảo mật"
-          onClick={() => setShowSettings(true)}
-        />
-        <MenuItem
-          icon={<LogOut className="w-5 h-5" />}
-          label="Đăng xuất"
-          desc="Thoát tài khoản"
-          onClick={handleLogout}
-          danger
-          last
-        />
+      {/* ================= ANIMATED TAB PANELS ================= */}
+      <div className="overflow-hidden">
+        <AnimatePresence mode="wait" custom={tabDirection}>
+          {activeTab === 'overview' && (
+            <motion.div
+              key="overview"
+              custom={tabDirection}
+              variants={{
+                enter: (d) => ({ opacity: 0, x: d * 48 }),
+                center: { opacity: 1, x: 0 },
+                exit: (d) => ({ opacity: 0, x: d * -48 }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <div className="space-y-4">
+                {/* Stat cards */}
+                <div className="grid grid-cols-3 gap-3">
+                  <StatCard icon={<Star className="w-6 h-6" />} value={xp} label="XP" color="yellow" />
+                  <StatCard
+                    icon={<Trophy className="w-6 h-6" />}
+                    value={statsData ? `${statsData.stats.achievements_earned}/${statsData.stats.total_achievements}` : '—'}
+                    label="Badges"
+                    color="purple"
+                  />
+                  <StatCard
+                    icon={<Flame className="w-6 h-6" />}
+                    value={user?.current_streak || 0}
+                    label="Streak"
+                    color="orange"
+                  />
+                </div>
+
+                {/* Menu */}
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                  <MenuItem
+                    icon={<User className="w-5 h-5" />}
+                    label="Chỉnh sửa hồ sơ"
+                    desc="Cập nhật thông tin"
+                    onClick={() => { setDisplayName(user?.display_name || ''); setShowEditProfile(true) }}
+                  />
+                  <MenuItem
+                    icon={<Settings className="w-5 h-5" />}
+                    label="Cài đặt"
+                    desc="Thông báo & Bảo mật"
+                    onClick={() => setShowSettings(true)}
+                  />
+                  <MenuItem
+                    icon={<LogOut className="w-5 h-5" />}
+                    label="Đăng xuất"
+                    desc="Thoát tài khoản"
+                    onClick={handleLogout}
+                    danger
+                    last
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'achievements' && (
+            <motion.div
+              key="achievements"
+              custom={tabDirection}
+              variants={{
+                enter: (d) => ({ opacity: 0, x: d * 48 }),
+                center: { opacity: 1, x: 0 },
+                exit: (d) => ({ opacity: 0, x: d * -48 }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <div className="space-y-4">
+                {/* Overall progress bar */}
+                {statsData && (
+                  <div>
+                    <div className="flex justify-between text-xs text-slate-500 mb-1.5 font-medium">
+                      <span className="flex items-center gap-1">
+                        <Medal className="w-3.5 h-3.5 text-purple-500" />
+                        <span className="font-bold text-slate-700">Thành tích</span>
+                      </span>
+                      <span>
+                        <span className="text-purple-600 font-bold">{statsData.stats.achievements_earned}</span>
+                        /{statsData.stats.total_achievements} đã mở khoá
+                      </span>
+                    </div>
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-purple-400 to-pink-500 rounded-full transition-all duration-700"
+                        style={{ width: `${(statsData.stats.achievements_earned / statsData.stats.total_achievements) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Filter tabs */}
+                <div className="flex gap-2">
+                  {['all', 'earned', 'locked'].map(f => (
+                    <button
+                      key={f}
+                      onClick={() => setAchFilter(f)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${achFilter === f
+                          ? 'bg-slate-900 text-white shadow-sm'
+                          : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'
+                        }`}
+                    >
+                      {f === 'all' ? 'Tất cả' : f === 'earned' ? 'Đã đạt' : 'Chưa đạt'}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Categorised achievement cards */}
+                {loadingStats ? (
+                  <div className="space-y-3">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="bg-white rounded-2xl p-4 border border-slate-100 animate-pulse h-20" />
+                    ))}
+                  </div>
+                ) : statsData ? (
+                  <AchievementCategories
+                    achievements={statsData.achievements}
+                    stats={statsData.stats}
+                    filter={achFilter}
+                  />
+                ) : null}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ================= EDIT PROFILE MODAL ================= */}
@@ -406,6 +552,130 @@ function Modal({ title, children, onClose }) {
         </button>
         <h2 className="text-xl font-bold text-slate-800 mb-6">{title}</h2>
         {children}
+      </div>
+    </div>
+  )
+}
+
+// ─── Category meta ───────────────────────────────────────────────────────────
+const ACH_CATEGORIES = [
+  { key: 'xp', label: 'Kinh nghiệm', emoji: '⭐', statKey: 'total_xp', unit: 'XP', color: 'from-yellow-400 to-orange-400', bg: 'bg-yellow-50', border: 'border-yellow-100' },
+  { key: 'progress', label: 'Bài học', emoji: '📚', statKey: 'completed_steps', unit: 'bài', color: 'from-blue-400 to-indigo-500', bg: 'bg-blue-50', border: 'border-blue-100' },
+  { key: 'streak', label: 'Streak', emoji: '🔥', statKey: 'current_streak', unit: 'ngày', color: 'from-orange-400 to-rose-500', bg: 'bg-orange-50', border: 'border-orange-100' },
+  { key: 'stories', label: 'Khoá học', emoji: '🎯', statKey: 'completed_stories', unit: 'khoá', color: 'from-green-400 to-emerald-500', bg: 'bg-green-50', border: 'border-green-100' },
+]
+
+const RARITY_STYLES = {
+  common: { bar: 'bg-slate-400', chip: 'bg-slate-100 text-slate-500', text: 'Common' },
+  uncommon: { bar: 'bg-green-400', chip: 'bg-green-100 text-green-700', text: 'Uncommon' },
+  rare: { bar: 'bg-blue-500', chip: 'bg-blue-100 text-blue-700', text: 'Rare' },
+  epic: { bar: 'bg-purple-500', chip: 'bg-purple-100 text-purple-700', text: 'Epic' },
+  legendary: { bar: 'bg-yellow-500', chip: 'bg-yellow-100 text-yellow-700', text: 'Legendary' },
+}
+
+function AchievementCategories({ achievements, stats, filter }) {
+  const [collapsed, setCollapsed] = useState({})
+
+  const toggle = (key) => setCollapsed(prev => ({ ...prev, [key]: !prev[key] }))
+
+  return (
+    <div className="space-y-3">
+      {ACH_CATEGORIES.map(cat => {
+        const list = achievements.filter(a => {
+          const catMatch = (a.category === cat.key) ||
+            (cat.key === 'progress' && a.requirement_type === 'steps') ||
+            (cat.key === 'xp' && a.requirement_type === 'xp') ||
+            (cat.key === 'streak' && a.requirement_type === 'streak') ||
+            (cat.key === 'stories' && a.requirement_type === 'stories')
+          if (!catMatch) return false
+          if (filter === 'earned') return a.is_earned
+          if (filter === 'locked') return !a.is_earned
+          return true
+        })
+        if (list.length === 0) return null
+        const earnedCount = list.filter(a => a.is_earned).length
+        const current = stats[cat.statKey] ?? 0
+        const isOpen = !collapsed[cat.key]
+        return (
+          <div key={cat.key} className={`rounded-2xl border overflow-hidden ${cat.border} ${cat.bg}`}>
+            {/* Collapsible category header */}
+            <button
+              onClick={() => toggle(cat.key)}
+              className={`w-full flex items-center justify-between px-4 py-3 transition-colors hover:brightness-95 ${cat.bg}`}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{cat.emoji}</span>
+                <span className="font-bold text-slate-700 text-sm">{cat.label}</span>
+                <span className="text-xs font-bold text-slate-400">
+                  <span className="text-slate-600">{earnedCount}</span>/{list.length}
+                </span>
+              </div>
+              <ChevronDown
+                className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-0' : '-rotate-90'}`}
+              />
+            </button>
+
+            {/* Achievement cards (collapsible) */}
+            {isOpen && (
+              <div className="bg-white border-t border-slate-100 divide-y divide-slate-50">
+                {list.map(ach => (
+                  <AchievementCard key={ach.id} achievement={ach} current={current} unit={cat.unit} gradientBar={cat.color} />
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function AchievementCard({ achievement, current, unit, gradientBar }) {
+  const rarity = RARITY_STYLES[achievement.rarity] || RARITY_STYLES.common
+  const earned = achievement.is_earned
+  const req = achievement.requirement_value ?? 1
+  console.log(achievement.title, current, req)
+  const progress = req > 0 ? Math.min(current ?? 0, req) : 0
+  const pct = req > 0 ? Math.min(Math.round(((current ?? 0) / req) * 100), 100) : 0
+
+  return (
+    <div className={`flex items-center gap-3 px-4 py-3 transition-colors ${earned ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/60'
+      }`}>
+      {/* Icon */}
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${earned ? 'bg-white shadow-sm border border-slate-100' : 'opacity-40 grayscale'
+        }`}>
+        {achievement.icon || '🏅'}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5">
+          <span className={`font-bold text-sm leading-tight ${earned ? 'text-slate-800' : 'text-slate-400'
+            }`}>{achievement.title}</span>
+          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide flex-shrink-0 ${earned ? rarity.chip : 'bg-slate-100 text-slate-400'
+            }`}>{rarity.text}</span>
+        </div>
+        <p className={`text-[11px] leading-snug mb-1.5 ${earned ? 'text-slate-500' : 'text-slate-400'
+          }`}>{achievement.description}</p>
+        {/* Progress bar */}
+        <div className="flex items-center gap-2">
+          <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-700 bg-gradient-to-r ${earned ? gradientBar : 'bg-slate-300'}`}
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <span className={`text-[10px] font-bold flex-shrink-0 ${earned ? 'text-slate-500' : 'text-slate-400'
+            }`}>
+            {earned ? `✓ ${current}/${req} ${unit}` : `${progress}/${req} ${unit}`}
+          </span>
+        </div>
+      </div>
+
+      {/* XP reward */}
+      <div className={`flex-shrink-0 text-center ${earned ? 'opacity-100' : 'opacity-40'}`}>
+        <div className={`text-xs font-black ${earned ? 'text-yellow-500' : 'text-slate-400'}`}>+{achievement.xp_reward}</div>
+        <div className="text-[9px] text-slate-400 font-bold">XP</div>
       </div>
     </div>
   )
