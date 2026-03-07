@@ -64,7 +64,7 @@ def send_html_email(receiver: str, subject: str, html: str):
     msg["Subject"] = subject
     msg.attach(MIMEText(html, "html"))
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+    with smtplib.SMTP("smtp.gmail.com", 2525) as server:
         server.starttls()
         server.login(sender, password)
         server.send_message(msg)
