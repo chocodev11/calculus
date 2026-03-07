@@ -86,7 +86,7 @@ export default function Layout() {
             {user && (
               <>
                 {/* Streak badge - passive display */}
-                <Badge variant="streak" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5">
+                <Badge variant="streak" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-500 hover:bg-orange-300 border-0">
                   <Flame className="w-4 h-4" />
                   <span>{user.current_streak || 0}</span>
                 </Badge>
@@ -98,12 +98,10 @@ export default function Layout() {
                 </Badge>
 
                 {/* Coins badge - clickable to shop */}
-                <Link to="/shop">
-                  <Badge variant="outline" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100 transition-colors cursor-pointer">
-                    <Coins className="w-4 h-4" />
-                    <span>{user.coins || 0}</span>
-                  </Badge>
-                </Link>
+                <Badge variant="outline" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-200 border-0">
+                  <Coins className="w-4 h-4" />
+                  <span>{user.coins || 0}</span>
+                </Badge>
 
                 {/* User Dropdown - Secondary actions hidden here (Hick's Law) */}
                 <DropdownMenu>

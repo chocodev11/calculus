@@ -634,7 +634,6 @@ function AchievementCard({ achievement, current, unit, gradientBar }) {
   const rarity = RARITY_STYLES[achievement.rarity] || RARITY_STYLES.common
   const earned = achievement.is_earned
   const req = achievement.requirement_value ?? 1
-  console.log(achievement.title, current, req)
   const progress = req > 0 ? Math.min(current ?? 0, req) : 0
   const pct = req > 0 ? Math.min(Math.round(((current ?? 0) / req) * 100), 100) : 0
 

@@ -228,7 +228,6 @@ function StatementPopup({ text }) {
  *   lesson           optional lesson config object to override defaults
  */
 export default function InteractionSlide({ interactionType, lesson }) {
-  console.log('Rendering InteractionSlide with type', interactionType, 'and lesson config', lesson)
   const Component = TYPE_MAP[interactionType]
 
   if (!Component) {
