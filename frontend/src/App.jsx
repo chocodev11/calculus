@@ -1,11 +1,10 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Explore from './pages/Explore'
 import Story from './pages/Story'
 import Step from './pages/Step'
 import Login from './pages/Login'
-import Register from './pages/Register'
 import Profile from './pages/Profile'
 import VerifyEmail from './pages/VerifyEmail'
 import QuestShop from './pages/QuestShop'
@@ -41,8 +40,8 @@ export default function App() {
       </Route>
       <Route path="/course/:slug/step/:encodedId" element={<Step />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-  <Route path="/verify-email" element={<VerifyEmail />} />
+      <Route path="/register" element={<Navigate to="/login?tab=register" replace />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
 
       {/* Admin Panel - Hidden from main UI, only accessible via /admin */}
       <Route path="/admin" element={<AdminLayout />}>
