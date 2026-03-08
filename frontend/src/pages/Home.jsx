@@ -28,6 +28,7 @@ import { Badge } from '../components/ui/badge'
 import { Progress } from '../components/ui/progress'
 import { Separator } from '../components/ui/separator'
 import LearningStreakCard from '../components/LearningStreakCard'
+import HeartsCard from '../components/HeartsCard'
 
 export default function Home() {
   const { user, isAuthenticated, fetchUser } = useAuthStore()
@@ -141,6 +142,9 @@ export default function Home() {
         <aside className="order-2 lg:order-1 space-y-6">
           {/* Learning Streak Card (interactive) */}
           <LearningStreakCard />
+
+          {/* Hearts Card */}
+          <HeartsCard />
           
           {/* User Stats Overview - clean, balanced */}
           {(() => {

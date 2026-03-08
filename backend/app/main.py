@@ -7,7 +7,7 @@ import runpy
 import asyncio
 from app.config import settings
 from app.database import init_db
-from app.routers import auth_router, stories_router, steps_router, progress_router, categories_router, shop_router, quests_router, auth
+from app.routers import auth_router, stories_router, steps_router, progress_router, categories_router, shop_router, quests_router, admin_router, auth
 
 # Reduce noisy Uvicorn logs and show only SQL logs
 import logging
@@ -57,6 +57,7 @@ app.include_router(progress_router, prefix="/api/v1")
 app.include_router(categories_router, prefix="/api/v1")
 app.include_router(shop_router, prefix="/api/v1")
 app.include_router(quests_router, prefix="/api/v1")
+app.include_router(admin_router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
 
 @app.get("/")
@@ -341,7 +342,7 @@ async def seed_shop_items():
                 "name": "Streak Freeze",
                 "description": "Skip 1 day without losing your streak",
                 "icon": "🧊",
-                "price": 50,
+                "price": 120,
                 "item_type": "streak_freeze",
                 "effect_value": 1,
                 "order_index": 1,
@@ -350,7 +351,7 @@ async def seed_shop_items():
                 "name": "XP Boost",
                 "description": "2x XP for the next lesson",
                 "icon": "⚡",
-                "price": 80,
+                "price": 60,
                 "item_type": "xp_boost",
                 "effect_value": 1,
                 "order_index": 2,
@@ -359,7 +360,7 @@ async def seed_shop_items():
                 "name": "Heart",
                 "description": "Restore 1 heart (life)",
                 "icon": "❤️",
-                "price": 60,
+                "price": 35,
                 "item_type": "heart",
                 "effect_value": 1,
                 "order_index": 3,
@@ -368,7 +369,7 @@ async def seed_shop_items():
                 "name": "Triple heart",
                 "description": "Restore 3 hearts (lives)",
                 "icon": "❤️❤️❤️",
-                "price": 150,
+                "price": 100,
                 "item_type": "heart",
                 "effect_value": 3,
                 "order_index": 4,

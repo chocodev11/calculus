@@ -5,5 +5,6 @@ from app.routers.progress import router as progress_router
 from app.routers.categories import router as categories_router
 from app.routers.shop import router as shop_router
 from app.routers.quests import router as quests_router
+from app.routers.admin import router as admin_router
 
-__all__ = ["auth_router", "stories_router", "steps_router", "progress_router", "categories_router", "shop_router", "quests_router"]
+__all__ = ["auth_router", "stories_router", "steps_router", "progress_router", "categories_router", "shop_router", "quests_router", "admin_router"]

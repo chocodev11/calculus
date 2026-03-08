@@ -51,39 +51,39 @@ async def buy_item(
     # Deduct coins
     current_user.coins = user_coins - item.price
 
-    # Hearts: restore directly onto the user (no inventory record)
+    # Hearts always pool into one inventory row (any heart item), using effect_value as count
     if item.item_type == "heart":
-        sync_hearts(current_user)
-        current_hearts = current_user.hearts or 0
-        restored = min(item.effect_value, MAX_HEARTS - current_hearts)
-        if restored <= 0:
-            # Full hearts — refund coins and reject
-            current_user.coins = user_coins
-            await db.commit()
-            raise HTTPException(status_code=400, detail="Tim đã đầy!")
-        current_user.hearts = current_hearts + restored
-        if (current_user.hearts or 0) >= MAX_HEARTS:
-            current_user.last_heart_restore_at = None
-    else:
-        # Stackable items: increment quantity if already owned
-        stackable_types = ("streak_freeze", "xp_boost", "hint_token")
-        if item.item_type in stackable_types:
-            inv_result = await db.execute(
-                select(UserInventory).where(
-                    UserInventory.user_id == current_user.id,
-                    UserInventory.item_id == item_id,
-                )
+        qty_to_add = item.effect_value or 1
+        # Find any existing heart inventory row for this user
+        heart_inv_result = await db.execute(
+            select(UserInventory)
+            .join(ShopItem, UserInventory.item_id == ShopItem.id)
+            .where(
+                UserInventory.user_id == current_user.id,
+                ShopItem.item_type == "heart",
             )
-            existing = inv_result.scalar_one_or_none()
-            if existing:
-                existing.quantity += 1
-            else:
-                db.add(UserInventory(
-                    user_id=current_user.id,
-                    item_id=item_id,
-                    quantity=1,
-                    is_active=True,
-                ))
+        )
+        existing_heart = heart_inv_result.scalar_one_or_none()
+        if existing_heart:
+            existing_heart.quantity += qty_to_add
+        else:
+            db.add(UserInventory(
+                user_id=current_user.id,
+                item_id=3,
+                quantity=qty_to_add,
+                is_active=True,
+            ))
+    else:
+        # All other stackable items: stack by item_id
+        inv_result = await db.execute(
+            select(UserInventory).where(
+                UserInventory.user_id == current_user.id,
+                UserInventory.item_id == item_id,
+            )
+        )
+        existing = inv_result.scalar_one_or_none()
+        if existing:
+            existing.quantity += 1
         else:
             db.add(UserInventory(
                 user_id=current_user.id,
@@ -182,3 +182,48 @@ async def get_hearts(
         max_hearts=MAX_HEARTS,
         seconds_until_restore=seconds_until_next_heart(current_user),
     )
+
+
+@router.post("/use-heart", response_model=HeartsResponse)
+async def use_heart(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Use one heart from inventory to restore +1 heart."""
+    sync_hearts(current_user)
+    if (current_user.hearts or 0) >= MAX_HEARTS:
+        raise HTTPException(status_code=400, detail="Tim đã đầy!")
+
+    # Find a heart item in inventory
+    result = await db.execute(
+        select(UserInventory)
+        .options(selectinload(UserInventory.item))
+        .where(
+            UserInventory.user_id == current_user.id,
+            UserInventory.quantity > 0,
+        )
+    )
+    inv_rows = result.scalars().all()
+    heart_inv = next((r for r in inv_rows if r.item and r.item.item_type == "heart"), None)
+    if not heart_inv:
+        raise HTTPException(status_code=400, detail="Không có tim trong kho!")
+
+    # Consume one from inventory
+    if heart_inv.quantity > 1:
+        heart_inv.quantity -= 1
+    else:
+        await db.delete(heart_inv)
+
+    # Restore one heart
+    current_user.hearts = (current_user.hearts or 0) + 1
+    if (current_user.hearts or 0) >= MAX_HEARTS:
+        current_user.last_heart_restore_at = None
+
+    await db.commit()
+    await db.refresh(current_user)
+    return HeartsResponse(
+        hearts=current_user.hearts,
+        max_hearts=MAX_HEARTS,
+        seconds_until_restore=seconds_until_next_heart(current_user),
+    )
+

@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stderr.reconfigure(encoding='utf-8')
 
-from app.models import Base, Category, Story, Chapter, Step
+from app.models import Base, Category, Story, Chapter, Step, Achievement, ShopItem, Quest
 from app.config import settings
 import logging
 
@@ -172,6 +172,11 @@ async def sync_data():
         await session.commit()
         logger.debug("\n✨ Data sync completed!")
 
+    await sync_achievements()
+    await sync_shop_items()
+    await sync_quests()
+    logger.debug("\n✅ All tables synced!")
+
 async def process_course(session, course_data):
     from sqlalchemy import select, delete
     from app.models import Slide
@@ -293,6 +298,154 @@ async def process_course(session, course_data):
                     blocks=slide_data.get("blocks", [])
                 )
                 session.add(slide)
+
+
+async def sync_achievements():
+    """Upsert achievements from data/achievements.json."""
+    from sqlalchemy import select
+    engine = create_async_engine(settings.database_url, echo=False)
+    async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+    achievements_file = DATA_DIR / "achievements.json"
+    if not achievements_file.exists():
+        logger.warning("⚠️  data/achievements.json not found, skipping")
+        return
+
+    with open(achievements_file, "r", encoding="utf-8") as f:
+        achievements_data = json.load(f).get("achievements", [])
+
+    async with async_session() as db:
+        for ach_data in achievements_data:
+            result = await db.execute(
+                select(Achievement).where(
+                    Achievement.title == ach_data["title"],
+                    Achievement.requirement_type == ach_data["requirement_type"],
+                )
+            )
+            existing = result.scalar_one_or_none()
+            if existing:
+                for k, v in ach_data.items():
+                    setattr(existing, k, v)
+                logger.debug(f"  🔄 Updated achievement: {ach_data['title']}")
+            else:
+                db.add(Achievement(**ach_data))
+                logger.debug(f"  ✅ Added achievement: {ach_data['title']}")
+        await db.commit()
+    logger.debug("✅ Achievements synced!")
+
+
+async def sync_shop_items():
+    """Upsert shop items — defined inline (source of truth is this list)."""
+    from sqlalchemy import select
+    engine = create_async_engine(settings.database_url, echo=False)
+    async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+    items = [
+        {
+            "name": "Streak Freeze",
+            "description": "Skip 1 day without losing your streak",
+            "icon": "🧊",
+            "price": 120,
+            "item_type": "streak_freeze",
+            "effect_value": 1,
+            "order_index": 1,
+        },
+        {
+            "name": "XP Boost",
+            "description": "2x XP for the next lesson",
+            "icon": "⚡",
+            "price": 60,
+            "item_type": "xp_boost",
+            "effect_value": 1,
+            "order_index": 2,
+        },
+        {
+            "name": "Heart",
+            "description": "Restore 1 heart (life)",
+            "icon": "❤️",
+            "price": 35,
+            "item_type": "heart",
+            "effect_value": 1,
+            "order_index": 3,
+        },
+        {
+            "name": "Triple heart",
+            "description": "Restore 3 hearts (lives)",
+            "icon": "❤️❤️❤️",
+            "price": 100,
+            "item_type": "heart",
+            "effect_value": 3,
+            "order_index": 4,
+        },
+    ]
+
+    async with async_session() as db:
+        for item_data in items:
+            result = await db.execute(
+                select(ShopItem).where(
+                    ShopItem.name == item_data["name"],
+                    ShopItem.item_type == item_data["item_type"],
+                )
+            )
+            existing = result.scalar_one_or_none()
+            if existing:
+                for k, v in item_data.items():
+                    setattr(existing, k, v)
+                logger.debug(f"  🔄 Updated shop item: {item_data['name']}")
+            else:
+                db.add(ShopItem(**item_data, is_active=True))
+                logger.debug(f"  ✅ Added shop item: {item_data['name']}")
+        await db.commit()
+    logger.debug("✅ Shop items synced!")
+
+
+async def sync_quests():
+    """Upsert quests from data/quests.json."""
+    from sqlalchemy import select
+    engine = create_async_engine(settings.database_url, echo=False)
+    async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+    quests_file = DATA_DIR / "quests.json"
+    if not quests_file.exists():
+        logger.warning("⚠️  data/quests.json not found, skipping")
+        return
+
+    with open(quests_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    quests_data = data.get("quests", data) if isinstance(data, dict) else data
+
+    async with async_session() as db:
+        for q in quests_data:
+            result = await db.execute(
+                select(Quest).where(
+                    Quest.title == q["title"],
+                    Quest.quest_type == q["quest_type"],
+                )
+            )
+            existing = result.scalar_one_or_none()
+            if existing:
+                existing.description = q.get("description", "")
+                existing.requirement_type = q["requirement_type"]
+                existing.requirement_value = q.get("requirement_value", 1)
+                existing.coin_reward = q.get("coin_reward", 20)
+                existing.icon = q.get("icon", "📋")
+                existing.is_active = True
+                logger.debug(f"  🔄 Updated quest: {q['title']}")
+            else:
+                db.add(Quest(
+                    title=q["title"],
+                    description=q.get("description", ""),
+                    quest_type=q["quest_type"],
+                    requirement_type=q["requirement_type"],
+                    requirement_value=q.get("requirement_value", 1),
+                    coin_reward=q.get("coin_reward", 20),
+                    icon=q.get("icon", "📋"),
+                    is_active=True,
+                ))
+                logger.debug(f"  ✅ Added quest: {q['title']}")
+        await db.commit()
+    logger.debug("✅ Quests synced!")
+
 
 if __name__ == "__main__":
     asyncio.run(sync_data())

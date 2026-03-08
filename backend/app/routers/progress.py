@@ -386,15 +386,46 @@ async def get_streak_week(
 
     longest = current_user.longest_streak or 0
 
-    # Build frozen_days list (7 bools) — also auto-apply streak freeze for yesterday if missed
+    # Build frozen_days list (7 bools) — auto-apply streak freeze for yesterday if eligible
+    # Rule: freeze purchased on day N can only protect day N (i.e. applied when today = N+1).
+    #       It never protects N-1 or earlier.
     frozen_arr = list(entry.frozen_days) if (entry and entry.frozen_days and len(entry.frozen_days) == 7) else [False] * 7
     monday = today_local - timedelta(days=today_local.weekday())
     is_current_week = (monday.isoformat() == week_start)
 
-    if is_current_week and today_idx >= 1:
-        yesterday_idx = today_idx - 1
-        if not days_arr[yesterday_idx] and not frozen_arr[yesterday_idx]:
-            # Yesterday was missed — try to auto-apply a streak freeze
+    if is_current_week:
+        # "yesterday" in the current week = today_idx - 1
+        # On Monday (today_idx=0), yesterday is previous week's Sunday (idx=6)
+        yesterday_current_idx = today_idx - 1  # -1 means yesterday is in the previous week
+
+        # Determine if yesterday (in current or previous week) was missed and not frozen
+        freeze_apply_current = (
+            yesterday_current_idx >= 0
+            and not days_arr[yesterday_current_idx]
+            and not frozen_arr[yesterday_current_idx]
+        )
+
+        freeze_prev_entry = None
+        freeze_prev_frozen_arr = None
+        if yesterday_current_idx < 0:  # today is Monday — check previous week's Sunday
+            prev_monday_str = (today_local - timedelta(days=7)).isoformat()
+            prev_res = await db.execute(
+                select(StreakWeek).where(
+                    StreakWeek.user_id == current_user.id,
+                    StreakWeek.week_start == prev_monday_str,
+                )
+            )
+            prev_entry_check = prev_res.scalar_one_or_none()
+            if prev_entry_check:
+                prev_days = list(prev_entry_check.days) if prev_entry_check.days and len(prev_entry_check.days) == 7 else [False] * 7
+                prev_frozen = list(prev_entry_check.frozen_days) if prev_entry_check.frozen_days and len(prev_entry_check.frozen_days) == 7 else [False] * 7
+                if not prev_days[6] and not prev_frozen[6]:
+                    freeze_prev_entry = prev_entry_check
+                    freeze_prev_frozen_arr = prev_frozen
+
+        if freeze_apply_current or freeze_prev_entry is not None:
+            # Only use a freeze that was purchased BEFORE today (acquired_at < today midnight local)
+            today_midnight_utc = datetime.combine(today_local, time.min) - timedelta(minutes=(tz_offset_minutes or 0))
             freeze_res = await db.execute(
                 select(UserInventory)
                 .join(ShopItem, UserInventory.item_id == ShopItem.id)
@@ -402,23 +433,28 @@ async def get_streak_week(
                     UserInventory.user_id == current_user.id,
                     ShopItem.item_type == "streak_freeze",
                     UserInventory.quantity > 0,
+                    UserInventory.acquired_at < today_midnight_utc,
                 )
             )
             freeze_inv = freeze_res.scalar_one_or_none()
             if freeze_inv:
                 freeze_inv.quantity -= 1
-                frozen_arr[yesterday_idx] = True
-                if entry:
-                    entry.frozen_days = frozen_arr
-                    entry.days = days_arr  # persist merged days too
+                if freeze_apply_current:
+                    frozen_arr[yesterday_current_idx] = True
+                    if entry:
+                        entry.frozen_days = frozen_arr
+                        entry.days = days_arr
+                    else:
+                        db.add(StreakWeek(
+                            user_id=current_user.id,
+                            week_start=week_start,
+                            days=days_arr,
+                            frozen_days=frozen_arr,
+                        ))
                 else:
-                    new_entry = StreakWeek(
-                        user_id=current_user.id,
-                        week_start=week_start,
-                        days=days_arr,
-                        frozen_days=frozen_arr,
-                    )
-                    db.add(new_entry)
+                    # Apply to previous week's Sunday
+                    freeze_prev_frozen_arr[6] = True
+                    freeze_prev_entry.frozen_days = freeze_prev_frozen_arr
                 await db.commit()
 
     return StreakWeekResponse(

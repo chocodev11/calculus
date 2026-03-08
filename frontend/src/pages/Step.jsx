@@ -222,13 +222,7 @@ export default function Step() {
   }
 
   const doNavigateNext = () => {
-    const currentIdx = allSteps.findIndex(s => s.id === parseInt(id))
-    if (currentIdx < allSteps.length - 1) {
-      const next = allSteps[currentIdx + 1]
-      navigate(`/course/${slug}/step/${encodeStepId(next.id)}`)
-    } else {
-      navigate(`/course/${slug}`)
-    }
+    navigate(`/course/${slug}`)
     fetchUser().catch(() => {})
   }
 

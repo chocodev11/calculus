@@ -393,7 +393,7 @@ function ShopItemCard({ item, owned, canAfford, buying, onBuy, isLast }) {
   )
 }
 
-function InventoryItemCard({ inv }) {
+function InventoryItemCard({ inv, isLast }) {
   const { user }                   = useAuthStore()
   const { equipItem, unequipItem } = useShopStore()
   const { showToast }              = useUIStore()
@@ -417,39 +417,34 @@ function InventoryItemCard({ inv }) {
   }
 
   return (
-    <div className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 ${colors.border} ${colors.bg} transition-all`}>
-      <div className="w-11 h-11 rounded-xl bg-background/60 flex items-center justify-center flex-shrink-0 p-2">
+    <div className={`flex items-center gap-4 px-6 py-5 transition-colors duration-150 hover:bg-muted/30
+      ${!isLast ? 'border-b border-border' : ''}
+    `}>
+      <div className={`w-16 h-16 rounded-2xl ${colors.bg} flex items-center justify-center flex-shrink-0 p-3`}>
         <ItemIcon variant={variant} />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="font-bold text-sm text-foreground">{inv.item?.name}</span>
-          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${colors.tag}`}>
-            {TYPE_LABELS[inv.item?.item_type] || inv.item?.item_type}
-          </span>
-        </div>
-        <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">{inv.item?.description}</p>
+        <p className="font-bold text-lg text-foreground leading-tight">{inv.item?.name}</p>
+        {inv.item?.description && (
+          <p className="text-base text-muted-foreground leading-snug mt-1 line-clamp-2">{inv.item.description}</p>
+        )}
         {inv.expires_at && (
-          <p className="text-[10px] text-[#FF9600] font-bold mt-1">
-            ⏳ {new Date(inv.expires_at).toLocaleString()}
-          </p>
+          <p className="text-xs text-[#FF9600] font-bold mt-1">⏳ {new Date(inv.expires_at).toLocaleString()}</p>
         )}
       </div>
-      <div className="flex flex-col items-end gap-1.5">
-        <div className={`flex items-center justify-center h-7 px-2.5 rounded-xl bg-background font-extrabold text-sm ${colors.text}`}>
-          ×{inv.quantity}
-        </div>
+      <div className="flex flex-col items-end gap-2.5 flex-shrink-0">
+        <span className={`font-extrabold text-base tabular-nums ${colors.text}`}>×{inv.quantity}</span>
         {canEquip && (
           <button
             disabled={loading}
             onClick={toggle}
-            className={`px-3 py-1 rounded-xl font-extrabold text-[10px] uppercase tracking-wide transition-all duration-100
+            className={`px-5 py-2 rounded-xl font-extrabold text-base transition-all duration-100
               ${isEquipped
-                ? 'bg-red-500 text-white shadow-[0_3px_0_#C53030] active:shadow-[0_1px_0_#C53030] active:translate-y-[2px]'
-                : 'bg-[#58CC02] text-white shadow-[0_3px_0_#46A302] active:shadow-[0_1px_0_#46A302] active:translate-y-[2px]'
+                ? 'bg-red-500 text-white shadow-[0_2px_0_#C53030] active:shadow-none active:translate-y-[1px]'
+                : 'bg-[#58CC02] text-white shadow-[0_2px_0_#46A302] hover:brightness-105 active:shadow-none active:translate-y-[1px]'
               } disabled:opacity-60`}
           >
-            {loading ? <Loader2 className="w-3 h-3 animate-spin mx-auto" /> : isEquipped ? 'Unequip' : 'Use'}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : isEquipped ? 'Unequip' : 'Use'}
           </button>
         )}
       </div>
@@ -578,14 +573,47 @@ function ShopPanel() {
       )}
 
       {/* Inventory tab */}
-      {shopTab === 'inventory' && (
-        <div className="flex-1 overflow-y-auto space-y-2 pr-0.5">
-          {inventory.length === 0
-            ? <EmptyState icon={<div className="w-12 h-12 mx-auto"><IcoBackpack /></div>} title="Inventory empty" desc="Buy items to see them here!" />
-            : inventory.map(inv => <InventoryItemCard key={inv.id} inv={inv} />)
-          }
-        </div>
-      )}
+      {shopTab === 'inventory' && (() => {
+        const ownedInv = inventory.filter(inv => (inv.quantity || 0) > 0)
+        if (ownedInv.length === 0) return (
+          <div className="flex-1 overflow-y-auto">
+            <EmptyState icon={<div className="w-12 h-12 mx-auto"><IcoBackpack /></div>} title="Inventory empty" desc="Buy items to see them here!" />
+          </div>
+        )
+        const knownTypes = SHOP_SECTIONS.flatMap(s => s.types)
+        return (
+          <div className="flex-1 overflow-y-auto space-y-6 pr-0.5">
+            {SHOP_SECTIONS.map(section => {
+              const sectionInv = ownedInv.filter(inv => section.types.includes(inv.item?.item_type))
+              if (sectionInv.length === 0) return null
+              return (
+                <div key={section.label}>
+                  <p className="text-base font-bold text-muted-foreground uppercase tracking-widest mb-3 px-1">{section.label}</p>
+                  <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                    {sectionInv.map((inv, idx) => (
+                      <InventoryItemCard key={inv.id} inv={inv} isLast={idx === sectionInv.length - 1} />
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+            {(() => {
+              const otherInv = ownedInv.filter(inv => !knownTypes.includes(inv.item?.item_type))
+              if (otherInv.length === 0) return null
+              return (
+                <div>
+                  <p className="text-base font-bold text-muted-foreground uppercase tracking-widest mb-3 px-1">Other</p>
+                  <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                    {otherInv.map((inv, idx) => (
+                      <InventoryItemCard key={inv.id} inv={inv} isLast={idx === otherInv.length - 1} />
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
+          </div>
+        )
+      })()}
     </div>
   )
 }

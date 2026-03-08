@@ -11,6 +11,7 @@ import VerifyEmail from './pages/VerifyEmail'
 import QuestShop from './pages/QuestShop'
 import NotFound from './pages/NotFound'
 import VerificationBlocker from './components/VerificationBlocker'
+import DevTerminal from './components/DevTerminal'
 
 // Admin
 import AdminLayout from './admin/AdminLayout'
@@ -25,6 +26,7 @@ export default function App() {
   return (
     <>
       <VerificationBlocker />
+      <DevTerminal />
       <Routes>
       {/* Main App */}
       <Route path="/" element={<Layout />}>
