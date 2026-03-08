@@ -4,10 +4,11 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from datetime import datetime, date, timedelta
 from app.database import get_db
-from app.models import Step, Slide, StepProgress, Chapter, Story, User, Enrollment, SlideProgress, StreakWeek, Achievement, UserAchievement
+from app.models import Step, Slide, StepProgress, Chapter, Story, User, Enrollment, SlideProgress, StreakWeek, Achievement, UserAchievement, UserInventory, ShopItem
 from app.schemas import StepDetailResponse, SlideResponse, StepCompleteRequest, SlideCompleteRequest
 from app.auth import get_current_user
 from app.routers.quests import tick_quest_progress
+from app.hearts import sync_hearts, deduct_heart, seconds_until_next_heart
 
 router = APIRouter(prefix="/steps", tags=["steps"])
 
@@ -141,6 +142,30 @@ async def complete_step(
     xp_earned = 0
     coins_earned = 0
     
+    xp_boost_active = False
+
+    async def _apply_boost_and_reward(base_xp: int, base_coins: int):
+        """Apply xp boost if available, then credit user. Returns (xp_earned, coins_earned, boost_used)."""
+        nonlocal xp_boost_active
+        boost_res = await db.execute(
+            select(UserInventory)
+            .join(ShopItem, UserInventory.item_id == ShopItem.id)
+            .where(
+                UserInventory.user_id == current_user.id,
+                ShopItem.item_type == "xp_boost",
+                UserInventory.quantity > 0,
+            )
+        )
+        boost_inv = boost_res.scalar_one_or_none()
+        xp = base_xp
+        if boost_inv:
+            xp *= 2
+            boost_inv.quantity -= 1
+            xp_boost_active = True
+        current_user.xp += xp
+        current_user.coins = (current_user.coins or 0) + base_coins
+        return xp, base_coins
+
     if not progress:
         progress = StepProgress(
             user_id=current_user.id,
@@ -151,19 +176,22 @@ async def complete_step(
             completed_at=datetime.utcnow()
         )
         db.add(progress)
-        xp_earned = step.xp_reward
-        coins_earned = step.coin_reward
-        current_user.xp += xp_earned
-        current_user.coins = (current_user.coins or 0) + coins_earned
+        base_xp = step.xp_reward + data.quizzes_correct * 15
+        xp_earned, coins_earned = await _apply_boost_and_reward(base_xp, step.coin_reward)
     elif not progress.is_completed:
         progress.is_completed = True
         progress.score = data.score
         progress.time_spent_seconds = data.time_spent_seconds
         progress.completed_at = datetime.utcnow()
-        xp_earned = step.xp_reward
-        coins_earned = step.coin_reward
-        current_user.xp += xp_earned
-        current_user.coins = (current_user.coins or 0) + coins_earned
+        base_xp = step.xp_reward + data.quizzes_correct * 15
+        xp_earned, coins_earned = await _apply_boost_and_reward(base_xp, step.coin_reward)
+
+    # Deduct 1 heart if more than half of quizzes were wrong (first completion only)
+    if xp_earned > 0 and data.quizzes_total > 0:
+        wrong = data.quizzes_total - data.quizzes_correct
+        if wrong / data.quizzes_total > 0.5:
+            deduct_heart(current_user)
+
     # Update streak (in-memory fields)
     # read tz offset header if present (minutes offset from UTC)
     tz_offset = None
@@ -217,8 +245,13 @@ async def complete_step(
     if xp_earned > 0:
         try:
             await tick_quest_progress(current_user.id, "lessons", 1, db)
+            await tick_quest_progress(current_user.id, "slides", 1, db)
             if data.time_spent_seconds > 0:
                 await tick_quest_progress(current_user.id, "study_time", data.time_spent_seconds, db)
+            if data.quizzes_correct > 0:
+                await tick_quest_progress(current_user.id, "quizzes", data.quizzes_correct, db)
+            if data.quizzes_total >= 1 and data.quizzes_correct == data.quizzes_total:
+                await tick_quest_progress(current_user.id, "perfect_quiz", 1, db)
             # Check streak-based quests
             await tick_quest_progress(current_user.id, "streak", current_user.current_streak or 0, db)
         except Exception:
@@ -304,9 +337,10 @@ async def complete_step(
         "coins_earned": coins_earned,
         "total_xp": current_user.xp,
         "total_coins": current_user.coins or 0,
+        "hearts": current_user.hearts if current_user.hearts is not None else 5,
+        "xp_boost_active": xp_boost_active,
         "streak": streak_info,
         "newly_earned_achievements": newly_earned
-
     }
 
 
@@ -362,8 +396,7 @@ async def complete_slide(
             completed_at=datetime.utcnow()
         )
         db.add(sp)
-        xp_earned = data.xp or 0
-        current_user.xp += xp_earned
+        # Quiz XP is consolidated at step completion — not awarded per slide
 
         # Only update streak once per day: skip if user was already active today
         tz_offset = None
@@ -415,11 +448,7 @@ async def complete_slide(
         except Exception:
             pass
 
-        # Tick quest progress for slide completion
-        try:
-            await tick_quest_progress(current_user.id, "slides", 1, db)
-        except Exception:
-            pass
+        # slides quest is now tracked at lesson (step) completion level
 
         await db.commit()
     else:
@@ -485,4 +514,28 @@ async def complete_slide(
         "xp_earned": xp_earned,
         "total_xp": current_user.xp,
         "newly_earned_achievements": newly_earned
+    }
+
+
+@router.post("/{step_id}/quit")
+async def quit_step(
+    step_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Called when user quits a lesson mid-way. Deducts 1 heart."""
+    # Verify the step exists
+    result = await db.execute(select(Step).where(Step.id == step_id))
+    if not result.scalar_one_or_none():
+        raise HTTPException(status_code=404, detail="Step not found")
+
+    sync_hearts(current_user)
+    heart_deducted = deduct_heart(current_user)
+    await db.commit()
+
+    return {
+        "success": True,
+        "hearts": current_user.hearts if current_user.hearts is not None else 5,
+        "heart_deducted": heart_deducted,
+        "seconds_until_restore": seconds_until_next_heart(current_user),
     }

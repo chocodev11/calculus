@@ -6,8 +6,9 @@ from datetime import datetime, timedelta
 
 from app.database import get_db
 from app.models import User, ShopItem, UserInventory
-from app.schemas import ShopItemResponse, BuyItemResponse, InventoryItemResponse, UserResponse
+from app.schemas import ShopItemResponse, BuyItemResponse, InventoryItemResponse, UserResponse, HeartsResponse
 from app.auth import get_current_user
+from app.hearts import sync_hearts, seconds_until_next_heart, MAX_HEARTS
 
 router = APIRouter(prefix="/shop", tags=["shop"])
 
@@ -50,23 +51,39 @@ async def buy_item(
     # Deduct coins
     current_user.coins = user_coins - item.price
 
-    # Calculate expiry for timed items
-    expires_at = None
-    if item.item_type == "xp_boost":
-        expires_at = datetime.utcnow() + timedelta(hours=item.effect_value)
-
-    # Stackable items: increment quantity if already owned
-    stackable_types = ("streak_freeze", "hint_token")
-    if item.item_type in stackable_types:
-        inv_result = await db.execute(
-            select(UserInventory).where(
-                UserInventory.user_id == current_user.id,
-                UserInventory.item_id == item_id,
+    # Hearts: restore directly onto the user (no inventory record)
+    if item.item_type == "heart":
+        sync_hearts(current_user)
+        current_hearts = current_user.hearts or 0
+        restored = min(item.effect_value, MAX_HEARTS - current_hearts)
+        if restored <= 0:
+            # Full hearts — refund coins and reject
+            current_user.coins = user_coins
+            await db.commit()
+            raise HTTPException(status_code=400, detail="Tim đã đầy!")
+        current_user.hearts = current_hearts + restored
+        if (current_user.hearts or 0) >= MAX_HEARTS:
+            current_user.last_heart_restore_at = None
+    else:
+        # Stackable items: increment quantity if already owned
+        stackable_types = ("streak_freeze", "xp_boost", "hint_token")
+        if item.item_type in stackable_types:
+            inv_result = await db.execute(
+                select(UserInventory).where(
+                    UserInventory.user_id == current_user.id,
+                    UserInventory.item_id == item_id,
+                )
             )
-        )
-        existing = inv_result.scalar_one_or_none()
-        if existing:
-            existing.quantity += 1
+            existing = inv_result.scalar_one_or_none()
+            if existing:
+                existing.quantity += 1
+            else:
+                db.add(UserInventory(
+                    user_id=current_user.id,
+                    item_id=item_id,
+                    quantity=1,
+                    is_active=True,
+                ))
         else:
             db.add(UserInventory(
                 user_id=current_user.id,
@@ -74,14 +91,6 @@ async def buy_item(
                 quantity=1,
                 is_active=True,
             ))
-    else:
-        db.add(UserInventory(
-            user_id=current_user.id,
-            item_id=item_id,
-            quantity=1,
-            expires_at=expires_at,
-            is_active=True,
-        ))
 
     await db.commit()
     await db.refresh(current_user)
@@ -158,3 +167,18 @@ async def unequip_item(
         await db.refresh(current_user)
         
     return current_user
+
+
+@router.get("/hearts", response_model=HeartsResponse)
+async def get_hearts(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Return current heart count and time until next restore."""
+    sync_hearts(current_user)
+    await db.commit()
+    return HeartsResponse(
+        hearts=current_user.hearts if current_user.hearts is not None else MAX_HEARTS,
+        max_hearts=MAX_HEARTS,
+        seconds_until_restore=seconds_until_next_heart(current_user),
+    )

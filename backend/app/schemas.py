@@ -28,6 +28,8 @@ class UserResponse(BaseModel):
     current_streak: int
     longest_streak: int
     is_active: bool = True  # Email verification status
+    hearts: int = 5
+    last_heart_restore_at: Optional[datetime] = None
     
     class Config:
         from_attributes = True
@@ -111,6 +113,8 @@ class DashboardResponse(BaseModel):
 class StepCompleteRequest(BaseModel):
     score: int = 100
     time_spent_seconds: int = 0
+    quizzes_correct: int = 0
+    quizzes_total: int = 0
 
 
 class SlideCompleteRequest(BaseModel):
@@ -182,9 +186,16 @@ class StreakWeekResponse(BaseModel):
     longest_streak: int = 0
     today_index: int = 0
     today_completed: bool = False
+    frozen_days: list[bool] = Field(default_factory=lambda: [False] * 7)
 
     class Config:
         from_attributes = True
+
+
+class HeartsResponse(BaseModel):
+    hearts: int
+    max_hearts: int = 5
+    seconds_until_restore: Optional[int] = None  # None means full
 
 # Generic
 class SuccessResponse(BaseModel):

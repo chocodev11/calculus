@@ -2,7 +2,7 @@
   "quests": [
     {
       "title": "Hoàn thành 1 bài học",
-      "description": "Complete 1 lesson today",
+      "description": "Hoàn thành 1 bài học hôm nay · nhận 25 xu",
       "quest_type": "daily",
       "requirement_type": "lessons",
       "requirement_value": 1,
@@ -10,26 +10,26 @@
       "icon": "📖"
     },
     {
-      "title": "Trả lời đúng 1 quiz",
-      "description": "Answer a quiz correctly",
+      "title": "Trả lời đúng 5 quiz",
+      "description": "Trả lời đúng 5 câu quiz · nhận 15 xu",
       "quest_type": "daily",
       "requirement_type": "quizzes",
-      "requirement_value": 1,
+      "requirement_value": 5,
       "coin_reward": 15,
       "icon": "✅"
     },
     {
-      "title": "Học 5 phút",
-      "description": "Study for 5 minutes",
+      "title": "Học 7 phút",
+      "description": "Học trong 7 phút hôm nay · nhận 15 xu",
       "quest_type": "daily",
       "requirement_type": "study_time",
-      "requirement_value": 300,
+      "requirement_value": 7,
       "coin_reward": 15,
       "icon": "⏱️"
     },
     {
       "title": "Đạt điểm quiz tuyệt đối",
-      "description": "Get a perfect quiz score",
+      "description": "Đạt điểm tuyệt đối trong 1 quiz · nhận 20 xu",
       "quest_type": "daily",
       "requirement_type": "perfect_quiz",
       "requirement_value": 1,
@@ -38,7 +38,7 @@
     },
     {
       "title": "Hoàn thành 2 bài học",
-      "description": "Complete 2 lessons today",
+      "description": "Hoàn thành 2 bài học hôm nay · nhận 35 xu",
       "quest_type": "daily",
       "requirement_type": "lessons",
       "requirement_value": 2,
@@ -46,94 +46,40 @@
       "icon": "📚"
     },
     {
-      "title": "Đọc 3 slides",
-      "description": "Read 3 slides",
+      "title": "Hoàn thành 3 bài học",
+      "description": "Hoàn thành 3 bài học hôm nay · nhận 50 xu",
       "quest_type": "daily",
-      "requirement_type": "slides",
+      "requirement_type": "lessons",
       "requirement_value": 3,
-      "coin_reward": 10,
+      "coin_reward": 50,
       "icon": "📄"
     },
     {
-      "title": "Hoàn thành 5 bài học tuần này",
-      "description": "Complete 5 lessons this week",
+      "title": "Hoàn thành 15 bài học tuần này",
+      "description": "Hoàn thành 15 bài học trong tuần này · nhận 100 xu",
       "quest_type": "weekly",
       "requirement_type": "lessons",
-      "requirement_value": 5,
-      "coin_reward": 100,
+      "requirement_value": 15,
+      "coin_reward": 200,
       "icon": "🎯"
     },
     {
-      "title": "Duy trì streak 5 ngày",
-      "description": "Maintain a 5-day streak",
+      "title": "Học 5 ngày trong tuần",
+      "description": "Tuần này duy trì streak học 5 ngày · nhận 120 xu",
       "quest_type": "weekly",
       "requirement_type": "streak",
       "requirement_value": 5,
-      "coin_reward": 120,
+      "coin_reward": 130,
       "icon": "🔥"
     },
     {
-      "title": "Hoàn thành 1 chương",
-      "description": "Complete an entire chapter",
-      "quest_type": "weekly",
-      "requirement_type": "chapter",
-      "requirement_value": 1,
-      "coin_reward": 150,
-      "icon": "📕"
-    },
-    {
-      "title": "Trả lời đúng 10 quiz",
-      "description": "Answer 10 quizzes correctly this week",
+      "title": "Trả lời đúng 36 quiz",
+      "description": "Trả lời đúng 36 quiz trong tuần này · nhận 80 xu",
       "quest_type": "weekly",
       "requirement_type": "quizzes",
-      "requirement_value": 10,
+      "requirement_value": 36,
       "coin_reward": 80,
       "icon": "🧠"
-    },
-    {
-      "title": "Bài học đầu tiên",
-      "description": "Complete your first lesson",
-      "quest_type": "milestone",
-      "requirement_type": "lessons",
-      "requirement_value": 1,
-      "coin_reward": 30,
-      "icon": "🌟"
-    },
-    {
-      "title": "Hoàn thành chương đầu tiên",
-      "description": "Complete your first chapter",
-      "quest_type": "milestone",
-      "requirement_type": "chapter",
-      "requirement_value": 1,
-      "coin_reward": 60,
-      "icon": "📗"
-    },
-    {
-      "title": "Hoàn thành khóa học đầu tiên",
-      "description": "Complete your first course",
-      "quest_type": "milestone",
-      "requirement_type": "course",
-      "requirement_value": 1,
-      "coin_reward": 200,
-      "icon": "🏆"
-    },
-    {
-      "title": "Streak 7 ngày",
-      "description": "Reach a 7-day streak",
-      "quest_type": "milestone",
-      "requirement_type": "streak",
-      "requirement_value": 7,
-      "coin_reward": 80,
-      "icon": "⚡"
-    },
-    {
-      "title": "Mua vật phẩm đầu tiên",
-      "description": "Buy your first item from the shop",
-      "quest_type": "milestone",
-      "requirement_type": "shop_buy",
-      "requirement_value": 1,
-      "coin_reward": 30,
-      "icon": "🛒"
     }
   ]
 }

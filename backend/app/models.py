@@ -17,6 +17,8 @@ class User(Base):
     equipped_items = Column(JSON, default=dict)
     xp = Column(Integer, default=0)
     coins = Column(Integer, default=0)
+    hearts = Column(Integer, default=5)
+    last_heart_restore_at = Column(DateTime, nullable=True)
     current_streak = Column(Integer, default=0)
     longest_streak = Column(Integer, default=0)
     last_activity_date = Column(DateTime)
@@ -36,6 +38,7 @@ class StreakWeek(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     week_start = Column(String(10), nullable=False, index=True)  # YYYY-MM-DD (Monday)
     days = Column(JSON, default=list)  # list of booleans for Mon..Sun
+    frozen_days = Column(JSON, default=list)  # list of booleans: True = streak-freeze applied
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 

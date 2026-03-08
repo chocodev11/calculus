@@ -21,6 +21,7 @@ export default function LearningStreakCard({
 }) {
   const [streak, setStreak] = useState(0)
   const [days, setDays] = useState([false,false,false,false,false,false,false])
+  const [frozenDays, setFrozenDays] = useState([false,false,false,false,false,false,false])
 
   // server will provide today index and streak info; initialize from client time as fallback
   const [todayIndex, setTodayIndex] = useState(() => (new Date().getDay() + 6) % 7)
@@ -38,6 +39,8 @@ export default function LearningStreakCard({
           // API returns authoritative fields: week_start, days, current_streak, longest_streak, today_index, today_completed
           const d = Array.isArray(res.days) && res.days.length === 7 ? res.days.map(x => !!x) : [false,false,false,false,false,false,false]
           setDays(d)
+          if (Array.isArray(res.frozen_days) && res.frozen_days.length === 7)
+            setFrozenDays(res.frozen_days.map(x => !!x))
           if (typeof res.current_streak === 'number') setStreak(res.current_streak)
           if (typeof res.longest_streak === 'number') setLongest(res.longest_streak)
           if (typeof res.today_index === 'number') setTodayIndex(res.today_index)
@@ -89,13 +92,14 @@ export default function LearningStreakCard({
             {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d, i) => {
               const isToday = i === todayIndex
               const done = Array.isArray(days) && !!days[i]
+              const frozen = Array.isArray(frozenDays) && !!frozenDays[i]
               const todayHighlight = isToday && done
               return (
                 <div key={d} className="flex flex-col items-center">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${todayHighlight ? 'bg-amber-500 text-white shadow-md' : done ? 'bg-amber-400 text-white shadow-md' : 'bg-slate-100 text-slate-500'}`}>
-                    <span className="uppercase">{d[0]}</span>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${todayHighlight ? 'bg-amber-500 text-white shadow-md' : done ? 'bg-amber-400 text-white shadow-md' : frozen ? 'bg-blue-300 text-white shadow-md' : 'bg-slate-100 text-slate-500'}`}>
+                    <span className="uppercase">{frozen && !done ? '❄' : d[0]}</span>
                   </div>
-                  <div className={`mt-1 text-[10px] ${todayHighlight ? 'text-amber-600 font-semibold' : 'text-slate-400'}`}>{d}</div>
+                  <div className={`mt-1 text-[10px] ${todayHighlight ? 'text-amber-600 font-semibold' : frozen && !done ? 'text-blue-400 font-semibold' : 'text-slate-400'}`}>{d}</div>
                 </div>
               )
             })}

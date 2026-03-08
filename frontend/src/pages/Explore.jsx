@@ -61,12 +61,12 @@ export default function Explore() {
 
       <div className="space-y-16">
         {learningPaths.map((path, index) => (
-          <>
-            <PathSection key={path.id} path={path} />
+          <div key={path.id}>
+            <PathSection path={path} />
             {index !== learningPaths.length - 1 && (
-              <div className="w-full h-[1px] bg-gray-300" />
+              <div className="w-full h-[1px] bg-gray-300 mt-16" />
             )}
-          </>
+          </div>
         ))}
       </div>
     </div>

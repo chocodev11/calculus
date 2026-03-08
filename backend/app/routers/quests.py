@@ -7,7 +7,7 @@ import random
 import logging
 
 from app.database import get_db
-from app.models import User, Quest, UserQuest
+from app.models import User, Quest, UserQuest, StreakWeek
 from app.schemas import UserQuestResponse, ClaimQuestResponse
 from app.auth import get_current_user
 
@@ -42,8 +42,13 @@ async def refresh_daily_quests(user_id: int, db: AsyncSession):
     if not pool:
         return
 
-    # Pick 3 random (or all if pool < 3)
-    chosen = random.sample(pool, min(3, len(pool)))
+    # Pick 3 random quests ensuring at least 2 distinct requirement_types
+    target = min(3, len(pool))
+    for _ in range(20):  # retry up to 20 times
+        chosen = random.sample(pool, target)
+        types = {q.requirement_type for q in chosen}
+        if len(types) >= min(2, target):
+            break
 
     for quest in chosen:
         uq = UserQuest(
@@ -96,13 +101,13 @@ async def refresh_weekly_quests(user_id: int, db: AsyncSession):
         )
         db.add(uq)
 
-
 async def tick_quest_progress(user_id: int, event_type: str, amount: int, db: AsyncSession):
     """Increment progress on matching quests for the user.
     
     event_type: "lessons", "slides", "quizzes", "perfect_quiz", "streak",
                 "study_time", "shop_buy", "chapter", "course"
     """
+    import math
     today_start = datetime.combine(date.today(), datetime.min.time())
     today = date.today()
     monday = today - timedelta(days=today.weekday())
@@ -130,9 +135,25 @@ async def tick_quest_progress(user_id: int, event_type: str, amount: int, db: As
         if quest.quest_type == "weekly" and uq.assigned_at < week_start:
             continue
 
-        # For streak type: check value directly instead of incrementing
         if event_type == "streak":
-            uq.progress = amount
+            if quest.quest_type == "weekly":
+                # Count unique days studied this week from StreakWeek record
+                week_start_str = monday.isoformat()
+                sw_res = await db.execute(
+                    select(StreakWeek).where(
+                        StreakWeek.user_id == user_id,
+                        StreakWeek.week_start == week_start_str,
+                    )
+                )
+                sw = sw_res.scalar_one_or_none()
+                uq.progress = sum(1 for d in (sw.days or []) if d) if sw else 0
+            else:
+                # Daily or other: use current streak value directly
+                uq.progress = amount
+        elif event_type == "study_time":
+            # Track in minutes (round up, minimum 1 minute per session)
+            minutes = max(1, math.ceil(amount / 60)) if amount > 0 else 0
+            uq.progress += minutes
         else:
             uq.progress += amount
 

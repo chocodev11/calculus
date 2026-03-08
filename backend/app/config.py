@@ -21,8 +21,8 @@ class Settings(BaseSettings):
     email_verification_token_expire_minutes: int = 60 * 24  # 24 hours
 
     # Email verification
-    require_email_verification: bool = False
-
+    require_email_verification: bool = Field(default=False, alias="REQUIRE_EMAIL_VERIFICATION")
+ 
     # URLs used in emails
     backend_base_url: str = "http://localhost:8000"
 

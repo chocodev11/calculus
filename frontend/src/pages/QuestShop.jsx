@@ -110,9 +110,8 @@ const TYPE_LABELS = {
 // Two primary sections; any remaining item_types fall into "Other"
 const SHOP_SECTIONS = [
   { label: 'Hearts',     types: ['heart'] },
-  { label: 'Power-ups',  types: ['streak_freeze', 'xp_boost', 'hint_token'] },
+  { label: 'Power-ups',  types: ['streak_freeze', 'xp_boost'] },
   { label: 'Cosmetics',  types: ['avatar_frame'] },
-  { label: 'Courses',    types: ['course_unlock'] },
 ]
 
 // ═══════════════════════════════════════════════════════════════════
@@ -186,7 +185,7 @@ function QuestCard({ uq, section, claimingId, justClaimed, onClaim }) {
             />
           </div>
           <span className="text-xs text-muted-foreground tabular-nums whitespace-nowrap">
-            {uq.progress}/{quest.requirement_value}
+            {uq.progress}/{quest.requirement_value}{quest.requirement_type === 'study_time' ? ' phút' : ''}
           </span>
         </div>
       </div>

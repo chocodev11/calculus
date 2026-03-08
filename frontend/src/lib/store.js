@@ -98,7 +98,7 @@ export const useAuthStore = create(
 
       clearError: () => set({ error: null }),
 
-      // Update user stats (XP, streak, coins) after step completion
+      // Update user stats (XP, streak, coins, hearts) after step completion
       updateUserStats: (stats) => {
         set((state) => ({
           user: state.user ? {
@@ -107,6 +107,7 @@ export const useAuthStore = create(
             coins: stats.total_coins ?? state.user.coins,
             current_streak: stats.streak?.current_streak ?? state.user.current_streak,
             longest_streak: stats.streak?.longest_streak ?? state.user.longest_streak,
+            hearts: stats.hearts ?? state.user.hearts,
           } : null
         }))
       },

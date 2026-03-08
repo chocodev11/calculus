@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload, joinedload
 from app.database import get_db
-from app.models import User, Enrollment, Story, Step, StepProgress, Chapter, Achievement, UserAchievement
+from app.models import User, Enrollment, Story, Step, StepProgress, Chapter, Achievement, UserAchievement, UserInventory, ShopItem
 from app.schemas import (
     DashboardResponse, StoryDetailResponse, ChapterResponse, StepResponse,
     UserStatsResponse, UserProgressResponse, AchievementResponse
@@ -386,13 +386,49 @@ async def get_streak_week(
 
     longest = current_user.longest_streak or 0
 
+    # Build frozen_days list (7 bools) — also auto-apply streak freeze for yesterday if missed
+    frozen_arr = list(entry.frozen_days) if (entry and entry.frozen_days and len(entry.frozen_days) == 7) else [False] * 7
+    monday = today_local - timedelta(days=today_local.weekday())
+    is_current_week = (monday.isoformat() == week_start)
+
+    if is_current_week and today_idx >= 1:
+        yesterday_idx = today_idx - 1
+        if not days_arr[yesterday_idx] and not frozen_arr[yesterday_idx]:
+            # Yesterday was missed — try to auto-apply a streak freeze
+            freeze_res = await db.execute(
+                select(UserInventory)
+                .join(ShopItem, UserInventory.item_id == ShopItem.id)
+                .where(
+                    UserInventory.user_id == current_user.id,
+                    ShopItem.item_type == "streak_freeze",
+                    UserInventory.quantity > 0,
+                )
+            )
+            freeze_inv = freeze_res.scalar_one_or_none()
+            if freeze_inv:
+                freeze_inv.quantity -= 1
+                frozen_arr[yesterday_idx] = True
+                if entry:
+                    entry.frozen_days = frozen_arr
+                    entry.days = days_arr  # persist merged days too
+                else:
+                    new_entry = StreakWeek(
+                        user_id=current_user.id,
+                        week_start=week_start,
+                        days=days_arr,
+                        frozen_days=frozen_arr,
+                    )
+                    db.add(new_entry)
+                await db.commit()
+
     return StreakWeekResponse(
         week_start=week_start,
         days=days_arr,
         current_streak=current_streak,
         longest_streak=longest,
         today_index=today_idx,
-        today_completed=today_completed
+        today_completed=today_completed,
+        frozen_days=frozen_arr,
     )
 
 

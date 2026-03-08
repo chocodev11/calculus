@@ -5,7 +5,7 @@ import {
   Eye,
   Lightbulb, AlertTriangle, Info, GraduationCap,
   Copy, CheckCheck, Play, GripVertical,
-  Trophy
+  Trophy, Heart, Zap
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '../lib/api'
@@ -46,6 +46,14 @@ export default function Step() {
   const [newAchievements, setNewAchievements] = useState([])
   const [slideAchievements, setSlideAchievements] = useState([])
 
+  // Track time spent on this step (for study_time quest)
+  const stepStartTimeRef = useRef(Date.now())
+
+  // Hearts (local mirror of user.hearts for immediate UI updates after quit)
+  const [localHearts, setLocalHearts] = useState(() => user?.hearts ?? 5)
+  // XP boost: true if user owns at least 1 xp_boost in inventory
+  const [hasXpBoost, setHasXpBoost] = useState(false)
+
   useEffect(() => { loadData() }, [id, slug])
 
   const loadData = async () => {
@@ -68,10 +76,14 @@ export default function Step() {
       })
       setAllSteps(steps)
 
-      const [stepData, slidesData] = await Promise.all([
+      const [stepData, slidesData, invData] = await Promise.all([
         api.get(`/steps/${id}`),
-        api.get(`/steps/${id}/slides`)
+        api.get(`/steps/${id}/slides`),
+        api.get('/shop/inventory').catch(() => []),
       ])
+
+      const boost = Array.isArray(invData) && invData.find(i => i.item?.item_type === 'xp_boost' && i.quantity > 0)
+      setHasXpBoost(!!boost)
 
       setStep(stepData)
       setSlides(slidesData)
@@ -81,6 +93,7 @@ export default function Step() {
       setQuizResults({})
       setTotalXpEarned(0)
       setShowCompleteScreen(false)
+      stepStartTimeRef.current = Date.now()
     } catch (e) {
       console.error('Error loading step:', e)
     } finally {
@@ -98,40 +111,30 @@ export default function Step() {
   const [showExplanation, setShowExplanation] = useState(false)
   const [currentExplanation, setCurrentExplanation] = useState('')
 
-  const awardSlideXp = useCallback(async (slideId, xp) => {
-    if (!slideId || !xp) return
+  const awardSlideXp = useCallback(async (slideId) => {
+    if (!slideId) return
     if (completedSlideIds.includes(slideId)) return
     // Mark locally first so duplicate calls are blocked immediately
     setCompletedSlideIds(prev => [...prev, slideId])
     try {
-      const res = await api.post(`/steps/${id}/slides/${slideId}/complete`, { xp })
+      const res = await api.post(`/steps/${id}/slides/${slideId}/complete`, {})
       if (res) {
-        setTotalXpEarned(prev => prev + (res.xp_earned || 0))
-        // Patch local store – no second fetchUser round-trip needed
-        updateUserStats(res)
         // Show achievement popup if any were newly unlocked
         const unlocked = res.newly_earned_achievements || []
         if (unlocked.length > 0) setSlideAchievements(unlocked)
       }
     } catch (e) {
-      console.error('Error awarding slide xp', e)
+      console.error('Error recording slide completion', e)
     }
-  }, [id, completedSlideIds, updateUserStats])
+  }, [id, completedSlideIds])
 
   const goNext = useCallback(() => {
     if (currentSlideIndex < slides.length - 1) {
-      // Fire slide-xp in background – don't block navigation on it
-      try {
-        const blocks = currentSlide?.blocks || []
-        const quizBlocks = blocks.filter(b => (b.type || b.block_type) === 'quiz')
-        const xp = quizBlocks.reduce((sum, b) => sum + (quizResults[b.id]?.xp || 0), 0)
-        awardSlideXp(currentSlide?.id, xp)
-      } catch (e) {
-        console.error('Error computing slide xp on next', e)
-      }
+      // Record slide completion in background
+      try { awardSlideXp(currentSlide?.id) } catch (e) {}
       setCurrentSlideIndex(i => i + 1)
     }
-  }, [currentSlideIndex, slides.length, awardSlideXp, currentSlide, quizResults])
+  }, [currentSlideIndex, slides.length, awardSlideXp, currentSlide])
 
   // Is the current slide an interaction slide? (true when at least one block is interaction)
   const isInteractionSlide = useMemo(() => {
@@ -177,14 +180,32 @@ export default function Step() {
   }
 
   // Completion
-  const handleComplete = () => setShowCompleteScreen(true)
+  const handleComplete = () => {
+    // Compute XP to display: step base XP + 15 per correct quiz answer (doubled if xp_boost)
+    const correctCount = Object.values(quizResults).filter(r => r.correct).length
+    const baseXp = (step?.xp_reward || 0) + correctCount * 15
+    setTotalXpEarned(hasXpBoost ? baseXp * 2 : baseXp)
+    setShowCompleteScreen(true)
+  }
 
   const handleCompleteAndNavigate = async () => {
     try {
-      const result = await api.post(`/steps/${id}/complete`, { score: 100 })
+      const timeSpent = Math.round((Date.now() - stepStartTimeRef.current) / 1000)
+      const quizEntries = Object.values(quizResults)
+      const quizzesTotal = quizEntries.length
+      const quizzesCorrect = quizEntries.filter(r => r.correct).length
+      const result = await api.post(`/steps/${id}/complete`, {
+        score: 100,
+        time_spent_seconds: timeSpent,
+        quizzes_correct: quizzesCorrect,
+        quizzes_total: quizzesTotal,
+      })
 
       // Patch store immediately
-      if (result) updateUserStats(result)
+      if (result) {
+        updateUserStats(result)
+        if (result.hearts != null) setLocalHearts(result.hearts)
+      }
 
       // If new achievements were unlocked, show the dedicated achievements screen
       const unlocked = result?.newly_earned_achievements || []
@@ -215,6 +236,17 @@ export default function Step() {
     setNewAchievements([])
     setShowAchievementsScreen(false)
     doNavigateNext()
+  }
+
+  const handleQuit = () => {
+    // Fire-and-forget: deduct heart in background, navigate immediately
+    api.post(`/steps/${id}/quit`, {}).then(result => {
+      if (result?.hearts != null) {
+        setLocalHearts(result.hearts)
+        updateUserStats({ hearts: result.hearts })
+      }
+    }).catch(() => {})
+    navigate(`/course/${slug}`)
   }
 
   // ── LOADING ──
@@ -288,15 +320,8 @@ export default function Step() {
     }
     // Continue / Complete (works for both correct and incorrect)
     if (isLastSlide) {
-      // Fire slide-xp in background, show complete screen immediately
-      try {
-        const blocks = currentSlide?.blocks || []
-        const quizBlocks = blocks.filter(b => (b.type || b.block_type) === 'quiz')
-        const xp = quizBlocks.reduce((sum, b) => sum + (quizResults[b.id]?.xp || 0), 0)
-        awardSlideXp(currentSlide?.id, xp)
-      } catch (e) {
-        console.error('Error computing slide xp on complete', e)
-      }
+      // Record last slide completion in background
+      try { awardSlideXp(currentSlide?.id) } catch (e) {}
       handleComplete()
     } else {
       goNext()
@@ -332,7 +357,7 @@ export default function Step() {
       <header className="h-[10vh] shrink-0 flex items-center justify-center relative bg-white">
         {/* Exit button — top left */}
         <button
-          onClick={() => navigate(`/course/${slug}`)}
+          onClick={handleQuit}
           className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition"
           title="Exit lesson"
         >
@@ -348,6 +373,25 @@ export default function Step() {
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
             />
+          </div>
+        </div>
+
+        {/* Right side: hearts + xp boost indicator */}
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+          {hasXpBoost && (
+            <div className="flex items-center gap-0.5 bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-full">
+              <Zap className="w-3 h-3" />2x
+            </div>
+          )}
+          <div className="flex items-center gap-0.5">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Heart
+                key={i}
+                className="w-4 h-4"
+                fill={i < localHearts ? '#ef4444' : 'none'}
+                stroke={i < localHearts ? '#ef4444' : '#d1d5db'}
+              />
+            ))}
           </div>
         </div>
       </header>

@@ -32,5 +32,17 @@ async def get_db():
 async def init_db():
     # Import all models so they are registered with Base.metadata before create_all
     from app import models  # noqa: F401
+    from sqlalchemy import text
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Add new columns to existing tables (idempotent)
+        _migrations = [
+            "ALTER TABLE users ADD COLUMN hearts INTEGER DEFAULT 5",
+            "ALTER TABLE users ADD COLUMN last_heart_restore_at DATETIME",
+            "ALTER TABLE streak_weeks ADD COLUMN frozen_days JSON",
+        ]
+        for sql in _migrations:
+            try:
+                await conn.execute(text(sql))
+            except Exception:
+                pass  # column already exists
