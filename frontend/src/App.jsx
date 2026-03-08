@@ -13,6 +13,8 @@ import NotFound from './pages/NotFound'
 import VerificationBlocker from './components/VerificationBlocker'
 import DevTerminal from './components/DevTerminal'
 
+const DEV_TERMINAL_ENABLED = import.meta.env.VITE_DEV_TERMINAL === 'true'
+
 // Admin
 import AdminLayout from './admin/AdminLayout'
 import AdminDashboard from './admin/Dashboard'
@@ -26,7 +28,7 @@ export default function App() {
   return (
     <>
       <VerificationBlocker />
-      <DevTerminal />
+      {DEV_TERMINAL_ENABLED && <DevTerminal />}
       <Routes>
       {/* Main App */}
       <Route path="/" element={<Layout />}>
