@@ -124,7 +124,7 @@ export default function Step() {
         if (unlocked.length > 0) setSlideAchievements(unlocked)
       }
     } catch (e) {
-      console.error('Error recording slide completion', e)
+      console.warn('Error recording slide completion', e)
     }
   }, [id, completedSlideIds])
 
