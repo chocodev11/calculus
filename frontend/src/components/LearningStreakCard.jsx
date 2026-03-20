@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Flame } from 'lucide-react'
 import api from '../lib/api'
 import { Card, CardContent } from './ui/card'
+import { t, fmt } from '../lib/locale'
 
 // Helper: compute current week's Monday as YYYY-MM-DD
 const getThisWeekMonday = () => {
@@ -82,14 +83,14 @@ export default function LearningStreakCard({
           </div>
           <div className="flex-1">
             <p className="text-3xl font-bold text-foreground leading-none mb-1">{streak}</p>
-            <p className="text-sm text-muted-foreground font-semibold">Day Streak • <span className="font-medium">{longest} longest</span></p>
-            {weekStart && <div className="mt-1 text-xs text-slate-400">Week of {weekStart}</div>}
+            <p className="text-sm text-muted-foreground font-semibold">{t.streakCard.dayStreak} • <span className="font-medium">{fmt(t.streakCard.longest, { n: longest })}</span></p>
+            {weekStart && <div className="mt-1 text-xs text-slate-400">{fmt(t.streakCard.weekOf, { date: weekStart })}</div>}
           </div>
         </div>
 
         <div className="mt-4">
           <div className="grid grid-cols-7 gap-2 text-center">
-            {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d, i) => {
+            {t.streakCard.days.map((d, i) => {
               const isToday = i === todayIndex
               const done = Array.isArray(days) && !!days[i]
               const frozen = Array.isArray(frozenDays) && !!frozenDays[i]
@@ -107,11 +108,11 @@ export default function LearningStreakCard({
         </div>
 
         {todayCompleted && (
-          <p className="text-sm text-orange-600 mt-3 font-bold"> You completed today's learning!</p>
+          <p className="text-sm text-orange-600 mt-3 font-bold"> {t.streakCard.completedToday}</p>
         )}
 
         {!todayCompleted && (
-          <p className="text-sm text-orange-600 mt-3 font-bold"> Don't break the streak! Complete today's learning.</p>
+          <p className="text-sm text-orange-600 mt-3 font-bold"> {t.streakCard.notCompletedToday}</p>
         )}
       </CardContent>
     </Card>

@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore, useQuestStore, useShopStore, useUIStore } from '../lib/store'
 import { Flame, Loader2, ScrollText, ShoppingBag, Star, Zap } from 'lucide-react'
+import { t } from '../lib/locale'
 
 // ═══════════════════════════════════════════════════════════════════
 // ─── SVG PRIMITIVES ─────────────────────────────────────────────
@@ -73,17 +74,17 @@ const QUEST_ICONS = {
 
 const SECTIONS = [
   {
-    key: 'daily', title: 'Daily Quests', subtitle: 'Reset every day',
+    key: 'daily', title: t.questShop.daily, subtitle: t.questShop.dailySubtitle,
     gradient: 'from-[#58CC02] to-[#46A302]', progressGradient: 'from-[#58CC02] to-[#89E219]',
     bgAccent: 'bg-[#58CC02]/5', borderAccent: 'border-[#58CC02]/20', iconBg: 'bg-[#58CC02]/10', headerIcon: IcoTarget,
   },
   {
-    key: 'weekly', title: 'Weekly Quests', subtitle: 'Bigger challenges',
+    key: 'weekly', title: t.questShop.weekly, subtitle: t.questShop.weeklySubtitle,
     gradient: 'from-[#CE82FF] to-[#A855F7]', progressGradient: 'from-[#CE82FF] to-[#E8B5FF]',
     bgAccent: 'bg-[#CE82FF]/5', borderAccent: 'border-[#CE82FF]/20', iconBg: 'bg-[#CE82FF]/10', headerIcon: IcoLightning,
   },
   {
-    key: 'milestone', title: 'Milestones', subtitle: 'One-time achievements',
+    key: 'milestone', title: t.questShop.milestone, subtitle: t.questShop.milestoneSubtitle,
     gradient: 'from-[#FF9600] to-[#FFC800]', progressGradient: 'from-[#FF9600] to-[#FFC800]',
     bgAccent: 'bg-[#FF9600]/5', borderAccent: 'border-[#FF9600]/20', iconBg: 'bg-[#FF9600]/10', headerIcon: IcoTrophy,
   },
@@ -102,16 +103,13 @@ const ITEM_COLORS = {
   avatar_frame:  { bg: 'bg-[#CE82FF]/10', border: 'border-[#CE82FF]/25', text: 'text-[#CE82FF]', tag: 'bg-[#CE82FF]/15 text-[#CE82FF]' },
   course_unlock: { bg: 'bg-[#FF9600]/10', border: 'border-[#FF9600]/25', text: 'text-[#FF9600]', tag: 'bg-[#FF9600]/15 text-[#FF9600]' },
 }
-const TYPE_LABELS = {
-  heart: 'Heart', streak_freeze: 'Streak', xp_boost: 'XP Boost',
-  hint_token: 'Hint', avatar_frame: 'Cosmetic', course_unlock: 'Course',
-}
+const TYPE_LABELS = t.questShop.typeLabels
 
 // Two primary sections; any remaining item_types fall into "Other"
 const SHOP_SECTIONS = [
-  { label: 'Hearts',     types: ['heart'] },
-  { label: 'Power-ups',  types: ['streak_freeze', 'xp_boost'] },
-  { label: 'Cosmetics',  types: ['avatar_frame'] },
+  { label: t.questShop.sectionHearts,    types: ['heart'] },
+  { label: t.questShop.sectionPowerups,  types: ['streak_freeze', 'xp_boost'] },
+  { label: t.questShop.sectionCosmetics, types: ['avatar_frame'] },
 ]
 
 // ═══════════════════════════════════════════════════════════════════
@@ -206,7 +204,7 @@ function QuestCard({ uq, section, claimingId, justClaimed, onClaim }) {
               active:shadow-none active:translate-y-[1px]
               transition-all duration-100 disabled:opacity-50"
           >
-            {claimingId === uq.id ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Claim'}
+          {claimingId === uq.id ? <Loader2 className="w-4 h-4 animate-spin" /> : t.questShop.claim}
           </button>
         ) : isClaimed ? (
           <svg viewBox="0 0 16 16" className="w-5 h-5 flex-shrink-0">
@@ -250,8 +248,8 @@ function QuestsPanel() {
       const res = await claimQuest(uq.id)
       await fetchUser()
       setClaimedIds(prev => new Set([...prev, uq.id]))
-      showToast(`+${res.coins_awarded} coins! 🎉`, 'success')
-    } catch (e) { showToast(e.message || 'Claim failed', 'error') }
+      showToast(`+${res.coins_awarded} ${t.questShop.claimed.replace('{n}', res.coins_awarded).replace('+{n}', `+${res.coins_awarded}`)}`, 'success')
+    } catch (e) { showToast(e.message || t.questShop.claimFailed, 'error') }
     finally { setClaimingId(null) }
   }
 
@@ -300,7 +298,7 @@ function QuestsPanel() {
       ) : quests.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-10 gap-2">
           <ScrollText className="w-7 h-7 text-muted-foreground/30" />
-          <p className="text-xs text-muted-foreground">Chưa có nhiệm vụ</p>
+          <p className="text-xs text-muted-foreground">{t.questShop.noQuests}</p>
         </div>
       ) : (
         SECTIONS.map(section => {
@@ -316,7 +314,7 @@ function QuestsPanel() {
                   {resetTimer(section.key) && (
                     <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
                       <span className="inline-block w-3.5 h-3.5 flex-shrink-0"><IcoTimer /></span>
-                      <span>Time remaining: {resetTimer(section.key)}</span>
+                      <span>{ t.questShop.timeRemaining.replace('{t}', resetTimer(section.key)) }</span>
                     </p>
                   )}
                 </div>
@@ -333,7 +331,7 @@ function QuestsPanel() {
                     ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     : <Star className="w-3.5 h-3.5" />
                   }
-                  Collect All{claimableInSection.length > 0 ? ` (${claimableInSection.length})` : ''}
+                  {t.questShop.collectAll}{claimableInSection.length > 0 ? ` (${claimableInSection.length})` : ''}
                 </button>
               </div>
               {/* Quest rows — no dividers */}
@@ -394,7 +392,7 @@ function ShopItemCard({ item, owned, canAfford, buying, onBuy, isLast }) {
               : 'bg-muted text-muted-foreground cursor-not-allowed'
             } disabled:opacity-60`}
         >
-          {buying ? <Loader2 className="w-4 h-4 animate-spin" /> : canAfford ? 'Buy' : '🔒'}
+          {buying ? <Loader2 className="w-4 h-4 animate-spin" /> : canAfford ? t.questShop.buy : '🔒'}
         </button>
       </div>
     </div>
@@ -418,9 +416,9 @@ function InventoryItemCard({ inv, isLast }) {
   const toggle = async () => {
     setLoading(true)
     try {
-      if (isEquipped) { await unequipItem(inv.item.item_type); showToast('Unequipped ' + inv.item.name, 'success') }
-      else            { await equipItem(inv.item.id);          showToast('Equipped '   + inv.item.name, 'success') }
-    } catch { showToast('Action failed', 'error') }
+      if (isEquipped) { await unequipItem(inv.item.item_type); showToast(t.questShop.unequip + ' ' + inv.item.name, 'success') }
+      else            { await equipItem(inv.item.id);          showToast(t.questShop.use + ' ' + inv.item.name, 'success') }
+    } catch { showToast(t.questShop.actionFailed, 'error') }
     finally { setLoading(false) }
   }
 
@@ -452,7 +450,7 @@ function InventoryItemCard({ inv, isLast }) {
                 : 'bg-[#58CC02] text-white shadow-[0_2px_0_#46A302] hover:brightness-105 active:shadow-none active:translate-y-[1px]'
               } disabled:opacity-60`}
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : isEquipped ? 'Unequip' : 'Use'}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : isEquipped ? t.questShop.unequip : t.questShop.use}
           </button>
         )}
       </div>
@@ -476,13 +474,13 @@ function ShopPanel() {
 
   const handleBuy = async (item) => {
     if (buyingId) return
-    if ((user?.coins || 0) < item.price) { showToast('Not enough coins! 💰', 'error'); return }
+    if ((user?.coins || 0) < item.price) { showToast(t.questShop.notEnoughCoins, 'error'); return }
     setBuyingId(item.id)
     try {
       const res = await buyItem(item.id)
       await fetchUser(); await fetchInventory()
       showToast(`${item.icon || '✅'} ${res.message}`, 'success')
-    } catch (e) { showToast(e.message || 'Purchase failed', 'error') }
+    } catch (e) { showToast(e.message || t.questShop.purchaseFailed, 'error') }
     finally { setBuyingId(null) }
   }
 
@@ -498,7 +496,7 @@ function ShopPanel() {
     <div className="h-full flex flex-col">
       {/* Top bar */}
       <div className="flex items-center justify-between mb-5">
-        <h2 className="font-bold text-2xl text-foreground">Shop</h2>
+        <h2 className="font-bold text-2xl text-foreground">{t.questShop.shopTitle}</h2>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 bg-[#FFF8E1] border border-[#FFC800]/30 rounded-full px-3.5 py-2">
             <SvgCoin size={16} />
@@ -514,7 +512,7 @@ function ShopPanel() {
           >
             <div className="flex items-center gap-1">
                 <div className="w-6 h-6"><IcoBackpack /></div>
-                <span className="font-extrabold text-base tabular-nums after:content-['\00a0']"> Inventory </span>    
+                <span className="font-extrabold text-base tabular-nums after:content-['\00a0']"> {t.questShop.inventory} </span>    
             </div>
             {totalItems > 0 && (
               <span className="absolute -top-1 -right-1 bg-[#FF4B4B] text-white text-[10px] font-extrabold w-5 h-5 flex items-center justify-center rounded-full leading-none">
@@ -535,7 +533,7 @@ function ShopPanel() {
           ) : items.length === 0 ? (
             <div className="flex flex-col items-center py-16 gap-2">
               <div className="w-10 h-10 opacity-25"><IcoBag /></div>
-              <p className="text-sm text-muted-foreground">Shop trống</p>
+              <p className="text-sm text-muted-foreground">{t.questShop.shopEmpty}</p>
             </div>
           ) : (
             <>
@@ -562,7 +560,7 @@ function ShopPanel() {
               })}
               {otherItems.length > 0 && (
                 <div>
-                  <p className="text-base font-bold text-muted-foreground uppercase tracking-widest mb-3 px-1">Other</p>
+                  <p className="text-base font-bold text-muted-foreground uppercase tracking-widest mb-3 px-1">{t.questShop.sectionOther}</p>
                   <div className="rounded-2xl border border-border bg-card overflow-hidden">
                     {otherItems.map((item, idx) => (
                       <ShopItemCard
@@ -585,7 +583,7 @@ function ShopPanel() {
         const ownedInv = inventory.filter(inv => (inv.quantity || 0) > 0)
         if (ownedInv.length === 0) return (
           <div className="flex-1 overflow-y-auto">
-            <EmptyState icon={<div className="w-12 h-12 mx-auto"><IcoBackpack /></div>} title="Inventory empty" desc="Buy items to see them here!" />
+            <EmptyState icon={<div className="w-12 h-12 mx-auto"><IcoBackpack /></div>} title={t.questShop.inventoryEmpty} desc={t.questShop.inventoryEmptyDesc} />
           </div>
         )
         const knownTypes = SHOP_SECTIONS.flatMap(s => s.types)
@@ -610,7 +608,7 @@ function ShopPanel() {
               if (otherInv.length === 0) return null
               return (
                 <div>
-                  <p className="text-base font-bold text-muted-foreground uppercase tracking-widest mb-3 px-1">Other</p>
+                  <p className="text-base font-bold text-muted-foreground uppercase tracking-widest mb-3 px-1">{t.questShop.sectionOther}</p>
                   <div className="rounded-2xl border border-border bg-card overflow-hidden">
                     {otherInv.map((inv, idx) => (
                       <InventoryItemCard key={inv.id} inv={inv} isLast={idx === otherInv.length - 1} />
@@ -660,8 +658,8 @@ export default function QuestShop() {
       {/* ── Mobile / tablet: tab switcher ── */}
       <div className="lg:hidden flex gap-2 px-4 pt-4 pb-2">
         {[
-          { key: 'quests', label: 'Quests', icon: <ScrollText  className="w-4 h-4" /> },
-          { key: 'shop',   label: 'Shop',   icon: <ShoppingBag className="w-4 h-4" /> },
+          { key: 'quests', label: t.questShop.quests, icon: <ScrollText  className="w-4 h-4" /> },
+          { key: 'shop',   label: t.questShop.shop,   icon: <ShoppingBag className="w-4 h-4" /> },
         ].map(({ key, label, icon }) => (
           <button
             key={key}

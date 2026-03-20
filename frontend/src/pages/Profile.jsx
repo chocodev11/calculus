@@ -4,6 +4,7 @@ import { useAuthStore, useShopStore } from '../lib/store'
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import api from '../lib/api'
+import { t } from '../lib/locale'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -189,7 +190,7 @@ export default function Profile() {
           <Star className={
             activeTab === 'overview' ? 'w-4 h-4 text-yellow-500' : 'w-4 h-4 text-slate-400'
           } />
-          Overview
+          {t.profile.overview}
         </button>
         <button
           onClick={() => switchTab('achievements')}
@@ -201,7 +202,7 @@ export default function Profile() {
           <Medal className={
             activeTab === 'achievements' ? 'w-4 h-4 text-purple-500' : 'w-4 h-4 text-slate-400'
           } />
-          Achievements
+          {t.profile.achievements}
           {statsData && (
             <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${activeTab === 'achievements' ? 'bg-purple-100 text-purple-600' : 'bg-slate-200 text-slate-500'
               }`}>
@@ -566,11 +567,11 @@ const ACH_CATEGORIES = [
 ]
 
 const RARITY_STYLES = {
-  common: { bar: 'bg-slate-400', chip: 'bg-slate-100 text-slate-500', text: 'Common' },
-  uncommon: { bar: 'bg-green-400', chip: 'bg-green-100 text-green-700', text: 'Uncommon' },
-  rare: { bar: 'bg-blue-500', chip: 'bg-blue-100 text-blue-700', text: 'Rare' },
-  epic: { bar: 'bg-purple-500', chip: 'bg-purple-100 text-purple-700', text: 'Epic' },
-  legendary: { bar: 'bg-yellow-500', chip: 'bg-yellow-100 text-yellow-700', text: 'Legendary' },
+  common:    { bar: 'bg-slate-400',  chip: 'bg-slate-100 text-slate-500',   text: t.profile.rarityLabels.common },
+  uncommon:  { bar: 'bg-green-400',  chip: 'bg-green-100 text-green-700',   text: t.profile.rarityLabels.uncommon },
+  rare:      { bar: 'bg-blue-500',   chip: 'bg-blue-100 text-blue-700',     text: t.profile.rarityLabels.rare },
+  epic:      { bar: 'bg-purple-500', chip: 'bg-purple-100 text-purple-700', text: t.profile.rarityLabels.epic },
+  legendary: { bar: 'bg-yellow-500', chip: 'bg-yellow-100 text-yellow-700', text: t.profile.rarityLabels.legendary },
 }
 
 function AchievementCategories({ achievements, stats, filter }) {

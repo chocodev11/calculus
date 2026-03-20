@@ -4,6 +4,7 @@ import { Home, Compass, User, Flame, Zap, Coins, Settings, LogOut, HelpCircle, B
 import { useAuthStore, useUIStore, useQuestStore } from '../lib/store'
 import Toast from './Toast'
 import AnimatedOutlet from './AnimatedOutlet'
+import { t } from '../lib/locale'
 
 // shadcn/ui components
 import { Button } from './ui/button'
@@ -32,9 +33,9 @@ export default function Layout() {
   }, [user])
 
   const navItems = [
-    { path: '/', icon: Home, label: 'Home' },
-    { path: '/explore', icon: Compass, label: 'Explore' },
-    { path: '/quests', icon: ScrollText, label: 'Quests' },
+    { path: '/', icon: Home, label: t.layout.nav.home },
+    { path: '/explore', icon: Compass, label: t.layout.nav.explore },
+    { path: '/quests', icon: ScrollText, label: t.layout.nav.quests },
   ]
 
   const handleLogout = () => {
@@ -126,25 +127,25 @@ export default function Layout() {
                     <DropdownMenuItem asChild className="cursor-pointer">
                       <Link to="/profile" className="flex items-center">
                         <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
+                        <span>{t.layout.dropdown.profile}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer">
                       <Bell className="mr-2 h-4 w-4" />
-                      <span>Notifications</span>
+                      <span>{t.layout.dropdown.notifications}</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer">
                       <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
+                      <span>{t.layout.dropdown.settings}</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer">
                       <HelpCircle className="mr-2 h-4 w-4" />
-                      <span>Help</span>
+                      <span>{t.layout.dropdown.help}</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
                       <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
+                      <span>{t.layout.dropdown.logout}</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -154,10 +155,10 @@ export default function Layout() {
             {!user && (
               <div className="flex items-center gap-2">
                 <Button variant="ghost" asChild>
-                  <Link to="/login">Log in</Link>
+                  <Link to="/login">{t.layout.auth.login}</Link>
                 </Button>
                 <Button asChild>
-                  <Link to="/register">Get started</Link>
+                  <Link to="/register">{t.layout.auth.register}</Link>
                 </Button>
               </div>
             )}
@@ -205,7 +206,7 @@ export default function Layout() {
               }`}
           >
             <User className={`w-6 h-6 ${location.pathname === '/profile' ? 'stroke-[2.5]' : ''}`} />
-            <span className="text-lg font-semibold">Profile</span>
+            <span className="text-lg font-semibold">{t.layout.nav.profile}</span>
           </Link>
         </div>
       </nav>

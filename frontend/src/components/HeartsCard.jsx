@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../lib/api'
 import { Card, CardContent } from './ui/card'
+import { t } from '../lib/locale'
 
 const MAX_HEARTS = 5
 const RESTORE_SECONDS = 6 * 3600 // 6 hours
@@ -115,15 +116,15 @@ export default function HeartsCard() {
               <HeartIcon filled size={18} />
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-800 leading-tight">Heart</p>
-              <p className="text-xs text-slate-400 leading-tight">{displayHearts}/{maxHearts} hearts</p>
+              <p className="text-sm font-bold text-slate-800 leading-tight">{t.heartsCard.heartLabel}</p>
+              <p className="text-xs text-slate-400 leading-tight">{t.heartsCard.heartsCount.replace('{cur}', displayHearts).replace('{max}', maxHearts)}</p>
             </div>
           </div>
           <Link
             to="/quests"
             className="text-xs font-semibold text-red-500 hover:text-red-600 transition-colors px-2 py-1 rounded-lg hover:bg-red-50"
           >
-            Out of heart?
+            {t.heartsCard.outOfHeart}
           </Link>
         </div>
 
@@ -136,7 +137,7 @@ export default function HeartsCard() {
 
         {/* Countdown / full message */}
         {isFull ? (
-          <p className="text-xs text-center text-red-500 font-semibold">❤️ Heart full!</p>
+          <p className="text-xs text-center text-red-500 font-semibold">{t.heartsCard.heartFull}</p>
         ) : secondsLeft !== null ? (
           <div className="space-y-1.5">
             <div className="h-1.5 rounded-full bg-red-100 overflow-hidden">
@@ -146,7 +147,7 @@ export default function HeartsCard() {
               />
             </div>
             <p className="text-xs text-center text-slate-500 tabular-nums">
-              +1 heart after <span className="font-bold text-red-500">{formatCountdown(secondsLeft)}</span>
+              {t.heartsCard.restoreIn} <span className="font-bold text-red-500">{formatCountdown(secondsLeft)}</span>
             </p>
           </div>
         ) : null}
@@ -155,7 +156,7 @@ export default function HeartsCard() {
         {invCount > 0 && (
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-red-100">
             <span className="text-xs text-slate-500">
-              <span className="font-bold text-red-500">×{invCount}</span> in bag
+              <span className="font-bold text-red-500">×{invCount}</span>{t.heartsCard.inBag}
             </span>
             <button
               onClick={handleUse}
@@ -164,7 +165,7 @@ export default function HeartsCard() {
                 shadow-[0_2px_0_#C53030] active:shadow-none active:translate-y-[1px]
                 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {using ? '...' : 'Use ❤️'}
+              {using ? '...' : t.heartsCard.use}
             </button>
           </div>
         )}

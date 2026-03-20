@@ -1,0 +1,193 @@
+{
+  "home": {
+    "friendlyMessages": [
+      "Rất vui được gặp lại bạn!",
+      "Hy vọng ngày của bạn vui vẻ.",
+      "Từng bước nhỏ, thành công lớn.",
+      "Sẵn sàng duy trì chuỗi học chưa?",
+      "Bạn làm được — tiếp tục nào."
+    ],
+    "welcome": "Chào mừng, {name}",
+    "yourProgress": "Tiến độ của bạn",
+    "progressSnap": "Tổng quan nhanh về vị trí của bạn.",
+    "onLive": "ON LIVE",
+    "totalXP": "Tổng XP",
+    "level": "Cấp độ",
+    "rank": "Xếp hạng",
+    "nextLevel": "Cấp tiếp theo",
+    "xpLeft": "{n} XP còn lại",
+    "yourCourses": "Khoá học của bạn",
+    "inProgress": "Đang học",
+    "recentAchievements": "Thành tựu gần đây",
+    "league": "Giải đấu",
+    "leaderboardTitle": "Bảng xếp hạng",
+    "top50": "Top 50",
+    "live": "Trực tiếp",
+    "yourPosition": "Vị trí của bạn",
+    "loadingLeaderboard": "Đang tải bảng xếp hạng…",
+    "xpRace": "Đua XP",
+    "loading": "Đang tải…",
+    "keepClimbing": "Tiếp tục leo lên! Bạn đang làm rất tốt!",
+    "close": "Đóng",
+    "you": "Bạn",
+    "levelN": "Cấp {n}",
+    "viewLeaderboard": "Xem bảng xếp hạng",
+    "leagueCard": "{league} Giải đấu",
+    "rankLabel": "Xếp hạng",
+    "xpToNextLevel": "{n} XP để lên cấp tiếp",
+    "inProgressBadge": "Đang học",
+    "percentComplete": "{n}% Hoàn thành",
+    "continueBtn": "Tiếp tục",
+    "startCourse": "Bắt đầu khoá học",
+    "dayStreak": "Ngày liên tiếp",
+    "longest": "{n} dài nhất",
+    "weekOf": "Tuần của {date}",
+    "onFire": "🔥 Bạn đang bùng cháy!",
+    "keepGoing": "💪 Tiếp tục nào!",
+    "empty": {
+      "title": "Bắt đầu thôi?",
+      "desc": "Khám phá khoá học đầu tiên và bắt đầu học",
+      "explore": "Khám phá khoá học"
+    },
+    "quickActions": {
+      "leaderboard": "Xem bảng xếp hạng",
+      "leaderboardDesc": "Xem bạn đứng thứ mấy",
+      "practice": "Luyện tập",
+      "practiceDesc": "Mài giũa kỹ năng"
+    },
+    "landing": {
+      "badge": "Học theo cách tương tác",
+      "h1a": "Làm chủ toán học qua",
+      "h1b": "giải quyết vấn đề",
+      "subtitle": "Xây dựng hiểu biết thực sự với bài học tương tác. Từ giải tích đến đại số tuyến tính.",
+      "cta": "Bắt đầu miễn phí",
+      "noCard": "Không cần thẻ tín dụng",
+      "learners": "người học",
+      "rating": "đánh giá",
+      "courses": "khoá học"
+    },
+    "leaderboardError": "Không thể tải bảng xếp hạng",
+    "topRange": "Top {range}",
+    "usersCount": "{n} người dùng",
+    "ariaNextCourse": "Khoá học tiếp theo",
+    "ariaPrevCourse": "Khoá học trước",
+    "ariaGoToSlide": "Đến khoá học {n}"
+  },
+  "explore": {
+    "title": "Mô-đun học tập",
+    "subtitle": "Các mô-đun từng bước được thiết kế đưa bạn từ cơ bản đến thành thạo.",
+    "new": "MỚI"
+  },
+  "story": {
+    "courseNotFound": "Không tìm thấy khoá học",
+    "backToExplore": "Quay lại Khám phá",
+    "lessons": "Bài học",
+    "exercises": "Bài tập",
+    "beginner": "Người mới bắt đầu",
+    "enrolling": "Đang đăng ký...",
+    "enroll": "Bắt đầu",
+    "loginToLearn": "Đăng nhập để học",
+    "enrolled": "Đã tham gia",
+    "levelN": "Cấp {n}",
+    "upNext": "Tiếp theo",
+    "next": "Tiếp",
+    "continue": "Tiếp tục",
+    "locked": "Đã khóa",
+    "completed": "Đã hoàn thành",
+    "readyToLearn": "Sẵn sàng học",
+    "lockedMsg": "Hoàn thành các bài trước để mở khóa bài này.",
+    "reviewLesson": "Xem lại bài học",
+    "startLesson": "Bắt đầu bài học",
+    "defaultDesc": "Tiếp tục hành trình học tập của bạn"
+  },
+  "questShop": {
+    "quests": "Nhiệm vụ",
+    "shop": "Cửa hàng",
+    "daily": "Nhiệm vụ hàng ngày",
+    "dailySubtitle": "Đặt lại mỗi ngày",
+    "weekly": "Nhiệm vụ hàng tuần",
+    "weeklySubtitle": "Thử thách lớn hơn",
+    "milestone": "Cột mốc",
+    "milestoneSubtitle": "Thành tích một lần",
+    "timeRemaining": "Thời gian còn lại: {t}",
+    "collectAll": "Thu thập tất cả",
+    "claim": "Nhận",
+    "claimed": "+{n} xu! 🎉",
+    "claimFailed": "Nhận thưởng thất bại",
+    "shopTitle": "Cửa hàng",
+    "inventory": "Túi đồ",
+    "buy": "Mua",
+    "notEnoughCoins": "Không đủ xu! 💰",
+    "purchaseFailed": "Mua hàng thất bại",
+    "noQuests": "Chưa có nhiệm vụ",
+    "shopEmpty": "Cửa hàng trống",
+    "inventoryEmpty": "Túi đồ trống",
+    "inventoryEmptyDesc": "Mua vật phẩm để xem ở đây!",
+    "sectionOther": "Khác",
+    "sectionHearts": "Trái tim",
+    "sectionPowerups": "Tăng lực",
+    "sectionCosmetics": "Trang trí",
+    "unequip": "Gỡ ra",
+    "use": "Sử dụng",
+    "actionFailed": "Thao tác thất bại",
+    "minuteUnit": " phút",
+    "typeLabels": {
+      "heart": "Trái tim",
+      "streak_freeze": "Đóng băng streak",
+      "xp_boost": "Tăng XP",
+      "hint_token": "Gợi ý",
+      "avatar_frame": "Khung hình",
+      "course_unlock": "Mở khoá"
+    }
+  },
+  "profile": {
+    "overview": "Tổng quan",
+    "achievements": "Thành tích",
+    "xp": "XP",
+    "badges": "Huy hiệu",
+    "streak": "Streak",
+    "rarityLabels": {
+      "common": "Phổ thông",
+      "uncommon": "Không phổ biến",
+      "rare": "Hiếm",
+      "epic": "Sử thi",
+      "legendary": "Huyền thoại"
+    }
+  },
+  "streakCard": {
+    "dayStreak": "Ngày liên tiếp",
+    "longest": "{n} dài nhất",
+    "weekOf": "Tuần của {date}",
+    "days": ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
+    "completedToday": "Bạn đã hoàn thành bài học hôm nay!",
+    "notCompletedToday": "Đừng phá vỡ chuỗi! Hoàn thành bài học hôm nay."
+  },
+  "heartsCard": {
+    "heartLabel": "Trái tim",
+    "heartsCount": "{cur}/{max} trái tim",
+    "outOfHeart": "Hết tim?",
+    "heartFull": "❤️ Tim đầy!",
+    "restoreIn": "+1 tim sau",
+    "inBag": " trong túi",
+    "use": "Dùng ❤️"
+  },
+  "layout": {
+    "nav": {
+      "home": "Trang chủ",
+      "explore": "Khám phá",
+      "quests": "Nhiệm vụ",
+      "profile": "Hồ sơ"
+    },
+    "dropdown": {
+      "profile": "Hồ sơ",
+      "notifications": "Thông báo",
+      "settings": "Cài đặt",
+      "help": "Trợ giúp",
+      "logout": "Đăng xuất"
+    },
+    "auth": {
+      "login": "Đăng nhập",
+      "register": "Bắt đầu"
+    }
+  }
+}

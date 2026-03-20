@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
+import { t, fmt } from '../lib/locale'
 import {
   ArrowLeft,
   Lock,
@@ -105,9 +106,9 @@ export default function Story() {
     return (
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-stone-500 mb-4">Course not found</p>
+          <p className="text-stone-500 mb-4">{t.story.courseNotFound}</p>
           <Button asChild variant="outline">
-            <Link to="/explore">Back to Explore</Link>
+            <Link to="/explore">{t.story.backToExplore}</Link>
           </Button>
         </div>
       </div>
@@ -206,19 +207,19 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
           </p>
           <div className="flex gap-2 mb-4">
             <Badge variant="outline" className="text-sm font-semibold text-stone-500 border-stone-200 px-3 py-1 rounded-full">
-              {story.difficulty || 'Beginner'}
+              {story.difficulty || t.story.beginner}
             </Badge>
           </div>
           <div className="flex items-center gap-6 mb-4">
             <div className="flex items-center gap-2 text-stone-600">
               <Layers className="w-5 h-5 text-blue-400" />
               <span className="text-base font-bold text-stone-900">{totalLessons}</span>
-              <span className="text-base text-stone-500">Lessons</span>
+              <span className="text-base text-stone-500">{t.story.lessons}</span>
             </div>
             <div className="flex items-center gap-2 text-stone-600">
               <BookOpen className="w-5 h-5 text-amber-400" />
               <span className="text-base font-bold text-stone-900">{story.exercises || 0}</span>
-              <span className="text-base text-stone-500">Exercises</span>
+              <span className="text-base text-stone-500">{t.story.exercises}</span>
             </div>
           </div>
           {/* Progress bar if enrolled */}
@@ -251,11 +252,11 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
           >
             {needsEnrollment
               ? enrolling
-                ? 'Enrolling...'
+                ? t.story.enrolling
                 : user
-                  ? 'Bắt đầu'
-                  : 'Đăng nhập để học'
-              : 'Đã tham gia'}
+                  ? t.story.enroll
+                  : t.story.loginToLearn
+              : t.story.enrolled}
           </Button>
         </div>
       </Card>
@@ -277,7 +278,7 @@ function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }
       {/* Level indicator */}
       <div className="flex items-center gap-2.5">
         <Badge variant="outline" className="px-3 py-1 text-xs font-bold uppercase tracking-wider border-stone-300 text-stone-600 bg-white">
-          Level {index + 1}
+          {fmt(t.story.levelN, { n: index + 1 })}
         </Badge>
         <span className="text-stone-700 font-medium text-sm">{chapter.title}</span>
         <span className="text-xs text-stone-400 ml-auto">{completedCount}/{steps.length}</span>
@@ -382,7 +383,7 @@ function LessonNode({ step, isCompleted, isCurrent, isLocked, isEnrolled, onSele
       {isCurrent && (
         <Badge className="shrink-0 bg-blue-500 text-white border-0 text-xs px-2">
           <Sparkles className="w-3 h-3 mr-1" />
-          Next
+          {t.story.next}
         </Badge>
       )}
 
@@ -410,7 +411,7 @@ function ActiveLessonCard({ lesson, courseSlug }) {
               <BookOpen className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-blue-600 font-semibold uppercase tracking-wider">Up next</p>
+              <p className="text-xs text-blue-600 font-semibold uppercase tracking-wider">{t.story.upNext}</p>
               <h3 className="text-base sm:text-lg font-bold text-stone-900 truncate mt-0.5">{lesson.title}</h3>
               {lesson.description && (
                 <p className="text-sm text-stone-500 mt-1 line-clamp-2">
@@ -427,7 +428,7 @@ function ActiveLessonCard({ lesson, courseSlug }) {
             className="w-full h-11 sm:h-12 text-sm sm:text-base font-bold bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-sm"
           >
             <Link to={`/course/${slug}/step/${encodeStepId(lesson.id)}`} className="flex items-center justify-center gap-2">
-              Continue
+              {t.story.continue}
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
           </Button>
@@ -524,7 +525,7 @@ function LessonModal({ lesson, isLocked, onClose, storySlug }) {
                       : 'bg-blue-100 text-blue-700'
                 )}
               >
-                {isLocked ? 'Locked' : lesson.is_completed ? 'Completed' : 'Ready to learn'}
+                {isLocked ? t.story.locked : lesson.is_completed ? t.story.completed : t.story.readyToLearn}
               </Badge>
             </div>
 
@@ -536,7 +537,7 @@ function LessonModal({ lesson, isLocked, onClose, storySlug }) {
             {/* Description or locked message */}
             {isLocked ? (
               <p className="text-center text-stone-500 text-sm leading-relaxed">
-                Complete the previous lessons to unlock this one.
+                {t.story.lockedMsg}
               </p>
             ) : lesson.description ? (
               <p className="text-center text-stone-500 text-sm leading-relaxed line-clamp-3">
@@ -563,7 +564,7 @@ function LessonModal({ lesson, isLocked, onClose, storySlug }) {
                   className="w-full h-12 bg-stone-100 text-stone-400 font-bold rounded-xl cursor-not-allowed"
                 >
                   <Lock className="w-4 h-4 mr-2" />
-                  Locked
+                  {t.story.locked}
                 </Button>
               ) : (
                 <Button
@@ -580,11 +581,11 @@ function LessonModal({ lesson, isLocked, onClose, storySlug }) {
                     {lesson.is_completed ? (
                       <>
                         <Check className="w-4 h-4 mr-2" />
-                        Review Lesson
+                        {t.story.reviewLesson}
                       </>
                     ) : (
                       <>
-                        Start Lesson
+                        {t.story.startLesson}
                         <ArrowRight className="w-4 h-4 ml-2" />
                       </>
                     )}

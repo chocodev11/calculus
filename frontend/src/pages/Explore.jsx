@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import categoriesData from '../../../data/categories.json';
+import categoriesData from '../../../data/categories.json'
+import { t } from '../lib/locale'
 
 // Load learningPaths directly from project `data/categories.json` (served as a static JSON).
 function useLearningPaths() {
@@ -51,11 +52,11 @@ export default function Explore() {
       {/* Title Section: Aligned left */}
       <div className="mb-16 max-w-3xl">
         <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
-          Studying Modules
+          {t.explore.title}
         </h1>
 
         <p className="mt-3 text-lg text-neutral-500 max-w-xl leading-relaxed">
-          SbS modules designed to take you from fundamentals to mastery.
+          {t.explore.subtitle}
         </p>
       </div>
 
@@ -115,7 +116,7 @@ function CourseCard({ course }) {
       >
         {course.isNew && (
           <div className="absolute top-2.5 right-2.5 bg-[#15B441] text-white text-[10px] font-[700] px-2 py-0.5 rounded-[10px] uppercase tracking-wider z-10">
-            NEW
+            {t.explore.new}
           </div>
         )}
         
