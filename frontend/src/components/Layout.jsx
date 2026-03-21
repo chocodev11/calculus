@@ -35,7 +35,7 @@ export default function Layout() {
   const navItems = [
     { path: '/', icon: Home, label: t.layout.nav.home },
     { path: '/explore', icon: Compass, label: t.layout.nav.explore },
-    { path: '/quests', icon: ScrollText, label: t.layout.nav.quests },
+    ...(user ? [{ path: '/quests', icon: ScrollText, label: t.layout.nav.quests }] : []),
   ]
 
   const handleLogout = () => {
