@@ -31,9 +31,10 @@ const api = {
     const res = await fetch(`${API_BASE}${endpoint}`, { headers, credentials: 'include' })
     
     if (res.status === 401) {
-      // Token expired or invalid, clear auth
-      localStorage.removeItem('auth-storage')
-      window.location.href = '/login'
+      if (token) {
+        localStorage.removeItem('auth-storage')
+        window.location.href = '/login'
+      }
       throw new Error('Unauthorized')
     }
     
@@ -69,8 +70,10 @@ const api = {
     })
 
     if (res.status === 401 && !endpoint.includes('/auth/')) {
-      localStorage.removeItem('auth-storage')
-      window.location.href = '/login'
+      if (token) {
+        localStorage.removeItem('auth-storage')
+        window.location.href = '/login'
+      }
       throw new Error('Unauthorized')
     }
 
@@ -102,6 +105,14 @@ const api = {
       credentials: 'include'
     })
 
+    if (res.status === 401 && !endpoint.includes('/auth/')) {
+      if (token) {
+        localStorage.removeItem('auth-storage')
+        window.location.href = '/login'
+      }
+      throw new Error('Unauthorized')
+    }
+
     if (!res.ok) {
       const error = await res.json().catch(() => ({ detail: 'Request failed' }))
       throw new Error(error.detail || 'Request failed')
@@ -128,6 +139,14 @@ const api = {
       headers,
       credentials: 'include'
     })
+
+    if (res.status === 401 && !endpoint.includes('/auth/')) {
+      if (token) {
+        localStorage.removeItem('auth-storage')
+        window.location.href = '/login'
+      }
+      throw new Error('Unauthorized')
+    }
 
     if (!res.ok) {
       const error = await res.json().catch(() => ({ detail: 'Request failed' }))

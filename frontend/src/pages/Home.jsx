@@ -41,10 +41,13 @@ export default function Home() {
   const [friendlyLine] = useState(() => t.home.friendlyMessages[Math.floor(Math.random() * t.home.friendlyMessages.length)])
 
   useEffect(() => {
-    // Fetch fresh user data to ensure XP/streak is synced
-    if (isAuthenticated()) {
-      fetchUser()
+    if (!isAuthenticated()) {
+      setLoading(false)
+      return
     }
+
+    // Fetch fresh user data to ensure XP/streak is synced
+    fetchUser()
     loadDashboard()
   }, [])
 
