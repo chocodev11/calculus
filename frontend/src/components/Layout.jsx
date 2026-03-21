@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Compass, User, Flame, Zap, Coins, Settings, LogOut, HelpCircle, Bell, ShoppingBag, ScrollText } from 'lucide-react'
+import { Home, Compass, User, Flame, Zap, Coins, Settings, LogOut, HelpCircle, Bell, ScrollText } from 'lucide-react'
 import { useAuthStore, useUIStore, useQuestStore } from '../lib/store'
 import Toast from './Toast'
 import AnimatedOutlet from './AnimatedOutlet'
@@ -52,14 +52,14 @@ export default function Layout() {
     <div className="min-h-screen bg-background">
       {/* Header - Minimal, clean */}
       <header className="bg-card border-b sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-2 flex items-center justify-between">
+        <div className="container mx-auto grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-2">
           {/* Title only - text (no logo) */}
-          <Link to="/" className="group">
+          <Link to="/" className="group justify-self-start">
             <span className="font-bebas text-3xl sm:text-3xl text-foreground inline-block mt-4">Calculus</span>
           </Link>
 
           {/* Desktop Navigation - 2 items only (Hick's Law) */}
-          <nav className="hidden md:flex items-center gap-3">
+          <nav className="hidden md:flex items-center justify-self-center gap-3">
             {navItems.map(({ path, label }) => {
               const isActive = location.pathname === path
               return (
@@ -83,7 +83,7 @@ export default function Layout() {
           </nav>
 
           {/* Right side - Status badges + User dropdown */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-self-end gap-3">
             {user && (
               <>
                 {/* Streak badge - passive display */}
