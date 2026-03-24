@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t, fmt } from '../lib/locale'
-import { 
-  Flame, 
-  Zap, 
-  Trophy, 
-  Crown, 
-  CheckCircle, 
+import {
+  Flame,
+  Zap,
+  Trophy,
+  Crown,
+  CheckCircle,
   ArrowRight,
   Sparkles,
   Target,
@@ -77,24 +77,24 @@ export default function Home() {
   // Get course cards to display - only in progress courses
   const getCourseCards = () => {
     if (!dashboardData) return []
-    
+
     // Use in_progress_stories from API (already deduplicated and filtered)
     if (dashboardData.in_progress_stories && Array.isArray(dashboardData.in_progress_stories)) {
       return dashboardData.in_progress_stories
         .map(s => ({ ...s, status: 'in-progress' }))
         .slice(0, 5)
     }
-    
+
     // Fallback to current_story if in_progress_stories not available
     if (dashboardData.current_story) {
       return [{ ...dashboardData.current_story, status: 'in-progress' }]
     }
-    
+
     return []
   }
 
   const courses = getCourseCards()
-  
+
   // Auto-slide every 10 seconds - cycle through all cards one by one
   useEffect(() => {
     if (courses.length <= 1 || isPaused) return
@@ -142,7 +142,7 @@ export default function Home() {
 
           {/* Hearts Card */}
           <HeartsCard />
-          
+
           {/* User Stats Overview - clean, balanced */}
           {(() => {
             const xpValue = user?.xp || 0
@@ -194,12 +194,12 @@ export default function Home() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Progress 
-                  value={(dashboardData.daily_goal.completed / dashboardData.daily_goal.target) * 100} 
-                  className="h-2 bg-cyan-200" 
+                <Progress
+                  value={(dashboardData.daily_goal.completed / dashboardData.daily_goal.target) * 100}
+                  className="h-2 bg-cyan-200"
                 />
                 <p className="text-xs text-cyan-700">
-                  {dashboardData.daily_goal.remaining > 0 
+                  {dashboardData.daily_goal.remaining > 0
                     ? `${dashboardData.daily_goal.remaining} bài nữa để hoàn thành mục tiêu!`
                     : 'Đã hoàn thành mục tiêu ngày! 🎉'
                   }
@@ -219,10 +219,10 @@ export default function Home() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {dashboardData.recent_achievements.map((achievement, idx) => (
-                  <AchievementItem 
+                  <AchievementItem
                     key={idx}
-                    icon={achievement.icon || '🏆'} 
-                    title={achievement.title} 
+                    icon={achievement.icon || '🏆'}
+                    title={achievement.title}
                     description={achievement.description}
                     unlocked={achievement.unlocked}
                   />
@@ -233,9 +233,9 @@ export default function Home() {
 
           {/* XP / League Progress - Colorful */}
           {dashboardData?.league && (
-            <LeagueCard 
-              xp={user?.xp || 0} 
-              league={dashboardData.league} 
+            <LeagueCard
+              xp={user?.xp || 0}
+              league={dashboardData.league}
               rank={dashboardData.rank || 0}
               onViewLeaderboard={() => setShowLeaderboard(true)}
             />
@@ -264,7 +264,7 @@ export default function Home() {
               <Card className="h-80 animate-pulse bg-muted hidden md:block" />
             </div>
           ) : courses.length > 0 ? (
-            <div 
+            <div
               className="relative"
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
@@ -282,15 +282,15 @@ export default function Home() {
 
               {/* Carousel Container */}
               <div className="relative overflow-hidden">
-                <motion.div 
+                <motion.div
                   className="flex"
-                  animate={{ 
+                  animate={{
                     x: `-${currentSlide * 100}%`
                   }}
-                  transition={{ 
-                    type: "spring", 
-                    stiffness: 300, 
-                    damping: 30 
+                  transition={{
+                    type: "tween",
+                    ease: "easeInOutQuart",
+                    duration: 0.5
                   }}
                 >
                   {courses.map((course, idx) => (
@@ -333,11 +333,10 @@ export default function Home() {
                       <button
                         key={idx}
                         onClick={() => goToSlide(idx)}
-                        className={`h-2 rounded-full transition-all ${
-                          idx === currentSlide
+                        className={`h-2 rounded-full transition-all ${idx === currentSlide
                             ? 'w-8 bg-primary'
                             : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50'
-                        }`}
+                          }`}
                         aria-label={fmt(t.home.ariaGoToSlide, { n: idx + 1 })}
                       />
                     ))}
@@ -351,15 +350,15 @@ export default function Home() {
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <QuickActionCard 
-              icon={Trophy} 
-              title={t.home.quickActions.leaderboard} 
+            <QuickActionCard
+              icon={Trophy}
+              title={t.home.quickActions.leaderboard}
               description={t.home.quickActions.leaderboardDesc}
               onClick={() => setShowLeaderboard(true)}
             />
-            <QuickActionCard 
-              icon={Target} 
-              title={t.home.quickActions.practice} 
+            <QuickActionCard
+              icon={Target}
+              title={t.home.quickActions.practice}
               description={t.home.quickActions.practiceDesc}
               to="/explore"
             />
@@ -383,150 +382,150 @@ export default function Home() {
   )
 }
 
-    // Leaderboard Modal (mobile-first, modern minimal gamified look)
-    function LeaderboardModal({ onClose, user }) {
-      const [items, setItems] = useState([])
-      const [loading, setLoading] = useState(true)
-      const [error, setError] = useState(null)
-      const [currentRank, setCurrentRank] = useState(null)
-      const [totalCount, setTotalCount] = useState(null)
+// Leaderboard Modal (mobile-first, modern minimal gamified look)
+function LeaderboardModal({ onClose, user }) {
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [currentRank, setCurrentRank] = useState(null)
+  const [totalCount, setTotalCount] = useState(null)
 
-      useEffect(() => {
-        let mounted = true
-        const fetchLeaderboard = async () => {
-          setLoading(true)
-          try {
-            // Fetch top 50
-            const topRes = await api.get('/progress/leaderboard?start=1&limit=50')
-            if (!mounted) return
-            const topEntries = topRes?.entries || []
-            setItems(topEntries)
-            setTotalCount(topRes?.total_count || null)
+  useEffect(() => {
+    let mounted = true
+    const fetchLeaderboard = async () => {
+      setLoading(true)
+      try {
+        // Fetch top 50
+        const topRes = await api.get('/progress/leaderboard?start=1&limit=50')
+        if (!mounted) return
+        const topEntries = topRes?.entries || []
+        setItems(topEntries)
+        setTotalCount(topRes?.total_count || null)
 
-            // If current user not in top 50, fetch their personal rank and append below
-            const isInTop = topEntries.some(e => e.id === user?.id)
-            if (!isInTop) {
-              const meRes = await api.get('/progress/leaderboard?around=true&limit=1')
-              if (!mounted) return
-              const meEntry = (meRes?.entries && meRes.entries.length > 0) ? meRes.entries[0] : null
-              if (meEntry) {
-                setItems(prev => [...prev, { ...meEntry, is_current_user: true }])
-                setCurrentRank(meRes?.current_user_rank || null)
-              }
-            } else {
-              // if in top, set current rank from top entries
-              const me = topEntries.find(e => e.id === user?.id)
-              if (me) setCurrentRank(me.rank)
-            }
-          } catch (e) {
-            console.error('Error loading leaderboard', e)
-            if (mounted) setError('Failed to load leaderboard')
-          } finally {
-            if (mounted) setLoading(false)
+        // If current user not in top 50, fetch their personal rank and append below
+        const isInTop = topEntries.some(e => e.id === user?.id)
+        if (!isInTop) {
+          const meRes = await api.get('/progress/leaderboard?around=true&limit=1')
+          if (!mounted) return
+          const meEntry = (meRes?.entries && meRes.entries.length > 0) ? meRes.entries[0] : null
+          if (meEntry) {
+            setItems(prev => [...prev, { ...meEntry, is_current_user: true }])
+            setCurrentRank(meRes?.current_user_rank || null)
           }
+        } else {
+          // if in top, set current rank from top entries
+          const me = topEntries.find(e => e.id === user?.id)
+          if (me) setCurrentRank(me.rank)
         }
-        fetchLeaderboard()
-        return () => { mounted = false }
-      }, [])
+      } catch (e) {
+        console.error('Error loading leaderboard', e)
+        if (mounted) setError('Failed to load leaderboard')
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+    fetchLeaderboard()
+    return () => { mounted = false }
+  }, [])
 
-      const medalBg = ['bg-amber-400','bg-gray-200','bg-orange-300']
-      const avatarBg = ['bg-amber-200','bg-emerald-200','bg-sky-200','bg-pink-200','bg-violet-200']
-      const levelOf = (xpVal) => Math.floor((xpVal || 0) / 100) + 1
+  const medalBg = ['bg-amber-400', 'bg-gray-200', 'bg-orange-300']
+  const avatarBg = ['bg-amber-200', 'bg-emerald-200', 'bg-sky-200', 'bg-pink-200', 'bg-violet-200']
+  const levelOf = (xpVal) => Math.floor((xpVal || 0) / 100) + 1
 
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/60 via-slate-900/55 to-slate-900/60 backdrop-blur" onClick={onClose} />
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900/60 via-slate-900/55 to-slate-900/60 backdrop-blur" onClick={onClose} />
 
-          <div className="relative z-10 w-full max-w-lg mx-4 bg-white/95 rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-            {/* Header */}
-            <div className="px-6 pt-6 pb-4 border-b border-slate-100 bg-gradient-to-r from-indigo-50 via-white to-emerald-50">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-md" style={{ background: 'linear-gradient(135deg,#8b5cf6,#22c55e)' }}>
-                    <Trophy className="w-7 h-7 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] text-slate-500 uppercase font-bold tracking-[0.2em]">{t.home.leaderboardTitle}</div>
-                    <div className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                      {t.home.top50}
-                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-900 text-white font-semibold">{t.home.live}</span>
-                    </div>
-                    <div className="mt-2 inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900 text-white text-xs font-semibold shadow-sm">
-                      <span className="bg-white/20 px-2 py-0.5 rounded-full">{currentRank ? `#${currentRank}` : '--'}</span>
-                      <span>{t.home.yourPosition}</span>
-                    </div>
-                  </div>
+      <div className="relative z-10 w-full max-w-lg mx-4 bg-white/95 rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 border-b border-slate-100 bg-gradient-to-r from-indigo-50 via-white to-emerald-50">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-md" style={{ background: 'linear-gradient(135deg,#8b5cf6,#22c55e)' }}>
+                <Trophy className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <div className="text-[11px] text-slate-500 uppercase font-bold tracking-[0.2em]">{t.home.leaderboardTitle}</div>
+                <div className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  {t.home.top50}
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-900 text-white font-semibold">{t.home.live}</span>
                 </div>
-                <button onClick={onClose} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition">
-                  <XIcon className="w-5 h-5" />
-                </button>
+                <div className="mt-2 inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900 text-white text-xs font-semibold shadow-sm">
+                  <span className="bg-white/20 px-2 py-0.5 rounded-full">{currentRank ? `#${currentRank}` : '--'}</span>
+                  <span>{t.home.yourPosition}</span>
+                </div>
               </div>
             </div>
-
-            {/* List */}
-            <div className="p-5">
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-4">
-                <span>{items && items.length > 0 ? (
-                  `Top ${items.length >= 50 ? '1–50' : `${items[0].rank}–${items[items.length-1].rank}`}${totalCount ? ` · ${totalCount} ${t.home.usersCount.replace('{n}','').trim()}` : ''}`
-                ) : t.home.loadingLeaderboard}</span>
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 font-semibold">{t.home.xpRace}</span>
-              </div>
-
-              <div className="max-h-80 overflow-y-auto rounded-2xl border border-slate-100 shadow-inner bg-slate-50/40">
-                {loading ? (
-                  <div className="p-6 flex items-center justify-center text-sm text-slate-500">{t.home.loading}</div>
-                ) : error ? (
-                  <div className="p-6 text-sm text-red-500">{error}</div>
-                ) : (
-                  <ul className="divide-y divide-slate-100">
-                    {items.map((it, idx) => {
-                      const isCurrent = it.id === user?.id || it.is_current_user
-                      const isTop = it.rank <= 3
-                      return (
-                        <li
-                          key={it.id}
-                          className={
-                            "flex items-center justify-between px-4 py-3 gap-3 transition " +
-                            (isCurrent ? 'bg-white/95 shadow-sm ring-1 ring-emerald-200/70' : 'hover:bg-white')
-                          }
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className={"w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-extrabold " + (isTop ? medalBg[it.rank-1] + ' text-slate-900' : 'bg-slate-200 text-slate-700')}>
-                              {isTop ? ['1st','2nd','3rd'][it.rank-1] : `#${it.rank}`}
-                            </div>
-                            <div className={`w-11 h-11 flex items-center justify-center rounded-2xl text-slate-900 font-bold ${avatarBg[idx % avatarBg.length]}`}>
-                              {String(it.username || 'U').charAt(0).toUpperCase()}
-                            </div>
-                            <div className="min-w-0">
-                              <div className="text-sm font-semibold text-slate-900 truncate flex items-center gap-2">
-                                {it.username}
-                                {isCurrent && <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">{t.home.you}</span>}
-                              </div>
-                              <div className="text-xs text-slate-500"> {fmt(t.home.levelN, { n: levelOf(it.xp) })}</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-slate-600 px-2.5 py-1 rounded-full bg-slate-100">{it.xp} XP</span>
-                          </div>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                )}
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="px-5 pb-5 pt-3 border-t border-slate-100 bg-white/90 flex items-center justify-between">
-              <div className="text-sm text-slate-500">{t.home.keepClimbing}</div>
-              <div className="flex items-center gap-2">
-                <button onClick={onClose} className="px-3 py-2 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-100">{t.home.close}</button>
-              </div>
-            </div>
+            <button onClick={onClose} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition">
+              <XIcon className="w-5 h-5" />
+            </button>
           </div>
         </div>
-      )
-    }
+
+        {/* List */}
+        <div className="p-5">
+          <div className="flex items-center justify-between text-xs text-slate-500 mb-4">
+            <span>{items && items.length > 0 ? (
+              `Top ${items.length >= 50 ? '1–50' : `${items[0].rank}–${items[items.length - 1].rank}`}${totalCount ? ` · ${totalCount} ${t.home.usersCount.replace('{n}', '').trim()}` : ''}`
+            ) : t.home.loadingLeaderboard}</span>
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 font-semibold">{t.home.xpRace}</span>
+          </div>
+
+          <div className="max-h-80 overflow-y-auto rounded-2xl border border-slate-100 shadow-inner bg-slate-50/40">
+            {loading ? (
+              <div className="p-6 flex items-center justify-center text-sm text-slate-500">{t.home.loading}</div>
+            ) : error ? (
+              <div className="p-6 text-sm text-red-500">{error}</div>
+            ) : (
+              <ul className="divide-y divide-slate-100">
+                {items.map((it, idx) => {
+                  const isCurrent = it.id === user?.id || it.is_current_user
+                  const isTop = it.rank <= 3
+                  return (
+                    <li
+                      key={it.id}
+                      className={
+                        "flex items-center justify-between px-4 py-3 gap-3 transition " +
+                        (isCurrent ? 'bg-white/95 shadow-sm ring-1 ring-emerald-200/70' : 'hover:bg-white')
+                      }
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={"w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-extrabold " + (isTop ? medalBg[it.rank - 1] + ' text-slate-900' : 'bg-slate-200 text-slate-700')}>
+                          {isTop ? ['1st', '2nd', '3rd'][it.rank - 1] : `#${it.rank}`}
+                        </div>
+                        <div className={`w-11 h-11 flex items-center justify-center rounded-2xl text-slate-900 font-bold ${avatarBg[idx % avatarBg.length]}`}>
+                          {String(it.username || 'U').charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-sm font-semibold text-slate-900 truncate flex items-center gap-2">
+                            {it.username}
+                            {isCurrent && <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">{t.home.you}</span>}
+                          </div>
+                          <div className="text-xs text-slate-500"> {fmt(t.home.levelN, { n: levelOf(it.xp) })}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold text-slate-600 px-2.5 py-1 rounded-full bg-slate-100">{it.xp} XP</span>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-5 pb-5 pt-3 border-t border-slate-100 bg-white/90 flex items-center justify-between">
+          <div className="text-sm text-slate-500">{t.home.keepClimbing}</div>
+          <div className="flex items-center gap-2">
+            <button onClick={onClose} className="px-3 py-2 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-100">{t.home.close}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 // =============================================================================
 // MAIN CONTENT COMPONENTS
@@ -537,10 +536,10 @@ export default function Home() {
  */
 function extractThemeColor(colorString) {
   if (!colorString) return '#deae1e' // Default primary color
-  
+
   // If it's a hex color, return it directly
   if (colorString.startsWith('#')) return colorString
-  
+
   // Try to extract from Tailwind gradient classes like "from-blue-500 to-blue-700"
   const colorMatch = colorString.match(/(?:from|to)-(\w+)-(\d+)/)
   if (colorMatch) {
@@ -560,7 +559,7 @@ function extractThemeColor(colorString) {
     }
     return colorMap[color] || '#6366f1'
   }
-  
+
   return '#6366f1' // Default
 }
 
@@ -570,27 +569,27 @@ function extractThemeColor(colorString) {
 function CourseCard({ story }) {
   const progressValue = story.progress || 0
   const isStarted = progressValue > 0
-  
+
   // Extract theme color from the story
   const themeColor = story.themeColor || extractThemeColor(story.color)
-  
+
   // Determine if this is an in-progress or suggested course
   const isInProgress = story.status === 'in-progress'
 
   return (
     <Link to={`/course/${story.slug}`} className="block h-full group">
-      <Card 
+      <Card
         className="relative overflow-hidden shadow-xl bg-white border-0 h-full hover:shadow-2xl transition-all duration-300 cursor-pointer"
         style={{ borderTop: `6px solid ${themeColor}` }}
       >
         {/* Decorative colored accent */}
-        <div 
+        <div
           className="absolute right-0 top-0 w-64 h-64 opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"
           style={{ backgroundColor: themeColor }}
         />
-        
+
         {/* Course Icon */}
-         <img
+        <img
           className="absolute right-20 top-8 opacity-5 select-none pointer-events-none"
           style={{
             filter: `drop-shadow(0 0 0 ${themeColor})`,
@@ -603,14 +602,14 @@ function CourseCard({ story }) {
           {/* Header */}
           <div className="space-y-3">
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge 
+              <Badge
                 className="border-0 font-bold text-xs text-white pointer-events-none"
                 style={{ backgroundColor: themeColor }}
               >
                 {fmt(t.home.levelN, { n: story.level || 1 })}
               </Badge>
               {isInProgress && (
-                <Badge 
+                <Badge
                   variant="secondary"
                   className="border-0 font-bold text-xs bg-blue-100 text-blue-700 pointer-events-none"
                 >
@@ -618,10 +617,10 @@ function CourseCard({ story }) {
                 </Badge>
               )}
               {isStarted && (
-                <Badge 
+                <Badge
                   variant="secondary"
                   className="border font-bold text-xs pointer-events-none"
-                  style={{ 
+                  style={{
                     borderColor: themeColor,
                     color: themeColor,
                     backgroundColor: `${themeColor}10`
@@ -642,11 +641,11 @@ function CourseCard({ story }) {
           {/* Progress Bar */}
           {isStarted && (
             <div className="space-y-2">
-              <Progress 
-                value={progressValue} 
+              <Progress
+                value={progressValue}
                 className="h-2.5 bg-gray-100"
-                style={{ 
-                  '--progress-color': themeColor 
+                style={{
+                  '--progress-color': themeColor
                 }}
               />
               <style>{`
@@ -658,9 +657,9 @@ function CourseCard({ story }) {
           )}
 
           {/* CTA Button - Now just visual, parent Link handles navigation */}
-          <div 
+          <div
             className={`cta-${story.slug} w-full md:w-auto font-bold text-base h-12 px-8 rounded-md border-2 flex items-center justify-center gap-2 transition-all duration-200 pointer-events-none`}
-            style={{ 
+            style={{
               borderColor: themeColor,
               color: themeColor,
               backgroundColor: 'transparent'
@@ -687,7 +686,7 @@ function CourseCard({ story }) {
 function StatItem({ icon: Icon, label, value, color, bgColor }) {
   return (
     <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-100 bg-white/70">
-      <div className={`w-9 h-9 rounded-lg ${bgColor} flex items-center justify-center mb-2 shadow-inner`}> 
+      <div className={`w-9 h-9 rounded-lg ${bgColor} flex items-center justify-center mb-2 shadow-inner`}>
         <Icon className={`w-5 h-5 ${color}`} />
       </div>
       <p className="text-lg font-bold text-slate-900 leading-tight">{value}</p>
@@ -780,9 +779,8 @@ function StreakCard({ streak }) {
     <Card className="border-2 border-orange-200/50 bg-gradient-to-br from-white to-orange-50/50">
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
-          <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-            isOnFire ? 'bg-gradient-to-br from-orange-400 to-red-500' : 'bg-orange-100'
-          }`}>
+          <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${isOnFire ? 'bg-gradient-to-br from-orange-400 to-red-500' : 'bg-orange-100'
+            }`}>
             <Flame className={`w-7 h-7 ${isOnFire ? 'text-white' : 'text-orange-500'}`} />
           </div>
           <div>
@@ -803,7 +801,7 @@ function StreakCard({ streak }) {
 /**
  * League/XP Card
  */
-function LeagueCard({ xp, league, rank, onViewLeaderboard = () => {} }) {
+function LeagueCard({ xp, league, rank, onViewLeaderboard = () => { } }) {
   const levelProgress = (xp % 100)
   const currentLevel = Math.floor(xp / 100)
 
@@ -820,9 +818,9 @@ function LeagueCard({ xp, league, rank, onViewLeaderboard = () => {} }) {
           <span className="text-sm text-muted-foreground">{t.home.rankLabel}</span>
           <span className="text-lg font-bold text-foreground">#{rank}</span>
         </div>
-        
+
         <Separator />
-        
+
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground font-medium">{fmt(t.home.levelN, { n: currentLevel })}</span>
@@ -831,7 +829,7 @@ function LeagueCard({ xp, league, rank, onViewLeaderboard = () => {} }) {
           <Progress value={levelProgress} className="h-2.5" />
           <p className="text-xs text-muted-foreground">{fmt(t.home.xpToNextLevel, { n: 100 - levelProgress })}</p>
         </div>
-        
+
         <Button variant="outline" size="sm" className="w-full mt-2" onClick={onViewLeaderboard}>
           {t.home.viewLeaderboard}
         </Button>
