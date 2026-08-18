@@ -1,0 +1,115 @@
+{
+  "id": "menh-de-nhan-dien",
+  "title": "Nhận diện mệnh đề và mệnh đề chứa biến",
+  "description": "Phân biệt câu khẳng định có giá trị đúng sai với mệnh đề chứa biến và câu không phải mệnh đề.",
+  "xp_reward": 20,
+  "order_index": 0,
+  "slides": [
+    {
+      "order_index": 0,
+      "blocks": [
+        {
+          "id": "intro",
+          "type": "text",
+          "content": {
+            "heading": "Mệnh đề có giá trị đúng hoặc sai xác định",
+            "paragraphs": [
+              "Một câu khẳng định được gọi là mệnh đề khi nó xác định được một và chỉ một giá trị đúng hoặc sai.",
+              "Câu có biến chưa được gán giá trị hoặc chưa có lượng từ là mệnh đề chứa biến. Không được kết luận đúng hoặc sai chỉ bằng cách thử một vài giá trị."
+            ]
+          }
+        },
+        {
+          "id": "warning",
+          "type": "callout",
+          "content": {
+            "variant": "warning",
+            "title": "Điểm cần tránh",
+            "body": "Câu $x^2+x+1>0$ vẫn là mệnh đề chứa biến nếu chưa nói rõ $x$ thuộc miền nào và chưa dùng lượng từ. Việc biểu thức luôn dương không làm biến mất biến $x$."
+          }
+        }
+      ]
+    },
+    {
+      "order_index": 1,
+      "blocks": [
+        {
+          "id": "classifier",
+          "type": "interaction",
+          "content": {
+            "interactionType": "sandbox",
+            "lesson": {
+              "prompt": "Phân loại từng câu. Hãy chú ý biến, miền biến và việc câu đã được lượng từ hóa hay chưa.",
+              "schemaVersion": "1.0",
+              "kind": "math.sandbox",
+              "id": "menh-de-classifier-v1",
+              "version": "1.0.0",
+              "domainId": "logic",
+              "archetypeId": "logic.proposition_identification",
+              "level": "recognition",
+              "recipe": "logic.proposition",
+              "outcomeIds": ["M10-SET-01"],
+              "prerequisites": [],
+              "misconceptions": ["logic.variable_sentence_is_proposition", "logic.question_is_proposition"],
+              "scene": { "space": "condition_graph" },
+              "controls": [
+                { "id": "class:a", "type": "choice", "label": "a) x² + x + 1 > 0", "initial": "", "options": ["", "proposition", "open_sentence", "not_proposition"], "optionLabels": { "": "Chọn phân loại", "proposition": "Mệnh đề", "open_sentence": "Mệnh đề chứa biến", "not_proposition": "Không phải mệnh đề" } },
+                { "id": "class:b", "type": "choice", "label": "b) 26 chia hết cho 2 và cho 13", "initial": "", "options": ["", "proposition", "open_sentence", "not_proposition"], "optionLabels": { "": "Chọn phân loại", "proposition": "Mệnh đề", "open_sentence": "Mệnh đề chứa biến", "not_proposition": "Không phải mệnh đề" } },
+                { "id": "class:c", "type": "choice", "label": "c) x² + y² > 9", "initial": "", "options": ["", "proposition", "open_sentence", "not_proposition"], "optionLabels": { "": "Chọn phân loại", "proposition": "Mệnh đề", "open_sentence": "Mệnh đề chứa biến", "not_proposition": "Không phải mệnh đề" } },
+                { "id": "class:d", "type": "choice", "label": "d) x − 2y và 2xy", "initial": "", "options": ["", "proposition", "open_sentence", "not_proposition"], "optionLabels": { "": "Chọn phân loại", "proposition": "Mệnh đề", "open_sentence": "Mệnh đề chứa biến", "not_proposition": "Không phải mệnh đề" } }
+              ],
+              "goals": [{ "id": "classification", "evidence": "structured_steps" }],
+              "solutionGraph": {
+                "steps": [
+                  { "id": "variables", "kind": "check", "hint": "Đánh dấu những câu còn chứa biến chưa được gán giá trị hoặc lượng từ." },
+                  { "id": "truth_value", "kind": "justify", "dependsOn": ["variables"], "hint": "Một mệnh đề phải là câu khẳng định và có đúng một giá trị đúng hoặc sai." }
+                ],
+                "terminalStepIds": ["truth_value"]
+              },
+              "assessment": [
+                { "id": "classify-four-statements", "type": "structured_reasoning", "prompt": "Phân loại bốn câu và giải thích câu nào còn chứa biến.", "outcomeIds": ["M10-SET-01"] }
+              ],
+              "accessibility": {
+                "keyboardControls": true,
+                "textAlternative": "Bốn câu cần phân loại thành mệnh đề, mệnh đề chứa biến hoặc không phải mệnh đề.",
+                "highContrast": true
+              },
+              "config": {
+                "mode": "proposition_classifier",
+                "activity": {
+                  "items": [
+                    { "id": "a", "label": "a) x² + x + 1 > 0", "controlId": "class:a", "expectedType": "open_sentence" },
+                    { "id": "b", "label": "b) 26 chia hết cho 2 và cho 13", "controlId": "class:b", "expectedType": "proposition" },
+                    { "id": "c", "label": "c) x² + y² > 9", "controlId": "class:c", "expectedType": "open_sentence" },
+                    { "id": "d", "label": "d) x − 2y và 2xy", "controlId": "class:d", "expectedType": "not_proposition" }
+                  ]
+                }
+              },
+              "analytics": ["predict", "classify_statement", "goal", "hint", "retry"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "order_index": 2,
+      "blocks": [
+        {
+          "id": "check",
+          "type": "quiz",
+          "content": {
+            "question": "Câu nào sau đây là mệnh đề chứa biến?",
+            "options": [
+              { "value": "a", "label": "$25$ là số chính phương." },
+              { "value": "b", "label": "$x^2+1>0$." },
+              { "value": "c", "label": "Hãy giải phương trình này." },
+              { "value": "d", "label": "$2+3=5$." }
+            ],
+            "correct": "b",
+            "explanation": "Biểu thức còn chứa biến x chưa được gán giá trị hoặc lượng từ hóa."
+          }
+        }
+      ]
+    }
+  ]
+}

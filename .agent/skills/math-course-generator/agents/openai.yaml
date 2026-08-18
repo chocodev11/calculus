@@ -1,0 +1,4 @@
+interface:
+  display_name: "Math Course Generator"
+  short_description: "Generate validated Vietnamese math lessons"
+  default_prompt: "Use $math-course-generator to create a validated Vietnamese math lesson in raw_courses."

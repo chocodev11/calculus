@@ -60,7 +60,7 @@ export type MathValue =
 export type PrimitiveState = JsonObject
 
 export interface SceneSpec {
-  space: 'truth_table' | 'venn_plane' | 'number_line' | 'unit_circle' | 'triangle_scene'
+  space: 'truth_table' | 'condition_graph' | 'venn_plane' | 'number_line' | 'unit_circle' | 'triangle_scene'
 }
 
 export interface ControlSpec {

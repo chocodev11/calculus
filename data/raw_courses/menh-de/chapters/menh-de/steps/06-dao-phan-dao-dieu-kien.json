@@ -1,0 +1,123 @@
+{
+  "id": "menh-de-dao-phan-dao-dieu-kien",
+  "title": "Mệnh đề đảo, phản đảo và điều kiện cần, đủ",
+  "description": "Tách hai chiều của mệnh đề kéo theo, nhận diện mệnh đề đảo và phản đảo, rồi phát biểu đúng điều kiện cần và điều kiện đủ.",
+  "xp_reward": 35,
+  "order_index": 5,
+  "slides": [
+    {
+      "order_index": 0,
+      "blocks": [
+        {
+          "id": "direction-theory",
+          "type": "text",
+          "content": {
+            "heading": "Đổi chiều là tạo ra một mệnh đề mới",
+            "paragraphs": [
+              "Với P: 6|a và Q: 3|a, P ⇒ Q đúng nhưng Q ⇒ P sai. Phản ví dụ của Q ⇒ P là a = 3: Q đúng nhưng P sai.",
+              "Mệnh đề đảo của P ⇒ Q là Q ⇒ P. Mệnh đề phản đảo là ¬Q ⇒ ¬P và luôn tương đương với P ⇒ Q. Nếu P ⇒ Q đúng thì P là điều kiện đủ của Q, còn Q là điều kiện cần của P."
+            ]
+          }
+        },
+        {
+          "id": "condition-language",
+          "type": "callout",
+          "content": {
+            "variant": "theorem",
+            "title": "Hai chiều mới là cần và đủ",
+            "body": "P ⇔ Q tương đương với (P ⇒ Q) ∧ (Q ⇒ P). Chỉ có một chiều thì chưa được dùng cụm “điều kiện cần và đủ”."
+          }
+        }
+      ]
+    },
+    {
+      "order_index": 1,
+      "blocks": [
+        {
+          "id": "direction-sandbox",
+          "type": "interaction",
+          "content": {
+            "interactionType": "sandbox",
+            "lesson": {
+              "prompt": "Kiểm tra P ⇒ Q, mệnh đề đảo Q ⇒ P và phản đảo ¬Q ⇒ ¬P trên miền a ∈ {3, 6, 9, 12}.",
+              "schemaVersion": "1.0",
+              "kind": "math.sandbox",
+              "id": "menh-de-direction-v1",
+              "version": "1.0.0",
+              "domainId": "logic",
+              "archetypeId": "logic.necessary_sufficient",
+              "level": "application",
+              "recipe": "logic.necessary_sufficient",
+              "outcomeIds": ["M10-SET-05", "M10-SET-06", "M10-SET-09"],
+              "prerequisites": ["M10-SET-04"],
+              "misconceptions": ["logic.reverse_implication", "logic.confuse_converse_with_contrapositive", "logic.swap_necessary_sufficient"],
+              "scene": { "space": "condition_graph" },
+              "controls": [
+                { "id": "p-to-q", "type": "choice", "label": "P ⇒ Q: Nếu 6|a thì 3|a", "initial": "", "options": ["", "Đúng", "Sai"] },
+                { "id": "q-to-p", "type": "choice", "label": "Q ⇒ P: Nếu 3|a thì 6|a", "initial": "", "options": ["", "Đúng", "Sai"] },
+                { "id": "q-to-p-counterexample", "type": "choice", "label": "Phản ví dụ của Q ⇒ P", "initial": "none", "options": ["none", "3", "6", "9", "12"], "optionLabels": { "none": "Không có", "3": "a = 3", "6": "a = 6", "9": "a = 9", "12": "a = 12" } },
+                { "id": "contrapositive", "type": "choice", "label": "Phản đảo ¬Q ⇒ ¬P", "initial": "", "options": ["", "Đúng", "Sai"] }
+              ],
+              "goals": [{ "id": "direction-and-conditions", "evidence": "structured_steps" }],
+              "solutionGraph": {
+                "steps": [
+                  { "id": "check-original", "kind": "check", "hint": "Mọi số chia hết cho 6 đều chia hết cho 3." },
+                  { "id": "find-converse-counterexample", "kind": "justify", "dependsOn": ["check-original"], "hint": "Chọn a = 3: chia hết cho 3 nhưng không chia hết cho 6." },
+                  { "id": "check-contrapositive", "kind": "check", "dependsOn": ["find-converse-counterexample"], "hint": "Phản đảo là không chia hết cho 3 thì không chia hết cho 6; đó là một mệnh đề tương đương với chiều ban đầu." },
+                  { "id": "name-conditions", "kind": "justify", "dependsOn": ["check-contrapositive"], "hint": "P là điều kiện đủ của Q; Q là điều kiện cần của P." }
+                ],
+                "terminalStepIds": ["name-conditions"]
+              },
+              "assessment": [
+                { "id": "converse", "type": "choice", "prompt": "Mệnh đề đảo của P ⇒ Q là gì và đúng hay sai?", "outcomeIds": ["M10-SET-05"] },
+                { "id": "condition-naming", "type": "structured_reasoning", "prompt": "Từ P ⇒ Q, phát biểu điều kiện cần và điều kiện đủ.", "outcomeIds": ["M10-SET-06"] }
+              ],
+              "accessibility": {
+                "keyboardControls": true,
+                "textAlternative": "Sơ đồ kiểm tra mệnh đề kéo theo, mệnh đề đảo, phản đảo và phản ví dụ.",
+                "highContrast": true
+              },
+              "config": {
+                "mode": "implication",
+                "activity": {
+                  "pExpression": "divisible(x, 6)",
+                  "qExpression": "divisible(x, 3)",
+                  "domainValues": [3, 6, 9, 12],
+                  "pToQControlId": "p-to-q",
+                  "qToPControlId": "q-to-p",
+                  "qToPCounterexampleControlId": "q-to-p-counterexample",
+                  "contrapositiveControlId": "contrapositive",
+                  "expectedPToQ": true,
+                  "expectedQToP": false,
+                  "expectedQToPCounterexample": 3,
+                  "expectedContrapositive": true
+                }
+              },
+              "analytics": ["predict", "implication_direction", "counterexample_selected", "condition_named", "goal", "hint", "retry"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "order_index": 2,
+      "blocks": [
+        {
+          "id": "necessary-sufficient-check",
+          "type": "quiz",
+          "content": {
+            "question": "Từ mệnh đề “Nếu a chia hết cho 6 thì a chia hết cho 3”, phát biểu nào đúng?",
+            "options": [
+              { "value": "a", "label": "a chia hết cho 6 là điều kiện cần để a chia hết cho 3" },
+              { "value": "b", "label": "a chia hết cho 6 là điều kiện đủ để a chia hết cho 3" },
+              { "value": "c", "label": "Hai điều kiện là tương đương" },
+              { "value": "d", "label": "a chia hết cho 3 là điều kiện đủ để a chia hết cho 6" }
+            ],
+            "correct": "b",
+            "explanation": "P ⇒ Q nghĩa là P là điều kiện đủ của Q và Q là điều kiện cần của P."
+          }
+        }
+      ]
+    }
+  ]
+}

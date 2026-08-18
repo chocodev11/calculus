@@ -1,0 +1,120 @@
+{
+  "id": "menh-de-keo-theo-dieu-kien",
+  "title": "Mệnh đề kéo theo và điều kiện cần, đủ",
+  "description": "Kiểm tra chiều kéo theo bằng phản ví dụ, phân biệt mệnh đề đảo và phát biểu điều kiện cần - đủ.",
+  "xp_reward": 30,
+  "order_index": 2,
+  "slides": [
+    {
+      "order_index": 0,
+      "blocks": [
+        {
+          "id": "implication-theory",
+          "type": "text",
+          "content": {
+            "heading": "Mệnh đề kéo theo chỉ sai ở một loại trường hợp",
+            "paragraphs": [
+              "Mệnh đề P ⇒ Q sai khi P đúng và Q sai. Vì vậy, để bác bỏ P ⇒ Q, chỉ cần tìm một phản ví dụ thuộc P nhưng không thuộc Q.",
+              "Nếu Q ⇒ P đúng thì Q là điều kiện đủ của P, đồng thời P là điều kiện cần của Q. Hai chiều đúng mới cho phép kết luận điều kiện cần và đủ."
+            ]
+          }
+        },
+        {
+          "id": "example",
+          "type": "math",
+          "content": {
+            "latex": "P(a): 6\\mid a,\\quad Q(a): 2\\mid a,\\quad a\\in\\{2,4,6,12\\}"
+          }
+        }
+      ]
+    },
+    {
+      "order_index": 1,
+      "blocks": [
+        {
+          "id": "implication-sandbox",
+          "type": "interaction",
+          "content": {
+            "interactionType": "sandbox",
+            "lesson": {
+              "prompt": "Kiểm tra hai chiều P ⇒ Q và Q ⇒ P. Hãy chọn phản ví dụ cho chiều sai.",
+              "schemaVersion": "1.0",
+              "kind": "math.sandbox",
+              "id": "menh-de-implication-v1",
+              "version": "1.0.0",
+              "domainId": "logic",
+              "archetypeId": "logic.implication_variants",
+              "level": "application",
+              "recipe": "logic.implication",
+              "outcomeIds": ["M10-SET-05", "M10-SET-06", "M10-SET-09"],
+              "prerequisites": ["M10-SET-02", "M10-SET-04"],
+              "misconceptions": ["logic.reverse_implication", "logic.confuse_converse_with_contrapositive", "logic.swap_necessary_sufficient"],
+              "scene": { "space": "condition_graph" },
+              "controls": [
+                { "id": "p-to-q", "type": "choice", "label": "P ⇒ Q: Nếu 6|a thì 2|a", "initial": "", "options": ["", "Đúng", "Sai"] },
+                { "id": "p-to-q-counterexample", "type": "choice", "label": "Phản ví dụ của P ⇒ Q", "initial": "none", "options": ["none", "2", "4", "6", "12"], "optionLabels": { "none": "Không có", "2": "a = 2", "4": "a = 4", "6": "a = 6", "12": "a = 12" } },
+                { "id": "q-to-p", "type": "choice", "label": "Q ⇒ P: Nếu 2|a thì 6|a", "initial": "", "options": ["", "Đúng", "Sai"] },
+                { "id": "q-to-p-counterexample", "type": "choice", "label": "Phản ví dụ của Q ⇒ P", "initial": "none", "options": ["none", "2", "4", "6", "12"], "optionLabels": { "none": "Không có", "2": "a = 2", "4": "a = 4", "6": "a = 6", "12": "a = 12" } }
+              ],
+              "goals": [{ "id": "implication-direction", "evidence": "structured_steps" }],
+              "solutionGraph": {
+                "steps": [
+                  { "id": "find-pq", "kind": "check", "hint": "Chỉ tìm các giá trị làm P đúng rồi kiểm tra Q." },
+                  { "id": "find-qp", "kind": "check", "dependsOn": ["find-pq"], "hint": "Đổi chiều là một mệnh đề mới; phải kiểm tra lại từ đầu." },
+                  { "id": "name-conditions", "kind": "justify", "dependsOn": ["find-qp"], "hint": "Từ chiều đúng Q ⇒ P, gọi Q là điều kiện đủ của P và P là điều kiện cần của Q." }
+                ],
+                "terminalStepIds": ["name-conditions"]
+              },
+              "assessment": [
+                { "id": "implication-direction", "type": "structured_reasoning", "prompt": "Xét hai chiều kéo theo và chỉ ra phản ví dụ cho chiều sai.", "outcomeIds": ["M10-SET-05", "M10-SET-09"] },
+                { "id": "necessary-sufficient", "type": "choice", "prompt": "Trong quan hệ Q ⇒ P, Q là điều kiện gì của P?", "outcomeIds": ["M10-SET-06"] }
+              ],
+              "accessibility": {
+                "keyboardControls": true,
+                "textAlternative": "Bảng các giá trị a được dùng để kiểm tra hai chiều kéo theo và phản ví dụ.",
+                "highContrast": true
+              },
+              "config": {
+                "mode": "implication",
+                "activity": {
+                  "pExpression": "divisible(x, 6)",
+                  "qExpression": "divisible(x, 2)",
+                  "domainValues": [2, 4, 6, 12],
+                  "pToQControlId": "p-to-q",
+                  "qToPControlId": "q-to-p",
+                  "pToQCounterexampleControlId": "p-to-q-counterexample",
+                  "qToPCounterexampleControlId": "q-to-p-counterexample",
+                  "expectedPToQ": true,
+                  "expectedQToP": false,
+                  "expectedPToQCounterexample": "none",
+                  "expectedQToPCounterexample": "4"
+                }
+              },
+              "analytics": ["predict", "implication_direction", "counterexample_selected", "goal", "hint", "retry"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "order_index": 2,
+      "blocks": [
+        {
+          "id": "condition-check",
+          "type": "quiz",
+          "content": {
+            "question": "Từ mệnh đề “Nếu a chia hết cho 6 thì a chia hết cho 2”, kết luận nào đúng?",
+            "options": [
+              { "value": "a", "label": "Chia hết cho 6 là điều kiện đủ để chia hết cho 2." },
+              { "value": "b", "label": "Chia hết cho 6 là điều kiện cần để chia hết cho 2." },
+              { "value": "c", "label": "Hai điều kiện tương đương." },
+              { "value": "d", "label": "Không thể kết luận gì." }
+            ],
+            "correct": "a",
+            "explanation": "P ⇒ Q nghĩa là P là điều kiện đủ của Q, còn Q là điều kiện cần của P."
+          }
+        }
+      ]
+    }
+  ]
+}

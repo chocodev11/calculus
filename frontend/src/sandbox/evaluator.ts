@@ -14,6 +14,7 @@ export type BinaryOperator =
   | '-'
   | '*'
   | '/'
+  | '%'
   | '^'
   | '<'
   | '<='
@@ -63,12 +64,12 @@ const DEFAULT_OPTIONS: Required<EvaluatorOptions> = {
 }
 
 const TWO_CHARACTER_OPERATORS = new Set(['<=', '>=', '==', '!=', '&&', '||'])
-const ONE_CHARACTER_OPERATORS = new Set(['+', '-', '*', '/', '^', '<', '>', '!'])
+const ONE_CHARACTER_OPERATORS = new Set(['+', '-', '*', '/', '%', '^', '<', '>', '!'])
 const PUNCTUATION = new Set(['(', ')', '[', ']', ','])
 const ALLOWED_FUNCTIONS = new Set([
   'abs', 'sqrt', 'log', 'sin', 'cos', 'tan', 'exp', 'pow', 'floor', 'ceil', 'round',
   'min', 'max', 'sign', 'deg', 'rad', 'set', 'union', 'intersection', 'difference',
-  'contains', 'interval', 'angle', 'point', 'vector', 'rational',
+  'contains', 'divisible', 'interval', 'angle', 'point', 'vector', 'rational',
 ])
 const FORBIDDEN_IDENTIFIERS = new Set(['globalThis', 'window', 'document', 'Function', 'eval', 'import', 'process'])
 
@@ -251,7 +252,7 @@ class Parser {
 
   private parseMultiplicative(depth: number): AstNode {
     let left = this.parsePower(depth + 1)
-    while (this.matches('*') || this.matches('/')) {
+    while (this.matches('*') || this.matches('/') || this.matches('%')) {
       const operator = this.take().text as BinaryOperator
       left = this.binary(operator, left, this.parsePower(depth + 1), depth)
     }
@@ -442,6 +443,13 @@ function callFunction(name: string, args: unknown[]): MathValue {
       }
       throw new EvaluationError('expected_collection', 'contains expects a finite set')
     }
+    case 'divisible': {
+      const [dividend, divisor] = args.map(asNumber)
+      if (!Number.isInteger(dividend) || !Number.isInteger(divisor) || divisor === 0) {
+        throw new EvaluationError('invalid_divisibility', 'divisible expects integers and a non-zero divisor')
+      }
+      return dividend % divisor === 0
+    }
     case 'interval': {
       const [left, right, leftClosed, rightClosed] = args
       return {
@@ -500,6 +508,11 @@ function evaluateAst(node: AstNode, scope: Record<string, MathValue>, steps: { v
           const denominator = asNumber(right)
           if (denominator === 0) throw new EvaluationError('division_by_zero', 'Division by zero is not allowed')
           return finiteNumber(asNumber(left) / denominator)
+        }
+        case '%': {
+          const denominator = asNumber(right)
+          if (denominator === 0) throw new EvaluationError('division_by_zero', 'Modulo by zero is not allowed')
+          return finiteNumber(asNumber(left) % denominator)
         }
         case '^': return finiteNumber(Math.pow(asNumber(left), asNumber(right)))
         case '<': return asNumber(left) < asNumber(right)

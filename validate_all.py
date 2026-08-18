@@ -328,6 +328,60 @@ def validate_interaction_type_e(filepath, lesson):
             if "message" not in t:
                 err(filepath, f"Type E: reflectionSpec.triggers[{i}].message is required")
 
+def validate_sandbox_manifest(filepath, lesson):
+    """Validate the public sandbox envelope without executing lesson code."""
+    if not isinstance(lesson, dict):
+        err(filepath, "Sandbox: lesson must be an object")
+        return
+
+    required = (
+        "schemaVersion", "kind", "id", "version", "domainId", "archetypeId",
+        "level", "recipe", "outcomeIds", "prerequisites", "misconceptions",
+        "scene", "controls", "goals", "assessment", "accessibility", "config",
+    )
+    for field in required:
+        if field not in lesson:
+            err(filepath, f"Sandbox: missing '{field}'")
+
+    if lesson.get("schemaVersion") != "1.0":
+        err(filepath, "Sandbox: schemaVersion must be '1.0'")
+    if lesson.get("kind") != "math.sandbox":
+        err(filepath, "Sandbox: kind must be 'math.sandbox'")
+    if lesson.get("domainId") not in {"logic", "set", "trigonometry"}:
+        err(filepath, f"Sandbox: unsupported domainId '{lesson.get('domainId')}'")
+    if lesson.get("level") not in {"recognition", "understanding", "application", "advanced_application"}:
+        err(filepath, f"Sandbox: unsupported level '{lesson.get('level')}'")
+    if not isinstance(lesson.get("outcomeIds"), list) or not lesson.get("outcomeIds"):
+        err(filepath, "Sandbox: outcomeIds must be a non-empty list")
+    if not isinstance(lesson.get("controls"), list):
+        err(filepath, "Sandbox: controls must be a list")
+    if not isinstance(lesson.get("goals"), list) or not lesson.get("goals"):
+        err(filepath, "Sandbox: goals must be a non-empty list")
+    accessibility = lesson.get("accessibility")
+    if not isinstance(accessibility, dict) or accessibility.get("keyboardControls") is not True:
+        err(filepath, "Sandbox: keyboardControls must be true")
+    if not isinstance(lesson.get("config"), dict):
+        err(filepath, "Sandbox: config must be an object")
+
+    serialized = json.dumps(lesson, ensure_ascii=False)
+    for forbidden in ("eval", "new Function", "__import__", "exec("):
+        if forbidden in serialized:
+            err(filepath, f"Sandbox: forbidden executable content '{forbidden}'")
+
+    config = lesson.get("config", {})
+    mode = config.get("mode") if isinstance(config, dict) else None
+    activity = config.get("activity", {}) if isinstance(config, dict) else {}
+    if lesson.get("domainId") == "logic" and mode in {"proposition_classifier", "quantifier_negation"}:
+        if not isinstance(activity, dict) or not isinstance(activity.get("items"), list) or not activity.get("items"):
+            err(filepath, f"Sandbox logic {mode}: activity.items must be a non-empty list")
+    if lesson.get("domainId") == "logic" and mode == "implication":
+        for field in ("pExpression", "qExpression", "domainValues"):
+            if not isinstance(activity, dict) or field not in activity:
+                err(filepath, f"Sandbox logic implication: missing activity.{field}")
+    if lesson.get("domainId") == "logic" and mode == "parameter_implication":
+        if not isinstance(activity, dict) or "expectedParameter" not in activity:
+            err(filepath, "Sandbox logic parameter_implication: missing activity.expectedParameter")
+
 def validate_quiz(filepath, block_id, content):
     """Validate quiz block content."""
     if "question" not in content:
@@ -464,6 +518,8 @@ def validate_step(filepath, data):
                     validate_interaction_type_c(filepath, lesson)
                 elif it == "E":
                     validate_interaction_type_e(filepath, lesson)
+                elif it in ("sandbox", "SANDBOX"):
+                    validate_sandbox_manifest(filepath, lesson)
                 else:
                     err(filepath, f"Block {bid}: unknown interactionType '{it}'")
                     

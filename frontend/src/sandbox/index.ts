@@ -11,7 +11,16 @@ export * from './assessment'
 export * from './fixtures'
 
 import { createRegistry } from './registry'
-import { logicPlugin, propositionBuilderPlugin, conditionGraphPlugin } from './plugins/logic'
+import {
+  logicPlugin,
+  propositionBuilderPlugin,
+  conditionGraphPlugin,
+  propositionPlugin,
+  quantifierPlugin,
+  implicationPlugin,
+  necessarySufficientPlugin,
+  parameterTruthPlugin,
+} from './plugins/logic'
 import { setPlugin, setBuilderPlugin, setVennPlugin, setNumberLinePlugin } from './plugins/set'
 import {
   trigonometryPlugin,
@@ -25,6 +34,11 @@ export const defaultSandboxRegistry = createRegistry([
   logicPlugin,
   propositionBuilderPlugin,
   conditionGraphPlugin,
+  propositionPlugin,
+  quantifierPlugin,
+  implicationPlugin,
+  necessarySufficientPlugin,
+  parameterTruthPlugin,
   setPlugin,
   setBuilderPlugin,
   setVennPlugin,

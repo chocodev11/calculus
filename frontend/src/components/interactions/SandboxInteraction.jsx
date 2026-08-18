@@ -35,11 +35,12 @@ function Control({ control, value, onChange }) {
     )
   }
   if (control.type === 'choice') {
+    const optionLabels = control.optionLabels || {}
     return (
       <label className="flex min-w-40 flex-col gap-1 text-sm font-semibold text-slate-700">
         {control.label}
         <select value={String(current)} onChange={event => onChange(event.target.value)} className="rounded-lg border border-slate-300 bg-white px-2 py-1">
-          {(control.options || []).map(option => <option key={String(option)} value={String(option)}>{String(option)}</option>)}
+          {(control.options || []).map(option => <option key={String(option)} value={String(option)}>{String(optionLabels[String(option)] ?? option)}</option>)}
         </select>
       </label>
     )
@@ -96,6 +97,25 @@ function SemanticAlternative({ snapshot, manifest }) {
   )
 }
 
+function DerivedSummary({ snapshot }) {
+  const derived = snapshot?.derivedState || {}
+  const rows = []
+  if (typeof derived.pToQ === 'boolean') rows.push(['P ⇒ Q', derived.pToQ ? 'Đúng' : 'Sai'])
+  if (typeof derived.qToP === 'boolean') rows.push(['Q ⇒ P', derived.qToP ? 'Đúng' : 'Sai'])
+  if (typeof derived.contrapositive === 'boolean') rows.push(['Phản đảo ¬Q ⇒ ¬P', derived.contrapositive ? 'Đúng' : 'Sai'])
+  if (typeof derived.sufficient === 'boolean') rows.push(['P là điều kiện đủ của Q', derived.sufficient ? 'Đúng' : 'Sai'])
+  if (typeof derived.necessary === 'boolean') rows.push(['Q là điều kiện cần của P', derived.necessary ? 'Đúng' : 'Sai'])
+  if (typeof derived.parameter === 'number') rows.push(['Tham số m', String(derived.parameter)])
+  if (Array.isArray(derived.roots)) rows.push(['Các nghiệm của Pₘ', derived.roots.join(', ')])
+  if (typeof derived.implication === 'boolean') rows.push(['Pₘ ⇒ Q', derived.implication ? 'Đúng' : 'Sai'])
+  if (rows.length === 0) return null
+  return (
+    <div className="grid gap-2 rounded-xl border border-indigo-100 bg-indigo-50 p-3 text-sm text-indigo-950 sm:grid-cols-2">
+      {rows.map(([label, value]) => <div key={label}><span className="font-bold">{label}:</span> {value}</div>)}
+    </div>
+  )
+}
+
 export default function SandboxInteraction({ lesson }) {
   const manifest = useMemo(() => manifestFromLesson(lesson), [lesson])
   const manifestKey = useMemo(() => manifest ? JSON.stringify(manifest) : '', [manifest])
@@ -145,7 +165,10 @@ export default function SandboxInteraction({ lesson }) {
           <p className="text-xs font-bold uppercase tracking-wide text-indigo-600">Math Sandbox</p>
           <h2 className="text-lg font-extrabold text-slate-900">{manifest.archetypeId}</h2>
         </div>
-        <button type="button" onClick={() => dispatch({ type: 'reset' })} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700">Đặt lại</button>
+        <div className="flex gap-2">
+          <button type="button" onClick={() => dispatch({ type: 'undo' })} disabled={snapshot.historyDepth === 0} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 disabled:cursor-not-allowed disabled:opacity-40">Hoàn tác</button>
+          <button type="button" onClick={() => dispatch({ type: 'reset' })} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700">Đặt lại</button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-3 rounded-xl border border-slate-200 bg-white p-3">
@@ -155,6 +178,7 @@ export default function SandboxInteraction({ lesson }) {
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-2" dangerouslySetInnerHTML={{ __html: svg }} />
+      <DerivedSummary snapshot={snapshot} />
       <SemanticAlternative snapshot={snapshot} manifest={manifest} />
 
       <div className="grid gap-2 sm:grid-cols-2">

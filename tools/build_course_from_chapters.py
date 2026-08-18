@@ -104,14 +104,8 @@ def build_course_from_folder(source_folder: str, target_dir: str, encrypt: bool 
     index_path = os.path.join(target_dir, '_index.json')
     os.makedirs(target_dir, exist_ok=True)
 
-    # Load index to check for existing mapping to avoid duplicates
+    # Load index so the deterministic filename can be reused on rebuilds.
     index = lookup_index(index_path)
-    # If slug already exists in index, return existing file
-    for fname, s in index.items():
-        if s == slug:
-            existing = os.path.join(target_dir, fname)
-            if os.path.isfile(existing):
-                return existing, ''
 
     if encrypt:
         filename_base, salt = encrypt_name(slug)

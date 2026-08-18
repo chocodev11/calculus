@@ -1,0 +1,121 @@
+{
+  "id": "menh-de-phu-dinh-luong-tu",
+  "title": "Mệnh đề phủ định và lượng từ",
+  "description": "Đọc đúng lượng từ với mọi, tồn tại; lập phủ định và tìm chứng minh hoặc phản ví dụ.",
+  "xp_reward": 25,
+  "order_index": 1,
+  "slides": [
+    {
+      "order_index": 0,
+      "blocks": [
+        {
+          "id": "quantifier-theory",
+          "type": "text",
+          "content": {
+            "heading": "Phủ định phải đổi cả lượng từ và quan hệ",
+            "paragraphs": [
+              "Phủ định của ∀x ∈ X, P(x) là ∃x ∈ X, ¬P(x). Phủ định của ∃x ∈ X, P(x) là ∀x ∈ X, ¬P(x).",
+              "Khi phủ định bất đẳng thức, < đổi thành ≥, > đổi thành ≤ và ngược lại. Miền của biến vẫn phải được giữ nguyên."
+            ]
+          }
+        },
+        {
+          "id": "proof-method",
+          "type": "callout",
+          "content": {
+            "variant": "theorem",
+            "title": "Hai cách kiểm tra",
+            "body": "Mệnh đề với ∀ sai chỉ cần một phản ví dụ. Mệnh đề với ∃ đúng chỉ cần một giá trị chứng minh. Để chứng minh mệnh đề ∀ đúng, cần lập luận bao quát miền biến."
+          }
+        }
+      ]
+    },
+    {
+      "order_index": 1,
+      "blocks": [
+        {
+          "id": "quantifier-sandbox",
+          "type": "interaction",
+          "content": {
+            "interactionType": "sandbox",
+            "lesson": {
+              "prompt": "Xét đúng sai, lập phủ định và chọn bằng chứng phù hợp cho từng mệnh đề.",
+              "schemaVersion": "1.0",
+              "kind": "math.sandbox",
+              "id": "menh-de-quantifier-v1",
+              "version": "1.0.0",
+              "domainId": "logic",
+              "archetypeId": "logic.negation",
+              "level": "application",
+              "recipe": "logic.quantifier",
+              "outcomeIds": ["M10-SET-03", "M10-SET-07", "M10-SET-09"],
+              "prerequisites": ["M10-SET-01", "M10-SET-02"],
+              "misconceptions": ["logic.negation_changes_only_symbol", "logic.solve_without_domain", "logic.counterexample_outside_domain"],
+              "scene": { "space": "condition_graph" },
+              "controls": [
+                { "id": "verdict:div3", "type": "choice", "label": "1) ∀n∈N*, n(n²−1) chia hết cho 3", "initial": "", "options": ["", "Đúng", "Sai"] },
+                { "id": "negation:div3", "type": "choice", "label": "Phủ định câu 1", "initial": "", "options": ["", "∃n∈N*: n(n²−1) không chia hết cho 3", "∀n∈N*: n(n²−1) không chia hết cho 3"] },
+                { "id": "evidence:div3", "type": "choice", "label": "Bằng chứng câu 1", "initial": "", "options": ["", "Phân tích (n−1)n(n+1)", "Thử n = 1, 2, 3"] },
+                { "id": "verdict:positive", "type": "choice", "label": "2) ∀x∈R, x²−6x+15 > 0", "initial": "", "options": ["", "Đúng", "Sai"] },
+                { "id": "negation:positive", "type": "choice", "label": "Phủ định câu 2", "initial": "", "options": ["", "∃x∈R: x²−6x+15 ≤ 0", "∀x∈R: x²−6x+15 ≤ 0"] },
+                { "id": "evidence:positive", "type": "choice", "label": "Bằng chứng câu 2", "initial": "", "options": ["", "Viết (x−3)²+6 > 0", "Chỉ thử x = 0"] },
+                { "id": "verdict:root", "type": "choice", "label": "3) ∃x∈R: x²−6x+5 = 0", "initial": "", "options": ["", "Đúng", "Sai"] },
+                { "id": "negation:root", "type": "choice", "label": "Phủ định câu 3", "initial": "", "options": ["", "∀x∈R: x²−6x+5 ≠ 0", "∃x∈R: x²−6x+5 ≠ 0"] },
+                { "id": "witness:root", "type": "numeric_input", "label": "Một nghiệm chứng minh câu 3", "min": -10, "max": 10, "step": 1, "initial": 1 }
+              ],
+              "goals": [{ "id": "quantifier-negation", "evidence": "structured_steps" }],
+              "solutionGraph": {
+                "steps": [
+                  { "id": "read-domain", "kind": "check", "hint": "Đọc chính xác miền N*, R trước khi xét đúng sai." },
+                  { "id": "negate-quantifier", "kind": "transform", "dependsOn": ["read-domain"], "hint": "Đổi ∀ thành ∃ hoặc ∃ thành ∀, rồi phủ định mệnh đề bên trong." },
+                  { "id": "choose-evidence", "kind": "justify", "dependsOn": ["negate-quantifier"], "hint": "Mệnh đề ∀ đúng cần lập luận bao quát; mệnh đề ∃ đúng cần một giá trị chứng minh." }
+                ],
+                "terminalStepIds": ["choose-evidence"]
+              },
+              "assessment": [
+                { "id": "negate-universal", "type": "structured_reasoning", "prompt": "Lập phủ định của một mệnh đề với lượng từ ∀ và giải thích miền biến.", "outcomeIds": ["M10-SET-03"] },
+                { "id": "quantifier-witness", "type": "structured_reasoning", "prompt": "Dùng phân tích hoặc phản ví dụ để xác định đúng sai.", "outcomeIds": ["M10-SET-07", "M10-SET-09"] }
+              ],
+              "accessibility": {
+                "keyboardControls": true,
+                "textAlternative": "Ba mệnh đề có lượng từ cần được xét đúng sai, lập phủ định và chọn bằng chứng.",
+                "highContrast": true
+              },
+              "config": {
+                "mode": "quantifier_negation",
+                "activity": {
+                  "items": [
+                    { "id": "div3", "label": "∀n∈N*: n(n²−1) chia hết cho 3", "controlId": "verdict:div3", "expectedVerdict": "Đúng", "expectedNegation": "∃n∈N*: n(n²−1) không chia hết cho 3", "negationControlId": "negation:div3", "expectedEvidence": "Phân tích (n−1)n(n+1)", "evidenceControlId": "evidence:div3" },
+                    { "id": "positive", "label": "∀x∈R: x²−6x+15 > 0", "controlId": "verdict:positive", "expectedVerdict": "Đúng", "expectedNegation": "∃x∈R: x²−6x+15 ≤ 0", "negationControlId": "negation:positive", "expectedEvidence": "Viết (x−3)²+6 > 0", "evidenceControlId": "evidence:positive" },
+                    { "id": "root", "label": "∃x∈R: x²−6x+5 = 0", "controlId": "verdict:root", "expectedVerdict": "Đúng", "expectedNegation": "∀x∈R: x²−6x+5 ≠ 0", "negationControlId": "negation:root", "expectedWitness": 1, "witnessControlId": "witness:root" }
+                  ]
+                }
+              },
+              "analytics": ["predict", "quantifier_selected", "negation_selected", "witness_submitted", "goal", "hint", "retry"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "order_index": 2,
+      "blocks": [
+        {
+          "id": "negation-check",
+          "type": "quiz",
+          "content": {
+            "question": "Phủ định của “∀x∈R, x²−6x+15 > 0” là gì?",
+            "options": [
+              { "value": "a", "label": "∃x∈R: x²−6x+15 ≤ 0" },
+              { "value": "b", "label": "∀x∈R: x²−6x+15 ≤ 0" },
+              { "value": "c", "label": "∃x∈R: x²−6x+15 > 0" },
+              { "value": "d", "label": "∀x∈R: x²−6x+15 < 0" }
+            ],
+            "correct": "a",
+            "explanation": "Phủ định của ∀ là ∃ và phủ định của > là ≤."
+          }
+        }
+      ]
+    }
+  ]
+}

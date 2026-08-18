@@ -39,6 +39,21 @@ function truthTable(model: RenderModel): string {
   return shell(`${header}${body}`, 'Bảng chân trị')
 }
 
+function conditionGraph(model: RenderModel): string {
+  const rows = (model.elements || []).map(record)
+  if (!rows.length) return shell('<text x="28" y="52" fill="#475569">Chưa có dữ liệu</text>', 'Sơ đồ điều kiện trống')
+  const cardHeight = Math.min(72, Math.max(48, 280 / rows.length))
+  const content = rows.slice(0, 8).map((row, index) => {
+    const y = 22 + index * cardHeight
+    const entries = Object.entries(row)
+      .filter(([key]) => key !== 'id')
+      .map(([key, value]) => `${key}: ${value === true ? 'Đúng' : value === false ? 'Sai' : String(value)}`)
+      .join(' · ')
+    return `<rect x="24" y="${y.toFixed(2)}" width="592" height="${(cardHeight - 6).toFixed(2)}" rx="10" fill="white" stroke="#cbd5e1"/><text x="40" y="${(y + cardHeight / 2 + 5).toFixed(2)}" fill="#1e293b" font-size="13">${escapeText(entries)}</text>`
+  }).join('')
+  return shell(`${content}<text x="320" y="306" text-anchor="middle" fill="#475569">Sơ đồ điều kiện và phản ví dụ</text>`, 'Sơ đồ điều kiện')
+}
+
 function venn(model: RenderModel): string {
   const first = record(model.elements?.[0])
   const result = record(first.result)
@@ -78,6 +93,7 @@ function triangle(model: RenderModel): string {
 
 export function renderSceneSvg(model: RenderModel): string {
   if (model.space === 'truth_table') return truthTable(model)
+  if (model.space === 'condition_graph') return conditionGraph(model)
   if (model.space === 'venn_plane') return venn(model)
   if (model.space === 'number_line') return numberLine(model)
   if (model.space === 'unit_circle') return unitCircle(model)
@@ -87,6 +103,7 @@ export function renderSceneSvg(model: RenderModel): string {
 
 export function renderTextAlternative(model: RenderModel): string {
   if (model.space === 'truth_table') return `Bảng chân trị gồm ${(model.elements || []).length} dòng.`
+  if (model.space === 'condition_graph') return `Sơ đồ điều kiện gồm ${(model.elements || []).length} trường hợp cần kiểm tra.`
   if (model.space === 'venn_plane') return 'Biểu đồ Venn biểu diễn hai tập hợp và vùng kết quả.'
   if (model.space === 'number_line') return 'Trục số biểu diễn các đầu mút và tính đóng mở của khoảng.'
   if (model.space === 'unit_circle') return 'Đường tròn lượng giác biểu diễn góc, sin và cos.'
