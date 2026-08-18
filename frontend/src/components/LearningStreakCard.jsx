@@ -1,30 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Flame } from 'lucide-react'
 import api from '../lib/api'
-import { Card, CardContent } from './ui/card'
 import { t, fmt } from '../lib/locale'
 
-// Helper: compute current week's Monday as YYYY-MM-DD
-const getThisWeekMonday = () => {
-  const d = new Date()
-  const day = d.getDay()
-  console.debug('Today is day index', day)
-  const diff = (day === 0 ? 6 : day - 1)
-  const monday = new Date(d)
-  monday.setDate(d.getDate() - diff)
-  monday.setHours(0,0,0,0)
-  return monday.toISOString().slice(0,10)
-}
-
-export default function LearningStreakCard({
-  // component now relies on backend for all data; props are ignored
-  theme = { from: 'bg-blue-900', to: 'bg-teal-800', accent: 'from-blue-400 to-teal-300' }
-}) {
+export default function LearningStreakCard() {
   const [streak, setStreak] = useState(0)
-  const [days, setDays] = useState([false,false,false,false,false,false,false])
-  const [frozenDays, setFrozenDays] = useState([false,false,false,false,false,false,false])
+  const [days, setDays] = useState([false, false, false, false, false, false, false])
+  const [frozenDays, setFrozenDays] = useState([false, false, false, false, false, false, false])
 
-  // server will provide today index and streak info; initialize from client time as fallback
   const [todayIndex, setTodayIndex] = useState(() => (new Date().getDay() + 6) % 7)
   const [todayCompleted, setTodayCompleted] = useState(false)
   const [longest, setLongest] = useState(0)
@@ -34,11 +17,10 @@ export default function LearningStreakCard({
     let mounted = true
     const load = async () => {
       try {
-        const res = await api.get(`/progress/streak-week`)
+        const res = await api.get('/progress/streak-week')
         if (!mounted) return
         if (res) {
-          // API returns authoritative fields: week_start, days, current_streak, longest_streak, today_index, today_completed
-          const d = Array.isArray(res.days) && res.days.length === 7 ? res.days.map(x => !!x) : [false,false,false,false,false,false,false]
+          const d = Array.isArray(res.days) && res.days.length === 7 ? res.days.map(x => !!x) : [false, false, false, false, false, false, false]
           setDays(d)
           if (Array.isArray(res.frozen_days) && res.frozen_days.length === 7)
             setFrozenDays(res.frozen_days.map(x => !!x))
@@ -56,65 +38,74 @@ export default function LearningStreakCard({
     return () => { mounted = false }
   }, [])
 
-  // component driven by backend; no local editing flow
-
-  const toggleDay = (i) => {
-    const copy = [...days]
-    copy[i] = !copy[i]
-    // send full days array to backend and replace local state with authoritative response
-    api.post('/progress/streak-week', { days: copy }).then(res => {
-      if (!res) return
-      const d = Array.isArray(res.days) && res.days.length === 7 ? res.days.map(x => !!x) : copy
-      setDays(d)
-      if (typeof res.current_streak === 'number') setStreak(res.current_streak)
-      if (typeof res.longest_streak === 'number') setLongest(res.longest_streak)
-      if (typeof res.today_index === 'number') setTodayIndex(res.today_index)
-      setTodayCompleted(Boolean(res.today_completed))
-      if (res.week_start) setWeekStart(res.week_start)
-    }).catch(err => console.debug('failed save streak week', err))
-  }
-
   return (
-    <Card className="border-2 border-orange-200/50 bg-gradient-to-br from-white to-orange-50/50">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
-          <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${streak >= 7 ? 'bg-gradient-to-br from-orange-400 to-red-500' : 'bg-orange-100'}`}>
-            <Flame className={`w-7 h-7 ${streak >= 7 ? 'text-white' : 'text-orange-500'}`} />
-          </div>
-          <div className="flex-1">
-            <p className="text-3xl font-bold text-foreground leading-none mb-1">{streak}</p>
-            <p className="text-sm text-muted-foreground font-semibold">{t.streakCard.dayStreak} • <span className="font-medium">{fmt(t.streakCard.longest, { n: longest })}</span></p>
-            {weekStart && <div className="mt-1 text-xs text-slate-400">{fmt(t.streakCard.weekOf, { date: weekStart })}</div>}
-          </div>
+    <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 shadow-[0_4px_0_0_#E2E8F0] space-y-4">
+      {/* Header */}
+      <div className="flex items-center gap-3.5">
+        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-b-2 ${
+          streak >= 7 
+            ? 'bg-amber-500 border-amber-700 text-white shadow-sm' 
+            : 'bg-amber-50 border-amber-200 text-amber-600'
+        }`}>
+          <Flame className={`w-6 h-6 ${streak >= 7 ? 'fill-white' : 'fill-amber-500'}`} />
         </div>
+        <div className="flex-1">
+          <div className="flex items-baseline gap-2">
+            <p className="text-2xl font-extrabold text-slate-900 leading-none tabular-nums">{streak}</p>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">
+              {t.streakCard?.dayStreak || 'Ngày liên tiếp'}
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 font-semibold mt-1">
+            Kỷ lục: <span className="text-slate-700 font-bold tabular-nums">{longest} ngày</span>
+          </p>
+        </div>
+      </div>
 
-        <div className="mt-4">
-          <div className="grid grid-cols-7 gap-2 text-center">
-            {t.streakCard.days.map((d, i) => {
-              const isToday = i === todayIndex
-              const done = Array.isArray(days) && !!days[i]
-              const frozen = Array.isArray(frozenDays) && !!frozenDays[i]
-              const todayHighlight = isToday && done
-              return (
-                <div key={d} className="flex flex-col items-center">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${todayHighlight ? 'bg-amber-500 text-white shadow-md' : done ? 'bg-amber-400 text-white shadow-md' : frozen ? 'bg-blue-300 text-white shadow-md' : 'bg-slate-100 text-slate-500'}`}>
-                    <span className="uppercase">{frozen && !done ? '❄' : d[0]}</span>
-                  </div>
-                  <div className={`mt-1 text-[10px] ${todayHighlight ? 'text-amber-600 font-semibold' : frozen && !done ? 'text-blue-400 font-semibold' : 'text-slate-400'}`}>{d}</div>
+      {/* Days Grid */}
+      <div className="pt-2">
+        <div className="grid grid-cols-7 gap-1.5 text-center">
+          {(t.streakCard?.days || ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']).map((d, i) => {
+            const isToday = i === todayIndex
+            const done = Array.isArray(days) && !!days[i]
+            const frozen = Array.isArray(frozenDays) && !done && !!frozenDays[i]
+
+            return (
+              <div key={d} className="flex flex-col items-center gap-1">
+                <div
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-extrabold transition-all ${
+                    done
+                      ? 'bg-amber-500 text-white border-b-2 border-amber-700 shadow-sm'
+                      : frozen
+                      ? 'bg-sky-400 text-white border-b-2 border-sky-600 shadow-sm'
+                      : isToday
+                      ? 'bg-slate-100 text-slate-700 border-2 border-dashed border-indigo-400'
+                      : 'bg-slate-100 text-slate-400'
+                  }`}
+                >
+                  {frozen ? '❄' : done ? '✓' : d[0]}
                 </div>
-              )
-            })}
-          </div>
+                <span className={`text-[10px] font-bold ${isToday ? 'text-indigo-600' : 'text-slate-400'}`}>
+                  {d}
+                </span>
+              </div>
+            )
+          })}
         </div>
+      </div>
 
-        {todayCompleted && (
-          <p className="text-sm text-orange-600 mt-3 font-bold"> {t.streakCard.completedToday}</p>
+      {/* Bottom Message */}
+      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
+        {todayCompleted ? (
+          <span className="text-emerald-600 flex items-center gap-1">
+            ✓ {t.streakCard?.completedToday || 'Đã duy trì hôm nay!'}
+          </span>
+        ) : (
+          <span className="text-amber-600 flex items-center gap-1">
+            🔥 {t.streakCard?.notCompletedToday || 'Học 1 bài để giữ chuỗi!'}
+          </span>
         )}
-
-        {!todayCompleted && (
-          <p className="text-sm text-orange-600 mt-3 font-bold"> {t.streakCard.notCompletedToday}</p>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

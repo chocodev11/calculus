@@ -1,11 +1,9 @@
-import { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   X as XIcon, Check, Sparkles, RotateCcw, HelpCircle,
-  Eye,
-  Lightbulb, AlertTriangle, Info, GraduationCap,
-  Copy, CheckCheck, Play, GripVertical,
-  Trophy, Heart, Zap
+  Eye, Lightbulb, AlertTriangle, Info, GraduationCap,
+  Copy, CheckCheck, Play, GripVertical, Trophy, Heart, Zap, ArrowRight
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '../lib/api'
@@ -13,11 +11,11 @@ import { useAuthStore } from '../lib/store'
 import { decodeStepId, encodeStepId, cn } from '../lib/utils'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
-
-import { Button } from '../components/ui/button'
+import { TactileButton } from '../components/ui/tactile-button'
+import { GamifyBadge } from '../components/ui/gamify-badge'
 import InteractionSlide from '../components/interactions'
 
-// ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
+// ─── MAIN STEP LESSON COMPONENT ─────────────────────────────────────────────
 
 export default function Step() {
   const { slug, encodedId } = useParams()
@@ -35,7 +33,7 @@ export default function Step() {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
   const [completedSlideIds, setCompletedSlideIds] = useState([])
 
-  // Quiz state: per-block
+  // Quiz state
   const [quizAnswers, setQuizAnswers] = useState({})
   const [quizSubmitted, setQuizSubmitted] = useState({})
   const [quizResults, setQuizResults] = useState({})
@@ -46,12 +44,13 @@ export default function Step() {
   const [newAchievements, setNewAchievements] = useState([])
   const [slideAchievements, setSlideAchievements] = useState([])
 
-  // Track time spent on this step (for study_time quest)
-  const stepStartTimeRef = useRef(Date.now())
+  // Explanation popup state
+  const [showExplanation, setShowExplanation] = useState(false)
+  const [currentExplanation, setCurrentExplanation] = useState('')
 
-  // Hearts (local mirror of user.hearts for immediate UI updates after quit)
+  // Track time spent
+  const stepStartTimeRef = useRef(Date.now())
   const [localHearts, setLocalHearts] = useState(() => user?.hearts ?? 5)
-  // XP boost: true if user owns at least 1 xp_boost in inventory
   const [hasXpBoost, setHasXpBoost] = useState(false)
 
   useEffect(() => { loadData() }, [id, slug])
@@ -62,9 +61,7 @@ export default function Step() {
       const fullStory = await api.get(`/stories/${slug}`)
       setStory(fullStory)
 
-      // Prevent accessing lesson content unless the course is started (enrolled)
       if (!fullStory.is_enrolled) {
-        // redirect back to course page where user can enroll
         navigate(`/course/${slug}`)
         setLoading(false)
         return
@@ -101,27 +98,18 @@ export default function Step() {
     }
   }
 
-  // Slide navigation helpers
   const currentSlide = slides[currentSlideIndex]
-  // Progress: 0% at start, 100% only after completing last slide
   const progress = slides.length > 0 ? (currentSlideIndex / slides.length) * 100 : 0
   const isLastSlide = currentSlideIndex === slides.length - 1
-
-  // Explanation popup state
-  const [showExplanation, setShowExplanation] = useState(false)
-  const [currentExplanation, setCurrentExplanation] = useState('')
 
   const awardSlideXp = useCallback(async (slideId) => {
     if (!slideId) return
     if (completedSlideIds.includes(slideId)) return
-    // Mark locally first so duplicate calls are blocked immediately
     setCompletedSlideIds(prev => [...prev, slideId])
     try {
       const res = await api.post(`/steps/${id}/slides/${slideId}/complete`, {})
-      if (res) {
-        // Show achievement popup if any were newly unlocked
-        const unlocked = res.newly_earned_achievements || []
-        if (unlocked.length > 0) setSlideAchievements(unlocked)
+      if (res?.newly_earned_achievements?.length > 0) {
+        setSlideAchievements(res.newly_earned_achievements)
       }
     } catch (e) {
       console.warn('Error recording slide completion', e)
@@ -130,19 +118,16 @@ export default function Step() {
 
   const goNext = useCallback(() => {
     if (currentSlideIndex < slides.length - 1) {
-      // Record slide completion in background
       try { awardSlideXp(currentSlide?.id) } catch (e) {}
       setCurrentSlideIndex(i => i + 1)
     }
   }, [currentSlideIndex, slides.length, awardSlideXp, currentSlide])
 
-  // Is the current slide an interaction slide? (true when at least one block is interaction)
   const isInteractionSlide = useMemo(() => {
     const blocks = currentSlide?.blocks || []
     return blocks.some(b => (b.type || b.block_type) === 'interaction')
   }, [currentSlide])
 
-  // Does the current slide have an unanswered quiz?
   const currentQuizBlocks = useMemo(() => {
     if (!currentSlide?.blocks) return []
     return currentSlide.blocks.filter(b => (b.type || b.block_type) === 'quiz')
@@ -151,14 +136,8 @@ export default function Step() {
   const hasQuiz = currentQuizBlocks.length > 0
   const allQuizzesAnswered = currentQuizBlocks.every(b => quizSubmitted[b.id])
   const allQuizzesCorrect = currentQuizBlocks.every(b => quizResults[b.id]?.correct)
-
-  // The footer button logic:
-  // - If slide has quiz and not all submitted → "Check" (disabled until all selected)
-  // - If slide has quiz and submitted but wrong → "Try Again"
-  // - Otherwise → "Continue" (or "Complete" on last slide)
   const allQuizzesSelected = currentQuizBlocks.every(b => quizAnswers[b.id] != null)
 
-  // Quiz handlers
   const handleQuizAnswer = (blockId, answer) => {
     setQuizAnswers(prev => ({ ...prev, [blockId]: answer }))
   }
@@ -167,6 +146,11 @@ export default function Step() {
     const xp = isCorrect ? 15 : 0
     setQuizSubmitted(prev => ({ ...prev, [blockId]: true }))
     setQuizResults(prev => ({ ...prev, [blockId]: { correct: isCorrect, xp, explanation } }))
+    
+    // If incorrect, deduct 1 heart in optimistic UI
+    if (!isCorrect) {
+      setLocalHearts(h => Math.max(0, h - 1))
+    }
   }
 
   const handleQuizRetry = (blockId) => {
@@ -179,9 +163,7 @@ export default function Step() {
     })
   }
 
-  // Completion
   const handleComplete = () => {
-    // Compute XP to display: step base XP + 15 per correct quiz answer (doubled if xp_boost)
     const correctCount = Object.values(quizResults).filter(r => r.correct).length
     const baseXp = (step?.xp_reward || 0) + correctCount * 15
     setTotalXpEarned(hasXpBoost ? baseXp * 2 : baseXp)
@@ -201,13 +183,11 @@ export default function Step() {
         quizzes_total: quizzesTotal,
       })
 
-      // Patch store immediately
       if (result) {
         updateUserStats(result)
         if (result.hearts != null) setLocalHearts(result.hearts)
       }
 
-      // If new achievements were unlocked, show the dedicated achievements screen
       const unlocked = result?.newly_earned_achievements || []
       if (unlocked.length > 0) {
         setNewAchievements(unlocked)
@@ -226,14 +206,7 @@ export default function Step() {
     fetchUser().catch(() => {})
   }
 
-  const handleNavigateAfterAchievements = () => {
-    setNewAchievements([])
-    setShowAchievementsScreen(false)
-    doNavigateNext()
-  }
-
   const handleQuit = () => {
-    // Fire-and-forget: deduct heart in background, navigate immediately
     api.post(`/steps/${id}/quit`, {}).then(result => {
       if (result?.hearts != null) {
         setLocalHearts(result.hearts)
@@ -243,34 +216,31 @@ export default function Step() {
     navigate(`/course/${slug}`)
   }
 
-  // ── LOADING ──
   if (loading) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center font-sans">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin" />
-          <p className="text-stone-500 text-sm">Loading lesson…</p>
+          <div className="w-10 h-10 border-3 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+          <p className="text-slate-500 font-bold text-sm">Đang tải bài học…</p>
         </div>
       </div>
     )
   }
 
-  // ── EMPTY ──
   if (!step || slides.length === 0) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-stone-500 mb-4">No content found for this lesson.</p>
-          <Button asChild variant="outline">
-            <Link to={`/course/${slug}`}>Back to Course</Link>
-          </Button>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+        <div className="text-center bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm space-y-4 max-w-sm">
+          <p className="text-slate-600 font-bold">Không tìm thấy nội dung cho bài học này.</p>
+          <TactileButton variant="secondary" onClick={() => navigate(`/course/${slug}`)} className="w-full">
+            Quay lại khoá học
+          </TactileButton>
         </div>
       </div>
     )
   }
 
-  // ── SLIDE ACHIEVEMENT POPUP ──
-  // Rendered as an overlay so it doesn't interrupt navigation
+  // Achievement Popups & Screens
   const achievementPopup = slideAchievements.length > 0 ? (
     <AchievementUnlockedPopup
       achievements={slideAchievements}
@@ -278,17 +248,19 @@ export default function Step() {
     />
   ) : null
 
-  // ── ACHIEVEMENTS SCREEN ──
   if (showAchievementsScreen) {
     return (
       <AchievementsScreen
         achievements={newAchievements}
-        onContinue={handleNavigateAfterAchievements}
+        onContinue={() => {
+          setNewAchievements([])
+          setShowAchievementsScreen(false)
+          doNavigateNext()
+        }}
       />
     )
   }
 
-  // ── COMPLETION SCREEN ──
   if (showCompleteScreen) {
     return (
       <CompleteScreen
@@ -299,10 +271,9 @@ export default function Step() {
     )
   }
 
-  // Footer button handler
+  // Footer Action Dispatcher
   const handleFooterAction = () => {
     if (hasQuiz && !allQuizzesAnswered) {
-      // Submit all quizzes on this slide
       currentQuizBlocks.forEach(b => {
         if (!quizSubmitted[b.id] && quizAnswers[b.id] != null) {
           const content = b.content || b.block_data || {}
@@ -312,9 +283,7 @@ export default function Step() {
       })
       return
     }
-    // Continue / Complete (works for both correct and incorrect)
     if (isLastSlide) {
-      // Record last slide completion in background
       try { awardSlideXp(currentSlide?.id) } catch (e) {}
       handleComplete()
     } else {
@@ -322,45 +291,38 @@ export default function Step() {
     }
   }
 
-  // Handle Why button click
   const handleWhyClick = () => {
     const explanations = currentQuizBlocks
       .map(b => (b.content || b.block_data || {}).explanation)
       .filter(Boolean)
-    setCurrentExplanation(explanations.join('\n\n') || 'No explanation available.')
+    setCurrentExplanation(explanations.join('\n\n') || 'Không có giải thích chi tiết cho câu hỏi này.')
     setShowExplanation(true)
   }
 
-  // Quiz state for footer styling
   const quizIsAnswered = hasQuiz && allQuizzesAnswered
   const quizIsCorrect = quizIsAnswered && allQuizzesCorrect
   const quizIsIncorrect = quizIsAnswered && !allQuizzesCorrect
+  const currentSlideXp = currentQuizBlocks.reduce((sum, b) => sum + (quizResults[b.id]?.xp || 0), 0)
 
-  // Calculate XP for current slide
-  const currentSlideXp = currentQuizBlocks.reduce((sum, b) => {
-    return sum + (quizResults[b.id]?.xp || 0)
-  }, 0)
-
-  // ── MAIN RENDER ──
   return (
-    <div className={cn(
-      'h-[100dvh] flex flex-col overflow-hidden', 'bg-white'
-    )}>
+    <div className="h-[100dvh] flex flex-col overflow-hidden bg-white font-sans select-none">
       {achievementPopup}
-      {/* ── Header ── 1/10 of screen */}
-      <header className="h-[10vh] shrink-0 flex items-center justify-center relative bg-white">
-        {/* Exit button — top left */}
+      
+      {/* ─── Top Header (10vh) ────────────────────────────────────────── */}
+      <header className="h-[10vh] shrink-0 border-b border-slate-200 flex items-center justify-between px-4 sm:px-8 bg-white relative z-20">
+        
+        {/* Exit Button */}
         <button
           onClick={handleQuit}
-          className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition"
-          title="Exit lesson"
+          className="p-2 rounded-2xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+          title="Thoát bài học"
         >
-          <XIcon className="w-5 h-5" />
+          <XIcon className="w-6 h-6 stroke-[2.5]" />
         </button>
 
-        {/* Progress bar — centered, ~50% width */}
-        <div className="w-1/2 max-w-md">
-          <div className="h-2.5 bg-stone-200 rounded-full overflow-hidden">
+        {/* Progress Bar */}
+        <div className="w-1/2 max-w-md mx-4">
+          <div className="h-3.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200">
             <motion.div
               className="h-full bg-emerald-500 rounded-full"
               initial={false}
@@ -370,30 +332,23 @@ export default function Step() {
           </div>
         </div>
 
-        {/* Right side: hearts + xp boost indicator */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+        {/* Status Indicators (Hearts & Boosters) */}
+        <div className="flex items-center gap-3">
           {hasXpBoost && (
-            <div className="flex items-center gap-0.5 bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-full">
-              <Zap className="w-3 h-3" />2x
-            </div>
+            <span className="hidden sm:inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-xs font-extrabold px-2.5 py-1 rounded-xl border border-amber-200">
+              <Zap className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+              2x XP
+            </span>
           )}
-          <div className="flex items-center gap-0.5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Heart
-                key={i}
-                className="w-4 h-4"
-                fill={i < localHearts ? '#ef4444' : 'none'}
-                stroke={i < localHearts ? '#ef4444' : '#d1d5db'}
-              />
-            ))}
-          </div>
+          <GamifyBadge type="hearts" value={localHearts} max={5} />
         </div>
+
       </header>
 
-      {/* ── Body ── fills remaining space; blocks constrained to center column */}
-      <main className='flex-1 shrink-0 overflow-hidden'>
+      {/* ─── Main Slide Content Body ─────────────────────────────────── */}
+      <main className="flex-1 shrink-0 overflow-hidden relative">
         {isInteractionSlide ? (
-          // Full-bleed interaction slide — direct passthrough, no scaling, no scroll
+          // Full-bleed interactive math engine slide
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlideIndex}
@@ -422,15 +377,15 @@ export default function Step() {
             </motion.div>
           </AnimatePresence>
         ) : (
-          // Normal slide — scrollable, constrained width
-          <div className="h-full overflow-y-auto flex items-center justify-center px-4 sm:px-8">
-            <div className="w-full max-w-2xl -mt-8">
+          // Standard slide content (scrollable with max-width)
+          <div className="h-full overflow-y-auto flex items-center justify-center px-4 sm:px-8 py-6">
+            <div className="w-full max-w-2xl">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlideIndex}
-                  initial={{ opacity: 0, y: 24 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -24 }}
+                  exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.25, ease: 'easeInOut' }}
                   className="space-y-6"
                 >
@@ -453,146 +408,142 @@ export default function Step() {
         )}
       </main>
 
-      {/* ── Footer ── handles quiz feedback states */}
+      {/* ─── Bottom Feedback Drawer (Duolingo-style) ─────────────────── */}
       <footer className={cn(
-        'h-[10vh] shrink-0 flex items-center justify-center transition-colors duration-300',
-        quizIsCorrect ? 'bg-emerald-500' :
-          quizIsIncorrect ? 'bg-stone-400' :
-            'bg-white'
+        'shrink-0 border-t-2 transition-all duration-300 px-6 py-4 relative z-30',
+        quizIsCorrect
+          ? 'bg-emerald-50 border-emerald-300'
+          : quizIsIncorrect
+          ? 'bg-rose-50 border-rose-300'
+          : 'bg-white border-slate-200'
       )}>
-        {quizIsAnswered ? (
-          // Answered state - show feedback
-          <div className="flex items-center gap-6">
-            {/* Feedback indicator */}
-            <div className="flex items-center gap-2">
-              {quizIsCorrect ? (
-                <>
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                    <Check className="w-5 h-5 text-white" strokeWidth={3} />
-                  </div>
-                  <div className="text-white">
-                    <p className="font-bold text-sm">Correct!</p>
-                    <p className="text-xs opacity-90">+{currentSlideXp} XP</p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                    <XIcon className="w-5 h-5 text-white" strokeWidth={3} />
-                  </div>
-                  <p className="font-bold text-white text-sm">Incorrect</p>
-                </>
-              )}
-            </div>
+        <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
+          
+          {quizIsAnswered ? (
+            <>
+              {/* Feedback Message */}
+              <div className="flex items-center gap-3.5">
+                <div className={cn(
+                  'w-11 h-11 rounded-2xl flex items-center justify-center text-white shrink-0 border-b-2 shadow-sm',
+                  quizIsCorrect ? 'bg-emerald-500 border-emerald-700' : 'bg-rose-500 border-rose-700'
+                )}>
+                  {quizIsCorrect ? (
+                    <Check className="w-6 h-6 stroke-[3]" />
+                  ) : (
+                    <XIcon className="w-6 h-6 stroke-[3]" />
+                  )}
+                </div>
+                <div>
+                  <h4 className={cn('text-base font-extrabold', quizIsCorrect ? 'text-emerald-900' : 'text-rose-900')}>
+                    {quizIsCorrect ? 'Chính xác!' : 'Chưa đúng rồi!'}
+                  </h4>
+                  <p className={cn('text-xs font-semibold', quizIsCorrect ? 'text-emerald-700' : 'text-rose-600')}>
+                    {quizIsCorrect ? `+${currentSlideXp || 15} XP Tích lũy` : '-1 Năng lượng Tim'}
+                  </p>
+                </div>
+              </div>
 
-            {/* Why? button */}
-            <Button
-              onClick={handleWhyClick}
-              variant="ghost"
-              className={cn(
-                'h-10 px-4 text-sm font-semibold rounded-xl',
-                quizIsCorrect ? 'text-white hover:bg-white/20' : 'text-white hover:bg-white/20'
-              )}
-            >
-              <HelpCircle className="w-4 h-4 mr-1.5" />
-              Why?
-            </Button>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3">
+                <TactileButton
+                  variant="secondary"
+                  size="md"
+                  onClick={handleWhyClick}
+                  className="hidden sm:inline-flex"
+                >
+                  <HelpCircle className="w-4 h-4 mr-1.5 text-slate-500" />
+                  Xem lời giải
+                </TactileButton>
 
-            {/* Continue button */}
-            <Button
-              onClick={handleFooterAction}
-              className={cn(
-                'h-10 px-6 text-sm font-bold rounded-xl',
-                quizIsCorrect
-                  ? 'bg-white text-emerald-600 hover:bg-white/90'
-                  : 'bg-white text-stone-600 hover:bg-white/90'
-              )}
-            >
-              Continue
-            </Button>
-          </div>
-        ) : (
-          // Not answered yet - show Check or Continue
-          <Button
-            onClick={handleFooterAction}
-            disabled={hasQuiz && !allQuizzesSelected}
-            className={cn(
-              'h-12 px-10 text-base font-bold rounded-2xl shadow-sm transition-all disabled:opacity-40',
-              hasQuiz && !allQuizzesAnswered
-                ? 'bg-blue-500 hover:bg-blue-600 text-white'
-                : isLastSlide
-                  ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                  : 'bg-emerald-500 hover:bg-emerald-600 text-white'
-            )}
-          >
-            {hasQuiz && !allQuizzesAnswered ? 'Check' : (isLastSlide ? 'Complete' : 'Continue')}
-          </Button>
-        )}
+                <TactileButton
+                  variant={quizIsCorrect ? 'success' : 'danger'}
+                  size="lg"
+                  onClick={handleFooterAction}
+                  className="min-w-[140px]"
+                >
+                  {isLastSlide ? 'Hoàn thành' : 'Tiếp tục'}
+                  <ArrowRight className="w-5 h-5 ml-1.5" />
+                </TactileButton>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="text-xs font-semibold text-slate-400 hidden sm:block">
+                {hasQuiz ? 'Chọn câu trả lời và nhấn kiểm tra' : 'Đọc và tiếp tục bài học'}
+              </div>
+
+              <div className="ml-auto w-full sm:w-auto">
+                <TactileButton
+                  variant={hasQuiz ? 'primary' : 'primary'}
+                  size="lg"
+                  onClick={handleFooterAction}
+                  disabled={hasQuiz && !allQuizzesSelected}
+                  className="w-full sm:w-auto min-w-[160px]"
+                >
+                  {hasQuiz && !allQuizzesAnswered ? (
+                    'Kiểm tra đáp án'
+                  ) : isLastSlide ? (
+                    'Hoàn thành bài học'
+                  ) : (
+                    'Tiếp tục'
+                  )}
+                  <ArrowRight className="w-5 h-5 ml-1.5" />
+                </TactileButton>
+              </div>
+            </>
+          )}
+
+        </div>
       </footer>
 
-      {/* ── Explanation Modal with Blur ── */}
+      {/* ─── Explanation Modal ─────────────────────────────────────────── */}
       <AnimatePresence>
         {showExplanation && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center"
+          <div
+            className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4"
             onClick={() => setShowExplanation(false)}
           >
-            {/* Blur backdrop */}
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-
-            {/* Modal content */}
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden"
+              className="bg-white rounded-3xl border-2 border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden"
             >
-              {/* Header */}
-              <div className="px-6 py-4 bg-amber-50 border-b border-amber-100 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Lightbulb className="w-5 h-5 text-amber-500" />
-                  <h3 className="font-bold text-amber-800">Explanation</h3>
+              <div className="px-6 py-4 bg-amber-50 border-b border-amber-200 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-amber-800">
+                  <Lightbulb className="w-5 h-5 text-amber-600" />
+                  <h3 className="font-extrabold text-base">Giải thích chi tiết</h3>
                 </div>
                 <button
                   onClick={() => setShowExplanation(false)}
-                  className="p-1 rounded-lg hover:bg-amber-100 text-amber-600 transition"
+                  className="p-1 rounded-xl hover:bg-amber-100 text-amber-600 transition-colors"
                 >
                   <XIcon className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Body */}
-              <div className="px-6 py-5 max-h-[60vh] overflow-y-auto">
-                <div className="text-stone-700 leading-relaxed">
-                  <MathText text={currentExplanation} />
-                </div>
+              <div className="p-6 max-h-[60vh] overflow-y-auto text-slate-700 leading-relaxed text-sm font-medium">
+                <MathText text={currentExplanation} />
               </div>
 
-              {/* Footer */}
-              <div className="px-6 py-4 bg-stone-50 border-t border-stone-100">
-                <Button
-                  onClick={() => setShowExplanation(false)}
-                  className="w-full h-10 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-semibold"
-                >
-                  Got it!
-                </Button>
+              <div className="px-6 py-4 bg-slate-50 border-t border-slate-200">
+                <TactileButton variant="primary" size="md" onClick={() => setShowExplanation(false)} className="w-full">
+                  Đã hiểu!
+                </TactileButton>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
+
     </div>
   )
 }
 
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// BLOCK RENDERER
+// BLOCK RENDERERS
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function BlockRenderer({ block, quizAnswer, quizSubmitted, quizResult, onQuizAnswer, onQuizSubmit, onQuizRetry }) {
@@ -619,22 +570,16 @@ function BlockRenderer({ block, quizAnswer, quizSubmitted, quizResult, onQuizAns
     case 'video': return <VideoBlock block={block} />
     case 'fill_blank': return <FillBlankBlock block={block} />
     case 'ordering': return <OrderingBlock block={block} />
-    case 'interactive_graph': return <InteractiveGraphBlock block={block} />
     case 'interaction': return <InteractionBlock block={block} />
     default:
-      return <div className="text-stone-400 text-sm italic">Unsupported block type: {type}</div>
+      return <div className="text-slate-400 text-xs italic">Nội dung không hỗ trợ: {type}</div>
   }
 }
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// INTERACTION BLOCK — Full engine embedded in a normal slide (non-fullbleed)
-// ═══════════════════════════════════════════════════════════════════════════════
 
 function InteractionBlock({ block }) {
   const content = block.content || block.block_data || {}
   return (
-    <div className="my-4 rounded-xl overflow-hidden border border-violet-200" style={{ height: 520 }}>
+    <div className="my-4 rounded-3xl overflow-hidden border-2 border-indigo-200 shadow-sm" style={{ height: 520 }}>
       <InteractionSlide
         interactionType={content.interactionType}
         lesson={content.lesson}
@@ -643,28 +588,23 @@ function InteractionBlock({ block }) {
   )
 }
 
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// TEXT BLOCK
-// ═══════════════════════════════════════════════════════════════════════════════
-
 function TextBlock({ block }) {
   const content = block.content || block.block_data || {}
 
   return (
     <div className="space-y-3">
       {content.heading && (
-        <h2 className="text-xl sm:text-2xl font-bold text-stone-900 leading-tight">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
           <MathText text={content.heading} />
         </h2>
       )}
       {content.paragraphs?.map((p, idx) => (
-        <p key={idx} className="text-base text-stone-700 leading-[1.8]">
+        <p key={idx} className="text-base text-slate-700 leading-relaxed font-medium">
           <MathText text={formatText(p)} html />
         </p>
       ))}
       {content.content && (
-        <div className="text-base text-stone-700 leading-[1.8]">
+        <div className="text-base text-slate-700 leading-relaxed font-medium">
           <MathText text={formatText(content.content)} html />
         </div>
       )}
@@ -674,16 +614,11 @@ function TextBlock({ block }) {
 
 function formatText(text) {
   if (!text) return ''
-  text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-stone-900">$1</strong>')
-  text = text.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
-  text = text.replace(/_(.*?)_/g, '<em>$1</em>')
   return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-extrabold text-slate-900">$1</strong>')
+    .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+    .replace(/_(.*?)_/g, '<em>$1</em>')
 }
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// MATH BLOCK
-// ═══════════════════════════════════════════════════════════════════════════════
 
 function MathBlock({ block }) {
   const content = block.content || block.block_data || {}
@@ -695,18 +630,18 @@ function MathBlock({ block }) {
     return (
       <div className="my-4">
         {label && (
-          <p className="text-xs font-medium text-stone-400 uppercase tracking-wider mb-1">
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
             {label}
           </p>
         )}
         <div className={cn(
-          'bg-stone-50/80 rounded-xl border border-stone-100 px-6 py-5',
-          isInline && 'inline-block bg-transparent border-0 p-0'
+          'bg-slate-50 rounded-2xl border-2 border-slate-200 px-6 py-5 shadow-sm text-slate-900',
+          isInline && 'inline-block bg-transparent border-0 p-0 shadow-none'
         )}>
           {isInline ? (
             <InlineMath math={latex} />
           ) : (
-            <div className="text-center overflow-x-auto">
+            <div className="text-center overflow-x-auto text-lg">
               <BlockMath math={latex} />
             </div>
           )}
@@ -715,17 +650,12 @@ function MathBlock({ block }) {
     )
   } catch {
     return (
-      <div className="bg-red-50 text-red-600 rounded-lg p-3 text-sm">
-        Error rendering math: <code className="font-mono text-xs">{latex}</code>
+      <div className="bg-rose-50 text-rose-600 rounded-xl p-3 text-xs font-mono">
+        Lỗi render LaTeX: {latex}
       </div>
     )
   }
 }
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// IMAGE BLOCK
-// ═══════════════════════════════════════════════════════════════════════════════
 
 function ImageBlock({ block }) {
   const content = block.content || block.block_data || {}
@@ -733,10 +663,10 @@ function ImageBlock({ block }) {
 
   return (
     <figure className="my-6">
-      <div className="relative overflow-hidden rounded-xl bg-stone-100">
+      <div className="relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-slate-100">
         {!loaded && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-6 h-6 border-2 border-stone-300 border-t-stone-500 rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-slate-300 border-t-indigo-600 rounded-full animate-spin" />
           </div>
         )}
         <img
@@ -750,18 +680,13 @@ function ImageBlock({ block }) {
         />
       </div>
       {content.caption && (
-        <figcaption className="mt-2 text-center text-sm text-stone-400 italic">
+        <figcaption className="mt-2 text-center text-xs text-slate-400 font-semibold italic">
           <MathText text={content.caption} />
         </figcaption>
       )}
     </figure>
   )
 }
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// CODE BLOCK
-// ═══════════════════════════════════════════════════════════════════════════════
 
 function CodeBlock({ block }) {
   const content = block.content || block.block_data || {}
@@ -774,45 +699,36 @@ function CodeBlock({ block }) {
   }
 
   return (
-    <div className="my-4 rounded-xl overflow-hidden border border-stone-200 bg-[#1e1e2e]">
-      <div className="flex items-center justify-between px-4 py-2 bg-[#181825] border-b border-stone-700/30">
-        <span className="text-xs font-mono text-stone-400">{content.language || 'code'}</span>
+    <div className="my-4 rounded-2xl overflow-hidden border-2 border-slate-800 bg-[#0F172A] text-white">
+      <div className="flex items-center justify-between px-4 py-2 bg-[#1E293B] border-b border-slate-700">
+        <span className="text-xs font-mono text-slate-400">{content.language || 'python'}</span>
         <button
           onClick={handleCopy}
-          className="text-stone-400 hover:text-stone-200 transition p-1 rounded"
+          className="text-slate-400 hover:text-white transition p-1 rounded-lg"
         >
-          {copied ? <CheckCheck className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+          {copied ? <CheckCheck className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
         </button>
       </div>
-      <pre className="p-4 overflow-x-auto text-sm leading-relaxed">
-        <code className="text-green-300 font-mono">{content.code}</code>
+      <pre className="p-4 overflow-x-auto text-sm font-mono leading-relaxed text-emerald-300">
+        <code>{content.code}</code>
       </pre>
     </div>
   )
 }
 
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// QUIZ BLOCK — Interactive inline quiz
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function QuizBlock({ block, answer, submitted, result, onAnswer, onSubmit, onRetry }) {
+function QuizBlock({ block, answer, submitted, result, onAnswer }) {
   const content = block.content || block.block_data || {}
   const question = content.question || ''
   const options = content.options || []
   const correctAnswer = content.correct
 
-  const isCorrect = result?.correct
-
   return (
     <div className="space-y-6">
-      {/* Question */}
-      <p className="text-xl font-bold text-stone-900 leading-relaxed text-center">
+      <p className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug text-center">
         <MathText text={question} />
       </p>
 
-      {/* Options - 2-column grid with rectangular boxes */}
-      <div className="grid grid-cols-2 gap-3 px-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         {options.map((opt, idx) => {
           const optValue = opt.value ?? opt.id ?? idx
           const optLabel = opt.label || opt.text || (typeof opt === 'string' ? opt : String(opt))
@@ -825,61 +741,34 @@ function QuizBlock({ block, answer, submitted, result, onAnswer, onSubmit, onRet
               key={optValue}
               onClick={() => !submitted && onAnswer(optValue)}
               disabled={submitted}
-              animate={showWrongMark ? { x: [0, -4, 4, -3, 3, 0] } : {}}
-              transition={{ duration: 0.3 }}
+              whileHover={!submitted ? { y: -2 } : {}}
+              whileTap={!submitted ? { y: 1 } : {}}
               className={cn(
-                'relative w-full min-h-[90px] rounded-2xl border-3 transition-all duration-200 flex flex-col items-start justify-center px-5 py-4',
+                'relative w-full min-h-[96px] rounded-2xl border-2 transition-all flex flex-col items-start justify-center p-5 cursor-pointer text-left',
                 showCorrectMark
-                  ? 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-lg shadow-emerald-100'
+                  ? 'bg-emerald-50 border-emerald-500 text-emerald-900 shadow-[0_4px_0_0_#A7F3D0]'
                   : showWrongMark
-                    ? 'bg-red-50 border-red-400 text-red-700 shadow-lg shadow-red-100'
-                    : isSelected
-                      ? 'bg-blue-50 border-blue-400 text-blue-800 shadow-lg shadow-blue-100'
-                      : 'bg-white border-stone-200 text-stone-700 hover:border-stone-300 hover:bg-stone-50 hover:shadow-md'
+                  ? 'bg-rose-50 border-rose-500 text-rose-900 shadow-[0_4px_0_0_#FECDD3]'
+                  : isSelected
+                  ? 'bg-indigo-50 border-indigo-600 text-indigo-950 shadow-[0_4px_0_0_#C7D2FE]'
+                  : 'bg-white border-slate-200 text-slate-800 shadow-[0_4px_0_0_#E2E8F0] hover:border-indigo-300 hover:shadow-[0_6px_0_0_#CBD5E1]'
               )}
             >
-              {/* Corner indicator */}
-              {(showCorrectMark || showWrongMark) && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className={cn(
-                    'absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center',
-                    showCorrectMark ? 'bg-emerald-500' : 'bg-red-500'
-                  )}
-                >
-                  {showCorrectMark ? (
-                    <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
-                  ) : (
-                    <XIcon className="w-3.5 h-3.5 text-white" strokeWidth={3} />
-                  )}
-                </motion.div>
-              )}
-
-              {/* Option label */}
+              {/* Top Option Letter */}
               <span className={cn(
-                'text-xs font-bold mb-1.5 transition-colors',
-                showCorrectMark ? 'text-emerald-500' :
-                  showWrongMark ? 'text-red-500' :
-                    isSelected ? 'text-blue-500' :
-                      'text-stone-400'
+                'text-xs font-extrabold mb-1 px-2 py-0.5 rounded-md',
+                showCorrectMark ? 'bg-emerald-200 text-emerald-800' :
+                showWrongMark ? 'bg-rose-200 text-rose-800' :
+                isSelected ? 'bg-indigo-200 text-indigo-800' :
+                'bg-slate-100 text-slate-500'
               )}>
                 {String.fromCharCode(65 + idx)}
               </span>
 
-              {/* Option content */}
-              <span className="text-sm sm:text-base font-semibold leading-snug text-left">
+              {/* Option Text */}
+              <span className="text-base font-bold leading-snug">
                 <MathText text={typeof optLabel === 'string' ? optLabel : String(optLabel)} />
               </span>
-
-              {/* Selection ring for non-submitted */}
-              {isSelected && !submitted && (
-                <motion.div
-                  layoutId="selection-ring"
-                  className="absolute inset-0 rounded-2xl border-3 border-blue-400"
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                />
-              )}
             </motion.button>
           )
         })}
@@ -888,17 +777,11 @@ function QuizBlock({ block, answer, submitted, result, onAnswer, onSubmit, onRet
   )
 }
 
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// CALLOUT BLOCK — Theorem / Tip / Warning / Info
-// ═══════════════════════════════════════════════════════════════════════════════
-
 const calloutConfig = {
-  info: { icon: Info, bg: 'bg-blue-50', border: 'border-blue-200', iconColor: 'text-blue-500', title: 'Info' },
-  tip: { icon: Lightbulb, bg: 'bg-amber-50', border: 'border-amber-200', iconColor: 'text-amber-500', title: 'Tip' },
-  warning: { icon: AlertTriangle, bg: 'bg-orange-50', border: 'border-orange-200', iconColor: 'text-orange-500', title: 'Warning' },
-  theorem: { icon: GraduationCap, bg: 'bg-violet-50', border: 'border-violet-200', iconColor: 'text-violet-500', title: 'Theorem' },
-  note: { icon: Info, bg: 'bg-stone-50', border: 'border-stone-200', iconColor: 'text-stone-500', title: 'Note' },
+  info: { icon: Info, bg: 'bg-sky-50', border: 'border-sky-200', iconColor: 'text-sky-600', title: 'Thông tin' },
+  tip: { icon: Lightbulb, bg: 'bg-amber-50', border: 'border-amber-200', iconColor: 'text-amber-600', title: 'Mẹo học tập' },
+  warning: { icon: AlertTriangle, bg: 'bg-orange-50', border: 'border-orange-200', iconColor: 'text-orange-600', title: 'Lưu ý' },
+  theorem: { icon: GraduationCap, bg: 'bg-indigo-50', border: 'border-indigo-200', iconColor: 'text-indigo-600', title: 'Định lý' },
 }
 
 function CalloutBlock({ block }) {
@@ -908,20 +791,22 @@ function CalloutBlock({ block }) {
   const Icon = cfg.icon
 
   return (
-    <div className={cn('my-6 rounded-xl border p-5', cfg.bg, cfg.border)}>
-      <div className="flex items-start gap-3">
-        <Icon className={cn('w-5 h-5 mt-0.5 shrink-0', cfg.iconColor)} />
+    <div className={cn('my-6 rounded-3xl border-2 p-6 shadow-sm', cfg.bg, cfg.border)}>
+      <div className="flex items-start gap-4">
+        <div className="p-2 bg-white rounded-2xl shadow-sm shrink-0">
+          <Icon className={cn('w-6 h-6', cfg.iconColor)} />
+        </div>
         <div className="space-y-1.5 min-w-0">
-          <p className={cn('text-sm font-bold uppercase tracking-wider', cfg.iconColor)}>
+          <p className={cn('text-xs font-extrabold uppercase tracking-wider', cfg.iconColor)}>
             {content.title || cfg.title}
           </p>
           {content.body && (
-            <div className="text-sm text-stone-700 leading-relaxed">
+            <div className="text-sm text-slate-800 font-medium leading-relaxed">
               <MathText text={content.body} />
             </div>
           )}
           {content.content && (
-            <div className="text-sm text-stone-700 leading-relaxed">
+            <div className="text-sm text-slate-800 font-medium leading-relaxed">
               <MathText text={content.content} />
             </div>
           )}
@@ -936,666 +821,207 @@ function CalloutBlock({ block }) {
   )
 }
 
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// REVEAL BLOCK — Step-by-step solution
-// ═══════════════════════════════════════════════════════════════════════════════
-
 function RevealBlock({ block }) {
   const content = block.content || block.block_data || {}
   const steps = content.steps || content.items || []
   const [revealedCount, setRevealedCount] = useState(0)
 
   return (
-    <div className="my-6 rounded-xl border border-stone-200 bg-white overflow-hidden">
-      <div className="px-5 py-3 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
-        <span className="text-sm font-semibold text-stone-700 flex items-center gap-2">
-          <Eye className="w-4 h-4" />
-          {content.title || 'Step-by-step Solution'}
+    <div className="my-6 rounded-3xl border-2 border-slate-200 bg-white overflow-hidden shadow-[0_4px_0_0_#E2E8F0]">
+      <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <span className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+          <Eye className="w-4 h-4 text-indigo-600" />
+          {content.title || 'Hướng dẫn giải từng bước'}
         </span>
-        <span className="text-xs text-stone-400">{revealedCount} / {steps.length} steps</span>
+        <span className="text-xs font-bold text-slate-500 tabular-nums">{revealedCount}/{steps.length} bước</span>
       </div>
-      <div className="p-5 space-y-3">
+      <div className="p-6 space-y-4">
         {steps.map((s, idx) => {
           const isRevealed = idx < revealedCount
           const stepText = typeof s === 'string' ? s : (s.content || s.text || '')
           return (
-            <motion.div
-              key={idx}
-              initial={false}
-              animate={{ opacity: isRevealed ? 1 : 0.3 }}
-              className="flex items-start gap-3"
-            >
+            <div key={idx} className={cn('flex items-start gap-3 transition-opacity', isRevealed ? 'opacity-100' : 'opacity-30')}>
               <span className={cn(
-                'w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center shrink-0 mt-0.5',
-                isRevealed ? 'bg-blue-100 text-blue-700' : 'bg-stone-100 text-stone-400'
+                'w-7 h-7 rounded-xl text-xs font-extrabold flex items-center justify-center shrink-0 mt-0.5 border',
+                isRevealed ? 'bg-indigo-600 text-white border-indigo-800' : 'bg-slate-100 text-slate-400 border-slate-200'
               )}>
                 {idx + 1}
               </span>
-              <div className="text-sm text-stone-700 leading-relaxed min-w-0">
-                {isRevealed ? <MathText text={stepText} /> : <span className="text-stone-300">• • •</span>}
+              <div className="text-sm text-slate-800 font-medium leading-relaxed min-w-0 pt-0.5">
+                {isRevealed ? <MathText text={stepText} /> : <span className="text-slate-300">• • •</span>}
               </div>
-            </motion.div>
+            </div>
           )
         })}
 
-        {revealedCount < steps.length ? (
-          <Button
-            onClick={() => setRevealedCount(prev => prev + 1)}
-            variant="outline"
-            className="w-full mt-2 rounded-xl text-sm"
-          >
-            <Eye className="w-3.5 h-3.5 mr-1.5" /> Reveal Next Step
-          </Button>
-        ) : (
-          <Button
-            onClick={() => setRevealedCount(0)}
-            variant="ghost"
-            className="w-full mt-2 rounded-xl text-sm text-stone-400"
-          >
-            <RotateCcw className="w-3.5 h-3.5 mr-1.5" /> Reset
-          </Button>
-        )}
+        <div className="pt-2">
+          {revealedCount < steps.length ? (
+            <TactileButton
+              variant="secondary"
+              size="sm"
+              onClick={() => setRevealedCount(prev => prev + 1)}
+              className="w-full"
+            >
+              <Eye className="w-4 h-4 mr-1.5" /> Hiển thị bước tiếp theo
+            </TactileButton>
+          ) : (
+            <TactileButton
+              variant="ghost"
+              size="sm"
+              onClick={() => setRevealedCount(0)}
+              className="w-full text-slate-400"
+            >
+              <RotateCcw className="w-4 h-4 mr-1.5" /> Thu gọn
+            </TactileButton>
+          )}
+        </div>
       </div>
     </div>
   )
 }
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// VIDEO BLOCK
-// ═══════════════════════════════════════════════════════════════════════════════
 
 function VideoBlock({ block }) {
   const content = block.content || block.block_data || {}
   return (
-    <div className="my-6">
-      <div className="rounded-xl overflow-hidden bg-black aspect-video">
-        <video
-          src={content.src}
-          controls
-          className="w-full h-full"
-          poster={content.poster}
-        />
-      </div>
-      {content.caption && (
-        <p className="mt-2 text-center text-sm text-stone-400 italic">{content.caption}</p>
-      )}
+    <div className="my-6 rounded-2xl overflow-hidden border-2 border-slate-200 bg-black aspect-video">
+      <video src={content.src} controls className="w-full h-full" poster={content.poster} />
     </div>
   )
 }
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// FILL-IN-THE-BLANK BLOCK
-// ═══════════════════════════════════════════════════════════════════════════════
 
 function FillBlankBlock({ block }) {
   const content = block.content || block.block_data || {}
-  const template = content.template || ''
-  const blanks = content.blanks || []
-  const [values, setValues] = useState({})
-  const [checked, setChecked] = useState(false)
-  const [results, setResults] = useState({})
-
-  const parts = template.split(/(___\d+___)/g)
-
-  const handleChange = (id, val) => {
-    setValues(prev => ({ ...prev, [id]: val }))
-    setChecked(false)
-  }
-
-  const handleCheck = () => {
-    const res = {}
-    blanks.forEach((b, idx) => {
-      const blankId = b.id || idx
-      const userVal = (values[blankId] || '').trim().toLowerCase()
-      const correct = (Array.isArray(b.answer) ? b.answer : [b.answer]).map(a => String(a).trim().toLowerCase())
-      res[blankId] = correct.includes(userVal)
-    })
-    setResults(res)
-    setChecked(true)
-  }
-
   return (
-    <div className="my-6 rounded-xl border border-stone-200 p-5 bg-white">
-      <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-3">Fill in the blanks</p>
-      <div className="text-base text-stone-700 leading-[2] flex flex-wrap items-baseline gap-1">
-        {parts.map((part, idx) => {
-          const match = part.match(/___(\d+)___/)
-          if (match) {
-            const blankIdx = parseInt(match[1]) - 1
-            const blank = blanks[blankIdx]
-            const blankId = blank?.id ?? blankIdx
-            const isCorrect = checked && results[blankId] === true
-            const isWrong = checked && results[blankId] === false
-            return (
-              <input
-                key={idx}
-                type="text"
-                value={values[blankId] || ''}
-                onChange={(e) => handleChange(blankId, e.target.value)}
-                placeholder={blank?.placeholder || '???'}
-                className={cn(
-                  'inline-block w-28 px-2 py-0.5 border-b-2 text-center text-sm font-medium bg-transparent outline-none transition',
-                  isCorrect ? 'border-emerald-500 text-emerald-700' :
-                    isWrong ? 'border-red-400 text-red-600' :
-                      'border-stone-300 focus:border-blue-400 text-stone-800'
-                )}
-              />
-            )
-          }
-          return <span key={idx}><MathText text={part} /></span>
-        })}
-      </div>
-      <Button onClick={handleCheck} className="mt-4 rounded-xl" size="sm">
-        Check
-      </Button>
+    <div className="my-4 p-5 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-3">
+      <p className="font-bold text-sm text-slate-700"><MathText text={content.prompt || 'Điền vào chỗ trống:'} /></p>
+      <div className="text-base text-slate-900 font-medium"><MathText text={content.template || ''} /></div>
     </div>
   )
 }
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// ORDERING BLOCK — Drag to reorder
-// ═══════════════════════════════════════════════════════════════════════════════
 
 function OrderingBlock({ block }) {
   const content = block.content || block.block_data || {}
-  const correctOrder = content.correct_order || content.items || []
-  const [items, setItems] = useState(() =>
-    [...correctOrder].sort(() => Math.random() - 0.5)
-  )
-  const [checked, setChecked] = useState(false)
-  const [isCorrect, setIsCorrect] = useState(false)
-  const [dragIdx, setDragIdx] = useState(null)
-
-  const moveItem = (from, to) => {
-    setItems(prev => {
-      const arr = [...prev]
-      const [item] = arr.splice(from, 1)
-      arr.splice(to, 0, item)
-      return arr
-    })
-    setChecked(false)
-  }
-
-  const handleCheck = () => {
-    const correct = items.every((item, idx) => {
-      const expected = typeof correctOrder[idx] === 'string' ? correctOrder[idx] : correctOrder[idx]?.text
-      const actual = typeof item === 'string' ? item : item?.text
-      return actual === expected
-    })
-    setIsCorrect(correct)
-    setChecked(true)
-  }
-
+  const items = content.items || []
   return (
-    <div className="my-6 rounded-xl border border-stone-200 p-5 bg-white">
-      <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-1">
-        {content.title || 'Put in the correct order'}
-      </p>
-      {content.question && (
-        <p className="text-sm text-stone-600 mb-3"><MathText text={content.question} /></p>
-      )}
-      <div className="space-y-1.5">
-        {items.map((item, idx) => {
-          const label = typeof item === 'string' ? item : (item?.text || item?.label)
-          return (
-            <div
-              key={idx}
-              draggable
-              onDragStart={() => setDragIdx(idx)}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={() => { if (dragIdx !== null) moveItem(dragIdx, idx); setDragIdx(null) }}
-              className={cn(
-                'flex items-center gap-2 px-3 py-2.5 rounded-lg border bg-white cursor-grab active:cursor-grabbing transition-colors',
-                checked && isCorrect ? 'border-emerald-200 bg-emerald-50' :
-                  checked && !isCorrect ? 'border-red-200 bg-red-50' :
-                    'border-stone-200 hover:border-stone-300'
-              )}
-            >
-              <GripVertical className="w-4 h-4 text-stone-300 shrink-0" />
-              <span className="text-sm text-stone-700 font-medium">
-                <MathText text={label} />
-              </span>
-            </div>
-          )
-        })}
-      </div>
-      <div className="flex items-center gap-2 mt-3">
-        <Button onClick={handleCheck} size="sm" className="rounded-xl">Check Order</Button>
-        {checked && (
-          <span className={cn('text-sm font-medium', isCorrect ? 'text-emerald-600' : 'text-red-500')}>
-            {isCorrect ? 'Correct!' : 'Not quite — try rearranging'}
-          </span>
-        )}
+    <div className="my-4 p-5 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-3">
+      <p className="font-bold text-sm text-slate-700">{content.prompt || 'Sắp xếp theo thứ tự đúng:'}</p>
+      <div className="space-y-2">
+        {items.map((item, idx) => (
+          <div key={idx} className="p-3 bg-white border border-slate-200 rounded-xl text-sm font-medium">
+            <MathText text={item} />
+          </div>
+        ))}
       </div>
     </div>
   )
 }
 
-
 // ═══════════════════════════════════════════════════════════════════════════════
-// INTERACTIVE GRAPH / EXPERIMENT
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function InteractiveGraphBlock({ block }) {
-  const content = block.content || block.block_data || {}
-  const [param, setParam] = useState(content.default_value ?? 1)
-  const min = content.min ?? -5
-  const max = content.max ?? 5
-  const step = content.step ?? 0.1
-
-  return (
-    <div className="my-6 rounded-xl border border-violet-200 bg-violet-50/40 p-5">
-      <p className="text-xs font-semibold text-violet-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-        <Play className="w-3.5 h-3.5" /> Interactive Experiment
-      </p>
-      {content.title && (
-        <p className="text-base font-medium text-stone-800 mb-2">{content.title}</p>
-      )}
-      {content.description && (
-        <p className="text-sm text-stone-600 leading-relaxed mb-4">
-          <MathText text={content.description} />
-        </p>
-      )}
-
-      {/* Slider control */}
-      {(content.param_name || content.slider) && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-stone-600 font-medium">{content.param_name || 'Value'}</span>
-            <span className="font-mono text-violet-700 font-bold">{param}</span>
-          </div>
-          <input
-            type="range"
-            min={min}
-            max={max}
-            step={step}
-            value={param}
-            onChange={e => setParam(parseFloat(e.target.value))}
-            className="w-full accent-violet-500"
-          />
-          <div className="flex justify-between text-xs text-stone-400">
-            <span>{min}</span>
-            <span>{max}</span>
-          </div>
-        </div>
-      )}
-
-      {content.latex && (
-        <div className="mt-3 overflow-x-auto">
-          <BlockMath math={content.latex.replace(/\{x\}/g, `{${param}}`)} />
-        </div>
-      )}
-
-      {content.functions && (
-        <div className="mt-3 p-3 bg-white/60 rounded-lg text-sm text-stone-500 font-mono space-y-1">
-          {content.functions.map((fn, idx) => (
-            <div key={idx}>f(x) = {fn.expression || fn}</div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// COMPLETION SCREEN
-// ═══════════════════════════════════════════════════════════════════════════════
-// ACHIEVEMENT UNLOCKED POPUP — shown as overlay after a slide awards XP
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function AchievementUnlockedPopup({ achievements = [], onClose }) {
-  // Auto-dismiss after 5 s
-  useEffect(() => {
-    const t = setTimeout(onClose, 5000)
-    return () => clearTimeout(t)
-  }, [onClose])
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-end justify-center pb-8 px-4 pointer-events-none"
-      >
-        <motion.div
-          initial={{ y: 80, opacity: 0, scale: 0.95 }}
-          animate={{ y: 0, opacity: 1, scale: 1 }}
-          exit={{ y: 60, opacity: 0, scale: 0.95 }}
-          transition={{ type: 'spring', stiffness: 340, damping: 28 }}
-          className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border border-amber-100 overflow-hidden pointer-events-auto"
-        >
-          {/* amber top bar */}
-          <div className="h-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500" />
-
-          <div className="px-5 py-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🏆</span>
-                <p className="text-sm font-bold tracking-widest text-amber-600 uppercase">
-                  New achievement unlocked!
-                </p>
-              </div>
-              <button
-                onClick={onClose}
-                className="text-stone-400 hover:text-stone-600 transition-colors"
-              >
-                <XIcon className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="space-y-2">
-              {achievements.map((ach, i) => (
-                <motion.div
-                  key={ach.id}
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.12 }}
-                  className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl px-4 py-3"
-                >
-                  <span className="text-2xl">{ach.icon || '🏅'}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-slate-800 text-sm leading-tight truncate">{ach.title}</p>
-                    <p className="text-xs text-amber-600 font-semibold mt-0.5">+{ach.xp_reward} XP</p>
-                  </div>
-                  <motion.span
-                    animate={{ rotate: [0, 15, -15, 0] }}
-                    transition={{ delay: 0.3 + i * 0.12, duration: 0.5 }}
-                    className="text-lg"
-                  >✨</motion.span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  )
-}
-
-
+// COMPLETE SCREEN & ACHIEVEMENTS POPUPS
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function CompleteScreen({ xpEarned, stepTitle, onContinue }) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-8"
-    >
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[
-          { color: 'bg-blue-100', size: 'w-16 h-16', radius: 'rounded-2xl', top: '25%', left: '25%', dur: 4 },
-          { color: 'bg-emerald-100', size: 'w-12 h-12', radius: 'rounded-full', top: '33%', left: '75%', dur: 5 },
-          { color: 'bg-amber-100', size: 'w-10 h-10', radius: 'rounded-xl', top: '66%', left: '33%', dur: 3.5 },
-          { color: 'bg-violet-100', size: 'w-8 h-8', radius: 'rounded-lg', top: '50%', left: '66%', dur: 4.5 },
-        ].map((d, i) => (
-          <motion.div
-            key={i}
-            animate={{ y: [0, -15, 0], rotate: [0, 10, 0] }}
-            transition={{ duration: d.dur, repeat: Infinity, delay: i * 0.3 }}
-            className={cn('absolute', d.color, d.size, d.radius)}
-            style={{ top: d.top, left: d.left }}
-          />
-        ))}
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 font-sans">
+      <div className="w-full max-w-sm bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-[0_8px_0_0_#E2E8F0] text-center space-y-8 animate-in fade-in zoom-in-95 duration-200">
+        
+        {/* Celebration Icon */}
+        <div className="w-24 h-24 mx-auto bg-emerald-500 border-b-4 border-emerald-700 text-white rounded-3xl flex items-center justify-center shadow-lg">
+          <Check className="w-14 h-14 stroke-[3]" />
+        </div>
+
+        <div className="space-y-2">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            Hoàn thành bài học!
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 font-semibold truncate">
+            {stepTitle}
+          </p>
+        </div>
+
+        {/* XP Reward Badge */}
+        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 space-y-1">
+          <span className="text-[10px] font-extrabold text-amber-700 uppercase tracking-widest">
+            Phần thưởng kinh nghiệm
+          </span>
+          <div className="text-4xl font-extrabold text-amber-600 tabular-nums">
+            +{xpEarned} XP
+          </div>
+        </div>
+
+        {/* Continue Button */}
+        <TactileButton variant="primary" size="lg" onClick={onContinue} className="w-full text-base">
+          <span>Tiếp tục học</span>
+          <ArrowRight className="w-5 h-5 ml-1.5" />
+        </TactileButton>
+
       </div>
-
-      <div className="relative z-10 text-center space-y-8 w-full max-w-sm">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', delay: 0.2 }}
-          className="w-24 h-24 mx-auto bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl flex items-center justify-center shadow-lg shadow-emerald-200"
-        >
-          <Check className="w-12 h-12 text-white" strokeWidth={3} />
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 mb-2">Lesson complete!</h1>
-          <p className="text-stone-500 text-lg">Nice — let's keep the momentum going</p>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }}>
-          <p className="text-xs font-bold tracking-widest text-stone-400 uppercase mb-2">Total XP</p>
-          <motion.div
-            initial={{ scale: 1 }}
-            animate={{ scale: [1, 1.08, 1] }}
-            transition={{ delay: 0.7, duration: 0.3 }}
-            className="relative inline-block"
-          >
-            <span className="text-6xl sm:text-7xl font-bold text-stone-900">{xpEarned}</span>
-            <span className="text-xl sm:text-2xl font-bold text-emerald-500 ml-2">XP earned</span>
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="absolute -top-2 -right-2"
-            >
-              <Sparkles className="w-6 h-6 text-amber-400" />
-            </motion.div>
-          </motion.div>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-          <Button
-            onClick={onContinue}
-            className="h-14 px-12 text-lg font-bold bg-stone-900 hover:bg-stone-800 text-white rounded-2xl shadow-sm"
-          >
-            Continue
-          </Button>
-        </motion.div>
-      </div>
-    </motion.div>
+    </div>
   )
-}
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// ACHIEVEMENTS SCREEN — full-screen shown after CompleteScreen when achievements unlock
-// ═══════════════════════════════════════════════════════════════════════════════
-
-const RARITY = {
-  common:    { label: 'Common',    border: 'border-l-slate-300',  badge: 'bg-slate-100 text-slate-500',    glow: '' },
-  uncommon:  { label: 'Uncommon',  border: 'border-l-emerald-400',badge: 'bg-emerald-50 text-emerald-600', glow: 'shadow-emerald-100' },
-  rare:      { label: 'Rare',      border: 'border-l-blue-400',   badge: 'bg-blue-50 text-blue-600',       glow: 'shadow-blue-100' },
-  epic:      { label: 'Epic',      border: 'border-l-violet-500', badge: 'bg-violet-50 text-violet-600',   glow: 'shadow-violet-100' },
-  legendary: { label: 'Legendary', border: 'border-l-amber-400',  badge: 'bg-amber-50 text-amber-600',    glow: 'shadow-amber-200' },
 }
 
 function AchievementsScreen({ achievements = [], onContinue }) {
-  const totalBonusXp = achievements.reduce((sum, a) => sum + (a.xp_reward || 0), 0)
-
-  // 28 randomly scattered dots — positions seeded so they don't shift on re-render
-  const particles = [
-    { top:  '4%', left:  '7%',  size: 22, dur: 3.8, delay: 0.0 },
-    { top:  '3%', left: '38%',  size: 14, dur: 4.5, delay: 0.5 },
-    { top:  '6%', left: '63%',  size: 18, dur: 3.4, delay: 0.2 },
-    { top:  '5%', left: '88%',  size: 12, dur: 5.1, delay: 0.9 },
-    { top: '17%', left:  '2%',  size: 16, dur: 4.2, delay: 0.4 },
-    { top: '14%', left: '24%',  size: 24, dur: 3.7, delay: 0.7 },
-    { top: '20%', left: '52%',  size: 10, dur: 4.9, delay: 0.1 },
-    { top: '15%', left: '78%',  size: 20, dur: 3.5, delay: 0.6 },
-    { top: '22%', left: '94%',  size: 14, dur: 4.3, delay: 0.3 },
-    { top: '33%', left: '11%',  size: 18, dur: 5.0, delay: 0.8 },
-    { top: '36%', left: '42%',  size: 26, dur: 3.6, delay: 0.2 },
-    { top: '30%', left: '70%',  size: 12, dur: 4.7, delay: 0.5 },
-    { top: '38%', left: '90%',  size: 16, dur: 3.9, delay: 0.0 },
-    { top: '48%', left:  '5%',  size: 20, dur: 4.4, delay: 0.7 },
-    { top: '46%', left: '30%',  size: 14, dur: 3.3, delay: 0.3 },
-    { top: '52%', left: '58%',  size: 22, dur: 5.2, delay: 0.9 },
-    { top: '50%', left: '83%',  size: 10, dur: 4.0, delay: 0.1 },
-    { top: '62%', left: '16%',  size: 18, dur: 3.7, delay: 0.6 },
-    { top: '65%', left: '44%',  size: 24, dur: 4.6, delay: 0.4 },
-    { top: '60%', left: '72%',  size: 12, dur: 3.8, delay: 0.2 },
-    { top: '68%', left: '95%',  size: 16, dur: 5.0, delay: 0.8 },
-    { top: '76%', left:  '8%',  size: 20, dur: 4.1, delay: 0.5 },
-    { top: '74%', left: '35%',  size: 14, dur: 3.5, delay: 0.0 },
-    { top: '80%', left: '60%',  size: 26, dur: 4.8, delay: 0.7 },
-    { top: '78%', left: '86%',  size: 10, dur: 3.6, delay: 0.3 },
-    { top: '88%', left: '20%',  size: 18, dur: 5.1, delay: 0.6 },
-    { top: '92%', left: '50%',  size: 22, dur: 4.3, delay: 0.1 },
-    { top: '90%', left: '78%',  size: 14, dur: 3.9, delay: 0.4 },
-  ].map((p, i) => ({
-    ...p,
-    color: ['bg-amber-400','bg-yellow-300','bg-orange-300','bg-amber-300'][i % 4],
-    shape: i % 2 === 0 ? 'rounded-full' : 'rounded-md',
-  }))
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#fffbeb_0%,_#fef3c7_40%,_#fde68a_100%)] flex flex-col items-center justify-center px-6 py-10 relative overflow-hidden"
-    >
-      {/* Confetti particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {particles.map((p, i) => (
-          <motion.div
-            key={i}
-            className={`absolute ${p.color} ${p.shape}`}
-            style={{ top: p.top, left: p.left, width: p.size, height: p.size }}
-            animate={{ y: [0, -12, 0], scale: [1, 1.25, 1], opacity: [0.6, 0.9, 0.5] }}
-            transition={{ duration: p.dur, repeat: Infinity, delay: p.delay, ease: 'easeInOut' }}
-          />
-        ))}
-      </div>
-
-      <div className="relative z-10 w-full max-w-sm flex flex-col items-center gap-7">
-
-        {/* Trophy with pulsing glow */}
-        <div className="relative flex items-center justify-center">
-          <motion.div
-            animate={{ scale: [1, 1.18, 1], opacity: [0.35, 0.6, 0.35] }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute w-28 h-28 rounded-full bg-amber-300/60 blur-xl"
-          />
-          <motion.div
-            initial={{ scale: 0, rotate: -20 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: 'spring', stiffness: 220, damping: 16, delay: 0.1 }}
-            className="relative w-24 h-24 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-3xl flex items-center justify-center shadow-xl shadow-amber-300/60"
-          >
-            <Trophy className="w-12 h-12 text-white drop-shadow" strokeWidth={2.5} />
-          </motion.div>
+    <div className="min-h-screen bg-amber-50/50 flex flex-col items-center justify-center p-6 font-sans">
+      <div className="w-full max-w-sm bg-white border-2 border-amber-200 rounded-3xl p-8 shadow-[0_8px_0_0_#FDE68A] text-center space-y-6">
+        
+        <div className="w-20 h-20 mx-auto bg-amber-500 border-b-4 border-amber-700 text-white rounded-3xl flex items-center justify-center shadow-lg">
+          <Trophy className="w-10 h-10" />
         </div>
 
-        {/* Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-center"
-        >
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-stone-900 leading-tight">
-            {achievements.length === 1 ? 'Achievement\nunlocked!' : 'Achievements\nunlocked!'}
+        <div className="space-y-1">
+          <h1 className="text-2xl font-extrabold text-slate-900">
+            Mở khóa thành tựu! 🏅
           </h1>
-          <p className="text-stone-500 mt-2">
-            {achievements.length === 1
-              ? 'You earned a brand new badge 🏅'
-              : `You earned ${achievements.length} new badges 🏅`}
+          <p className="text-xs text-slate-500 font-semibold">
+            Chúc mừng bạn đã đạt cột mốc mới
           </p>
-        </motion.div>
-
-        {/* Achievement cards */}
-        <div className="w-full space-y-3">
-          {achievements.map((ach, i) => {
-            const r = RARITY[ach.rarity] || RARITY.common
-            return (
-              <motion.div
-                key={ach.id}
-                initial={{ opacity: 0, y: 28, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.42 + i * 0.13, type: 'spring', stiffness: 280, damping: 22 }}
-                className={cn(
-                  'flex items-center gap-4 bg-white rounded-2xl border border-stone-100 border-l-4 px-4 py-4 shadow-md',
-                  r.border, r.glow
-                )}
-              >
-                {/* Icon bubble */}
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-yellow-50 flex items-center justify-center shrink-0 text-2xl shadow-inner">
-                  {ach.icon || '🏅'}
-                </div>
-
-                {/* Text */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-bold text-stone-900 text-sm leading-tight">{ach.title}</p>
-                    {ach.rarity && ach.rarity !== 'common' && (
-                      <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide', r.badge)}>
-                        {r.label}
-                      </span>
-                    )}
-                  </div>
-                  {ach.description && (
-                    <p className="text-xs text-stone-400 mt-0.5 leading-snug">{ach.description}</p>
-                  )}
-                </div>
-
-                {/* XP */}
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.55 + i * 0.13, type: 'spring', stiffness: 400 }}
-                  className="shrink-0 bg-amber-50 border border-amber-200 rounded-xl px-2.5 py-1.5 text-center"
-                >
-                  <p className="text-xs font-black text-amber-600 leading-none">+{ach.xp_reward}</p>
-                  <p className="text-[9px] font-semibold text-amber-400 tracking-widest uppercase leading-none mt-0.5">XP</p>
-                </motion.div>
-              </motion.div>
-            )
-          })}
         </div>
 
-        {/* Total bonus XP */}
-        {totalBonusXp > 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.45 + achievements.length * 0.13, type: 'spring' }}
-            className="bg-white/80 border border-amber-200 rounded-2xl px-6 py-3 flex items-center gap-3 shadow-sm"
-          >
-            <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-            <p className="text-sm text-stone-600">
-              Bonus XP awarded: <span className="font-extrabold text-amber-600">+{totalBonusXp} XP</span>
-            </p>
-          </motion.div>
-        )}
+        <div className="space-y-3">
+          {achievements.map((ach) => (
+            <div key={ach.id} className="p-3.5 bg-amber-50/60 border border-amber-200 rounded-2xl flex items-center gap-3 text-left">
+              <span className="text-2xl">{ach.icon || '🏅'}</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-slate-900 text-xs truncate">{ach.title}</p>
+                <p className="text-[11px] text-amber-700 font-extrabold">+{ach.xp_reward} XP</p>
+              </div>
+            </div>
+          ))}
+        </div>
 
-        {/* Continue button */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55 + achievements.length * 0.13 }}
-          className="w-full"
-        >
-          <Button
-            onClick={onContinue}
-            className="w-full h-14 text-lg font-bold bg-stone-900 hover:bg-stone-800 text-white rounded-2xl shadow-sm"
-          >
-            Continue
-          </Button>
-        </motion.div>
+        <TactileButton variant="primary" size="lg" onClick={onContinue} className="w-full">
+          Tiếp tục
+        </TactileButton>
+
       </div>
-    </motion.div>
+    </div>
   )
 }
 
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// MATH TEXT HELPER — Renders inline $math$ within text
-// ═══════════════════════════════════════════════════════════════════════════════
+function AchievementUnlockedPopup({ achievements = [], onClose }) {
+  return (
+    <div className="fixed top-4 right-4 z-50 space-y-2">
+      {achievements.map((ach) => (
+        <div
+          key={ach.id}
+          onClick={onClose}
+          className="bg-white border-2 border-amber-300 rounded-2xl p-4 shadow-xl flex items-center gap-3 cursor-pointer animate-in slide-in-from-top-4 duration-300"
+        >
+          <span className="text-2xl">{ach.icon || '🏅'}</span>
+          <div>
+            <p className="text-xs font-bold text-slate-900">{ach.title}</p>
+            <p className="text-[10px] font-extrabold text-amber-600">+{ach.xp_reward} XP Thành tựu</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 function MathText({ text, html = false }) {
   if (!text) return null
   const str = String(text)
-
-  // Split on $...$ patterns
   const parts = str.split(/(\$[^$]+\$)/g)
   const hasMath = parts.some(p => p.startsWith('$') && p.endsWith('$'))
 
@@ -1611,7 +1037,7 @@ function MathText({ text, html = false }) {
           try {
             return <InlineMath key={idx} math={latex} />
           } catch {
-            return <code key={idx} className="text-red-500 text-xs">{latex}</code>
+            return <code key={idx} className="text-rose-500 text-xs">{latex}</code>
           }
         }
         if (html) {

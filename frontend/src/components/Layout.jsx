@@ -1,14 +1,15 @@
 import { useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Compass, User, Flame, Zap, Coins, Settings, LogOut, HelpCircle, Bell, ScrollText } from 'lucide-react'
+import { Home, Compass, User, Flame, Zap, Coins, Settings, LogOut, HelpCircle, Bell, ScrollText, Sparkles } from 'lucide-react'
 import { useAuthStore, useUIStore, useQuestStore } from '../lib/store'
 import Toast from './Toast'
 import AnimatedOutlet from './AnimatedOutlet'
 import { t } from '../lib/locale'
+import { GamifyBadge } from './ui/gamify-badge'
+import { TactileButton } from './ui/tactile-button'
 
 // shadcn/ui components
 import { Button } from './ui/button'
-import { Badge } from './ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import {
   DropdownMenu,
@@ -33,9 +34,9 @@ export default function Layout() {
   }, [user])
 
   const navItems = [
-    { path: '/', icon: Home, label: t.layout.nav.home },
-    { path: '/explore', icon: Compass, label: t.layout.nav.explore },
-    ...(user ? [{ path: '/quests', icon: ScrollText, label: t.layout.nav.quests }] : []),
+    { path: '/', icon: Home, label: t.layout?.nav?.home || 'Trang chủ' },
+    { path: '/explore', icon: Compass, label: t.layout?.nav?.explore || 'Khám phá' },
+    ...(user ? [{ path: '/quests', icon: ScrollText, label: t.layout?.nav?.quests || 'Nhiệm vụ' }] : []),
   ]
 
   const handleLogout = () => {
@@ -49,169 +50,176 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header - Minimal, clean */}
-      <header className="bg-card border-b sticky top-0 z-40">
-        <div className="container mx-auto grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-2">
-          {/* Title only - text (no logo) */}
-          <Link to="/" className="group justify-self-start">
-            <span className="font-bebas text-3xl sm:text-3xl text-foreground inline-block mt-4">Calculus</span>
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+      {/* Top Header */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 h-16">
+          
+          {/* Left: Brand Identity with Mathematical Integral Icon */}
+          <Link to="/" className="flex items-center gap-2.5 group select-none">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 border-b-2 border-indigo-800 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+              <span className="font-serif italic font-extrabold text-2xl leading-none">∫</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-extrabold text-xl tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
+                Calculus<span className="text-indigo-600">.app</span>
+              </span>
+            </div>
           </Link>
 
-          {/* Desktop Navigation - 2 items only (Hick's Law) */}
-          <nav className="hidden md:flex items-center justify-self-center gap-3">
-            {navItems.map(({ path, label }) => {
+          {/* Desktop Navigation (Center) */}
+          <nav className="hidden md:flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-2xl border border-slate-200/60">
+            {navItems.map(({ path, icon: Icon, label }) => {
               const isActive = location.pathname === path
               return (
-                <Button
+                <Link
                   key={path}
-                  variant={isActive ? 'secondary' : 'ghost'}
-                  asChild
-                  className="font-semibold text-lg px-3 py-2 relative"
+                  to={path}
+                  className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-150 select-none ${
+                    isActive
+                      ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/60'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                  }`}
                 >
-                  <Link to={path}>
-                    {label}
-                    {path === '/quests' && claimableCount > 0 && (
-                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
-                        {claimableCount}
-                      </span>
-                    )}
-                  </Link>
-                </Button>
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                  <span>{label}</span>
+                  {path === '/quests' && claimableCount > 0 && (
+                    <span className="w-5 h-5 bg-amber-500 text-white text-[10px] rounded-full flex items-center justify-center font-extrabold shadow-sm animate-pulse">
+                      {claimableCount}
+                    </span>
+                  )}
+                </Link>
               )
             })}
           </nav>
 
-          {/* Right side - Status badges + User dropdown */}
-          <div className="flex items-center justify-self-end gap-3">
-            {user && (
+          {/* Right Section: Gamification Badges or Auth Buttons */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {user ? (
               <>
-                {/* Streak badge - passive display */}
-                <Badge variant="streak" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-500 hover:bg-orange-300 border-0">
-                  <Flame className="w-4 h-4" />
-                  <span>{user.current_streak || 0}</span>
-                </Badge>
+                {/* Gamification stat capsules */}
+                <div className="hidden sm:flex items-center gap-2">
+                  <GamifyBadge type="streak" value={user.current_streak || 0} />
+                  <GamifyBadge type="xp" value={user.xp || 0} />
+                  <GamifyBadge 
+                    type="coins" 
+                    value={user.coins || 0} 
+                    onClick={() => navigate('/shop')} 
+                  />
+                  <GamifyBadge type="hearts" value={user.hearts ?? 5} max={5} />
+                </div>
 
-                {/* XP badge - passive display */}
-                <Badge variant="default" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-primary-100 text-primary-700 border-0">
-                  <Zap className="w-4 h-4" />
-                  <span>{user.xp || 0}</span>
-                </Badge>
-
-                {/* Coins badge - clickable to shop */}
-                <Badge variant="outline" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-200 border-0">
-                  <Coins className="w-4 h-4" />
-                  <span>{user.coins || 0}</span>
-                </Badge>
-
-                {/* User Dropdown - Secondary actions hidden here (Hick's Law) */}
+                {/* User Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={user.avatar_url} alt={user.display_name} />
-                        <AvatarFallback className="bg-primary-100 text-primary-700 font-semibold">
+                    <button className="relative h-10 w-10 rounded-full border-2 border-slate-200 hover:border-indigo-400 transition-colors p-0.5 outline-none focus:ring-2 focus:ring-indigo-300">
+                      <Avatar className="h-full w-full">
+                        <AvatarImage src={user.avatar_url} alt={user.display_name || user.username} />
+                        <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold text-sm">
                           {getInitials(user.display_name || user.username)}
                         </AvatarFallback>
                       </Avatar>
-                    </Button>
+                    </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <DropdownMenuLabel className="font-normal">
-                      <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-semibold leading-none">{user.display_name || user.username}</p>
-                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                  <DropdownMenuContent className="w-56 rounded-2xl p-1.5 shadow-lg border-slate-200" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal px-3 py-2">
+                      <div className="flex flex-col space-y-0.5">
+                        <p className="text-sm font-bold text-slate-900 leading-none">{user.display_name || user.username}</p>
+                        <p className="text-xs text-slate-500 truncate">{user.email}</p>
                       </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link to="/profile" className="flex items-center">
-                        <User className="mr-2 h-4 w-4" />
-                        <span>{t.layout.dropdown.profile}</span>
+                    <DropdownMenuSeparator className="my-1" />
+                    <DropdownMenuItem asChild className="cursor-pointer rounded-xl font-medium">
+                      <Link to="/profile" className="flex items-center gap-2.5 px-3 py-2 text-slate-700">
+                        <User className="w-4 h-4 text-slate-400" />
+                        <span>{t.layout?.dropdown?.profile || 'Hồ sơ cá nhân'}</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer">
-                      <Bell className="mr-2 h-4 w-4" />
-                      <span>{t.layout.dropdown.notifications}</span>
+                    <DropdownMenuItem asChild className="cursor-pointer rounded-xl font-medium">
+                      <Link to="/quests" className="flex items-center gap-2.5 px-3 py-2 text-slate-700">
+                        <ScrollText className="w-4 h-4 text-slate-400" />
+                        <span>{t.layout?.dropdown?.quests || 'Nhiệm vụ & Cửa hàng'}</span>
+                      </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>{t.layout.dropdown.settings}</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer">
-                      <HelpCircle className="mr-2 h-4 w-4" />
-                      <span>{t.layout.dropdown.help}</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>{t.layout.dropdown.logout}</span>
+                    <DropdownMenuSeparator className="my-1" />
+                    <DropdownMenuItem 
+                      onClick={handleLogout} 
+                      className="cursor-pointer rounded-xl font-medium text-rose-600 focus:text-rose-600 focus:bg-rose-50 flex items-center gap-2.5 px-3 py-2"
+                    >
+                      <LogOut className="w-4 h-4 text-rose-500" />
+                      <span>{t.layout?.dropdown?.logout || 'Đăng xuất'}</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </>
-            )}
-
-            {!user && (
+            ) : (
               <div className="flex items-center gap-2">
-                <Button variant="ghost" asChild>
-                  <Link to="/login">{t.layout.auth.login}</Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/register">{t.layout.auth.register}</Link>
-                </Button>
+                <TactileButton 
+                  variant="secondary" 
+                  size="sm" 
+                  onClick={() => navigate('/login')}
+                >
+                  {t.layout?.auth?.login || 'Đăng nhập'}
+                </TactileButton>
+                <TactileButton 
+                  variant="primary" 
+                  size="sm" 
+                  onClick={() => navigate('/register')}
+                >
+                  <Sparkles className="w-3.5 h-3.5 mr-1" />
+                  {t.layout?.auth?.register || 'Bắt đầu miễn phí'}
+                </TactileButton>
               </div>
             )}
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-6 pb-24 md:pb-8">
+      {/* Main Page Body */}
+      <main className="flex-1 w-full pb-20 md:pb-8">
         <AnimatedOutlet />
       </main>
 
-      {/* Mobile Bottom Navigation - 2 primary items only */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-card border-t z-40 md:hidden">
-        <div className="flex justify-around py-2">
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 md:hidden shadow-lg">
+        <div className="flex justify-around items-center py-1.5 px-2">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = location.pathname === path
             return (
               <Link
                 key={path}
                 to={path}
-                className={`relative flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-colors ${isActive
-                  ? 'text-primary'
-                  : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                className={`relative flex flex-col items-center gap-1 py-1.5 px-4 rounded-xl text-xs font-bold transition-colors ${
+                  isActive ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+                }`}
               >
-                <span className="relative inline-flex">
-                  <Icon className={`w-6 h-6 ${isActive ? 'stroke-[2.5]' : ''}`} />
+                <div className="relative">
+                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : ''}`} />
                   {path === '/quests' && claimableCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold">
+                    <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 text-white text-[8px] rounded-full flex items-center justify-center font-extrabold">
                       {claimableCount}
                     </span>
                   )}
-                </span>
-                <span className="text-base font-semibold">{label}</span>
+                </div>
+                <span>{label}</span>
               </Link>
             )
           })}
-          {/* Profile as third item on mobile */}
-          <Link
-            to="/profile"
-            className={`flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-colors ${location.pathname === '/profile'
-              ? 'text-primary'
-              : 'text-muted-foreground hover:text-foreground'
+          {user && (
+            <Link
+              to="/profile"
+              className={`flex flex-col items-center gap-1 py-1.5 px-4 rounded-xl text-xs font-bold transition-colors ${
+                location.pathname === '/profile' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
               }`}
-          >
-            <User className={`w-6 h-6 ${location.pathname === '/profile' ? 'stroke-[2.5]' : ''}`} />
-            <span className="text-lg font-semibold">{t.layout.nav.profile}</span>
-          </Link>
+            >
+              <User className={`w-5 h-5 ${location.pathname === '/profile' ? 'stroke-[2.5]' : ''}`} />
+              <span>{t.layout?.nav?.profile || 'Hồ sơ'}</span>
+            </Link>
+          )}
         </div>
       </nav>
 
-      {/* Toast */}
+      {/* Global Toast */}
       {toast && <Toast message={toast.message} type={toast.type} />}
     </div>
   )

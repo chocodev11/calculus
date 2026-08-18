@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t, fmt } from '../lib/locale'
 import {
@@ -7,7 +7,7 @@ import {
   Zap,
   Trophy,
   Crown,
-  CheckCircle,
+  CheckCircle2,
   ArrowRight,
   Sparkles,
   Target,
@@ -16,56 +16,64 @@ import {
   TrendingUp,
   BookOpen,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Play,
+  Layers,
+  Clock,
+  X as XIcon,
+  Medal,
+  ScrollText
 } from 'lucide-react'
-import { X as XIcon } from 'lucide-react'
-import { useAuthStore } from '../lib/store'
+import { useAuthStore, useQuestStore } from '../lib/store'
 import api from '../lib/api'
-
-// shadcn/ui components
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card'
-import { Button } from '../components/ui/button'
-import { Badge } from '../components/ui/badge'
-import { Progress } from '../components/ui/progress'
-import { Separator } from '../components/ui/separator'
+import Landing from './Landing'
 import LearningStreakCard from '../components/LearningStreakCard'
 import HeartsCard from '../components/HeartsCard'
+import { TactileButton } from '../components/ui/tactile-button'
+import { GamifyBadge } from '../components/ui/gamify-badge'
+import { encodeStepId } from '../lib/utils'
 
 export default function Home() {
   const { user, isAuthenticated, fetchUser } = useAuthStore()
+  const { quests, fetchQuests, claimCoins } = useQuestStore()
+  const navigate = useNavigate()
+
   const [dashboardData, setDashboardData] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [isPaused, setIsPaused] = useState(false)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
-  const [friendlyLine] = useState(() => t.home.friendlyMessages[Math.floor(Math.random() * t.home.friendlyMessages.length)])
+  const [leaderboardUsers, setLeaderboardUsers] = useState([])
+  const [loadingLeaderboard, setLoadingLeaderboard] = useState(false)
+  const [friendlyLine] = useState(() => {
+    const list = t.home?.friendlyMessages || [
+      'Rất vui được gặp lại bạn!',
+      'Hôm nay bạn muốn chinh phục định lý nào?',
+      'Từng bước nhỏ tạo nên sự đột phá lớn.',
+      'Sẵn sàng duy trì chuỗi học tập chưa?'
+    ]
+    return list[Math.floor(Math.random() * list.length)]
+  })
 
   useEffect(() => {
     if (!isAuthenticated()) {
       setLoading(false)
       return
     }
-
-    // Fetch fresh user data to ensure XP/streak is synced
     fetchUser()
     loadDashboard()
+    fetchQuests()
   }, [])
 
   const loadDashboard = async () => {
     try {
       const data = await api.get('/progress/dashboard')
-      // Set dashboard data first
       setDashboardData(data)
-
-      // Then fetch current user's rank and merge it into dashboardData
       try {
         const rankRes = await api.get('/progress/leaderboard?around=true&limit=1')
         if (rankRes && typeof rankRes.current_user_rank !== 'undefined') {
           setDashboardData(prev => ({ ...(prev || {}), rank: rankRes.current_user_rank }))
         }
       } catch (e) {
-        // silent - dashboard still useful without rank
-        console.debug('Failed to fetch current rank', e)
+        console.debug('Failed to fetch rank', e)
       }
     } catch (e) {
       console.error(e)
@@ -74,831 +82,399 @@ export default function Home() {
     }
   }
 
-  // Get course cards to display - only in progress courses
-  const getCourseCards = () => {
-    if (!dashboardData) return []
-
-    // Use in_progress_stories from API (already deduplicated and filtered)
-    if (dashboardData.in_progress_stories && Array.isArray(dashboardData.in_progress_stories)) {
-      return dashboardData.in_progress_stories
-        .map(s => ({ ...s, status: 'in-progress' }))
-        .slice(0, 5)
+  const loadFullLeaderboard = async () => {
+    setLoadingLeaderboard(true)
+    try {
+      const data = await api.get('/progress/leaderboard?limit=20')
+      setLeaderboardUsers(data?.users || [])
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoadingLeaderboard(false)
     }
-
-    // Fallback to current_story if in_progress_stories not available
-    if (dashboardData.current_story) {
-      return [{ ...dashboardData.current_story, status: 'in-progress' }]
-    }
-
-    return []
-  }
-
-  const courses = getCourseCards()
-
-  // Auto-slide every 10 seconds - cycle through all cards one by one
-  useEffect(() => {
-    if (courses.length <= 1 || isPaused) return
-
-    const interval = setInterval(() => {
-      setCurrentSlide(prev => {
-        // Loop back to 0 after reaching the last card
-        return (prev + 1) % courses.length
-      })
-    }, 10000) // 10 seconds
-
-    return () => clearInterval(interval)
-  }, [courses.length, isPaused])
-
-  const nextSlide = () => {
-    setCurrentSlide(prev => (prev + 1) % courses.length)
-    setIsPaused(true)
-    setTimeout(() => setIsPaused(false), 10000) // Resume after 10s
-  }
-
-  const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + courses.length) % courses.length)
-    setIsPaused(true)
-    setTimeout(() => setIsPaused(false), 10000) // Resume after 10s
-  }
-
-  const goToSlide = (index) => {
-    setCurrentSlide(index)
-    setIsPaused(true)
-    setTimeout(() => setIsPaused(false), 10000) // Resume after 10s
   }
 
   if (!isAuthenticated()) {
     return <Landing />
   }
 
-  let courseCarouselContent;
-  if (loading) {
-    courseCarouselContent = (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="h-80 animate-pulse bg-muted" />
-        <Card className="h-80 animate-pulse bg-muted hidden md:block" />
-      </div>
-    );
-  } else if (courses.length > 0) {
-    courseCarouselContent = (
-      <div
-        className="relative"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        {/* Section Header */}
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-            <BookOpen className="w-5 h-5" />
-            {t.home.yourCourses}
-          </h2>
-          <Badge variant="secondary" className="text-xs">
-            {courses.length} {t.home.inProgress}
-          </Badge>
-        </div>
+  const courses = dashboardData?.in_progress_stories || (dashboardData?.current_story ? [dashboardData.current_story] : [])
+  const primaryCourse = courses[0] || null
 
-        {/* Carousel Container */}
-        <div className="relative overflow-hidden">
-          <motion.div
-            className="flex"
-            animate={{
-              x: `-${currentSlide * 100}%`
-            }}
-            transition={{
-              type: "tween",
-              ease: "easeInOutQuart",
-              duration: 0.5
-            }}
-          >
-            {courses.map((course, idx) => (
-              <motion.div
-                key={course.slug || idx}
-                className="flex-shrink-0 w-full px-1"
-              >
-                <CourseCard story={course} />
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Navigation Controls */}
-        {courses.length > 1 && (
-          <>
-            {/* Previous/Next Buttons */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white hover:bg-white shadow-lg rounded-full h-10 w-10 z-20 transition-all hover:scale-110"
-              onClick={prevSlide}
-              aria-label={t.home.ariaPrevCourse}
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white hover:bg-white shadow-lg rounded-full h-10 w-10 z-20 transition-all hover:scale-110"
-              onClick={nextSlide}
-              aria-label={t.home.ariaNextCourse}
-            >
-              <ChevronRight className="w-5 h-5" />
-            </Button>
-
-            {/* Slide Indicators */}
-            <div className="flex items-center justify-center gap-2 mt-6">
-              {courses.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => goToSlide(idx)}
-                  className={`h-2 rounded-full transition-all ${idx === currentSlide
-                      ? 'w-8 bg-primary'
-                      : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50'
-                    }`}
-                  aria-label={fmt(t.home.ariaGoToSlide, { n: idx + 1 })}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    );
-  } else {
-    courseCarouselContent = <EmptyStateCard />;
-  }
+  const xpValue = user?.xp || 0
+  const currentLevel = Math.floor(xpValue / 100) + 1
+  const levelProgress = xpValue % 100
+  const xpNeeded = 100 - levelProgress
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* 2-Column Responsive Layout */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 lg:gap-8">
-        {/* Left Sidebar - Colorful & Minimal */}
-        <aside className="order-2 lg:order-1 space-y-6">
-          {/* Learning Streak Card (interactive) */}
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8 font-sans">
+      
+      {/* ─── Top Greeting Banner ────────────────────────────────────────── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-[0_4px_0_0_#E2E8F0]">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Chào mừng, {user?.display_name || user?.username || 'Học viên'}! 👋
+          </h1>
+          <p className="text-sm font-medium text-slate-500">
+            {friendlyLine}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <GamifyBadge type="streak" value={user?.current_streak || 0} />
+          <GamifyBadge type="xp" value={user?.xp || 0} />
+          <GamifyBadge type="hearts" value={user?.hearts ?? 5} max={5} />
+        </div>
+      </div>
+
+      {/* ─── Main Grid: 2-Column Responsive Layout ─────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Left Column (Courses & Quests) */}
+        <div className="lg:col-span-8 space-y-8">
+          
+          {/* 1. Primary Active Course Hero Card */}
+          {loading ? (
+            <div className="h-64 bg-slate-200 animate-pulse rounded-3xl" />
+          ) : primaryCourse ? (
+            <div className="bg-white border-2 border-indigo-200 rounded-3xl p-6 sm:p-8 shadow-[0_6px_0_0_#C7D2FE] relative overflow-hidden space-y-6">
+              
+              {/* Background Accent */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl -z-0 pointer-events-none" />
+
+              <div className="flex items-center justify-between relative z-10">
+                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold px-3 py-1 rounded-full bg-indigo-100 text-indigo-700">
+                  <BookOpen className="w-3.5 h-3.5" />
+                  Đang học tiếp
+                </span>
+                <span className="text-xs font-bold text-slate-400 tabular-nums">
+                  {primaryCourse.total_steps ? `${primaryCourse.completed_steps || 0}/${primaryCourse.total_steps} bài học` : ''}
+                </span>
+              </div>
+
+              <div className="space-y-2 relative z-10">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  {primaryCourse.title}
+                </h2>
+                <p className="text-sm text-slate-600 font-medium max-w-xl line-clamp-2">
+                  {primaryCourse.description || 'Tiếp tục bài học tiếp theo để mở khóa toàn bộ trực giác giải tích.'}
+                </p>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="space-y-2 relative z-10">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="text-slate-600">Tiến độ khoá học</span>
+                  <span className="text-indigo-600 tabular-nums">
+                    {Math.round(primaryCourse.progress_percent || 0)}%
+                  </span>
+                </div>
+                <div className="h-3.5 rounded-full bg-slate-100 p-0.5 border border-slate-200 overflow-hidden">
+                  <div
+                    className="h-full bg-indigo-600 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.max(5, primaryCourse.progress_percent || 0)}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex flex-col sm:flex-row items-center gap-3 relative z-10">
+                {primaryCourse.next_step_id ? (
+                  <TactileButton
+                    variant="primary"
+                    size="lg"
+                    onClick={() => navigate(`/course/${primaryCourse.slug}/step/${encodeStepId(primaryCourse.next_step_id)}`)}
+                    className="w-full sm:w-auto shadow-md"
+                  >
+                    <Play className="w-5 h-5 mr-1.5 fill-white" />
+                    <span>Tiếp tục học ngay</span>
+                    <ArrowRight className="w-5 h-5 ml-1.5" />
+                  </TactileButton>
+                ) : (
+                  <TactileButton
+                    variant="primary"
+                    size="lg"
+                    onClick={() => navigate(`/course/${primaryCourse.slug}`)}
+                    className="w-full sm:w-auto"
+                  >
+                    <span>Vào khoá học</span>
+                    <ArrowRight className="w-5 h-5 ml-1.5" />
+                  </TactileButton>
+                )}
+
+                <TactileButton
+                  variant="secondary"
+                  size="lg"
+                  onClick={() => navigate(`/course/${primaryCourse.slug}`)}
+                  className="w-full sm:w-auto"
+                >
+                  <span>Xem đề cương</span>
+                </TactileButton>
+              </div>
+
+            </div>
+          ) : (
+            <div className="bg-white border-2 border-dashed border-slate-200 rounded-3xl p-10 text-center space-y-4">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                <Compass className="w-8 h-8" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-xl font-bold text-slate-900">Bắt đầu học giải tích</h3>
+                <p className="text-sm text-slate-500 max-w-md mx-auto">
+                  Bạn chưa bắt đầu khoá học nào. Hãy chọn một chủ đề trong mục Khám phá để bắt đầu!
+                </p>
+              </div>
+              <TactileButton variant="primary" onClick={() => navigate('/explore')}>
+                Khám phá các khoá học <ArrowRight className="w-4 h-4 ml-1.5" />
+              </TactileButton>
+            </div>
+          )}
+
+          {/* 2. Other In-Progress Courses */}
+          {courses.length > 1 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-indigo-600" />
+                Các khoá học khác
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {courses.slice(1).map(c => (
+                  <div 
+                    key={c.slug}
+                    onClick={() => navigate(`/course/${c.slug}`)}
+                    className="bg-white border-2 border-slate-200 rounded-2xl p-5 shadow-[0_4px_0_0_#E2E8F0] hover:border-indigo-300 transition-all cursor-pointer space-y-3"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600">
+                        {Math.round(c.progress_percent || 0)}%
+                      </span>
+                      <ArrowUpRight className="w-4 h-4 text-slate-400" />
+                    </div>
+                    <h4 className="text-base font-bold text-slate-900">{c.title}</h4>
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${c.progress_percent || 0}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 3. Daily Quests Progress */}
+          <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-[0_4px_0_0_#E2E8F0] space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ScrollText className="w-5 h-5 text-amber-500" />
+                <h3 className="text-base font-extrabold text-slate-900">Nhiệm vụ hàng ngày</h3>
+              </div>
+              <Link to="/quests" className="text-xs font-bold text-indigo-600 hover:underline">
+                Xem tất cả ({quests.length})
+              </Link>
+            </div>
+
+            <div className="space-y-3">
+              {quests.slice(0, 3).map(q => {
+                const isComplete = q.is_complete
+                const isClaimed = q.coins_claimed
+                const pct = Math.min(100, Math.round((q.progress / (q.target || 1)) * 100))
+
+                return (
+                  <div key={q.id} className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-4">
+                    <div className="space-y-1.5 flex-1 min-w-0">
+                      <div className="flex items-center justify-between text-xs font-bold">
+                        <span className="text-slate-800 truncate">{q.title}</span>
+                        <span className="text-slate-500 tabular-nums shrink-0 ml-2">
+                          {q.progress} / {q.target}
+                        </span>
+                      </div>
+                      <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full rounded-full transition-all ${isComplete ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="shrink-0">
+                      {isComplete && !isClaimed ? (
+                        <button
+                          onClick={() => claimCoins(q.id)}
+                          className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-white font-extrabold text-xs rounded-xl border-b-2 border-amber-700 active:border-b-0 active:translate-y-0.5 transition-all shadow-sm"
+                        >
+                          Nhận +{q.coin_reward} Xu
+                        </button>
+                      ) : isClaimed ? (
+                        <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                          <CheckCircle2 className="w-4 h-4" /> Đã nhận
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold text-slate-400">
+                          +{q.coin_reward} Xu
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="lg:col-span-4 space-y-6">
+          
+          {/* Learning Streak Card */}
           <LearningStreakCard />
 
           {/* Hearts Card */}
           <HeartsCard />
 
-          {/* User Stats Overview - clean, balanced */}
-          {(() => {
-            const xpValue = user?.xp || 0
-            const level = Math.floor(xpValue / 100) + 1
-            const nextProgress = xpValue % 100
-            const nextNeed = 100 - nextProgress
-            return (
-              <Card className="border border-slate-100 bg-gradient-to-br from-emerald-50 via-white to-indigo-50 shadow-md">
-                <CardHeader className="pb-1">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                      <TrendingUp className="w-5 h-5 text-emerald-500" />
-                      {t.home.yourProgress}
-                    </CardTitle>
-                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-50 text-slate-600 font-semibold">{t.home.onLive}</span>
-                  </div>
-                  <p className="text-xs text-slate-500">{t.home.progressSnap}</p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-3 gap-3">
-                    <StatItem icon={Zap} label={t.home.totalXP} value={xpValue} color="text-amber-600" bgColor="bg-amber-50" />
-                    <StatItem icon={Award} label={t.home.level} value={level} color="text-emerald-600" bgColor="bg-emerald-50" />
-                    <StatItem icon={Trophy} label={t.home.rank} value={dashboardData?.rank ? `#${dashboardData.rank}` : '—'} color="text-indigo-600" bgColor="bg-indigo-50" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                      <span>{t.home.nextLevel}</span>
-                      <span>{fmt(t.home.xpLeft, { n: nextNeed })}</span>
-                    </div>
-                    <Progress value={nextProgress} className="h-2 bg-slate-100" />
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })()}
-
-          {/* Daily Goal - More Colorful */}
-          {dashboardData?.daily_goal && (
-            <Card className="border-2 border-cyan-300/40 bg-gradient-to-r from-cyan-100 via-sky-100 to-green-100 shadow-md">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base flex items-center gap-2 text-cyan-700">
-                    <Calendar className="w-4 h-4 text-cyan-500 animate-spin-slow" />
-                    Mục tiêu hôm nay
-                  </CardTitle>
-                  <Badge variant="secondary" className="text-xs bg-cyan-200 text-cyan-800">
-                    {dashboardData.daily_goal.completed}/{dashboardData.daily_goal.target}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Progress
-                  value={(dashboardData.daily_goal.completed / dashboardData.daily_goal.target) * 100}
-                  className="h-2 bg-cyan-200"
-                />
-                <p className="text-xs text-cyan-700">
-                  {dashboardData.daily_goal.remaining > 0
-                    ? `${dashboardData.daily_goal.remaining} bài nữa để hoàn thành mục tiêu!`
-                    : 'Đã hoàn thành mục tiêu ngày! 🎉'
-                  }
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Achievements Preview - Only show if available */}
-          {dashboardData?.recent_achievements && dashboardData.recent_achievements.length > 0 && (
-            <Card className="border-2 border-amber-300/40 bg-gradient-to-r from-yellow-100 via-amber-100 to-orange-100 shadow-md">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2 text-amber-700">
-                  <Award className="w-4 h-4 text-amber-500 animate-pulse" />
-                  Thành tựu gần đây
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {dashboardData.recent_achievements.map((achievement, idx) => (
-                  <AchievementItem
-                    key={idx}
-                    icon={achievement.icon || '🏆'}
-                    title={achievement.title}
-                    description={achievement.description}
-                    unlocked={achievement.unlocked}
-                  />
-                ))}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* XP / League Progress - Colorful */}
-          {dashboardData?.league && (
-            <LeagueCard
-              xp={user?.xp || 0}
-              league={dashboardData.league}
-              rank={dashboardData.rank || 0}
-              onViewLeaderboard={() => setShowLeaderboard(true)}
-            />
-          )}
-        </aside>
-
-        {/* Main Content Area - Course Carousel */}
-        <main className="order-1 lg:order-2 space-y-6">
-          {/* Friendly Greeting */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">👋</span>
-              <div>
-                <p className="text-muted-foreground font-medium">{friendlyLine}</p>
-                <h1 className="text-xl font-bold text-foreground">
-                  {fmt(t.home.welcome, { name: user?.display_name || user?.username })}
-                </h1>
+          {/* User Level & XP Progress Card */}
+          <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 shadow-[0_4px_0_0_#E2E8F0] space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-indigo-600" />
+                <h3 className="text-base font-extrabold text-slate-900">Cấp độ & XP</h3>
               </div>
+              <span className="text-xs font-extrabold px-2.5 py-1 rounded-xl bg-indigo-100 text-indigo-700 tabular-nums">
+                Cấp {currentLevel}
+              </span>
             </div>
-          </div>
 
-          {/* Course Cards Carousel - Multiple Cards */}
-          {courseCarouselContent}
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <QuickActionCard
-              icon={Trophy}
-              title={t.home.quickActions.leaderboard}
-              description={t.home.quickActions.leaderboardDesc}
-              onClick={() => setShowLeaderboard(true)}
-            />
-            <QuickActionCard
-              icon={Target}
-              title={t.home.quickActions.practice}
-              description={t.home.quickActions.practiceDesc}
-              to="/explore"
-            />
-          </div>
-        </main>
-      </div>
-
-      <AnimatePresence>
-        {showLeaderboard && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-          >
-            <LeaderboardModal onClose={() => setShowLeaderboard(false)} user={user} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-    </div>
-  )
-}
-
-// Leaderboard Modal (mobile-first, modern minimal gamified look)
-function LeaderboardModal({ onClose, user }) {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [currentRank, setCurrentRank] = useState(null)
-  const [totalCount, setTotalCount] = useState(null)
-
-  useEffect(() => {
-    let mounted = true
-    const fetchLeaderboard = async () => {
-      setLoading(true)
-      try {
-        // Fetch top 50
-        const topRes = await api.get('/progress/leaderboard?start=1&limit=50')
-        if (!mounted) return
-        const topEntries = topRes?.entries || []
-        setItems(topEntries)
-        setTotalCount(topRes?.total_count || null)
-
-        // If current user not in top 50, fetch their personal rank and append below
-        const isInTop = topEntries.some(e => e.id === user?.id)
-        if (!isInTop) {
-          const meRes = await api.get('/progress/leaderboard?around=true&limit=1')
-          if (!mounted) return
-          const meEntry = (meRes?.entries && meRes.entries.length > 0) ? meRes.entries[0] : null
-          if (meEntry) {
-            setItems(prev => [...prev, { ...meEntry, is_current_user: true }])
-            setCurrentRank(meRes?.current_user_rank || null)
-          }
-        } else {
-          // if in top, set current rank from top entries
-          const me = topEntries.find(e => e.id === user?.id)
-          if (me) setCurrentRank(me.rank)
-        }
-      } catch (e) {
-        console.error('Error loading leaderboard', e)
-        if (mounted) setError('Failed to load leaderboard')
-      } finally {
-        if (mounted) setLoading(false)
-      }
-    }
-    fetchLeaderboard()
-    return () => { mounted = false }
-  }, [])
-
-  const medalBg = ['bg-amber-400', 'bg-gray-200', 'bg-orange-300']
-  const avatarBg = ['bg-amber-200', 'bg-emerald-200', 'bg-sky-200', 'bg-pink-200', 'bg-violet-200']
-  const levelOf = (xpVal) => Math.floor((xpVal || 0) / 100) + 1
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900/60 via-slate-900/55 to-slate-900/60 backdrop-blur" onClick={onClose} />
-
-      <div className="relative z-10 w-full max-w-lg mx-4 bg-white/95 rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-        {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-slate-100 bg-gradient-to-r from-indigo-50 via-white to-emerald-50">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-md" style={{ background: 'linear-gradient(135deg,#8b5cf6,#22c55e)' }}>
-                <Trophy className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <div className="text-[11px] text-slate-500 uppercase font-bold tracking-[0.2em]">{t.home.leaderboardTitle}</div>
-                <div className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                  {t.home.top50}
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-900 text-white font-semibold">{t.home.live}</span>
-                </div>
-                <div className="mt-2 inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900 text-white text-xs font-semibold shadow-sm">
-                  <span className="bg-white/20 px-2 py-0.5 rounded-full">{currentRank ? `#${currentRank}` : '--'}</span>
-                  <span>{t.home.yourPosition}</span>
-                </div>
-              </div>
-            </div>
-            <button onClick={onClose} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition">
-              <XIcon className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* List */}
-        <div className="p-5">
-          <div className="flex items-center justify-between text-xs text-slate-500 mb-4">
-            <span>{items && items.length > 0 ? (
-              `Top ${items.length >= 50 ? '1–50' : `${items[0].rank}–${items[items.length - 1].rank}`}${totalCount ? ` · ${totalCount} ${t.home.usersCount.replace('{n}', '').trim()}` : ''}`
-            ) : t.home.loadingLeaderboard}</span>
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 font-semibold">{t.home.xpRace}</span>
-          </div>
-
-          <div className="max-h-80 overflow-y-auto rounded-2xl border border-slate-100 shadow-inner bg-slate-50/40">
-            {loading ? (
-              <div className="p-6 flex items-center justify-center text-sm text-slate-500">{t.home.loading}</div>
-            ) : error ? (
-              <div className="p-6 text-sm text-red-500">{error}</div>
-            ) : (
-              <ul className="divide-y divide-slate-100">
-                {items.map((it, idx) => {
-                  const isCurrent = it.id === user?.id || it.is_current_user
-                  const isTop = it.rank <= 3
-                  return (
-                    <li
-                      key={it.id}
-                      className={
-                        "flex items-center justify-between px-4 py-3 gap-3 transition " +
-                        (isCurrent ? 'bg-white/95 shadow-sm ring-1 ring-emerald-200/70' : 'hover:bg-white')
-                      }
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className={"w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-extrabold " + (isTop ? medalBg[it.rank - 1] + ' text-slate-900' : 'bg-slate-200 text-slate-700')}>
-                          {isTop ? ['1st', '2nd', '3rd'][it.rank - 1] : `#${it.rank}`}
-                        </div>
-                        <div className={`w-11 h-11 flex items-center justify-center rounded-2xl text-slate-900 font-bold ${avatarBg[idx % avatarBg.length]}`}>
-                          {String(it.username || 'U').charAt(0).toUpperCase()}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-sm font-semibold text-slate-900 truncate flex items-center gap-2">
-                            {it.username}
-                            {isCurrent && <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">{t.home.you}</span>}
-                          </div>
-                          <div className="text-xs text-slate-500"> {fmt(t.home.levelN, { n: levelOf(it.xp) })}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-600 px-2.5 py-1 rounded-full bg-slate-100">{it.xp} XP</span>
-                      </div>
-                    </li>
-                  )
-                })}
-              </ul>
-            )}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="px-5 pb-5 pt-3 border-t border-slate-100 bg-white/90 flex items-center justify-between">
-          <div className="text-sm text-slate-500">{t.home.keepClimbing}</div>
-          <div className="flex items-center gap-2">
-            <button onClick={onClose} className="px-3 py-2 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-100">{t.home.close}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// =============================================================================
-// MAIN CONTENT COMPONENTS
-// =============================================================================
-
-/**
- * Extract color from gradient or solid color string
- */
-function extractThemeColor(colorString) {
-  if (!colorString) return '#deae1e' // Default primary color
-
-  // If it's a hex color, return it directly
-  if (colorString.startsWith('#')) return colorString
-
-  // Try to extract from Tailwind gradient classes like "from-blue-500 to-blue-700"
-  const colorMatch = colorString.match(/(?:from|to)-(\w+)-(\d+)/)
-  if (colorMatch) {
-    const [_, color, shade] = colorMatch
-    // Map Tailwind colors to hex (common ones)
-    const colorMap = {
-      'blue': '#3b82f6',
-      'purple': '#a855f7',
-      'green': '#22c55e',
-      'red': '#ef4444',
-      'orange': '#f97316',
-      'yellow': '#eab308',
-      'pink': '#ec4899',
-      'indigo': '#6366f1',
-      'teal': '#14b8a6',
-      'cyan': '#06b6d4',
-    }
-    return colorMap[color] || '#6366f1'
-  }
-
-  return '#6366f1' // Default
-}
-
-/**
- * Course Card - White background with theme color accents
- */
-function CourseCard({ story }) {
-  const progressValue = story.progress || 0
-  const isStarted = progressValue > 0
-
-  // Extract theme color from the story
-  const themeColor = story.themeColor || extractThemeColor(story.color)
-
-  // Determine if this is an in-progress or suggested course
-  const isInProgress = story.status === 'in-progress'
-
-  return (
-    <Link to={`/course/${story.slug}`} className="block h-full group">
-      <Card
-        className="relative overflow-hidden shadow-xl bg-white border-0 h-full hover:shadow-2xl transition-all duration-300 cursor-pointer"
-        style={{ borderTop: `6px solid ${themeColor}` }}
-      >
-        {/* Decorative colored accent */}
-        <div
-          className="absolute right-0 top-0 w-64 h-64 opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"
-          style={{ backgroundColor: themeColor }}
-        />
-
-        {/* Course Icon */}
-        <img
-          className="absolute right-20 top-8 opacity-5 select-none pointer-events-none"
-          style={{
-            filter: `drop-shadow(0 0 0 ${themeColor})`,
-          }}
-          src={story.illustration}
-        />
-
-
-        <CardContent className="relative z-10 p-8 space-y-6">
-          {/* Header */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge
-                className="border-0 font-bold text-xs text-white pointer-events-none"
-                style={{ backgroundColor: themeColor }}
-              >
-                {fmt(t.home.levelN, { n: story.level || 1 })}
-              </Badge>
-              {isInProgress && (
-                <Badge
-                  variant="secondary"
-                  className="border-0 font-bold text-xs bg-blue-100 text-blue-700 pointer-events-none"
-                >
-                  {t.home.inProgressBadge}
-                </Badge>
-              )}
-              {isStarted && (
-                <Badge
-                  variant="secondary"
-                  className="border font-bold text-xs pointer-events-none"
-                  style={{
-                    borderColor: themeColor,
-                    color: themeColor,
-                    backgroundColor: `${themeColor}10`
-                  }}
-                >
-                  {fmt(t.home.percentComplete, { n: progressValue })}
-                </Badge>
-              )}
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight line-clamp-2">
-              {story.title}
-            </h2>
-            <p className="text-gray-600 text-base font-medium line-clamp-2">
-              {story.description || t.story.defaultDesc}
-            </p>
-          </div>
-
-          {/* Progress Bar */}
-          {isStarted && (
             <div className="space-y-2">
-              <Progress
-                value={progressValue}
-                className="h-2.5 bg-gray-100"
-                style={{
-                  '--progress-color': themeColor
-                }}
-              />
-              <style>{`
-                :global(.bg-gray-100 > div) {
-                  background-color: var(--progress-color) !important;
-                }
-              `}</style>
+              <div className="flex justify-between text-xs font-bold">
+                <span className="text-slate-500">Tiến độ lên Cấp {currentLevel + 1}</span>
+                <span className="text-indigo-600 tabular-nums">{levelProgress} / 100 XP</span>
+              </div>
+              <div className="h-3 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200">
+                <div
+                  className="h-full bg-indigo-600 rounded-full transition-all duration-300"
+                  style={{ width: `${levelProgress}%` }}
+                />
+              </div>
+              <p className="text-[11px] text-slate-400 font-medium text-right tabular-nums">
+                Cần thêm {xpNeeded} XP để lên cấp
+              </p>
             </div>
-          )}
-
-          {/* CTA Button - Now just visual, parent Link handles navigation */}
-          <div
-            className={`cta-${story.slug} w-full md:w-auto font-bold text-base h-12 px-8 rounded-md border-2 flex items-center justify-center gap-2 transition-all duration-200 pointer-events-none`}
-            style={{
-              borderColor: themeColor,
-              color: themeColor,
-              backgroundColor: 'transparent'
-            }}
-          >
-            {isStarted ? t.home.continueBtn : t.home.startCourse}
-            <ArrowRight className="w-5 h-5" />
           </div>
-          <style>{`
-            .group:hover .cta-${story.slug} {
-              background-color: ${themeColor} !important;
-              color: white !important;
-            }
-          `}</style>
-        </CardContent>
-      </Card>
-    </Link>
-  )
-}
 
-/**
- * Stat Item Component
- */
-function StatItem({ icon: Icon, label, value, color, bgColor }) {
-  return (
-    <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-100 bg-white/70">
-      <div className={`w-9 h-9 rounded-lg ${bgColor} flex items-center justify-center mb-2 shadow-inner`}>
-        <Icon className={`w-5 h-5 ${color}`} />
+          {/* Leaderboard Snapshot Card */}
+          <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 shadow-[0_4px_0_0_#E2E8F0] space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-amber-500" />
+                <h3 className="text-base font-extrabold text-slate-900">Bảng xếp hạng tuần</h3>
+              </div>
+              <span className="text-xs font-extrabold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg">
+                Top 20
+              </span>
+            </div>
+
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 font-extrabold flex items-center justify-center text-xs">
+                  #{dashboardData?.rank || 1}
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900">Thứ hạng của bạn</p>
+                  <p className="text-[11px] text-slate-500 font-medium">{user?.xp || 0} XP tích lũy</p>
+                </div>
+              </div>
+              <Medal className="w-5 h-5 text-amber-500" />
+            </div>
+
+            <TactileButton
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                setShowLeaderboard(true)
+                loadFullLeaderboard()
+              }}
+              className="w-full"
+            >
+              Xem bảng xếp hạng đầy đủ
+            </TactileButton>
+          </div>
+
+        </div>
+
       </div>
-      <p className="text-lg font-bold text-slate-900 leading-tight">{value}</p>
-      <p className="text-[11px] text-slate-500 font-medium tracking-wide">{label}</p>
-    </div>
-  )
-}
 
-/**
- * Achievement Item Component
- */
-function AchievementItem({ icon, title, description, unlocked }) {
-  return (
-    <div className={`flex items-center gap-3 p-2 rounded-lg ${unlocked ? 'opacity-100' : 'opacity-50'}`}>
-      <div className="text-2xl">{icon}</div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-bold text-foreground truncate">{title}</p>
-        <p className="text-xs text-muted-foreground truncate">{description}</p>
-      </div>
-      {unlocked && <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />}
-    </div>
-  )
-}
+      {/* ─── Leaderboard Modal ─────────────────────────────────────────── */}
+      {showLeaderboard && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-slate-200 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200">
+            
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-amber-500" />
+                <h3 className="text-lg font-extrabold text-slate-900">Bảng xếp hạng tuần</h3>
+              </div>
+              <button
+                onClick={() => setShowLeaderboard(false)}
+                className="p-1 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <XIcon className="w-5 h-5" />
+              </button>
+            </div>
 
-/**
- * Quick Action Card Component
- */
-function QuickActionCard({ icon: Icon, title, description, to, onClick }) {
-  const content = (
-    <Card className="hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer h-full">
-      <CardContent className="p-4 space-y-3">
-        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <h3 className="font-bold text-foreground">{title}</h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
-        </div>
-      </CardContent>
-    </Card>
-  )
+            {/* List */}
+            <div className="p-4 overflow-y-auto space-y-2 flex-1">
+              {loadingLeaderboard ? (
+                <div className="p-8 text-center text-slate-400 font-bold text-sm">
+                  Đang tải bảng xếp hạng...
+                </div>
+              ) : leaderboardUsers.length > 0 ? (
+                leaderboardUsers.map((u, i) => {
+                  const isCurrent = u.id === user?.id
+                  return (
+                    <div
+                      key={u.id || i}
+                      className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${
+                        isCurrent
+                          ? 'bg-indigo-50 border-indigo-200 text-indigo-900 font-extrabold'
+                          : 'bg-white border-slate-100 text-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className={`w-6 text-center text-xs font-extrabold tabular-nums ${
+                          i === 0 ? 'text-amber-500 text-sm' : i === 1 ? 'text-slate-400 text-sm' : i === 2 ? 'text-amber-700 text-sm' : 'text-slate-400'
+                        }`}>
+                          {i + 1}
+                        </span>
+                        <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-xs">
+                          {(u.display_name || u.username || 'U')[0].toUpperCase()}
+                        </div>
+                        <span className="text-sm font-bold truncate max-w-[140px]">
+                          {u.display_name || u.username} {isCurrent && '(Bạn)'}
+                        </span>
+                      </div>
 
-  if (onClick) {
-    return (
-      <div onClick={onClick} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') onClick() }}>
-        {content}
-      </div>
-    )
-  }
+                      <span className="text-xs font-extrabold text-indigo-600 tabular-nums">
+                        {u.xp || 0} XP
+                      </span>
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="p-8 text-center text-slate-400 text-sm">
+                  Chưa có dữ liệu bảng xếp hạng tuần này.
+                </div>
+              )}
+            </div>
 
-  return (
-    <Link to={to}>
-      {content}
-    </Link>
-  )
-}
+            {/* Footer */}
+            <div className="p-4 border-t border-slate-200 bg-slate-50">
+              <TactileButton variant="secondary" size="sm" onClick={() => setShowLeaderboard(false)} className="w-full">
+                Đóng
+              </TactileButton>
+            </div>
 
-/**
- * Empty State - When no course started
- */
-function EmptyStateCard() {
-  return (
-    <Card className="p-12 text-center border-2 border-dashed">
-      <div className="space-y-6">
-        <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-          <Target className="w-10 h-10 text-primary" />
-        </div>
-        <div>
-          <h3 className="text-2xl font-bold text-foreground mb-2">{t.home.empty.title}</h3>
-          <p className="text-muted-foreground text-lg">{t.home.empty.desc}</p>
-        </div>
-        <Button asChild size="lg" className="w-full max-w-xs">
-          <Link to="/explore">
-            {t.home.empty.explore}
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Link>
-        </Button>
-      </div>
-    </Card>
-  )
-}
-
-/**
- * Streak Card - Gamification (passive display)
- */
-function StreakCard({ streak }) {
-  const isOnFire = streak >= 7
-
-  return (
-    <Card className="border-2 border-orange-200/50 bg-gradient-to-br from-white to-orange-50/50">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
-          <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${isOnFire ? 'bg-gradient-to-br from-orange-400 to-red-500' : 'bg-orange-100'
-            }`}>
-            <Flame className={`w-7 h-7 ${isOnFire ? 'text-white' : 'text-orange-500'}`} />
-          </div>
-          <div>
-            <p className="text-3xl font-bold text-foreground leading-none mb-1">{streak}</p>
-            <p className="text-sm text-muted-foreground font-semibold">{t.home.dayStreak}</p>
           </div>
         </div>
-        {streak > 0 && (
-          <p className="text-sm text-orange-600 mt-3 font-bold">
-            {isOnFire ? t.home.onFire : t.home.keepGoing}
-          </p>
-        )}
-      </CardContent>
-    </Card>
-  )
-}
+      )}
 
-/**
- * League/XP Card
- */
-function LeagueCard({ xp, league, rank, onViewLeaderboard = () => { } }) {
-  const levelProgress = (xp % 100)
-  const currentLevel = Math.floor(xp / 100)
-
-  return (
-    <Card className="border-2 border-purple-200/50">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Trophy className="w-5 h-5 text-purple-600" />
-          {fmt(t.home.leagueCard, { league })}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">{t.home.rankLabel}</span>
-          <span className="text-lg font-bold text-foreground">#{rank}</span>
-        </div>
-
-        <Separator />
-
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground font-medium">{fmt(t.home.levelN, { n: currentLevel })}</span>
-            <span className="font-bold text-foreground">{xp} XP</span>
-          </div>
-          <Progress value={levelProgress} className="h-2.5" />
-          <p className="text-xs text-muted-foreground">{fmt(t.home.xpToNextLevel, { n: 100 - levelProgress })}</p>
-        </div>
-
-        <Button variant="outline" size="sm" className="w-full mt-2" onClick={onViewLeaderboard}>
-          {t.home.viewLeaderboard}
-        </Button>
-      </CardContent>
-    </Card>
-  )
-}
-
-// =============================================================================
-// LANDING PAGE - For non-authenticated users
-// =============================================================================
-
-function Landing() {
-  return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
-      <div className="max-w-2xl space-y-8">
-        {/* Hero */}
-        <div className="space-y-4">
-          <Badge variant="secondary" className="mb-4">
-            <Sparkles className="w-3 h-3 mr-1" />
-            {t.home.landing.badge}
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
-            {t.home.landing.h1a}{' '}
-            <span className="text-primary">{t.home.landing.h1b}</span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-lg mx-auto">
-            {t.home.landing.subtitle}
-          </p>
-        </div>
-
-        {/* Single Primary CTA - Fitts's Law */}
-        <div className="space-y-4">
-          <Button asChild size="lg" className="h-14 px-8 text-base font-bold">
-            <Link to="/register">
-              {t.home.landing.cta}
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
-          </Button>
-          <p className="text-sm text-muted-foreground">
-            {t.home.landing.noCard}
-          </p>
-        </div>
-
-        {/* Social proof - minimal */}
-        <div className="flex items-center justify-center gap-6 pt-8 text-muted-foreground">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-foreground">10k+</p>
-            <p className="text-sm">{t.home.landing.learners}</p>
-          </div>
-          <Separator orientation="vertical" className="h-10" />
-          <div className="text-center">
-            <p className="text-2xl font-bold text-foreground">4.9</p>
-            <p className="text-sm">{t.home.landing.rating}</p>
-          </div>
-          <Separator orientation="vertical" className="h-10" />
-          <div className="text-center">
-            <p className="text-2xl font-bold text-foreground">50+</p>
-            <p className="text-sm">{t.home.landing.courses}</p>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

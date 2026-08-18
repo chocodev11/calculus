@@ -1,28 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { Heart, Plus, Clock } from 'lucide-react'
 import api from '../lib/api'
-import { Card, CardContent } from './ui/card'
 import { t } from '../lib/locale'
 
 const MAX_HEARTS = 5
 const RESTORE_SECONDS = 6 * 3600 // 6 hours
-
-function HeartIcon({ filled, size = 24 }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill={filled ? '#FF4B4B' : 'none'}
-      stroke={filled ? '#FF4B4B' : '#d1d5db'}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  )
-}
 
 function formatCountdown(seconds) {
   if (!seconds || seconds <= 0) return '0:00'
@@ -107,69 +90,89 @@ export default function HeartsCard() {
     : 1
 
   return (
-    <Card className="border-2 border-red-200/50 bg-gradient-to-br from-white to-red-50/50">
-      <CardContent className="p-4">
-        {/* Header row */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isFull ? 'bg-red-100' : 'bg-red-50'}`}>
-              <HeartIcon filled size={18} />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-slate-800 leading-tight">{t.heartsCard.heartLabel}</p>
-              <p className="text-xs text-slate-400 leading-tight">{t.heartsCard.heartsCount.replace('{cur}', displayHearts).replace('{max}', maxHearts)}</p>
-            </div>
+    <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 shadow-[0_4px_0_0_#E2E8F0] space-y-4">
+      {/* Header row */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center border-b-2 ${
+            isFull ? 'bg-rose-50 border-rose-200 text-rose-500' : 'bg-rose-50 border-rose-200 text-rose-500'
+          }`}>
+            <Heart className="w-5 h-5 fill-rose-500" />
           </div>
-          <Link
-            to="/quests"
-            className="text-xs font-semibold text-red-500 hover:text-red-600 transition-colors px-2 py-1 rounded-lg hover:bg-red-50"
-          >
-            {t.heartsCard.outOfHeart}
-          </Link>
-        </div>
-
-        {/* Hearts row */}
-        <div className="flex items-center justify-center gap-2 mb-3">
-          {Array.from({ length: maxHearts }).map((_, i) => (
-            <HeartIcon key={i} filled={i < displayHearts} size={28} />
-          ))}
-        </div>
-
-        {/* Countdown / full message */}
-        {isFull ? (
-          <p className="text-xs text-center text-red-500 font-semibold">{t.heartsCard.heartFull}</p>
-        ) : secondsLeft !== null ? (
-          <div className="space-y-1.5">
-            <div className="h-1.5 rounded-full bg-red-100 overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-red-400 to-pink-400 rounded-full transition-all duration-1000"
-                style={{ width: `${restoreProgress * 100}%` }}
-              />
-            </div>
-            <p className="text-xs text-center text-slate-500 tabular-nums">
-              {t.heartsCard.restoreIn} <span className="font-bold text-red-500">{formatCountdown(secondsLeft)}</span>
+          <div>
+            <p className="text-sm font-extrabold text-slate-900 leading-tight">
+              {t.heartsCard?.heartLabel || 'Năng lượng Tim'}
+            </p>
+            <p className="text-xs text-slate-500 font-semibold leading-tight tabular-nums mt-0.5">
+              {displayHearts} / {maxHearts} Tim
             </p>
           </div>
-        ) : null}
+        </div>
+        <Link
+          to="/shop"
+          className="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/80 px-2.5 py-1.5 rounded-xl border border-rose-200 transition-colors"
+        >
+          {t.heartsCard?.outOfHeart || 'Nạp thêm'}
+        </Link>
+      </div>
 
-        {/* Inventory + Use button */}
-        {invCount > 0 && (
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-red-100">
-            <span className="text-xs text-slate-500">
-              <span className="font-bold text-red-500">×{invCount}</span>{t.heartsCard.inBag}
-            </span>
-            <button
-              onClick={handleUse}
-              disabled={using || isFull}
-              className="text-xs font-bold px-3 py-1.5 rounded-xl bg-red-500 text-white
-                shadow-[0_2px_0_#C53030] active:shadow-none active:translate-y-[1px]
-                transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
+      {/* Hearts visual row */}
+      <div className="flex items-center justify-center gap-2 py-1 bg-slate-50 rounded-2xl border border-slate-100">
+        {Array.from({ length: maxHearts }).map((_, i) => {
+          const active = i < displayHearts
+          return (
+            <div
+              key={i}
+              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                active 
+                  ? 'bg-rose-500 text-white border-b-2 border-rose-700 shadow-sm' 
+                  : 'bg-slate-200 text-slate-400 border-b-2 border-slate-300'
+              }`}
             >
-              {using ? '...' : t.heartsCard.use}
-            </button>
+              <Heart className={`w-5 h-5 ${active ? 'fill-white' : 'fill-slate-300 text-slate-300'}`} />
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Countdown / full status */}
+      {isFull ? (
+        <p className="text-xs text-center text-emerald-600 font-bold">
+          ✓ {t.heartsCard?.heartFull || 'Tim đã đầy! Sẵn sàng học.'}
+        </p>
+      ) : secondsLeft !== null ? (
+        <div className="space-y-1.5 pt-1">
+          <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+            <div
+              className="h-full bg-rose-500 rounded-full transition-all duration-1000"
+              style={{ width: `${restoreProgress * 100}%` }}
+            />
           </div>
-        )}
-      </CardContent>
-    </Card>
+          <p className="text-xs text-center text-slate-500 font-medium tabular-nums flex items-center justify-center gap-1">
+            <Clock className="w-3 h-3 text-slate-400" />
+            <span>Hồi phục 1 tim sau:</span>
+            <span className="font-extrabold text-rose-600">{formatCountdown(secondsLeft)}</span>
+          </p>
+        </div>
+      ) : null}
+
+      {/* Inventory item usage */}
+      {invCount > 0 && (
+        <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+          <span className="text-xs font-bold text-slate-600">
+            Túi đồ: <span className="text-rose-600 font-extrabold">×{invCount} Tim</span>
+          </span>
+          <button
+            onClick={handleUse}
+            disabled={using || isFull}
+            className="text-xs font-bold px-3 py-1.5 rounded-xl bg-rose-500 text-white
+              border-b-2 border-rose-700 active:border-b-0 active:translate-y-0.5
+              transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {using ? 'Đang dùng...' : 'Sử dụng'}
+          </button>
+        </div>
+      )}
+    </div>
   )
 }

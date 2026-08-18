@@ -12,19 +12,14 @@ import {
   Sparkles,
   ArrowRight,
   ChevronRight,
-  X
+  X,
+  GraduationCap
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '../lib/api'
 import { useAuthStore } from '../lib/store'
 import { encodeStepId, cn } from '../lib/utils'
-
-// shadcn/ui components
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card'
-import { Button } from '../components/ui/button'
-import { Badge } from '../components/ui/badge'
-import { Progress } from '../components/ui/progress'
-import { Separator } from '../components/ui/separator'
+import { TactileButton } from '../components/ui/tactile-button'
 
 export default function Story() {
   const { slug } = useParams()
@@ -40,9 +35,7 @@ export default function Story() {
 
   const loadStory = async () => {
     try {
-      console.debug('[Story] fetching', slug)
       const data = await api.get(`/stories/${slug}`)
-      console.debug('[Story] /stories/:slug response', { slug, illustration: data?.illustration, thumbnail_url: data?.thumbnail_url })
       setStory(data)
     } catch (e) {
       console.error('[Story] loadStory error', e)
@@ -90,12 +83,11 @@ export default function Story() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-stone-50">
-        <header className="h-14 bg-white border-b border-stone-100 sticky top-0 z-30" />
-        <div className="container max-w-5xl mx-auto px-4 sm:px-6 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 lg:gap-8">
-            <div className="h-80 animate-pulse bg-stone-200 rounded-2xl" />
-            <div className="h-96 animate-pulse bg-stone-200 rounded-2xl" />
+      <div className="min-h-screen bg-slate-50 py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8">
+            <div className="h-96 animate-pulse bg-slate-200 rounded-3xl" />
+            <div className="h-96 animate-pulse bg-slate-200 rounded-3xl" />
           </div>
         </div>
       </div>
@@ -104,12 +96,12 @@ export default function Story() {
 
   if (!story) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-stone-500 mb-4">{t.story.courseNotFound}</p>
-          <Button asChild variant="outline">
-            <Link to="/explore">{t.story.backToExplore}</Link>
-          </Button>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="text-center bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm space-y-4 max-w-sm">
+          <p className="text-slate-600 font-bold">{t.story?.courseNotFound || 'Không tìm thấy khoá học'}</p>
+          <TactileButton variant="secondary" onClick={() => navigate('/explore')} className="w-full">
+            {t.story?.backToExplore || 'Quay lại Khám phá'}
+          </TactileButton>
         </div>
       </div>
     )
@@ -118,32 +110,36 @@ export default function Story() {
   const needsEnrollment = !story.is_enrolled
 
   return (
-    <div className="min-h-screen bg-stone-50 pb-12">
-      {/* Minimal Header */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-stone-100">
-        <div className="container max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="shrink-0 text-stone-500 hover:text-stone-900 hover:bg-stone-100" asChild>
-            <Link to="/explore">
+    <div className="min-h-screen bg-slate-50 pb-16 font-sans">
+      
+      {/* Top Breadcrumb Navigation */}
+      <div className="bg-white border-b border-slate-200 sticky top-16 z-30 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <Link
+              to="/explore"
+              className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
+            >
               <ArrowLeft className="w-5 h-5" />
             </Link>
-          </Button>
-          <div className="flex-1 min-w-0">
-            <h1 className="font-bold text-stone-900 truncate text-sm sm:text-base">{story.title}</h1>
+            <h1 className="font-extrabold text-slate-900 truncate text-base sm:text-lg">
+              {story.title}
+            </h1>
           </div>
           {story.is_enrolled && (
-            <Badge variant="secondary" className="shrink-0 bg-emerald-50 text-emerald-700 border-emerald-200">
-              {story.progress || 0}%
-            </Badge>
+            <span className="shrink-0 text-xs font-extrabold px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 tabular-nums">
+              {Math.round(story.progress || 0)}% Hoàn thành
+            </span>
           )}
         </div>
-      </header>
+      </div>
 
-      {/* Two-column layout */}
-      <div className="container max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6 lg:gap-10 items-start">
+      {/* Main Two-Column Course View */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8 items-start">
 
-          {/* Left Column - Static Course Overview Card */}
-          <div className="lg:sticky lg:top-20">
+          {/* Left Column: Course Overview Card */}
+          <div className="lg:sticky lg:top-32">
             <CourseOverviewCard
               story={story}
               totalLessons={totalLessons}
@@ -155,8 +151,8 @@ export default function Story() {
             />
           </div>
 
-          {/* Right Column - Lesson Path + Active Lesson Card */}
-          <div className="space-y-5">
+          {/* Right Column: Interactive Lesson Path */}
+          <div className="space-y-6">
             {story.chapters?.map((chapter, cIndex) => (
               <ChapterSection
                 key={chapter.id}
@@ -168,159 +164,155 @@ export default function Story() {
               />
             ))}
           </div>
+
         </div>
       </div>
+
     </div>
   )
 }
 
-// =============================================================================
-// LEFT COLUMN - Course Overview Card (No CTA, informational only)
-// =============================================================================
-
 function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnrollment, onEnroll, enrolling, user }) {
-  const progressPercent = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
-  // Fallback: illustration, then thumbnail, then icon
-  let illustrationUrl = story.illustration;
-  if (!illustrationUrl && story.thumbnail_url) illustrationUrl = story.thumbnail_url;
-  useEffect(() => {
-    console.debug('[CourseOverviewCard] story values', { slug: story.slug, illustration: story.illustration, thumbnail_url: story.thumbnail_url, used: illustrationUrl })
-  }, [story, illustrationUrl]);
-  // Use a friendlier, round font (e.g. font-sans, font-[Quicksand] if available)
+  const progressPercent = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
+  const illustrationUrl = story.illustration || story.thumbnail_url
+
   return (
-    <div className="group relative cursor-pointer select-none" tabIndex={0} role="button">
-      <Card className="overflow-hidden border-0 shadow-lg bg-white rounded-3xl transition-all duration-200 group-hover:shadow-xl group-hover:scale-[1.02] focus:shadow-xl focus:scale-[1.02] font-sans text-left">
-        <div className="flex flex-col items-start pt-8 pb-4 px-8">
-          <div className="w-24 h-24 rounded-2xl bg-[#F4F8FF] flex items-center justify-center mb-6 shadow-sm">
-            <img
-              src={illustrationUrl}
-              alt={story.illustration ? 'Course illustration' : 'Course thumbnail'}
-              className="w-20 h-20 object-contain rounded-xl"
-              loading="lazy"
-              draggable="false"
-              onError={e => { console.warn('[CourseOverviewCard] image failed to load', illustrationUrl); e.target.style.display = 'none'; }}
+    <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-[0_6px_0_0_#E2E8F0] space-y-6">
+      
+      {/* Icon / Illustration */}
+      <div className="w-24 h-24 rounded-3xl bg-indigo-50 border-2 border-indigo-100 flex items-center justify-center p-3 shadow-sm">
+        {illustrationUrl ? (
+          <img
+            src={illustrationUrl}
+            alt={story.title}
+            className="w-full h-full object-contain"
+            onError={e => { e.target.style.display = 'none' }}
+          />
+        ) : (
+          <GraduationCap className="w-12 h-12 text-indigo-600" />
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
+            {story.difficulty || t.story?.beginner || 'Cơ bản'}
+          </span>
+        </div>
+        <h2 className="text-2xl font-extrabold text-slate-900 leading-tight">
+          {story.title}
+        </h2>
+        <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+          {story.description || 'Làm chủ các khái niệm giải tích thông qua mô phỏng trực quan và thực hành giải đố.'}
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3 py-3 border-y border-slate-100">
+        <div className="flex items-center gap-2">
+          <Layers className="w-4 h-4 text-indigo-600" />
+          <span className="text-xs font-bold text-slate-700 tabular-nums">
+            {totalLessons} bài học
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <BookOpen className="w-4 h-4 text-amber-500" />
+          <span className="text-xs font-bold text-slate-700 tabular-nums">
+            {story.chapters?.length || 0} chương
+          </span>
+        </div>
+      </div>
+
+      {/* Progress if enrolled */}
+      {!needsEnrollment && (
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs font-bold">
+            <span className="text-slate-600">Tiến độ của bạn</span>
+            <span className="text-emerald-600 tabular-nums">{progressPercent}%</span>
+          </div>
+          <div className="h-3 rounded-full bg-slate-100 p-0.5 border border-slate-200 overflow-hidden">
+            <div
+              className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+              style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <h2 className="text-2xl font-extrabold text-stone-900 mb-2 leading-tight tracking-tight">{story.title}</h2>
-          <p className="text-stone-500 text-lg mb-3 leading-relaxed max-w-[90%]">
-            {story.description || 'Master the fundamentals through interactive problem-solving.'}
+          <p className="text-[11px] text-slate-400 font-medium text-right tabular-nums">
+            Đã hoàn thành {completedLessons} / {totalLessons} bài
           </p>
-          <div className="flex gap-2 mb-4">
-            <Badge variant="outline" className="text-sm font-semibold text-stone-500 border-stone-200 px-3 py-1 rounded-full">
-              {story.difficulty || t.story.beginner}
-            </Badge>
-          </div>
-          <div className="flex items-center gap-6 mb-4">
-            <div className="flex items-center gap-2 text-stone-600">
-              <Layers className="w-5 h-5 text-blue-400" />
-              <span className="text-base font-bold text-stone-900">{totalLessons}</span>
-              <span className="text-base text-stone-500">{t.story.lessons}</span>
-            </div>
-            <div className="flex items-center gap-2 text-stone-600">
-              <BookOpen className="w-5 h-5 text-amber-400" />
-              <span className="text-base font-bold text-stone-900">{story.exercises || 0}</span>
-              <span className="text-base text-stone-500">{t.story.exercises}</span>
-            </div>
-          </div>
-          {/* Progress bar if enrolled */}
-          {!needsEnrollment && (
-            <div className="w-full mb-3">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-base font-bold text-emerald-600">{progressPercent}%</span>
-                <span className="text-base text-stone-400">{completedLessons} / {totalLessons}</span>
-              </div>
-              <div className="h-3 bg-stone-100 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressPercent}%` }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className="h-full bg-emerald-500 rounded-full"
-                />
-              </div>
-            </div>
-          )}
-          {/* CTA button */}
-          <Button
-            onClick={onEnroll}
-            disabled={enrolling || !needsEnrollment}
-            className={cn(
-              'w-full h-12 mt-2 font-bold rounded-xl text-lg transition-all',
-              needsEnrollment
-                ? 'bg-blue-500 hover:bg-blue-600 text-white shadow'
-                : 'bg-stone-200 text-stone-500 cursor-default pointer-events-none'
-            )}
-          >
-            {needsEnrollment
-              ? enrolling
-                ? t.story.enrolling
-                : user
-                  ? t.story.enroll
-                  : t.story.loginToLearn
-              : t.story.enrolled}
-          </Button>
         </div>
-      </Card>
+      )}
+
+      {/* Enroll Action CTA */}
+      <TactileButton
+        variant={needsEnrollment ? 'primary' : 'secondary'}
+        size="lg"
+        onClick={onEnroll}
+        disabled={enrolling || !needsEnrollment}
+        className="w-full text-base"
+      >
+        {needsEnrollment
+          ? enrolling
+            ? 'Đang đăng ký...'
+            : user
+            ? 'Bắt đầu học ngay'
+            : 'Đăng nhập để học'
+          : '✓ Đã tham gia khoá học'}
+      </TactileButton>
+
     </div>
-  );
+  )
 }
 
-// =============================================================================
-// RIGHT COLUMN - Chapter Section with Lesson Path
-// =============================================================================
-
 function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }) {
-  const [selectedLesson, setSelectedLesson] = useState(null) // { step, isLocked }
+  const [selectedLesson, setSelectedLesson] = useState(null)
   const steps = chapter.steps || []
   const completedCount = steps.filter(s => s.is_completed).length
 
   return (
-    <div className="space-y-3">
-      {/* Level indicator */}
-      <div className="flex items-center gap-2.5">
-        <Badge variant="outline" className="px-3 py-1 text-xs font-bold uppercase tracking-wider border-stone-300 text-stone-600 bg-white">
-          {fmt(t.story.levelN, { n: index + 1 })}
-        </Badge>
-        <span className="text-stone-700 font-medium text-sm">{chapter.title}</span>
-        <span className="text-xs text-stone-400 ml-auto">{completedCount}/{steps.length}</span>
-      </div>
-
-      {/* Lesson path container */}
-      <Card className="p-3 sm:p-4 border-stone-200 shadow-sm">
-        <div className="relative">
-          {/* Vertical line */}
-          <div className="absolute left-[18px] sm:left-5 top-5 bottom-5 w-0.5 bg-stone-200" />
-
-          {/* Lessons */}
-          <div className="space-y-1.5">
-            {steps.map((step, stepIndex) => {
-              const isCurrentStep = currentLesson?.step?.id === step.id
-              const isCompleted = step.is_completed
-              const adminMode = new URLSearchParams(window.location.search).get('admin') === '1'
-              const isLocked = adminMode ? false : (!isEnrolled || (!isCompleted && !isCurrentStep))
-
-              return (
-                <LessonNode
-                  key={step.id}
-                  step={step}
-                  isCompleted={isCompleted}
-                  isCurrent={isCurrentStep}
-                  isLocked={isLocked}
-                  isEnrolled={isEnrolled}
-                  isLast={stepIndex === steps.length - 1}
-                  onSelect={() => setSelectedLesson({ step, isLocked })}
-                />
-              )
-            })}
+    <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-[0_4px_0_0_#E2E8F0] space-y-6">
+      
+      {/* Chapter Header */}
+      <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 font-extrabold text-xs flex items-center justify-center">
+            {index + 1}
+          </div>
+          <div>
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900">
+              {chapter.title}
+            </h3>
+            <p className="text-xs text-slate-400 font-medium">Chương {index + 1}</p>
           </div>
         </div>
+        <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 tabular-nums">
+          {completedCount}/{steps.length} bài
+        </span>
+      </div>
 
-        {/* Active lesson card - appears at bottom if current lesson is in this chapter */}
-        {currentLesson?.chapter?.id === chapter.id && (
-          <ActiveLessonCard lesson={currentLesson.step} courseSlug={storySlug} />
-        )}
-      </Card>
+      {/* Lessons Path Grid */}
+      <div className="space-y-3">
+        {steps.map((step, stepIndex) => {
+          const isCurrentStep = currentLesson?.step?.id === step.id
+          const isCompleted = step.is_completed
+          const isLocked = !isEnrolled || (!isCompleted && !isCurrentStep)
 
-      {/* Lesson Modal */}
+          return (
+            <LessonNode
+              key={step.id}
+              step={step}
+              isCompleted={isCompleted}
+              isCurrent={isCurrentStep}
+              isLocked={isLocked}
+              isEnrolled={isEnrolled}
+              storySlug={storySlug}
+              onSelect={() => setSelectedLesson({ step, isLocked })}
+            />
+          )
+        })}
+      </div>
+
+      {/* Lesson Details Modal */}
       <LessonModal
         lesson={selectedLesson?.step}
         isLocked={selectedLesson?.isLocked}
@@ -331,271 +323,114 @@ function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }
   )
 }
 
-// =============================================================================
-// LESSON NODE - Individual lesson in the path
-// =============================================================================
+function LessonNode({ step, isCompleted, isCurrent, isLocked, isEnrolled, storySlug, onSelect }) {
+  const navigate = useNavigate()
 
-function LessonNode({ step, isCompleted, isCurrent, isLocked, isEnrolled, onSelect }) {
   return (
-    <motion.div
+    <div
       onClick={onSelect}
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
-      className={cn(
-        'relative flex items-center gap-3 p-2.5 sm:p-3 rounded-xl transition-all cursor-pointer',
+      className={`group flex items-center justify-between p-4 rounded-2xl border-2 transition-all cursor-pointer select-none ${
         isCurrent
-          ? 'bg-blue-50 ring-2 ring-blue-400 ring-offset-1'
-          : 'bg-stone-50 hover:bg-stone-100'
-      )}
+          ? 'bg-indigo-50/70 border-indigo-300 shadow-[0_3px_0_0_#C7D2FE]'
+          : isCompleted
+          ? 'bg-white border-slate-200 hover:border-slate-300'
+          : isLocked
+          ? 'bg-slate-50/60 border-slate-200/60 opacity-70'
+          : 'bg-white border-slate-200 hover:border-indigo-300'
+      }`}
     >
-      {/* Status icon */}
-      <div className={cn(
-        'relative z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 transition-all',
-        isCompleted
-          ? 'bg-emerald-500 text-white'
-          : isCurrent
-            ? 'bg-blue-500 text-white shadow-lg shadow-blue-200'
-            : 'bg-stone-200 text-stone-400'
-      )}>
-        {isCompleted ? (
-          <Check className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2.5} />
-        ) : isCurrent ? (
-          <Play className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5" fill="currentColor" />
-        ) : (
-          <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-        )}
-      </div>
-
-      {/* Lesson info */}
-      <div className="flex-1 min-w-0">
-        <p className={cn(
-          'font-semibold truncate text-sm sm:text-base',
-          isCompleted ? 'text-stone-500' : 'text-stone-800'
-        )}>
-          {step.title}
-        </p>
-        {step.duration && (
-          <p className="text-xs text-stone-400 mt-0.5">{step.duration}</p>
-        )}
-      </div>
-
-      {/* Current indicator */}
-      {isCurrent && (
-        <Badge className="shrink-0 bg-blue-500 text-white border-0 text-xs px-2">
-          <Sparkles className="w-3 h-3 mr-1" />
-          {t.story.next}
-        </Badge>
-      )}
-
-      {/* Chevron */}
-      <ChevronRight className={cn(
-        'w-4 h-4 shrink-0 transition-colors',
-        isCurrent ? 'text-blue-400' : 'text-stone-300'
-      )} />
-    </motion.div>
-  )
-}
-
-// =============================================================================
-// ACTIVE LESSON CARD - Primary CTA area (Fitts's Law)
-// =============================================================================
-
-function ActiveLessonCard({ lesson, courseSlug }) {
-  const slug = courseSlug || lesson?.story_slug
-  return (
-    <div className="mt-4 pt-4 border-t border-stone-100">
-      <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50/50 border border-blue-100 overflow-hidden">
-        <div className="p-4 sm:p-5 space-y-4">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-500 flex items-center justify-center shrink-0 shadow-sm">
-              <BookOpen className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-blue-600 font-semibold uppercase tracking-wider">{t.story.upNext}</p>
-              <h3 className="text-base sm:text-lg font-bold text-stone-900 truncate mt-0.5">{lesson.title}</h3>
-              {lesson.description && (
-                <p className="text-sm text-stone-500 mt-1 line-clamp-2">
-                  {lesson.description}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Primary CTA - Continue button */}
-          <Button
-            asChild
-            size="lg"
-            className="w-full h-11 sm:h-12 text-sm sm:text-base font-bold bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-sm"
-          >
-            <Link to={`/course/${slug}/step/${encodeStepId(lesson.id)}`} className="flex items-center justify-center gap-2">
-              {t.story.continue}
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </Link>
-          </Button>
+      <div className="flex items-center gap-3.5 min-w-0">
+        
+        {/* Status Node Icon */}
+        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border-b-2 transition-transform group-hover:scale-105 ${
+          isCompleted
+            ? 'bg-emerald-500 border-emerald-700 text-white shadow-sm'
+            : isCurrent
+            ? 'bg-indigo-600 border-indigo-800 text-white shadow-sm'
+            : 'bg-slate-200 border-slate-300 text-slate-400'
+        }`}>
+          {isCompleted ? (
+            <Check className="w-5 h-5 stroke-[3]" />
+          ) : isCurrent ? (
+            <Play className="w-5 h-5 fill-white ml-0.5" />
+          ) : (
+            <Lock className="w-4 h-4" />
+          )}
         </div>
+
+        {/* Info */}
+        <div className="space-y-0.5 min-w-0">
+          <p className={`text-sm sm:text-base font-bold truncate ${
+            isCurrent ? 'text-indigo-900' : isCompleted ? 'text-slate-700' : 'text-slate-800'
+          }`}>
+            {step.title}
+          </p>
+          <p className="text-xs text-slate-400 font-medium">
+            {step.duration || '3 - 5 phút'}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        {isCurrent && (
+          <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-lg bg-indigo-600 text-white shadow-sm">
+            Tiếp theo
+          </span>
+        )}
+        <ChevronRight className={`w-5 h-5 ${isCurrent ? 'text-indigo-600' : 'text-slate-300'}`} />
       </div>
     </div>
   )
 }
 
-// =============================================================================
-// LESSON MODAL - Popup card when clicking a lesson
-// =============================================================================
-
 function LessonModal({ lesson, isLocked, onClose, storySlug }) {
+  const navigate = useNavigate()
   if (!lesson) return null
 
+  const handleStart = () => {
+    onClose()
+    navigate(`/course/${storySlug}/step/${encodeStepId(lesson.id)}`)
+  }
+
   return (
-    <AnimatePresence>
-      {/* Backdrop */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-        onClick={onClose}
-      />
-
-      {/* Modal Card */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden relative"
-        >
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center transition-colors"
-          >
-            <X className="w-4 h-4 text-stone-500" />
+    <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
+      <div className="bg-white border-2 border-slate-200 rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-200">
+        
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+            {lesson.duration || '3 - 5 phút'}
+          </span>
+          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600">
+            <X className="w-5 h-5" />
           </button>
+        </div>
 
-          {/* Decorative header gradient */}
-          <div className={cn(
-            'h-24 relative overflow-hidden',
-            isLocked
-              ? 'bg-gradient-to-br from-stone-100 to-stone-200'
-              : lesson.is_completed
-                ? 'bg-gradient-to-br from-emerald-100 via-emerald-50 to-teal-100'
-                : 'bg-gradient-to-br from-blue-100 via-indigo-50 to-violet-100'
-          )}>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.6),transparent)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(99,102,241,0.08),transparent)]" />
-          </div>
+        <div className="space-y-2">
+          <h3 className="text-xl font-extrabold text-slate-900">{lesson.title}</h3>
+          <p className="text-sm text-slate-600 font-medium leading-relaxed">
+            {lesson.description || 'Thực hành các câu hỏi tương tác và nắm bắt trực quan toán học.'}
+          </p>
+        </div>
 
-          {/* Status icon - overlapping header */}
-          <div className="flex justify-center -mt-10 relative z-10">
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.1 }}
-              className={cn(
-                'w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg border-4 border-white',
-                isLocked
-                  ? 'bg-stone-100'
-                  : lesson.is_completed
-                    ? 'bg-emerald-500'
-                    : 'bg-blue-500'
-              )}
-            >
-              {isLocked ? (
-                <Lock className="w-8 h-8 text-stone-400" />
-              ) : lesson.is_completed ? (
-                <Check className="w-8 h-8 text-white" strokeWidth={2.5} />
-              ) : (
-                <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
-              )}
-            </motion.div>
-          </div>
-
-          <div className="p-6 pt-4 space-y-4">
-            {/* Status badge */}
-            <div className="flex justify-center">
-              <Badge
-                variant="secondary"
-                className={cn(
-                  'text-xs font-semibold px-3 py-1',
-                  isLocked
-                    ? 'bg-stone-100 text-stone-500'
-                    : lesson.is_completed
-                      ? 'bg-emerald-100 text-emerald-700'
-                      : 'bg-blue-100 text-blue-700'
-                )}
-              >
-                {isLocked ? t.story.locked : lesson.is_completed ? t.story.completed : t.story.readyToLearn}
-              </Badge>
-            </div>
-
-            {/* Title */}
-            <h2 className="text-center text-xl sm:text-2xl font-bold text-stone-900 leading-tight">
-              {lesson.title}
-            </h2>
-
-            {/* Description or locked message */}
-            {isLocked ? (
-              <p className="text-center text-stone-500 text-sm leading-relaxed">
-                {t.story.lockedMsg}
+        <div className="flex flex-col gap-2.5 pt-2">
+          {!isLocked ? (
+            <TactileButton variant="primary" size="lg" onClick={handleStart} className="w-full">
+              <Play className="w-5 h-5 mr-1.5 fill-white" />
+              Bắt đầu bài học
+            </TactileButton>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-xs text-rose-500 font-bold text-center">
+                🔒 Bài học này đang bị khóa. Hãy hoàn thành các bài học trước để mở khóa!
               </p>
-            ) : lesson.description ? (
-              <p className="text-center text-stone-500 text-sm leading-relaxed line-clamp-3">
-                {lesson.description}
-              </p>
-            ) : null}
-
-            {/* Duration info */}
-            {lesson.duration && !isLocked && (
-              <div className="flex justify-center">
-                <div className="flex items-center gap-1.5 text-stone-400 text-sm">
-                  <Clock className="w-4 h-4" />
-                  <span>{lesson.duration}</span>
-                </div>
-              </div>
-            )}
-
-            {/* Action Button */}
-            <div className="pt-2">
-              {isLocked ? (
-                <Button
-                  disabled
-                  size="lg"
-                  className="w-full h-12 bg-stone-100 text-stone-400 font-bold rounded-xl cursor-not-allowed"
-                >
-                  <Lock className="w-4 h-4 mr-2" />
-                  {t.story.locked}
-                </Button>
-              ) : (
-                <Button
-                  asChild
-                  size="lg"
-                  className={cn(
-                    'w-full h-12 font-bold rounded-xl transition-all',
-                    lesson.is_completed
-                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                      : 'bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-200'
-                  )}
-                >
-                  <Link to={`/course/${storySlug}/step/${encodeStepId(lesson.id)}`} onClick={onClose}>
-                    {lesson.is_completed ? (
-                      <>
-                        <Check className="w-4 h-4 mr-2" />
-                        {t.story.reviewLesson}
-                      </>
-                    ) : (
-                      <>
-                        {t.story.startLesson}
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </>
-                    )}
-                  </Link>
-                </Button>
-              )}
+              <TactileButton variant="secondary" size="md" onClick={onClose} className="w-full">
+                Đã hiểu
+              </TactileButton>
             </div>
-          </div>
-        </motion.div>
+          )}
+        </div>
+
       </div>
-    </AnimatePresence>
+    </div>
   )
 }
