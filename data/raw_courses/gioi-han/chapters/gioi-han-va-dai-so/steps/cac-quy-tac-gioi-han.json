@@ -41,17 +41,17 @@
                                 {
                                     "id": "sum-law",
                                     "trigger": "state.currentValue > 0.8 && state.currentValue < 1.2",
-                                    "text": "Tại x = 2: giới hạn của f (xanh dương) = 3, giới hạn của g (cam) = {eval:p*2}. Giới hạn của f+g (xanh lá) = {eval:3+p*2}. Đúng bằng 3 + {eval:p*2}! Quy tắc tổng hoạt động ✔️"
+                                    "text": "Tại x = 2: giới hạn của f (xanh dương) = 3, giới hạn của g (cam) = {expr:p*2}. Giới hạn của f+g (xanh lá) = {expr:3+p*2}. Đúng bằng 3 + {expr:p*2}! Quy tắc tổng hoạt động ✔️"
                                 },
                                 {
                                     "id": "negative",
                                     "trigger": "state.currentValue < -1",
-                                    "text": "Đường cam dốc xuống. Tại x = 2: giới hạn f = 3, giới hạn g = {eval:p*2}. Tổng giới hạn = {eval:3+p*2}. Vẫn đúng quy tắc: giới hạn của tổng = tổng các giới hạn!"
+                                    "text": "Đường cam dốc xuống. Tại x = 2: giới hạn f = 3, giới hạn g = {expr:p*2}. Tổng giới hạn = {expr:3+p*2}. Vẫn đúng quy tắc: giới hạn của tổng = tổng các giới hạn!"
                                 },
                                 {
                                     "id": "large",
                                     "trigger": "state.currentValue > 2.5",
-                                    "text": "Đường cam dốc lên mạnh. Tổng giới hạn = 3 + {eval:p*2} = {eval:3+p*2}. Dù thay đổi g(x) thế nào, quy tắc tổng luôn đúng!"
+                                    "text": "Đường cam dốc lên mạnh. Tổng giới hạn = 3 + {expr:p*2} = {expr:3+p*2}. Dù thay đổi g(x) thế nào, quy tắc tổng luôn đúng!"
                                 }
                             ],
                             "prompt": "Trên đồ thị có 3 đường:\n• Xanh dương: f(x) = x + 1\n• Cam: g(x) = p·x (bạn điều chỉnh p)\n• Xanh lá: tổng f(x) + g(x)\n\n🎯 Thay đổi p rồi đọc giá trị của 3 đường tại x = 2. Giới hạn của đường xanh lá có luôn bằng tổng giới hạn của xanh dương và cam không?"

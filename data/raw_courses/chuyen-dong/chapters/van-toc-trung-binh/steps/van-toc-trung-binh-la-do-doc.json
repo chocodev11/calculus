@@ -66,22 +66,22 @@
                                 {
                                     "id": "going-forward",
                                     "trigger": "state.currentValue < 4",
-                                    "text": "Vật đang đi về phía trước. Đường đỏ dốc lên: vận tốc TB = {eval:Math.round((-0.25*p+2)*10)/10} m/s (dương)."
+                                    "text": "Vật đang đi về phía trước. Đường đỏ dốc lên: vận tốc TB = {expr:Math.round((-0.25*p+2)*10)/10} m/s (dương)."
                                 },
                                 {
                                     "id": "returning",
                                     "trigger": "state.currentValue >= 4 && state.currentValue < 7.5",
-                                    "text": "Vật đã đạt đỉnh và đang quay lại. Dù vật đổi chiều, vận tốc TB = {eval:Math.round((-0.25*p+2)*10)/10} m/s vẫn dương — vì xét ròng, vật vẫn ở phía trước so với điểm xuất phát."
+                                    "text": "Vật đã đạt đỉnh và đang quay lại. Dù vật đổi chiều, vận tốc TB = {expr:Math.round((-0.25*p+2)*10)/10} m/s vẫn dương — vì xét ròng, vật vẫn ở phía trước so với điểm xuất phát."
                                 },
                                 {
                                     "id": "near-zero",
                                     "trigger": "state.currentValue >= 7.5 && state.currentValue <= 8.5",
-                                    "text": "Đường đỏ gần nằm ngang! VTB ≈ {eval:Math.round((-0.25*p+2)*10)/10} m/s, tiến về 0. Tại b = 8, vật về đúng nơi xuất phát: dịch chuyển ròng = 0 → vận tốc TB = 0."
+                                    "text": "Đường đỏ gần nằm ngang! VTB ≈ {expr:Math.round((-0.25*p+2)*10)/10} m/s, tiến về 0. Tại b = 8, vật về đúng nơi xuất phát: dịch chuyển ròng = 0 → vận tốc TB = 0."
                                 },
                                 {
                                     "id": "negative",
                                     "trigger": "state.currentValue > 8.5",
-                                    "text": "Đường đỏ dốc xuống! VTB = {eval:Math.round((-0.25*p+2)*10)/10} m/s < 0. Vật đã vượt qua điểm xuất phát về phía ngược lại — dịch chuyển ròng âm."
+                                    "text": "Đường đỏ dốc xuống! VTB = {expr:Math.round((-0.25*p+2)*10)/10} m/s < 0. Vật đã vượt qua điểm xuất phát về phía ngược lại — dịch chuyển ròng âm."
                                 }
                             ]
                         }

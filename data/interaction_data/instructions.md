@@ -45,7 +45,7 @@ Type B supports an **extended mode** for lessons involving relationships between
 
 **Reflection text interpolation:**
 - `{p}` → current parameter value (2 decimals)
-- `{eval:JS_expression_using_p}` → evaluated expression result
+- `{expr:JS_expression_using_p}` → evaluated expression result
 
 **When to use extended mode:**
 - Limit arithmetic (sum, product, quotient rules) — show f, g, and f∘g simultaneously

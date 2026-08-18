@@ -63,7 +63,7 @@
                                 {
                                     "id": "fast",
                                     "trigger": "state.currentValue > 2.5",
-                                    "text": "Gia tốc cao — đường cam rất dốc về cuối, vượt qua đường xanh. Sau t = {eval:Math.round(2/(0.1*p)*10)/10} giây, vật B sẽ nhanh hơn vật A."
+                                    "text": "Gia tốc cao — đường cam rất dốc về cuối, vượt qua đường xanh. Sau t = {expr:Math.round(2/(0.1*p)*10)/10} giây, vật B sẽ nhanh hơn vật A."
                                 }
                             ]
                         }

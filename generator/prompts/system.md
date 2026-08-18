@@ -154,7 +154,7 @@ Use this mode when the lesson involves RELATIONSHIPS between functions
     {
       "id": "<unique id>",
       "trigger": "<JS expression using state.currentValue>",
-      "text": "<Vietnamese text — may use {p} for param value, {eval:expression} for computed values>"
+      "text": "<Vietnamese text — may use {p} for param value, {expr:expression} for computed values>"
     }
   ]
 }
@@ -166,7 +166,7 @@ Extended mode fields:
 - annotations[]:
   - "limitValue": Evaluates expr at x=at, displays "label" with {value} replaced by computed number. Shown in a panel.
   - "horizontalLine": Draws a dotted horizontal line at the computed y-value.
-- Reflection text supports {p} (parameter value) and {eval:JS_expression_using_p} for dynamic computed values.
+- Reflection text supports {p} (parameter value) and {expr:JS_expression_using_p} for dynamic computed values.
 
 WHEN TO USE EXTENDED MODE:
 - Limit arithmetic rules (sum, product, quotient, constant multiple)

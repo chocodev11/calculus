@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { MathText } from './MathText'
+import { evaluateCondition, makeNumberEvaluator } from './legacyEvaluator'
 
 // ─── DEFAULT LESSON CONFIG ───────────────────────────────────────────────────
 
@@ -32,26 +33,24 @@ const DEFAULT_LESSON = {
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
-const MATH_HELPERS_STR = 'const {abs,pow,sin,cos,tan,sqrt,log,exp,floor,ceil,round,PI,E,min,max,sign} = Math;'
-
 function makeEval(expr) {
-  return new Function('x', 'p', `${MATH_HELPERS_STR} return ${expr}`)
+  return makeNumberEvaluator(expr, ['x', 'p'])
 }
 
 function makeEvalP(expr) {
-  return new Function('p', `${MATH_HELPERS_STR} return ${expr}`)
+  return makeNumberEvaluator(expr, ['p'])
 }
 
 /**
  * Interpolate dynamic values in reflection text.
  * {p}           → current parameter value (2 decimals)
- * {eval:expr}   → evaluated JS expression with p in scope
+ * {expr:expression} → evaluated safe math expression with p in scope
  */
 function interpolateText(text, p) {
   if (typeof text !== 'string') return text
   return text
     .replace(/\{p\}/g, Number.isFinite(p) ? p.toFixed(2) : String(p))
-    .replace(/\{eval:([^}]+)\}/g, (_, expr) => {
+    .replace(/\{expr:([^}]+)\}/g, (_, expr) => {
       try {
         const val = makeEvalP(expr)(p)
         return Number.isFinite(val) ? val.toFixed(2) : '\u2204'
@@ -577,7 +576,7 @@ export default function InteractionTypeB({ lesson: lessonProp }) {
         triggered = ref.trigger(state)
       } else if (typeof ref.trigger === 'string') {
         try {
-          triggered = new Function('state', `"use strict"; return (${ref.trigger});`)(state)
+          triggered = evaluateCondition(ref.trigger, state)
         } catch { triggered = false }
       } else if (ref.triggerSpec) {
         const { field, op, value } = ref.triggerSpec

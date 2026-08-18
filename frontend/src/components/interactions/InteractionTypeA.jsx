@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { MathText } from './MathText'
+import { evaluateCondition, makeNumberEvaluator } from './legacyEvaluator'
 
 // ─── DEFAULT LESSON CONFIG ───────────────────────────────────────────────────
 
@@ -36,9 +37,8 @@ function recompute(interaction, state) {
   const { function: fnExpr, derivative: dfExpr, domain, anchor } = interaction.systemSpec
   const resolution = state.resolution
 
-  const mathHelpers = 'const {abs,pow,sin,cos,tan,sqrt,log,exp,floor,ceil,round,PI,E,min,max,sign} = Math;'
-  const f = interaction.systemSpec._f || new Function("x", `${mathHelpers} return ${fnExpr}`)
-  const df = interaction.systemSpec._df || new Function("x", `${mathHelpers} return ${dfExpr}`)
+  const f = interaction.systemSpec._f || makeNumberEvaluator(fnExpr, ['x'])
+  const df = interaction.systemSpec._df || makeNumberEvaluator(dfExpr, ['x'])
 
   const graph = []
   const dxGraph = (domain[1] - domain[0]) / 300
@@ -71,8 +71,7 @@ function recomputeRiemann(interaction, state) {
   const { function: fnExpr, integral, sumType, domain } = interaction.systemSpec
   const n = state.resolution
 
-  const mathHelpers = 'const {abs,pow,sin,cos,tan,sqrt,log,exp,floor,ceil,round,PI,E,min,max,sign} = Math;'
-  const f = interaction.systemSpec._f || new Function("x", `${mathHelpers} return ${fnExpr}`)
+  const f = interaction.systemSpec._f || makeNumberEvaluator(fnExpr, ['x'])
 
   const graph = []
   const dxGraph = (domain[1] - domain[0]) / 300
@@ -277,7 +276,7 @@ function evalCondition(trigger, state) {
   if (typeof trigger.condition === 'function') return trigger.condition(state)
   if (typeof trigger.condition === 'string') {
     try {
-      return new Function('state', `"use strict"; return (${trigger.condition});`)(state)
+      return evaluateCondition(trigger.condition, state)
     } catch { return false }
   }
   if (trigger.conditionSpec) {
@@ -310,11 +309,10 @@ export default function InteractionTypeA({ lesson: lessonProp }) {
   const canvasRef = useRef(null)
 
   const { f, df } = useMemo(() => {
-    const mh = 'const {abs,pow,sin,cos,tan,sqrt,log,exp,floor,ceil,round,PI,E,min,max,sign} = Math;'
     return {
-      f: new Function("x", `${mh} return ${LESSON.systemSpec.function}`),
+      f: makeNumberEvaluator(LESSON.systemSpec.function, ['x']),
       df: !isRiemann && LESSON.systemSpec.derivative
-        ? new Function("x", `${mh} return ${LESSON.systemSpec.derivative}`)
+        ? makeNumberEvaluator(LESSON.systemSpec.derivative, ['x'])
         : () => 0
     }
   }, [LESSON, isRiemann])

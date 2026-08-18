@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { MathText } from './MathText'
+import { makeArrayEvaluator } from './legacyEvaluator'
 
 // ─── DEFAULT LESSON CONFIG ───────────────────────────────────────────────────
 
@@ -29,22 +30,8 @@ const DEFAULT_LESSON = {
 
 // ─── DSL EVALUATOR ───────────────────────────────────────────────────────────
 
-const ALLOWED_FNS = {
-  sin: Math.sin, cos: Math.cos, abs: Math.abs,
-  sqrt: Math.sqrt, log: Math.log, exp: Math.exp,
-  pow: Math.pow, sign: Math.sign
-}
-
 function createEvaluator(model) {
-  const expr = model.expression.replace(/\^/g, "**")
-  return function (scope) {
-    const fn = new Function(
-      ...Object.keys(ALLOWED_FNS),
-      ...Object.keys(scope),
-      `"use strict"; return (${expr});`
-    )
-    return fn(...Object.values(ALLOWED_FNS), ...Object.values(scope))
-  }
+  return makeArrayEvaluator(model.expression)
 }
 
 // ─── PURE LOGIC ──────────────────────────────────────────────────────────────

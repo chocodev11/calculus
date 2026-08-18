@@ -42,12 +42,12 @@
                                 {
                                     "id": "far-left",
                                     "trigger": "state.currentValue < 0.5",
-                                    "text": "Tại x = {p}: biểu thức gốc ({eval:p*p}−4)/({p}−2) = {eval:(p*p-4)/(p-2)}. Rút gọn: {p}+2 = {eval:p+2}. Cùng kết quả! ✔️"
+                                    "text": "Tại x = {p}: biểu thức gốc ({expr:p*p}−4)/({p}−2) = {expr:(p*p-4)/(p-2)}. Rút gọn: {p}+2 = {expr:p+2}. Cùng kết quả! ✔️"
                                 },
                                 {
                                     "id": "approaching",
                                     "trigger": "state.currentValue > 1.5 && state.currentValue < 1.95",
-                                    "text": "x = {p} — gần lỗ trống rồi! Biểu thức gốc = {eval:(p*p-4)/(p-2)}, rút gọn = {eval:p+2}. Cả hai đều tiến về 4 khi x → 2!"
+                                    "text": "x = {p} — gần lỗ trống rồi! Biểu thức gốc = {expr:(p*p-4)/(p-2)}, rút gọn = {expr:p+2}. Cả hai đều tiến về 4 khi x → 2!"
                                 },
                                 {
                                     "id": "at-hole",
@@ -57,7 +57,7 @@
                                 {
                                     "id": "past",
                                     "trigger": "state.currentValue > 3",
-                                    "text": "Tại x = {p}: biểu thức gốc = {eval:(p*p-4)/(p-2)}, rút gọn = {eval:p+2}. Bằng nhau tại mọi điểm trừ x = 2! Việc rút gọn là hợp lệ."
+                                    "text": "Tại x = {p}: biểu thức gốc = {expr:(p*p-4)/(p-2)}, rút gọn = {expr:p+2}. Bằng nhau tại mọi điểm trừ x = 2! Việc rút gọn là hợp lệ."
                                 }
                             ],
                             "prompt": "Đường cong xanh là đồ thị của (x²−4)/(x−2), với lỗ trống ○ tại x = 2 (vì mẫu = 0).\nĐường xanh lá nét đứt là y = 4 (giá trị giới hạn).\n\n🎯 Kéo thanh trượt để di chuyển điểm x dọc theo đường cong. So sánh giá trị của biểu thức gốc và biểu thức rút gọn (x+2). Chúng khác nhau ở đâu?"

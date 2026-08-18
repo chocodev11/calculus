@@ -66,17 +66,17 @@
                                 {
                                     "id": "short",
                                     "trigger": "state.currentValue < 1.5",
-                                    "text": "Trong {eval:Math.round(p*10)/10} giây đầu, vật đi rất nhanh. Tốc độ trung bình = {eval:Math.round(4/Math.sqrt(p)*10)/10} m/s — cao vì vật mới xuất phát, chưa chậm lại nhiều."
+                                    "text": "Trong {expr:Math.round(p*10)/10} giây đầu, vật đi rất nhanh. Tốc độ trung bình = {expr:Math.round(4/Math.sqrt(p)*10)/10} m/s — cao vì vật mới xuất phát, chưa chậm lại nhiều."
                                 },
                                 {
                                     "id": "medium",
                                     "trigger": "state.currentValue >= 1.5 && state.currentValue <= 4",
-                                    "text": "Sau {eval:Math.round(p*10)/10} giây, tốc độ trung bình = {eval:Math.round(4/Math.sqrt(p)*10)/10} m/s. Vật đi chậm dần nên trung bình bị kéo xuống so với lúc đầu. Đường đỏ thoải hơn."
+                                    "text": "Sau {expr:Math.round(p*10)/10} giây, tốc độ trung bình = {expr:Math.round(4/Math.sqrt(p)*10)/10} m/s. Vật đi chậm dần nên trung bình bị kéo xuống so với lúc đầu. Đường đỏ thoải hơn."
                                 },
                                 {
                                     "id": "long",
                                     "trigger": "state.currentValue > 4",
-                                    "text": "Khoảng dài {eval:Math.round(p*10)/10} giây — tốc độ trung bình chỉ còn {eval:Math.round(4/Math.sqrt(p)*10)/10} m/s. Con số này gộp cả lúc nhanh (đầu) và lúc chậm (cuối) thành một giá trị duy nhất — nó che giấu mọi biến thiên bên trong."
+                                    "text": "Khoảng dài {expr:Math.round(p*10)/10} giây — tốc độ trung bình chỉ còn {expr:Math.round(4/Math.sqrt(p)*10)/10} m/s. Con số này gộp cả lúc nhanh (đầu) và lúc chậm (cuối) thành một giá trị duy nhất — nó che giấu mọi biến thiên bên trong."
                                 }
                             ]
                         }

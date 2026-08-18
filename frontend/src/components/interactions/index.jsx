@@ -21,17 +21,21 @@ export { default as InteractionTypeA } from './InteractionTypeA'
 export { default as InteractionTypeB } from './InteractionTypeB'
 export { default as InteractionTypeC } from './InteractionTypeC'
 export { default as InteractionTypeE } from './InteractionTypeE'
+export { default as SandboxInteraction } from './SandboxInteraction'
 
 import InteractionTypeA from './InteractionTypeA'
 import InteractionTypeB from './InteractionTypeB'
 import InteractionTypeC from './InteractionTypeC'
 import InteractionTypeE from './InteractionTypeE'
+import SandboxInteraction from './SandboxInteraction'
 
 const TYPE_MAP = {
   'A': InteractionTypeA,
   'B': InteractionTypeB,
   'C': InteractionTypeC,
   'E': InteractionTypeE,
+  'sandbox': SandboxInteraction,
+  'SANDBOX': SandboxInteraction,
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

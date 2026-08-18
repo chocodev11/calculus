@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from 'react'
 import { MathText } from './MathText'
+import { evaluateNumber, makeNumberEvaluator } from './legacyEvaluator'
 
 // ─── DEFAULT LESSON CONFIG ───────────────────────────────────────────────────
 
@@ -30,13 +31,11 @@ const DEFAULT_LESSON = {
 // ─── MATH UTILITIES ──────────────────────────────────────────────────────────
 
 function evalExpr(expr, scope) {
-  const fn = new Function(...Object.keys(scope), `"use strict"; return (${expr});`)
-  return fn(...Object.values(scope))
+  return evaluateNumber(expr, scope)
 }
 
-const MATH_HELPERS = 'const {abs,pow,sin,cos,tan,sqrt,log,exp,floor,ceil,round,PI,E,min,max,sign} = Math;'
 function makeFn(expr) {
-  return new Function("x", `${MATH_HELPERS} return ${expr}`)
+  return makeNumberEvaluator(expr, ['x'])
 }
 
 function integrate(f, a, b, n = 300) {
