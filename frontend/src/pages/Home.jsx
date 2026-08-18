@@ -131,6 +131,101 @@ export default function Home() {
     return <Landing />
   }
 
+  let courseCarouselContent;
+  if (loading) {
+    courseCarouselContent = (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="h-80 animate-pulse bg-muted" />
+        <Card className="h-80 animate-pulse bg-muted hidden md:block" />
+      </div>
+    );
+  } else if (courses.length > 0) {
+    courseCarouselContent = (
+      <div
+        className="relative"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        {/* Section Header */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <BookOpen className="w-5 h-5" />
+            {t.home.yourCourses}
+          </h2>
+          <Badge variant="secondary" className="text-xs">
+            {courses.length} {t.home.inProgress}
+          </Badge>
+        </div>
+
+        {/* Carousel Container */}
+        <div className="relative overflow-hidden">
+          <motion.div
+            className="flex"
+            animate={{
+              x: `-${currentSlide * 100}%`
+            }}
+            transition={{
+              type: "tween",
+              ease: "easeInOutQuart",
+              duration: 0.5
+            }}
+          >
+            {courses.map((course, idx) => (
+              <motion.div
+                key={course.slug || idx}
+                className="flex-shrink-0 w-full px-1"
+              >
+                <CourseCard story={course} />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Navigation Controls */}
+        {courses.length > 1 && (
+          <>
+            {/* Previous/Next Buttons */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white hover:bg-white shadow-lg rounded-full h-10 w-10 z-20 transition-all hover:scale-110"
+              onClick={prevSlide}
+              aria-label={t.home.ariaPrevCourse}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white hover:bg-white shadow-lg rounded-full h-10 w-10 z-20 transition-all hover:scale-110"
+              onClick={nextSlide}
+              aria-label={t.home.ariaNextCourse}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+
+            {/* Slide Indicators */}
+            <div className="flex items-center justify-center gap-2 mt-6">
+              {courses.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => goToSlide(idx)}
+                  className={`h-2 rounded-full transition-all ${idx === currentSlide
+                      ? 'w-8 bg-primary'
+                      : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                    }`}
+                  aria-label={fmt(t.home.ariaGoToSlide, { n: idx + 1 })}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  } else {
+    courseCarouselContent = <EmptyStateCard />;
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* 2-Column Responsive Layout */}
@@ -258,95 +353,7 @@ export default function Home() {
           </div>
 
           {/* Course Cards Carousel - Multiple Cards */}
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="h-80 animate-pulse bg-muted" />
-              <Card className="h-80 animate-pulse bg-muted hidden md:block" />
-            </div>
-          ) : courses.length > 0 ? (
-            <div
-              className="relative"
-              onMouseEnter={() => setIsPaused(true)}
-              onMouseLeave={() => setIsPaused(false)}
-            >
-              {/* Section Header */}
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  {t.home.yourCourses}
-                </h2>
-                <Badge variant="secondary" className="text-xs">
-                  {courses.length} {t.home.inProgress}
-                </Badge>
-              </div>
-
-              {/* Carousel Container */}
-              <div className="relative overflow-hidden">
-                <motion.div
-                  className="flex"
-                  animate={{
-                    x: `-${currentSlide * 100}%`
-                  }}
-                  transition={{
-                    type: "tween",
-                    ease: "easeInOutQuart",
-                    duration: 0.5
-                  }}
-                >
-                  {courses.map((course, idx) => (
-                    <motion.div
-                      key={course.slug || idx}
-                      className="flex-shrink-0 w-full px-1"
-                    >
-                      <CourseCard story={course} />
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </div>
-
-              {/* Navigation Controls */}
-              {courses.length > 1 && (
-                <>
-                  {/* Previous/Next Buttons */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white hover:bg-white shadow-lg rounded-full h-10 w-10 z-20 transition-all hover:scale-110"
-                    onClick={prevSlide}
-                    aria-label={t.home.ariaPrevCourse}
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white hover:bg-white shadow-lg rounded-full h-10 w-10 z-20 transition-all hover:scale-110"
-                    onClick={nextSlide}
-                    aria-label={t.home.ariaNextCourse}
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </Button>
-
-                  {/* Slide Indicators */}
-                  <div className="flex items-center justify-center gap-2 mt-6">
-                    {courses.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => goToSlide(idx)}
-                        className={`h-2 rounded-full transition-all ${idx === currentSlide
-                            ? 'w-8 bg-primary'
-                            : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50'
-                          }`}
-                        aria-label={fmt(t.home.ariaGoToSlide, { n: idx + 1 })}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          ) : (
-            <EmptyStateCard />
-          )}
+          {courseCarouselContent}
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
