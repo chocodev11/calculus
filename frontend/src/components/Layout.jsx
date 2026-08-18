@@ -153,11 +153,12 @@ export default function Layout() {
                 </DropdownMenu>
               </>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <TactileButton 
                   variant="secondary" 
                   size="sm" 
                   onClick={() => navigate('/login')}
+                  className="h-8 sm:h-9 px-2.5 sm:px-3.5 text-xs sm:text-sm font-bold text-slate-700 hover:text-indigo-600"
                 >
                   {t.layout?.auth?.login || 'Đăng nhập'}
                 </TactileButton>
@@ -165,9 +166,11 @@ export default function Layout() {
                   variant="primary" 
                   size="sm" 
                   onClick={() => navigate('/register')}
+                  className="h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm font-extrabold shadow-sm"
                 >
-                  <Sparkles className="w-3.5 h-3.5 mr-1" />
-                  {t.layout?.auth?.register || 'Bắt đầu miễn phí'}
+                  <Sparkles className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
+                  <span className="hidden sm:inline">{t.layout?.auth?.register || 'Bắt đầu miễn phí'}</span>
+                  <span className="sm:hidden">Đăng ký</span>
                 </TactileButton>
               </div>
             )}
@@ -205,7 +208,7 @@ export default function Layout() {
               </Link>
             )
           })}
-          {user && (
+          {user ? (
             <Link
               to="/profile"
               className={`flex flex-col items-center gap-1 py-1.5 px-4 rounded-xl text-xs font-bold transition-colors ${
@@ -214,6 +217,16 @@ export default function Layout() {
             >
               <User className={`w-5 h-5 ${location.pathname === '/profile' ? 'stroke-[2.5]' : ''}`} />
               <span>{t.layout?.nav?.profile || 'Hồ sơ'}</span>
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className={`flex flex-col items-center gap-1 py-1.5 px-4 rounded-xl text-xs font-bold transition-colors ${
+                location.pathname === '/login' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              <User className={`w-5 h-5 ${location.pathname === '/login' ? 'stroke-[2.5]' : ''}`} />
+              <span>Đăng nhập</span>
             </Link>
           )}
         </div>

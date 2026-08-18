@@ -25,24 +25,23 @@ export default function Landing() {
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
             
             {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-xs sm:text-sm font-bold shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs sm:text-sm font-bold shadow-sm">
               <span className="flex h-2 w-2 rounded-full bg-indigo-600 animate-ping" />
               <Sparkles className="w-4 h-4 text-indigo-600" />
-              <span>Nền tảng học Giải Tích trực quan thế hệ mới</span>
+              <span>Phương pháp trực quan hóa toán học tương tác</span>
             </div>
 
-            {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
-              Học Toán Giải Tích <br className="hidden sm:inline" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-sky-500 to-indigo-700">
-                Trực Quan Như Chơi Game
+            {/* Main Headline (Pure solid typography - NO text gradient) */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.12]">
+              Làm Chủ Giải Tích <br className="hidden sm:inline" />
+              <span className="text-indigo-600">
+                Bằng Trực Giác Hình Học
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
-              Biến công thức trừu tượng thành mô hình tương tác sống động. Thấu hiểu bản chất của 
-              <strong className="text-slate-800"> Đạo hàm, Giới hạn & Tích phân</strong> qua phương pháp học vi mô (micro-learning) cùng cơ chế gamification đầy cuốn hút.
+              Không còn những trang giáo trình khô khan và học vẹt công thức. Tự tay kéo trượt đồ thị, chứng kiến cát tuyến hội tụ thành tiếp tuyến và làm chủ <strong className="text-slate-900 font-bold">Giới hạn, Đạo hàm & Tích phân</strong> qua từng thử thách tương tác ngắn gọn.
             </p>
 
             {/* Action Buttons */}
@@ -134,13 +133,13 @@ export default function Landing() {
         
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
           <span className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
-            Phương pháp đột phá
+            Phương pháp học tập trực quan
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Cách Học Giải Tích Hiệu Quả Gấp 3 Lần
+            Hiểu Sâu Bản Chất Thay Vì Học Thuộc
           </h2>
           <p className="text-base sm:text-lg text-slate-600">
-            Kết hợp sự chặt chẽ của giáo trình học thuật chuẩn quốc tế với công nghệ mô phỏng tương tác trực giác.
+            Tự tay khám phá quy luật toán học thông qua mô phỏng động trước khi tiếp cận công thức đại số.
           </p>
         </div>
 
@@ -459,10 +458,10 @@ export default function Landing() {
               Sẵn sàng làm chủ Toán Giải Tích?
             </span>
             <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-              Bắt Đầu Hành Trình Học Tập Của Bạn Ngay Hôm Nay
+              Chinh Phục Giải Tích Ngay Hôm Nay
             </h2>
             <p className="text-indigo-200 text-base sm:text-lg">
-              Gia nhập hơn 10,000 học viên đang chinh phục Đạo hàm & Tích phân một cách tự tin.
+              Xây dựng trực giác toán học vững chắc và làm chủ các kỳ thi chỉ với 5 phút học mỗi ngày.
             </p>
           </div>
 
