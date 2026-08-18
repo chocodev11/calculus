@@ -40,7 +40,6 @@ async def get_stories(
     db: AsyncSession = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user_optional)
 ):
-    # Use joinedload to eagerly load category and slides so we can compute exercise count
     query = select(Story).options(
         joinedload(Story.category),
         selectinload(Story.chapters).selectinload(Chapter.steps).selectinload(Step.slides)
@@ -51,48 +50,52 @@ async def get_stories(
     
     if featured:
         query = query.where(Story.is_featured == True)
+
+    if enrolled is not None and current_user:
+        enrolled_subq = select(Enrollment.story_id).where(Enrollment.user_id == current_user.id)
+        if enrolled:
+            query = query.where(Story.id.in_(enrolled_subq))
+        else:
+            query = query.where(Story.id.notin_(enrolled_subq))
+    elif enrolled is True and not current_user:
+        return []
     
     query = query.order_by(Story.order_index).offset(offset).limit(limit)
     result = await db.execute(query)
     stories = result.unique().scalars().all()
+
+    enrolled_story_ids = set()
+    completed_step_ids = set()
+    if current_user:
+        enroll_res = await db.execute(
+            select(Enrollment.story_id).where(Enrollment.user_id == current_user.id)
+        )
+        enrolled_story_ids = set(enroll_res.scalars().all())
+
+        prog_res = await db.execute(
+            select(StepProgress.step_id).where(
+                StepProgress.user_id == current_user.id,
+                StepProgress.is_completed == True
+            )
+        )
+        completed_step_ids = set(prog_res.scalars().all())
     
     response = []
     for story in stories:
-        # Get chapter count
-        chapter_result = await db.execute(
-            select(func.count(Chapter.id)).where(Chapter.story_id == story.id)
-        )
-        chapter_count = chapter_result.scalar() or 0
+        chapter_count = len(story.chapters or [])
+        is_enrolled = story.id in enrolled_story_ids
         
-        # Check enrollment and progress
-        is_enrolled = False
         progress = 0
+        if is_enrolled:
+            story_step_ids = {st.id for ch in (story.chapters or []) for st in (ch.steps or [])}
+            total_steps = len(story_step_ids)
+            if total_steps > 0:
+                completed_count = len(completed_step_ids & story_step_ids)
+                progress = int((completed_count / total_steps) * 100)
         
-        if current_user:
-            enrollment_result = await db.execute(
-                select(Enrollment).where(
-                    Enrollment.user_id == current_user.id,
-                    Enrollment.story_id == story.id
-                )
-            )
-            is_enrolled = enrollment_result.scalar_one_or_none() is not None
-            
-            if is_enrolled:
-                progress = await calculate_story_progress(db, current_user.id, story.id)
-        
-        if enrolled is not None and is_enrolled != enrolled:
-            continue
-        
-        # Access category safely - already loaded
         category_name = story.category.name if story.category else None
-        
-        # Count exercises (quiz blocks) from preloaded slides
         exercises_count = _count_quiz_blocks_in_story(story)
-        
-        # Story is completed when progress is 100%
-        is_completed = progress == 100
-
-        logger.debug(f"[stories.get_stories] slug={story.slug} illustration={story.illustration!r} thumbnail_url={story.thumbnail_url!r} exercises={exercises_count}")
+        is_completed = (progress == 100)
         
         response.append(StoryListResponse(
             id=story.id,

@@ -69,7 +69,7 @@ async def buy_item(
         else:
             db.add(UserInventory(
                 user_id=current_user.id,
-                item_id=3,
+                item_id=item.id,
                 quantity=qty_to_add,
                 is_active=True,
             ))
@@ -150,7 +150,7 @@ async def equip_item(
 
     await db.commit()
     await db.refresh(current_user)
-    return current_user
+    return UserResponse.model_validate(current_user)
 
 @router.post("/unequip/{item_type}", response_model=UserResponse)
 async def unequip_item(
@@ -166,7 +166,7 @@ async def unequip_item(
         await db.commit()
         await db.refresh(current_user)
         
-    return current_user
+    return UserResponse.model_validate(current_user)
 
 
 @router.get("/hearts", response_model=HeartsResponse)

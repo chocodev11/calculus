@@ -7,7 +7,7 @@ import runpy
 import asyncio
 from app.config import settings
 from app.database import init_db
-from app.routers import auth_router, stories_router, steps_router, progress_router, categories_router, shop_router, quests_router, admin_router, auth
+from app.routers import auth_router, stories_router, steps_router, progress_router, categories_router, shop_router, quests_router, admin_router
 
 # Reduce noisy Uvicorn logs and show only SQL logs
 import logging
@@ -58,7 +58,6 @@ app.include_router(categories_router, prefix="/api/v1")
 app.include_router(shop_router, prefix="/api/v1")
 app.include_router(quests_router, prefix="/api/v1")
 app.include_router(admin_router, prefix="/api/v1")
-app.include_router(auth.router, prefix="/api/v1")
 
 @app.get("/")
 async def root():

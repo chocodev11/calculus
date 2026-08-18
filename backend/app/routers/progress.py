@@ -248,35 +248,6 @@ async def get_streak_week(
     )
     entry = result.scalar_one_or_none()
 
-    # helper to compute current streak by looking at this week and previous week(s)
-    def compute_current_streak_from(week_days, week_start_date):
-        # week_days: list[bool] for Mon..Sun
-        # start from today if this is current week, or from last true day otherwise
-        streak_count = 0
-        # determine today's index relative to week_start_date using user-local today
-        monday = today_local - timedelta(days=today_local.weekday())
-        is_current_week = (monday.isoformat() == week_start_date)
-        today_idx = (today_local.weekday()) if is_current_week else 6
-        i = today_idx
-        # count backwards within this week's days
-        while i >= 0 and i < len(week_days) and week_days[i]:
-            streak_count += 1
-            i -= 1
-
-        # if we reached before Monday (i < 0) and still want to continue streak,
-        # check previous week(s) - simple single previous week lookup
-        if i < 0:
-            prev_monday = (date.fromisoformat(week_start_date) - timedelta(days=7)).isoformat()
-            prev_res = db.execute(select(StreakWeek).where(StreakWeek.user_id == current_user.id, StreakWeek.week_start == prev_monday))
-            prev_entry = (prev_res).scalar_one_or_none()
-            if prev_entry and isinstance(prev_entry.days, list):
-                j = 6
-                while j >= 0 and prev_entry.days[j]:
-                    streak_count += 1
-                    j -= 1
-
-        return streak_count, today_idx if is_current_week else None
-
     # Determine activity-derived days for the week (from StepProgress and SlideProgress)
     week_start_date = date.fromisoformat(week_start)
     start_dt = datetime.combine(week_start_date, time.min)
@@ -508,27 +479,45 @@ async def post_streak_week(
         db.add(entry)
 
     # After updating, if this is the current week, recompute current and longest streak
-    today = date.today()
-    current_week_monday = (today - timedelta(days=today.weekday())).isoformat()
+    if tz_offset_minutes is not None:
+        today_local = (datetime.utcnow() + timedelta(minutes=tz_offset_minutes)).date()
+    else:
+        today_local = date.today()
+
+    current_week_monday = (today_local - timedelta(days=today_local.weekday())).isoformat()
     if week_start == current_week_monday:
-        # compute consecutive days up to today in this week
-        today_idx = today.weekday()
+        today_idx = today_local.weekday()
+        # Count from today if today completed, otherwise from yesterday
+        start_idx = today_idx if (0 <= today_idx < len(days) and days[today_idx]) else (today_idx - 1)
         current = 0
-        i = today_idx
+        i = start_idx
         while i >= 0 and i < len(days) and days[i]:
             current += 1
             i -= 1
 
         # continue into previous week if needed
         if i < 0:
-            prev_monday = (today - timedelta(days=7 + today.weekday())).isoformat()
+            prev_monday = (today_local - timedelta(days=7 + today_local.weekday())).isoformat()
             prev_result = await db.execute(select(StreakWeek).where(StreakWeek.user_id == current_user.id, StreakWeek.week_start == prev_monday))
             prev_entry = prev_result.scalar_one_or_none()
             if prev_entry and isinstance(prev_entry.days, list):
                 j = 6
-                while j >= 0 and prev_entry.days[j]:
+                while j >= 0 and j < len(prev_entry.days) and prev_entry.days[j]:
                     current += 1
                     j -= 1
+
+        # Keep existing streak counter if within 1 day grace period
+        if current_user.last_activity_date:
+            lad = current_user.last_activity_date
+            lad_local = (lad + timedelta(minutes=tz_offset_minutes)).date() if tz_offset_minutes is not None else lad.date()
+            gap_days = (today_local - lad_local).days
+            if gap_days <= 1 and (current_user.current_streak or 0) > current:
+                current = current_user.current_streak or 0
+            elif gap_days > 1:
+                current = 0
+        else:
+            if (current_user.current_streak or 0) > current:
+                current = current_user.current_streak or 0
 
         # update user's streak counters
         current_user.current_streak = current
@@ -539,10 +528,9 @@ async def post_streak_week(
     await db.commit()
 
     # prepare response payload
-    today_idx = date.today().weekday()
+    today_idx = today_local.weekday() if 'today_local' in locals() else date.today().weekday()
     today_completed = bool(days[today_idx]) if 0 <= today_idx < len(days) else False
     longest = current_user.longest_streak or 0
-    # compute current streak to return (mirror above)
     current = current_user.current_streak or 0
 
     return StreakWeekResponse(
@@ -680,66 +668,8 @@ async def check_and_award_achievements(
     current_user: User = Depends(get_current_user)
 ):
     """Check and award any achievements the user has earned"""
-    
-    # Get all achievements not yet earned by user
-    subquery = select(UserAchievement.achievement_id).where(
-        UserAchievement.user_id == current_user.id
-    )
-    result = await db.execute(
-        select(Achievement).where(Achievement.id.notin_(subquery))
-    )
-    unearned = result.scalars().all()
-    
-    # Get user stats for checking
-    completed_steps_result = await db.execute(
-        select(func.count(StepProgress.id)).where(
-            StepProgress.user_id == current_user.id,
-            StepProgress.is_completed == True
-        )
-    )
-    completed_steps = completed_steps_result.scalar() or 0
-    
-    completed_stories = 0
-    enrollments_result = await db.execute(
-        select(Enrollment).where(Enrollment.user_id == current_user.id)
-    )
-    for enrollment in enrollments_result.scalars().all():
-        progress = await calculate_story_progress(db, current_user.id, enrollment.story_id)
-        if progress >= 100:
-            completed_stories += 1
-    
-    # Check each unearned achievement
-    newly_earned = []
-    for ach in unearned:
-        earned = False
-        
-        if ach.requirement_type == "xp" and current_user.xp >= ach.requirement_value:
-            earned = True
-        elif ach.requirement_type == "steps" and completed_steps >= ach.requirement_value:
-            earned = True
-        elif ach.requirement_type == "streak" and current_user.current_streak >= ach.requirement_value:
-            earned = True
-        elif ach.requirement_type == "stories" and completed_stories >= ach.requirement_value:
-            earned = True
-        
-        if earned:
-            user_ach = UserAchievement(
-                user_id=current_user.id,
-                achievement_id=ach.id
-            )
-            db.add(user_ach)
-            current_user.xp += ach.xp_reward
-            coins_awarded = getattr(ach, 'coin_reward', 0) or 0
-            current_user.coins = (current_user.coins or 0) + coins_awarded
-            newly_earned.append({
-                "id": ach.id,
-                "title": ach.title,
-                "icon": ach.icon,
-                "rarity": ach.rarity,
-                "xp_reward": ach.xp_reward,
-                "coin_reward": coins_awarded,
-            })
-    
+    from app.routers.steps import check_and_award_user_achievements
+    newly_earned = await check_and_award_user_achievements(db, current_user)
     if newly_earned:
         await db.commit()
     

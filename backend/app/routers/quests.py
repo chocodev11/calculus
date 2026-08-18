@@ -16,9 +16,18 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/quests", tags=["quests"])
 
 
+def _get_utc_today_and_week_start():
+    now_utc = datetime.utcnow()
+    today_utc = now_utc.date()
+    today_start = datetime.combine(today_utc, datetime.min.time())
+    monday_utc = today_utc - timedelta(days=today_utc.weekday())
+    week_start = datetime.combine(monday_utc, datetime.min.time())
+    return today_start, week_start, monday_utc
+
+
 async def refresh_daily_quests(user_id: int, db: AsyncSession):
     """Assign 3 random daily quests if none exist for today."""
-    today_start = datetime.combine(date.today(), datetime.min.time())
+    today_start, _, _ = _get_utc_today_and_week_start()
 
     # Check if user has any daily quests assigned today
     existing = await db.execute(
@@ -44,6 +53,7 @@ async def refresh_daily_quests(user_id: int, db: AsyncSession):
 
     # Pick 3 random quests ensuring at least 2 distinct requirement_types
     target = min(3, len(pool))
+    chosen = []
     for _ in range(20):  # retry up to 20 times
         chosen = random.sample(pool, target)
         types = {q.requirement_type for q in chosen}
@@ -64,9 +74,7 @@ async def refresh_daily_quests(user_id: int, db: AsyncSession):
 
 async def refresh_weekly_quests(user_id: int, db: AsyncSession):
     """Assign 2 random weekly quests if none exist for this week."""
-    today = date.today()
-    monday = today - timedelta(days=today.weekday())
-    week_start = datetime.combine(monday, datetime.min.time())
+    _, week_start, _ = _get_utc_today_and_week_start()
 
     existing = await db.execute(
         select(UserQuest)
@@ -108,10 +116,7 @@ async def tick_quest_progress(user_id: int, event_type: str, amount: int, db: As
                 "study_time", "shop_buy", "chapter", "course"
     """
     import math
-    today_start = datetime.combine(date.today(), datetime.min.time())
-    today = date.today()
-    monday = today - timedelta(days=today.weekday())
-    week_start = datetime.combine(monday, datetime.min.time())
+    today_start, week_start, monday_utc = _get_utc_today_and_week_start()
 
     # Find all active (unclaimed) user_quests where quest.requirement_type matches
     result = await db.execute(
@@ -138,7 +143,7 @@ async def tick_quest_progress(user_id: int, event_type: str, amount: int, db: As
         if event_type == "streak":
             if quest.quest_type == "weekly":
                 # Count unique days studied this week from StreakWeek record
-                week_start_str = monday.isoformat()
+                week_start_str = monday_utc.isoformat()
                 sw_res = await db.execute(
                     select(StreakWeek).where(
                         StreakWeek.user_id == user_id,
@@ -175,10 +180,7 @@ async def get_quests(
     await db.commit()
 
     # Fetch current period quests
-    today_start = datetime.combine(date.today(), datetime.min.time())
-    today = date.today()
-    monday = today - timedelta(days=today.weekday())
-    week_start = datetime.combine(monday, datetime.min.time())
+    today_start, week_start, _ = _get_utc_today_and_week_start()
 
     result = await db.execute(
         select(UserQuest)

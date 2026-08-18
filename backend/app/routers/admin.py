@@ -38,6 +38,17 @@ class CommandResponse(BaseModel):
     ok: bool = True
 
 
+@router.post("/sync-data")
+async def admin_sync_data():
+    """Trigger non-destructive data sync from JSON files."""
+    try:
+        from sync_data import sync_data
+        await sync_data()
+        return {"success": True, "message": "Course and platform data synced successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to sync data: {str(e)}")
+
+
 @router.post("/command", response_model=CommandResponse)
 async def run_command(
     body: CommandRequest,

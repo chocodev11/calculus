@@ -3,6 +3,9 @@ Comprehensive validator for all raw course JSON files.
 Checks structural integrity and compatibility with frontend rendering components.
 """
 import json, os, sys, re
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
 
 RAW_COURSES_DIR = os.path.join("data", "raw_courses")
 

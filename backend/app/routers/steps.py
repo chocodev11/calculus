@@ -13,6 +13,70 @@ from app.hearts import sync_hearts, deduct_heart, seconds_until_next_heart
 router = APIRouter(prefix="/steps", tags=["steps"])
 
 
+async def check_and_award_user_achievements(db: AsyncSession, user: User) -> list[dict]:
+    """Check all unearned achievements and award XP and coins if requirements are met."""
+    newly_earned = []
+    try:
+        subq = select(UserAchievement.achievement_id).where(
+            UserAchievement.user_id == user.id
+        )
+        unearned_res = await db.execute(
+            select(Achievement).where(Achievement.id.notin_(subq))
+        )
+        unearned = unearned_res.scalars().all()
+        if not unearned:
+            return []
+
+        steps_res = await db.execute(
+            select(func.count(StepProgress.id)).where(
+                StepProgress.user_id == user.id,
+                StepProgress.is_completed == True
+            )
+        )
+        completed_steps = steps_res.scalar() or 0
+
+        enroll_res = await db.execute(
+            select(Enrollment).where(Enrollment.user_id == user.id)
+        )
+        completed_stories = 0
+        from app.routers.stories import calculate_story_progress
+        for enr in enroll_res.scalars().all():
+            prog = await calculate_story_progress(db, user.id, enr.story_id)
+            if prog >= 100:
+                completed_stories += 1
+
+        for ach in unearned:
+            earned = False
+            if ach.requirement_type == "xp" and (user.xp or 0) >= ach.requirement_value:
+                earned = True
+            elif ach.requirement_type == "steps" and completed_steps >= ach.requirement_value:
+                earned = True
+            elif ach.requirement_type == "streak" and (user.current_streak or 0) >= ach.requirement_value:
+                earned = True
+            elif ach.requirement_type == "stories" and completed_stories >= ach.requirement_value:
+                earned = True
+
+            if earned:
+                db.add(UserAchievement(
+                    user_id=user.id,
+                    achievement_id=ach.id
+                ))
+                user.xp = (user.xp or 0) + (ach.xp_reward or 0)
+                coin_reward = getattr(ach, 'coin_reward', 0) or 0
+                user.coins = (user.coins or 0) + coin_reward
+                newly_earned.append({
+                    "id": ach.id,
+                    "title": ach.title,
+                    "icon": ach.icon,
+                    "rarity": getattr(ach, 'rarity', 'common'),
+                    "xp_reward": ach.xp_reward or 0,
+                    "coin_reward": coin_reward,
+                })
+    except Exception:
+        pass
+    return newly_earned
+
+
 def update_streak(user: User, tz_offset_minutes: int | None = None) -> dict:
     """Update user's streak based on activity dates.
     Returns dict with streak info."""
@@ -257,79 +321,9 @@ async def complete_step(
         except Exception:
             pass
 
-    # Auto-check achievements after each step (awards XP + coins for milestones)
-    try:
-        from app.routers.progress import check_and_award_achievements as _check_ach
-        from fastapi import Request as _Req
-        await _check_ach(db=db, current_user=current_user)
-    except Exception:
-        pass
-
+    # Auto-check and award achievements (awards XP + coins for milestones)
+    newly_earned = await check_and_award_user_achievements(db, current_user)
     await db.commit()
-
-    # ── Auto-check and award achievements ─────────────────────────────────
-    newly_earned = []
-    try:
-        # Grab all achievements the user hasn't earned yet
-        subq = select(UserAchievement.achievement_id).where(
-            UserAchievement.user_id == current_user.id
-        )
-        unearned_res = await db.execute(
-            select(Achievement).where(Achievement.id.notin_(subq))
-        )
-        unearned = unearned_res.scalars().all()
-
-        if unearned:
-            # Count completed steps for this user
-            steps_res = await db.execute(
-                select(func.count(StepProgress.id)).where(
-                    StepProgress.user_id == current_user.id,
-                    StepProgress.is_completed == True
-                )
-            )
-            completed_steps = steps_res.scalar() or 0
-
-            # Count completed stories
-            completed_stories = 0
-            enroll_res2 = await db.execute(
-                select(Enrollment).where(Enrollment.user_id == current_user.id)
-            )
-            from app.routers.stories import calculate_story_progress
-            for enr in enroll_res2.scalars().all():
-                prog = await calculate_story_progress(db, current_user.id, enr.story_id)
-                if prog >= 100:
-                    completed_stories += 1
-
-            for ach in unearned:
-                earned = False
-                if ach.requirement_type == "xp" and current_user.xp >= ach.requirement_value:
-                    earned = True
-                elif ach.requirement_type == "steps" and completed_steps >= ach.requirement_value:
-                    earned = True
-                elif ach.requirement_type == "streak" and current_user.current_streak >= ach.requirement_value:
-                    earned = True
-                elif ach.requirement_type == "stories" and completed_stories >= ach.requirement_value:
-                    earned = True
-
-                if earned:
-                    db.add(UserAchievement(
-                        user_id=current_user.id,
-                        achievement_id=ach.id
-                    ))
-                    current_user.xp += ach.xp_reward
-                    newly_earned.append({
-                        "id": ach.id,
-                        "title": ach.title,
-                        "icon": ach.icon,
-                        "xp_reward": ach.xp_reward
-                    })
-
-            if newly_earned:
-                await db.commit()
-    except Exception as e:
-        # Don't break step completion if achievement check fails
-        import logging
-        logging.getLogger(__name__).warning("Achievement check failed: %s", e)
 
     return {
         "success": True,
@@ -456,58 +450,10 @@ async def complete_slide(
         xp_earned = 0
         streak_info = {"current_streak": current_user.current_streak, "longest_streak": current_user.longest_streak}
 
-    # ── Auto-check and award achievements ─────────────────────────────────
-    newly_earned = []
-    try:
-        from sqlalchemy import func
-        from app.models import Achievement, UserAchievement, StepProgress, Enrollment
-        subq = select(UserAchievement.achievement_id).where(UserAchievement.user_id == current_user.id)
-        unearned_res = await db.execute(select(Achievement).where(Achievement.id.notin_(subq)))
-        unearned = unearned_res.scalars().all()
-
-        if unearned:
-            steps_res = await db.execute(
-                select(func.count(StepProgress.id)).where(
-                    StepProgress.user_id == current_user.id,
-                    StepProgress.is_completed == True
-                )
-            )
-            completed_steps = steps_res.scalar() or 0
-
-            completed_stories = 0
-            enroll_res2 = await db.execute(select(Enrollment).where(Enrollment.user_id == current_user.id))
-            from app.routers.stories import calculate_story_progress
-            for enr in enroll_res2.scalars().all():
-                prog = await calculate_story_progress(db, current_user.id, enr.story_id)
-                if prog >= 100:
-                    completed_stories += 1
-
-            for ach in unearned:
-                earned = False
-                if ach.requirement_type == "xp" and current_user.xp >= ach.requirement_value:
-                    earned = True
-                elif ach.requirement_type == "steps" and completed_steps >= ach.requirement_value:
-                    earned = True
-                elif ach.requirement_type == "streak" and current_user.current_streak >= ach.requirement_value:
-                    earned = True
-                elif ach.requirement_type == "stories" and completed_stories >= ach.requirement_value:
-                    earned = True
-
-                if earned:
-                    db.add(UserAchievement(user_id=current_user.id, achievement_id=ach.id))
-                    current_user.xp += ach.xp_reward
-                    newly_earned.append({
-                        "id": ach.id,
-                        "title": ach.title,
-                        "icon": ach.icon,
-                        "xp_reward": ach.xp_reward
-                    })
-
-            if newly_earned:
-                await db.commit()
-    except Exception as e:
-        import logging
-        logging.getLogger(__name__).warning("Achievement check failed on slide complete: %s", e)
+    # Auto-check and award achievements
+    newly_earned = await check_and_award_user_achievements(db, current_user)
+    if newly_earned:
+        await db.commit()
 
     return {
         "success": True,
