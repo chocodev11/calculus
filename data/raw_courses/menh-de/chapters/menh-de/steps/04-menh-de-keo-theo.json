@@ -1,0 +1,307 @@
+{
+  "id": "04-menh-de-keo-theo",
+  "title": "Mệnh đề kéo theo",
+  "order": 3,
+  "description": "Hiểu cấu trúc mệnh đề kéo theo P ⇒ Q, định lý toán học, bảng chân trị và phương pháp tìm phản ví dụ bác bỏ theo chuẩn GDPT 2018.",
+  "xp_reward": 120,
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Khái niệm Mệnh đề Kéo theo",
+      "blocks": [
+        {
+          "id": "b1_text_implication",
+          "block_type": "text",
+          "content": {
+            "heading": "Mệnh đề kéo theo P ⇒ Q là gì?",
+            "paragraphs": [
+              "Cho hai mệnh đề $P$ và $Q$. Mệnh đề **\"Nếu $P$ thì $Q$\"** được gọi là **mệnh đề kéo theo**, ký hiệu là $P \\Rightarrow Q$.",
+              "Trong mệnh đề $P \\Rightarrow Q$, mệnh đề $P$ được gọi là **giả thiết** (hay tiền đề), mệnh đề $Q$ được gọi là **kết luận** (hay hậu quả).",
+              "Hầu hết các định lý toán học đều được phát biểu dưới dạng mệnh đề kéo theo: \"Nếu giả thiết thỏa mãn thì kết luận đúng\"."
+            ]
+          }
+        },
+        {
+          "id": "b1_callout_truth_rule",
+          "block_type": "callout",
+          "content": {
+            "variant": "theorem",
+            "title": "Quy tắc chân trị của P ⇒ Q",
+            "body": "Mệnh đề $P \\Rightarrow Q$ **chỉ SAI** trong trường hợp duy nhất: **$P$ Đúng mà $Q$ Sai**.\nTrong tất cả các trường hợp còn lại (kể cả khi giả thiết $P$ Sai), mệnh đề $P \\Rightarrow Q$ đều **Đúng**."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "Phòng thí nghiệm Bao hàm & Phản ví dụ",
+      "blocks": [
+        {
+          "id": "b2_sandbox_implication",
+          "block_type": "interaction",
+          "content": {
+            "interactionType": "sandbox",
+            "lesson": {
+              "schemaVersion": "1.0",
+              "kind": "math.sandbox",
+              "id": "menh_de_04_implication",
+              "version": 1,
+              "archetypeId": "logic.implication",
+              "domainId": "logic",
+              "level": "understanding",
+              "recipe": "core",
+              "outcomeIds": [
+                "M10-LOGIC-04"
+              ],
+              "prerequisites": [],
+              "misconceptions": [],
+              "scene": {
+                "objects": []
+              },
+              "config": {},
+              "mode": "implication",
+              "activity": {
+                "pExpression": "a chia hết cho 6",
+                "qExpression": "a chia hết cho 2",
+                "domainValues": [
+                  2,
+                  4,
+                  6,
+                  12
+                ],
+                "controlPToQ": "c_p_to_q",
+                "controlQToP": "c_q_to_p",
+                "controlCounterexample": "c_counterexample",
+                "expectedPToQ": true,
+                "expectedQToP": false,
+                "expectedCounterexamples": [
+                  2,
+                  4
+                ]
+              },
+              "controls": [
+                {
+                  "id": "c_p_to_q",
+                  "type": "choice",
+                  "label": "Mệnh đề P ⇒ Q (Nếu a ⋮ 6 thì a ⋮ 2)",
+                  "initial": "false",
+                  "options": [
+                    "true",
+                    "false"
+                  ],
+                  "optionLabels": {
+                    "true": "Đúng (Đ)",
+                    "false": "Sai (S)"
+                  }
+                },
+                {
+                  "id": "c_q_to_p",
+                  "type": "choice",
+                  "label": "Mệnh đề chiều ngược Q ⇒ P (Nếu a ⋮ 2 thì a ⋮ 6)",
+                  "initial": "true",
+                  "options": [
+                    "true",
+                    "false"
+                  ],
+                  "optionLabels": {
+                    "true": "Đúng (Đ)",
+                    "false": "Sai (S)"
+                  }
+                },
+                {
+                  "id": "c_counterexample",
+                  "type": "choice",
+                  "label": "Phản ví dụ chứng minh Q ⇒ P sai",
+                  "initial": "none",
+                  "options": [
+                    "none",
+                    "2_or_4",
+                    "6",
+                    "12"
+                  ],
+                  "optionLabels": {
+                    "none": "Không có",
+                    "2_or_4": "a = 2 hoặc a = 4",
+                    "6": "a = 6",
+                    "12": "a = 12"
+                  }
+                }
+              ],
+              "goals": [
+                {
+                  "id": "implication_analysis",
+                  "evidence": "implication_accuracy"
+                }
+              ],
+              "solutionGraph": {
+                "steps": [
+                  {
+                    "id": "check_inclusion",
+                    "kind": "check",
+                    "hint": "Tập số chia hết cho 6 là tập con của tập số chia hết cho 2 (P ⊂ Q)."
+                  },
+                  {
+                    "id": "identify_counterexample",
+                    "kind": "justify",
+                    "dependsOn": [
+                      "check_inclusion"
+                    ],
+                    "hint": "Với a = 2 hoặc 4, a chia hết cho 2 nhưng không chia hết cho 6."
+                  }
+                ],
+                "terminalStepIds": [
+                  "identify_counterexample"
+                ]
+              },
+              "assessment": [
+                {
+                  "id": "check-implication-truth",
+                  "type": "structured_reasoning",
+                  "prompt": "Phân tích tính đúng sai của mệnh đề kéo theo và chỉ ra phản ví dụ.",
+                  "outcomeIds": [
+                    "M10-LOGIC-04"
+                  ]
+                }
+              ],
+              "accessibility": {
+                "keyboardControls": true,
+                "textAlternative": "Biểu đồ Venn: P={6,12} ⊂ Q={2,4,6,12}."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+      "blocks": [
+        {
+          "id": "b3_callout_takeaway",
+          "block_type": "callout",
+          "content": {
+            "variant": "tip",
+            "title": "Phương pháp Bác bỏ bằng Phản ví dụ",
+            "body": "Để chứng minh mệnh đề kéo theo $P \\Rightarrow Q$ là **SAI**, ta chỉ cần tìm ra **một phần tử phản ví dụ** (counterexample) thỏa mãn:\n$$\\text{Giả thiết } P \\text{ ĐÚNG nhưng Kết luận } Q \\text{ SAI}$$"
+          }
+        },
+        {
+          "id": "b3_math_table",
+          "block_type": "math",
+          "content": {
+            "label": "Bảng chân trị mệnh đề kéo theo",
+            "latex": "\\begin{array}{|c|c|c|} \\hline P & Q & P \\Rightarrow Q \\\\ \\hline 1 & 1 & 1 \\\\ 1 & 0 & 0 \\\\ 0 & 1 & 1 \\\\ 0 & 0 & 1 \\\\ \\hline \\end{array}"
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 4,
+      "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+      "blocks": [
+        {
+          "id": "b4_quiz_d1",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "multiple_choice",
+            "question": "Trong các mệnh đề sau, mệnh đề nào là **mệnh đề sai**?",
+            "options": [
+              {
+                "id": "A",
+                "text": "Nếu tứ giác $ABCD$ là hình thoi thì tứ giác $ABCD$ có hai đường chéo vuông góc."
+              },
+              {
+                "id": "B",
+                "text": "Nếu tam giác $ABC$ đều thì tam giác $ABC$ cân."
+              },
+              {
+                "id": "C",
+                "text": "Nếu số tự nhiên $n$ chia hết cho 9 thì $n$ chia hết cho 3."
+              },
+              {
+                "id": "D",
+                "text": "Nếu $a > b$ thì $a^2 > b^2$ (với $a, b \\in \\mathbb{R}$)."
+              }
+            ],
+            "correct": "D",
+            "explanation": "Câu D là mệnh đề sai. Phản ví dụ: chọn $a = 1, b = -3$. Rõ ràng $1 > -3$ ($P$ đúng), nhưng $1^2 = 1 < (-3)^2 = 9$ ($Q$ sai). Do đó $P \\Rightarrow Q$ sai."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 5,
+      "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+      "blocks": [
+        {
+          "id": "b5_quiz_d2",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "true_false_group",
+            "question": "Xét tính đúng sai của các mệnh đề kéo theo sau:",
+            "items": [
+              {
+                "id": "a",
+                "label": "a) Nếu n là số chẵn thì n chia hết cho 4.",
+                "correct": false
+              },
+              {
+                "id": "b",
+                "label": "b) Nếu tứ giác ABCD là hình vuông thì ABCD là hình bình hành.",
+                "correct": true
+              },
+              {
+                "id": "c",
+                "label": "c) Nếu a = b thì a + c = b + c (với mọi c ∈ R).",
+                "correct": true
+              },
+              {
+                "id": "d",
+                "label": "d) Nếu tam giác ABC có AB = AC thì tam giác ABC đều.",
+                "correct": false
+              }
+            ],
+            "explanation": "Ý a sai (phản ví dụ n=6 là số chẵn nhưng không chia hết cho 4). Ý b đúng (hình vuông là trường hợp đặc biệt của hình bình hành). Ý c đúng (tính chất đẳng thức). Ý d sai (chỉ suy ra được tam giác cân, chưa đủ để đều)."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 6,
+      "title": "Thử thách Dạng III · Điền đáp số",
+      "blocks": [
+        {
+          "id": "b6_quiz_d3",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "short_answer",
+            "question": "Xét tập số $U = \\{2, 3, 4, 6, 9, 12\\}$ và mệnh đề $P(x): \"\\text{Nếu } x \\;\\vdots\\; 3 \\text{ thì } x \\;\\vdots\\; 6\"$. Có bao nhiêu phần tử $x \\in U$ là **phản ví dụ** chứng minh mệnh đề trên sai?",
+            "correct": "2",
+            "correct_answers": [
+              "2",
+              "hai",
+              "2 phần tử"
+            ],
+            "explanation": "Các số chia hết cho 3 trong $U$ là: $\\{3, 6, 9, 12\\}$. Trong đó, $x = 3$ và $x = 9$ chia hết cho 3 nhưng không chia hết cho 6. Vậy có đúng 2 phần tử phản ví dụ là $x=3$ và $x=9$."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 7,
+      "title": "Tổng kết & Cầu nối Sư phạm",
+      "blocks": [
+        {
+          "id": "b7_callout_summary",
+          "block_type": "callout",
+          "content": {
+            "variant": "info",
+            "title": "Tổng kết Bài học 4",
+            "body": "Ta đã hiểu bản chất kéo theo và cách dùng phản ví dụ để bác bỏ một mệnh đề sai. Ở bài tiếp theo, chúng ta sẽ mở rộng sang **Mệnh đề đảo $Q \\Rightarrow P$** và chuẩn hóa thuật ngữ **Điều kiện cần, Điều kiện đủ, Tương đương**."
+          }
+        }
+      ]
+    }
+  ],
+  "order_index": 3
+}

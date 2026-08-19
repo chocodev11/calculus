@@ -1,0 +1,305 @@
+{
+  "id": "05-dao-tuong-duong-dieu-kien-can-du",
+  "title": "Mệnh đề đảo · Tương đương · Điều kiện cần và đủ",
+  "order": 4,
+  "description": "Thành thạo mệnh đề đảo, mệnh đề tương đương, chuẩn hóa thuật ngữ điều kiện cần, điều kiện đủ và điều kiện cần và đủ theo chuẩn GDPT 2018.",
+  "xp_reward": 120,
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Mệnh đề Đảo & Mệnh đề Tương đương",
+      "blocks": [
+        {
+          "id": "b1_text_converse_equiv",
+          "block_type": "text",
+          "content": {
+            "heading": "Mệnh đề đảo & Tương đương",
+            "paragraphs": [
+              "Cho mệnh đề kéo theo $P \\Rightarrow Q$. Mệnh đề $Q \\Rightarrow P$ được gọi là **mệnh đề đảo** của $P \\Rightarrow Q$.",
+              "Nếu cả hai mệnh đề $P \\Rightarrow Q$ và $Q \\Rightarrow P$ đều đúng, ta nói $P$ và $Q$ là **hai mệnh đề tương đương**, ký hiệu là $P \\Leftrightarrow Q$ (đọc là \"$P$ tương đương $Q$\" hoặc \"$P$ khi và chỉ khi $Q$\")."
+            ]
+          }
+        },
+        {
+          "id": "b1_callout_terms",
+          "block_type": "callout",
+          "content": {
+            "variant": "theorem",
+            "title": "Chuẩn hóa Thuật ngữ Cần & Đủ",
+            "body": "Khi định lý $P \\Rightarrow Q$ đúng:\n- $P$ là **điều kiện đủ** để có $Q$.\n- $Q$ là **điều kiện cần** để có $P$.\n\nKhi $P \\Leftrightarrow Q$ đúng: $P$ là **điều kiện cần và đủ** để có $Q$."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "Phòng thí nghiệm Điều kiện Cần & Đủ",
+      "blocks": [
+        {
+          "id": "b2_sandbox_converse",
+          "block_type": "interaction",
+          "content": {
+            "interactionType": "sandbox",
+            "lesson": {
+              "schemaVersion": "1.0",
+              "kind": "math.sandbox",
+              "id": "menh_de_05_necessary_sufficient",
+              "version": 1,
+              "archetypeId": "logic.necessary_sufficient",
+              "domainId": "logic",
+              "level": "application",
+              "recipe": "core",
+              "outcomeIds": [
+                "M10-LOGIC-05"
+              ],
+              "prerequisites": [],
+              "misconceptions": [],
+              "scene": {
+                "objects": []
+              },
+              "config": {},
+              "mode": "implication",
+              "activity": {
+                "pExpression": "Tứ giác ABCD là hình vuông",
+                "qExpression": "Tứ giác ABCD là hình chữ nhật",
+                "domainValues": [
+                  "hinh_vuong",
+                  "hinh_chu_nhat",
+                  "hinh_thoi",
+                  "tu_giac_thuong"
+                ],
+                "controlPToQ": "c_p_to_q",
+                "controlQToP": "c_q_to_p",
+                "controlCounterexample": "c_counterexample",
+                "expectedPToQ": true,
+                "expectedQToP": false,
+                "expectedCounterexamples": [
+                  "hinh_chu_nhat_khong_vuong"
+                ]
+              },
+              "controls": [
+                {
+                  "id": "c_p_to_q",
+                  "type": "choice",
+                  "label": "P ⇒ Q (Hình vuông ⇒ Hình chữ nhật)",
+                  "initial": "false",
+                  "options": [
+                    "true",
+                    "false"
+                  ],
+                  "optionLabels": {
+                    "true": "Đúng (Đ)",
+                    "false": "Sai (S)"
+                  }
+                },
+                {
+                  "id": "c_q_to_p",
+                  "type": "choice",
+                  "label": "Đảo Q ⇒ P (Hình chữ nhật ⇒ Hình vuông)",
+                  "initial": "true",
+                  "options": [
+                    "true",
+                    "false"
+                  ],
+                  "optionLabels": {
+                    "true": "Đúng (Đ)",
+                    "false": "Sai (S)"
+                  }
+                },
+                {
+                  "id": "c_counterexample",
+                  "type": "choice",
+                  "label": "Kết luận về điều kiện",
+                  "initial": "none",
+                  "options": [
+                    "sufficient_only",
+                    "necessary_only",
+                    "necessary_and_sufficient",
+                    "none"
+                  ],
+                  "optionLabels": {
+                    "sufficient_only": "P là ĐỦ, Q là CẦN",
+                    "necessary_only": "P là CẦN, Q là ĐỦ",
+                    "necessary_and_sufficient": "Cần và Đủ",
+                    "none": "Chưa xác định"
+                  }
+                }
+              ],
+              "goals": [
+                {
+                  "id": "condition_direction_goals",
+                  "evidence": "implication_accuracy"
+                }
+              ],
+              "solutionGraph": {
+                "steps": [
+                  {
+                    "id": "check_forward_backward",
+                    "kind": "check",
+                    "hint": "Hình vuông luôn là hình chữ nhật. Nhưng hình chữ nhật chưa chắc là hình vuông."
+                  },
+                  {
+                    "id": "conclude_terms",
+                    "kind": "justify",
+                    "dependsOn": [
+                      "check_forward_backward"
+                    ],
+                    "hint": "Do đó P là điều kiện đủ của Q, và Q là điều kiện cần của P."
+                  }
+                ],
+                "terminalStepIds": [
+                  "conclude_terms"
+                ]
+              },
+              "assessment": [
+                {
+                  "id": "check-direction-and-conditions",
+                  "type": "structured_reasoning",
+                  "prompt": "Xác định chính xác tính đúng sai của hai chiều.",
+                  "outcomeIds": [
+                    "M10-LOGIC-05"
+                  ]
+                }
+              ],
+              "accessibility": {
+                "keyboardControls": true,
+                "textAlternative": "Hình vuông => Hình chữ nhật đúng; chiều đảo sai. P là điều kiện đủ, Q là điều kiện cần."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+      "blocks": [
+        {
+          "id": "b3_callout_takeaway",
+          "block_type": "callout",
+          "content": {
+            "variant": "tip",
+            "title": "Mẹo vàng phân biệt CẦN và ĐỦ",
+            "body": "- **ĐỦ (Sufficient)**: Có $P$ là **đã đủ** để suy ra $Q$ ($P \\Rightarrow Q$).\n- **CẦN (Necessary)**: Bắt buộc **phải có** $Q$ thì mới mong có được $P$ ($P \\Rightarrow Q$, nếu không có $Q$ thì không thể có $P$).\n- Khi cả 2 chiều đều đúng ($P \\Leftrightarrow Q$): Ta dùng cụm từ **\"Khi và chỉ khi\"** hoặc **\"Điều kiện cần và đủ\"**."
+          }
+        },
+        {
+          "id": "b3_math_formula",
+          "block_type": "math",
+          "content": {
+            "label": "Mô hình quan hệ tương đương",
+            "latex": "(P \\iff Q) \\iff (P \\implies Q) \\land (Q \\implies P)"
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 4,
+      "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+      "blocks": [
+        {
+          "id": "b4_quiz_d1",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "multiple_choice",
+            "question": "Cho hai mệnh đề $P$: \"Tứ giác $ABCD$ là hình thoi\" và $Q$: \"Tứ giác $ABCD$ có hai đường chéo vuông góc\". Khẳng định nào sau đây là **đúng**?",
+            "options": [
+              {
+                "id": "A",
+                "text": "$P$ là điều kiện cần để có $Q$."
+              },
+              {
+                "id": "B",
+                "text": "$P$ là điều kiện đủ để có $Q$."
+              },
+              {
+                "id": "C",
+                "text": "$P$ là điều kiện cần và đủ để có $Q$."
+              },
+              {
+                "id": "D",
+                "text": "$Q$ là điều kiện đủ để có $P$."
+              }
+            ],
+            "correct": "B",
+            "explanation": "Mệnh đề $P \\Rightarrow Q$ đúng (mọi hình thoi đều có 2 đường chéo vuông góc). Nhưng chiều ngược lại $Q \\Rightarrow P$ sai (tứ giác có 2 đường chéo vuông góc chưa chắc là hình thoi, ví dụ hình cánh diều). Do đó $P$ là điều kiện đủ để có $Q$."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 5,
+      "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+      "blocks": [
+        {
+          "id": "b5_quiz_d2",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "true_false_group",
+            "question": "Xét tính đúng sai của các khẳng định về điều kiện cần và đủ sau:",
+            "items": [
+              {
+                "id": "a",
+                "label": "a) Tam giác ABC có 3 cạnh bằng nhau là điều kiện cần và đủ để tam giác ABC đều.",
+                "correct": true
+              },
+              {
+                "id": "b",
+                "label": "b) Số tự nhiên a có chữ số tận cùng bằng 0 là điều kiện đủ để a chia hết cho 5.",
+                "correct": true
+              },
+              {
+                "id": "c",
+                "label": "c) a = b là điều kiện cần và đủ để a² = b² (với a, b ∈ R).",
+                "correct": false
+              },
+              {
+                "id": "d",
+                "label": "d) Tứ giác ABCD có 4 góc bằng nhau là điều kiện cần để ABCD là hình vuông.",
+                "correct": true
+              }
+            ],
+            "explanation": "Ý a đúng (định nghĩa tam giác đều). Ý b đúng (tận cùng bằng 0 chắc chắn chia hết cho 5). Ý c sai vì $a^2=b^2 \\Leftrightarrow a=\\pm b$. Ý d đúng vì hình vuông bắt buộc phải có 4 góc vuông (4 góc bằng nhau), nên đó là điều kiện cần."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 6,
+      "title": "Thử thách Dạng III · Điền đáp số",
+      "blocks": [
+        {
+          "id": "b6_quiz_d3",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "short_answer",
+            "question": "Cho các cặp mệnh đề sau: (1) $P: x > 1$ và $Q: x^2 > 1$. (2) $P: a=b$ và $Q: a+c=b+c$. (3) $P: x=2$ và $Q: x^2=4$. (4) $P: a \\;\\vdots\\; 6$ và $Q: (a \\;\\vdots\\; 2 \\text{ và } a \\;\\vdots\\; 3)$. Hỏi có bao nhiêu cặp thỏa mãn **$P \\Leftrightarrow Q$ là mệnh đề đúng**?",
+            "correct": "2",
+            "correct_answers": [
+              "2",
+              "hai",
+              "2 cặp"
+            ],
+            "explanation": "Có đúng 2 cặp tương đương đúng là (2) (tính chất đại số) và (4) (dấu hiệu chia hết cho 6). Cặp (1) sai chiều ngược ($x=-2$). Cặp (3) sai chiều ngược ($x=-2$)."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 7,
+      "title": "Tổng kết & Cầu nối Sư phạm",
+      "blocks": [
+        {
+          "id": "b7_callout_summary",
+          "block_type": "callout",
+          "content": {
+            "variant": "info",
+            "title": "Tổng kết Bài học 5",
+            "body": "Bạn đã làm chủ các thuật ngữ định lý: Đảo, Tương đương, Cần & Đủ. Ở bài tiếp theo, chúng ta sẽ khảo sát công cụ biểu diễn toán học mạnh nhất: **Lượng từ $\\forall, \\exists$ và Mệnh đề nhiều biến**."
+          }
+        }
+      ]
+    }
+  ],
+  "order_index": 4
+}

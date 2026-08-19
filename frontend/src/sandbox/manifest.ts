@@ -15,7 +15,7 @@ const MAX_ASSESSMENTS = 64
 const LEVELS = new Set(['recognition', 'understanding', 'application', 'advanced_application'])
 const DOMAINS = new Set(['logic', 'set', 'trigonometry'])
 const GOAL_EVIDENCE = new Set(['truth_value', 'truth_table_complete', 'unit_circle_value', 'set_equal', 'interval_equal', 'triangle_valid', 'triangle_solved', 'measurement_consistent', 'structured_steps'])
-const ASSESSMENT_TYPES = new Set(['choice', 'boolean_group', 'set', 'interval', 'numeric', 'fraction', 'expression', 'angle', 'quantity', 'ordered_steps', 'structured_reasoning'])
+const ASSESSMENT_TYPES = new Set(['choice', 'boolean', 'boolean_group', 'set', 'interval', 'numeric', 'fraction', 'expression', 'angle', 'quantity', 'ordered_steps', 'structured_reasoning'])
 const schemaValidator = new Ajv({ allErrors: true, strict: false }).compile(manifestSchema)
 
 function issue(path: string, code: string, message: string): ValidationIssue {
@@ -32,7 +32,7 @@ function isJsonSafe(value: unknown, depth = 0): boolean {
   if (value === null || typeof value === 'string' || typeof value === 'boolean') return true
   if (Array.isArray(value)) return value.every(item => isJsonSafe(item, depth + 1))
   if (!isObject(value)) return false
-  return Object.entries(value).every(([key, item]) => Boolean(key) && isJsonSafe(item, depth + 1))
+  return Object.entries(value).every(([key, item]) => typeof key === 'string' && isJsonSafe(item, depth + 1))
 }
 
 function stringAt(value: Record<string, unknown>, key: string): string | null {

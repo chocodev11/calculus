@@ -179,7 +179,7 @@ export default function Layout() {
       </header>
 
       {/* Main Page Body */}
-      <main className="flex-1 w-full pb-20 md:pb-8">
+      <main className="flex-1 w-full pb-20 md:pb-0">
         <AnimatedOutlet />
       </main>
 

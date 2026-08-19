@@ -10,10 +10,13 @@ import api from '../lib/api'
 import { useAuthStore } from '../lib/store'
 import { decodeStepId, encodeStepId, cn } from '../lib/utils'
 import 'katex/dist/katex.min.css'
-import { InlineMath, BlockMath } from 'react-katex'
+import * as ReactKatexModule from 'react-katex'
 import { TactileButton } from '../components/ui/tactile-button'
 import { GamifyBadge } from '../components/ui/gamify-badge'
 import InteractionSlide from '../components/interactions'
+
+const ReactKatex = ReactKatexModule.default || ReactKatexModule
+const { InlineMath, BlockMath } = ReactKatex
 
 // ─── MAIN STEP LESSON COMPONENT ─────────────────────────────────────────────
 
@@ -133,10 +136,24 @@ export default function Step() {
     return currentSlide.blocks.filter(b => (b.type || b.block_type) === 'quiz')
   }, [currentSlide])
 
+  const isQuizBlockSelected = useCallback((block) => {
+    const content = block.content || block.block_data || {}
+    const qType = content.quiz_type || (content.items ? 'true_false_group' : 'multiple_choice')
+    const ans = quizAnswers[block.id]
+    if (qType === 'true_false_group') {
+      const items = content.items || []
+      return items.length > 0 && typeof ans === 'object' && ans !== null && items.every(itm => ans[itm.id] !== undefined)
+    }
+    if (qType === 'short_answer' || qType === 'text_input') {
+      return ans != null && String(ans).trim() !== ''
+    }
+    return ans != null
+  }, [quizAnswers])
+
   const hasQuiz = currentQuizBlocks.length > 0
   const allQuizzesAnswered = currentQuizBlocks.every(b => quizSubmitted[b.id])
   const allQuizzesCorrect = currentQuizBlocks.every(b => quizResults[b.id]?.correct)
-  const allQuizzesSelected = currentQuizBlocks.every(b => quizAnswers[b.id] != null)
+  const allQuizzesSelected = currentQuizBlocks.length > 0 && currentQuizBlocks.every(isQuizBlockSelected)
 
   const handleQuizAnswer = (blockId, answer) => {
     setQuizAnswers(prev => ({ ...prev, [blockId]: answer }))
@@ -216,6 +233,41 @@ export default function Step() {
     navigate(`/course/${slug}`)
   }
 
+  const handleFooterAction = () => {
+    if (hasQuiz && !allQuizzesAnswered) {
+      currentQuizBlocks.forEach(b => {
+        if (!quizSubmitted[b.id] && isQuizBlockSelected(b)) {
+          const content = b.content || b.block_data || {}
+          const qType = content.quiz_type || (content.items ? 'true_false_group' : 'multiple_choice')
+          const ans = quizAnswers[b.id]
+          let isCorrect = false
+          if (qType === 'true_false_group') {
+            const items = content.items || []
+            isCorrect = items.length > 0 && items.every(itm => {
+              const expected = itm.correct === true || String(itm.correct).toLowerCase() === 'đúng' || String(itm.correct).toLowerCase() === 'true'
+              const userVal = ans[itm.id] === true || String(ans[itm.id]).toLowerCase() === 'đúng' || String(ans[itm.id]).toLowerCase() === 'true'
+              return expected === userVal
+            })
+          } else if (qType === 'short_answer' || qType === 'text_input') {
+            const correctAnswers = content.correct_answers || [content.correct, content.expected].filter(Boolean)
+            const cleanUser = String(ans).trim().toLowerCase()
+            isCorrect = correctAnswers.some(c => String(c).trim().toLowerCase() === cleanUser)
+          } else {
+            isCorrect = String(ans) === String(content.correct)
+          }
+          handleQuizSubmit(b.id, isCorrect, content.explanation)
+        }
+      })
+      return
+    }
+    if (isLastSlide) {
+      try { awardSlideXp(currentSlide?.id) } catch (e) {}
+      handleComplete()
+    } else {
+      goNext()
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center font-sans">
@@ -271,25 +323,7 @@ export default function Step() {
     )
   }
 
-  // Footer Action Dispatcher
-  const handleFooterAction = () => {
-    if (hasQuiz && !allQuizzesAnswered) {
-      currentQuizBlocks.forEach(b => {
-        if (!quizSubmitted[b.id] && quizAnswers[b.id] != null) {
-          const content = b.content || b.block_data || {}
-          const isCorrect = String(quizAnswers[b.id]) === String(content.correct)
-          handleQuizSubmit(b.id, isCorrect, content.explanation)
-        }
-      })
-      return
-    }
-    if (isLastSlide) {
-      try { awardSlideXp(currentSlide?.id) } catch (e) {}
-      handleComplete()
-    } else {
-      goNext()
-    }
-  }
+
 
   const handleWhyClick = () => {
     const explanations = currentQuizBlocks
@@ -348,7 +382,7 @@ export default function Step() {
       {/* ─── Main Slide Content Body ─────────────────────────────────── */}
       <main className="flex-1 shrink-0 overflow-hidden relative">
         {isInteractionSlide ? (
-          // Full-bleed interactive math engine slide
+          // Full-bleed interactive math engine slide with scroll support
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlideIndex}
@@ -356,7 +390,7 @@ export default function Step() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="w-full h-full"
+              className="w-full h-full overflow-y-auto"
             >
               {(() => {
                 const blocks = currentSlide?.blocks || []
@@ -364,7 +398,7 @@ export default function Step() {
                 if (interactionBlock) {
                   const content = interactionBlock.content || interactionBlock.block_data || {}
                   return (
-                    <div style={{ width: '100%', height: '100%' }}>
+                    <div className="w-full min-h-full max-w-4xl mx-auto p-3 sm:p-6 pb-24">
                       <InteractionSlide
                         interactionType={content.interactionType}
                         lesson={content.lesson}
@@ -578,8 +612,12 @@ function BlockRenderer({ block, quizAnswer, quizSubmitted, quizResult, onQuizAns
 
 function InteractionBlock({ block }) {
   const content = block.content || block.block_data || {}
+  const isCanvas = ['A', 'B', 'C', 'E'].includes(content.interactionType)
+
   return (
-    <div className="my-4 rounded-3xl overflow-hidden border-2 border-indigo-200 shadow-sm" style={{ height: 520 }}>
+    <div className={`my-6 rounded-3xl overflow-hidden border-2 border-slate-200 shadow-[0_4px_0_0_#E2E8F0] bg-white flex flex-col ${
+      isCanvas ? 'h-[520px]' : 'min-h-[560px] h-auto'
+    }`}>
       <InteractionSlide
         interactionType={content.interactionType}
         lesson={content.lesson}
@@ -719,14 +757,185 @@ function CodeBlock({ block }) {
 function QuizBlock({ block, answer, submitted, result, onAnswer }) {
   const content = block.content || block.block_data || {}
   const question = content.question || ''
+  const qType = content.quiz_type || (content.items ? 'true_false_group' : 'multiple_choice')
+
+  // ─── Dạng II: Đúng / Sai 4 ý ─────────────────────────────────────────────
+  if (qType === 'true_false_group' || content.items) {
+    const items = content.items || []
+    const currentMap = typeof answer === 'object' && answer !== null ? answer : {}
+
+    const handleSelectOption = (itemId, boolVal) => {
+      if (submitted) return
+      onAnswer({ ...currentMap, [itemId]: boolVal })
+    }
+
+    return (
+      <div className="space-y-6">
+        <div className="space-y-1 text-center">
+          <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-extrabold rounded-lg uppercase tracking-wider mb-2 border border-indigo-200">
+            Dạng II · Trắc nghiệm Đúng / Sai 4 ý
+          </span>
+          <p className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
+            <MathText text={question} />
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {items.map((item, idx) => {
+            const itemKey = item.id || `item_${idx}`
+            const selectedVal = currentMap[itemKey]
+            const isItemSubmitted = submitted
+            const expected = item.correct === true || String(item.correct).toLowerCase() === 'đúng' || String(item.correct).toLowerCase() === 'true'
+            const isUserCorrect = isItemSubmitted && selectedVal === expected
+
+            return (
+              <div
+                key={itemKey}
+                className={cn(
+                  'rounded-2xl border-2 p-4 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white',
+                  isItemSubmitted
+                    ? isUserCorrect
+                      ? 'border-emerald-300 bg-emerald-50/40'
+                      : 'border-rose-300 bg-rose-50/40'
+                    : selectedVal !== undefined
+                    ? 'border-indigo-300 shadow-sm'
+                    : 'border-slate-200'
+                )}
+              >
+                {/* Statement text */}
+                <div className="flex items-start gap-3 flex-1">
+                  <span className="w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 border border-slate-200">
+                    {String.fromCharCode(97 + idx)}
+                  </span>
+                  <div className="text-sm sm:text-base font-bold text-slate-800 leading-snug pt-0.5">
+                    <MathText text={item.label || item.text || item.statement || ''} />
+                  </div>
+                </div>
+
+                {/* True / False Buttons */}
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                  <button
+                    type="button"
+                    onClick={() => handleSelectOption(itemKey, true)}
+                    disabled={submitted}
+                    className={cn(
+                      'px-4 py-2 rounded-xl text-xs font-extrabold border-2 transition-all cursor-pointer select-none',
+                      selectedVal === true
+                        ? isItemSubmitted
+                          ? expected === true
+                            ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                            : 'bg-rose-600 text-white border-rose-700 shadow-sm'
+                          : 'bg-indigo-600 text-white border-indigo-800 shadow-sm'
+                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300'
+                    )}
+                  >
+                    Đúng
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSelectOption(itemKey, false)}
+                    disabled={submitted}
+                    className={cn(
+                      'px-4 py-2 rounded-xl text-xs font-extrabold border-2 transition-all cursor-pointer select-none',
+                      selectedVal === false
+                        ? isItemSubmitted
+                          ? expected === false
+                            ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                            : 'bg-rose-600 text-white border-rose-700 shadow-sm'
+                          : 'bg-indigo-600 text-white border-indigo-800 shadow-sm'
+                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300'
+                    )}
+                  >
+                    Sai
+                  </button>
+
+                  {isItemSubmitted && (
+                    <span className={cn(
+                      'text-xs font-extrabold px-2 py-1 rounded-lg ml-1 flex items-center gap-1',
+                      isUserCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                    )}>
+                      {isUserCorrect ? '✓ Đúng' : `✗ (${expected ? 'Đúng' : 'Sai'})`}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
+  // ─── Dạng III: Trả lời ngắn / Điền đáp số ───────────────────────────────
+  if (qType === 'short_answer' || qType === 'text_input') {
+    const inputVal = answer ?? ''
+    const isCorrect = result?.correct
+    const correctVal = content.correct ?? (content.correct_answers ? content.correct_answers[0] : '')
+
+    return (
+      <div className="space-y-6 max-w-lg mx-auto">
+        <div className="space-y-1 text-center">
+          <span className="inline-block px-3 py-1 bg-amber-50 text-amber-800 text-xs font-extrabold rounded-lg uppercase tracking-wider mb-2 border border-amber-200">
+            Dạng III · Điền đáp số / Trả lời ngắn
+          </span>
+          <p className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
+            <MathText text={question} />
+          </p>
+        </div>
+
+        <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+          <label className="block text-xs font-extrabold text-slate-500 uppercase tracking-wider">
+            Nhập kết quả hoặc số nguyên:
+          </label>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={String(inputVal)}
+              onChange={(e) => !submitted && onAnswer(e.target.value)}
+              disabled={submitted}
+              placeholder="Nhập đáp số vào đây…"
+              className={cn(
+                'w-full py-3.5 px-4 rounded-2xl border-2 font-bold text-lg text-center outline-none transition-all',
+                submitted
+                  ? isCorrect
+                    ? 'border-emerald-500 bg-emerald-50 text-emerald-900'
+                    : 'border-rose-500 bg-rose-50 text-rose-900'
+                  : 'border-slate-200 focus:border-indigo-600 bg-slate-50 focus:bg-white text-slate-900'
+              )}
+            />
+          </div>
+
+          {submitted && (
+            <div className={cn(
+              'p-3.5 rounded-2xl border flex items-center justify-between text-xs sm:text-sm font-bold',
+              isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
+            )}>
+              <span>{isCorrect ? 'Chính xác!' : 'Đáp án chính xác:'}</span>
+              <span className="font-extrabold px-2.5 py-1 rounded-lg bg-white shadow-sm border border-slate-200">
+                <MathText text={String(correctVal)} />
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ─── Dạng I: Trắc nghiệm 4 lựa chọn (A, B, C, D) ───────────────────────
   const options = content.options || []
   const correctAnswer = content.correct
 
   return (
     <div className="space-y-6">
-      <p className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug text-center">
-        <MathText text={question} />
-      </p>
+      <div className="space-y-1 text-center">
+        <span className="inline-block px-3 py-1 bg-slate-100 text-slate-700 text-xs font-extrabold rounded-lg uppercase tracking-wider mb-2 border border-slate-200">
+          Dạng I · Trắc nghiệm 4 lựa chọn
+        </span>
+        <p className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
+          <MathText text={question} />
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         {options.map((opt, idx) => {

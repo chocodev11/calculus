@@ -383,9 +383,38 @@ def validate_sandbox_manifest(filepath, lesson):
             err(filepath, "Sandbox logic parameter_implication: missing activity.expectedParameter")
 
 def validate_quiz(filepath, block_id, content):
-    """Validate quiz block content."""
+    """Validate quiz block content (Multiple choice, True/False group, or Short answer)."""
     if "question" not in content:
         err(filepath, f"Quiz {block_id}: missing 'question'")
+        return
+
+    quiz_type = content.get("quiz_type", "multiple_choice")
+    
+    # 1. True/False Group (Dạng II: Đúng/Sai 4 ý)
+    if quiz_type == "true_false_group" or "items" in content:
+        items = content.get("items", [])
+        if not isinstance(items, list) or len(items) == 0:
+            err(filepath, f"Quiz {block_id}: true_false_group requires a non-empty 'items' array")
+            return
+        if len(items) != 4:
+            warn(filepath, f"Quiz {block_id}: expected 4 sub-items for true_false_group, got {len(items)}")
+        for i, itm in enumerate(items):
+            if not isinstance(itm, dict):
+                err(filepath, f"Quiz {block_id}: items[{i}] must be an object")
+                continue
+            if "label" not in itm and "text" not in itm and "statement" not in itm:
+                err(filepath, f"Quiz {block_id}: items[{i}] missing 'label' or 'text'")
+            if "correct" not in itm:
+                err(filepath, f"Quiz {block_id}: items[{i}] missing 'correct' boolean/value")
+        return
+
+    # 2. Short Answer (Dạng III: Trả lời ngắn / Điền số)
+    if quiz_type in ("short_answer", "text_input"):
+        if "correct" not in content and "correct_answers" not in content and "expected" not in content:
+            err(filepath, f"Quiz {block_id}: short_answer requires 'correct' or 'correct_answers'")
+        return
+
+    # 3. Standard Multiple Choice (Dạng I: Trắc nghiệm 4 lựa chọn)
     if "options" not in content:
         err(filepath, f"Quiz {block_id}: missing 'options'")
         return

@@ -114,6 +114,7 @@ export interface AssessmentSpec {
   id: string
   type:
     | 'choice'
+    | 'boolean'
     | 'boolean_group'
     | 'set'
     | 'interval'
@@ -151,6 +152,7 @@ export interface SandboxManifest {
   config: JsonObject
   feedback?: JsonObject
   analytics?: string[]
+  prompt?: string
 }
 
 export interface ValidationIssue {

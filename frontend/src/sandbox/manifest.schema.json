@@ -21,6 +21,7 @@
     "config"
   ],
   "properties": {
+    "prompt": { "type": "string" },
     "schemaVersion": { "const": "1.0" },
     "kind": { "const": "math.sandbox" },
     "id": { "type": "string", "minLength": 1 },
@@ -83,7 +84,7 @@
       "required": ["id", "type", "prompt", "outcomeIds"],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
-        "type": { "enum": ["choice", "boolean_group", "set", "interval", "numeric", "fraction", "expression", "angle", "quantity", "ordered_steps", "structured_reasoning"] },
+        "type": { "enum": ["choice", "boolean", "boolean_group", "set", "interval", "numeric", "fraction", "expression", "angle", "quantity", "ordered_steps", "structured_reasoning"] },
         "prompt": { "type": "string", "minLength": 1 },
         "outcomeIds": { "type": "array", "items": { "type": "string" } },
         "misconceptionIds": { "type": "array", "items": { "type": "string" } },

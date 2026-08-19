@@ -1,4 +1,7 @@
-import { InlineMath } from 'react-katex'
+import * as ReactKatexModule from 'react-katex'
+
+const ReactKatex = ReactKatexModule.default || ReactKatexModule
+const { InlineMath } = ReactKatex
 
 /**
  * Renders text with inline $LaTeX$ segments via KaTeX.

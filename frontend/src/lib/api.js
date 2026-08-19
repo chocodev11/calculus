@@ -13,6 +13,32 @@ const getToken = () => {
   return null
 }
 
+const formatErrorDetail = (detail) => {
+  if (typeof detail === 'string') return detail
+
+  if (Array.isArray(detail)) {
+    return detail
+      .map((item) => {
+        if (typeof item === 'string') return item
+        if (!item || typeof item !== 'object') return String(item)
+
+        const location = Array.isArray(item.loc)
+          ? item.loc.filter((part) => part !== 'body').join('.')
+          : ''
+        const message = item.msg || item.message || 'Dữ liệu không hợp lệ'
+        return location ? `${location}: ${message}` : message
+      })
+      .filter(Boolean)
+      .join('; ')
+  }
+
+  if (detail && typeof detail === 'object') {
+    return detail.message || detail.msg || 'Request failed'
+  }
+
+  return 'Request failed'
+}
+
 const api = {
   async get(endpoint) {
     const token = getToken()
@@ -41,7 +67,7 @@ const api = {
     if (!res.ok) {
       const error = await res.json().catch(() => ({ detail: 'Request failed' }))
       console.error(`[api] GET ${endpoint} failed:`, error)
-      throw new Error(error.detail || 'Request failed')
+      throw new Error(formatErrorDetail(error.detail))
     }
     
     const data = await res.json()
@@ -79,7 +105,7 @@ const api = {
 
     if (!res.ok) {
       const error = await res.json().catch(() => ({ detail: 'Request failed' }))
-      throw new Error(error.detail || 'Request failed')
+      throw new Error(formatErrorDetail(error.detail))
     }
 
     return await res.json()
@@ -115,7 +141,7 @@ const api = {
 
     if (!res.ok) {
       const error = await res.json().catch(() => ({ detail: 'Request failed' }))
-      throw new Error(error.detail || 'Request failed')
+      throw new Error(formatErrorDetail(error.detail))
     }
 
     return await res.json()
@@ -150,7 +176,7 @@ const api = {
 
     if (!res.ok) {
       const error = await res.json().catch(() => ({ detail: 'Request failed' }))
-      throw new Error(error.detail || 'Request failed')
+      throw new Error(formatErrorDetail(error.detail))
     }
 
     return await res.json()

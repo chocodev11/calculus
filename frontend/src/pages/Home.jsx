@@ -22,7 +22,9 @@ import {
   Clock,
   X as XIcon,
   Medal,
-  ScrollText
+  ScrollText,
+  Compass,
+  ArrowUpRight
 } from 'lucide-react'
 import { useAuthStore, useQuestStore } from '../lib/store'
 import api from '../lib/api'

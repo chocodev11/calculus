@@ -9,7 +9,10 @@ import {
 import { TactileButton } from '../components/ui/tactile-button'
 import { GamifyBadge } from '../components/ui/gamify-badge'
 import 'katex/dist/katex.min.css'
-import { InlineMath, BlockMath } from 'react-katex'
+import * as ReactKatexModule from 'react-katex'
+
+const ReactKatex = ReactKatexModule.default || ReactKatexModule
+const { InlineMath, BlockMath } = ReactKatex
 
 export default function Landing() {
   const navigate = useNavigate()

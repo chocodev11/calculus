@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { User, Settings, LogOut, Trophy, Flame, Star, X, ChevronRight, Bell, Sparkles, KeyRound, Medal, CheckCircle2 } from 'lucide-react'
+import { User, Settings, LogOut, Trophy, Flame, Star, X, ChevronRight, Bell, Sparkles, KeyRound, Medal, CheckCircle2, Zap } from 'lucide-react'
 import { useAuthStore, useShopStore } from '../lib/store'
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'

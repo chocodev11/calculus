@@ -72,12 +72,13 @@ function rowsFor(variables: string[], expression: ReturnType<typeof compilePredi
   return rows
 }
 
-function renderModel(rows: JsonObject[], mode: LogicMode): RenderModel {
+function renderModel(rows: JsonObject[], mode: LogicMode, extra: JsonObject = {}): RenderModel {
   return {
     kind: 'logic',
     space: mode === 'truth_table' ? 'truth_table' : 'condition_graph',
     elements: rows,
-    labels: [],
+    labels: [mode],
+    ...extra,
   }
 }
 
@@ -139,7 +140,7 @@ function recomputeClassifier(manifest: SandboxManifest, state: PrimitiveState): 
     return { id: item.id, statement: item.label, selected: selected ?? '', correct }
   })
   const complete = items.length > 0 && rows.every(row => row.correct)
-  const render = renderModel(rows, 'condition_graph')
+  const render = renderModel(rows, 'proposition_classifier', { items })
   return {
     state: structuredClone(state),
     derivedState: { rows, complete },
@@ -187,7 +188,7 @@ function recomputeQuantifier(manifest: SandboxManifest, state: PrimitiveState): 
     derivedState: { rows, complete },
     goals: goalResults(manifest, complete, rows),
     feedback: activityFeedback(complete, incorrect),
-    renderModel: renderModel(rows, 'condition_graph'),
+    renderModel: renderModel(rows, 'quantifier_negation', { items }),
   }
 }
 
@@ -251,7 +252,15 @@ function recomputeImplication(manifest: SandboxManifest, state: PrimitiveState):
     },
     goals: goalResults(manifest, complete, { pToQ: expectedPToQ, qToP: expectedQToP, necessary, sufficient }),
     feedback: activityFeedback(complete, incorrect),
-    renderModel: renderModel(rowsWithResult, 'condition_graph'),
+    renderModel: renderModel(rowsWithResult, 'implication', {
+      expectedPToQ,
+      expectedQToP,
+      pToQCounterexamples,
+      qToPCounterexamples,
+      domain: activity.domainValues,
+      pToQCorrect,
+      qToPCorrect,
+    }),
   }
 }
 
@@ -279,7 +288,7 @@ function recomputeParameter(manifest: SandboxManifest, state: PrimitiveState): R
     derivedState: { rows, complete, parameter, roots, implication: parameterCorrect },
     goals: goalResults(manifest, complete, { parameter, roots, implication: parameterCorrect }),
     feedback: activityFeedback(complete, incorrect),
-    renderModel: renderModel(rows, 'condition_graph'),
+    renderModel: renderModel(rows, 'parameter_implication', { parameter, roots, complete, parameterCorrect }),
   }
 }
 

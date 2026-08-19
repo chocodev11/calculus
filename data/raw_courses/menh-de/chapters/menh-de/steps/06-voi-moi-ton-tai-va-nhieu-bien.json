@@ -1,0 +1,361 @@
+{
+  "id": "06-voi-moi-ton-tai-va-nhieu-bien",
+  "title": "Lượng từ ∀, ∃ và mệnh đề nhiều biến",
+  "order": 5,
+  "description": "Làm chủ lượng từ với mọi ∀, tồn tại ∃, phủ định lượng từ và mở rộng mệnh đề nhiều biến theo chuẩn GDPT 2018.",
+  "xp_reward": 120,
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Khái niệm Lượng từ ∀ và ∃",
+      "blocks": [
+        {
+          "id": "b1_text_quantifiers",
+          "block_type": "text",
+          "content": {
+            "heading": "Lượng từ Với mọi (∀) & Tồn tại (∃)",
+            "paragraphs": [
+              "Trong toán học, để khẳng định một tính chất $P(x)$ đúng với mọi phần tử hoặc tồn tại ít nhất một phần tử, ta dùng các **lượng từ logic**:",
+              "- **Lượng từ với mọi ($\\forall$)**: \"$\\forall x \\in X,\\; P(x)$\" có nghĩa là $P(x)$ đúng với **tất cả** các giá trị $x \\in X$.",
+              "- **Lượng từ tồn tại ($\\exists$)**: \"$\\exists x \\in X,\\; P(x)$\" có nghĩa là có **ít nhất một** giá trị $x \\in X$ làm cho $P(x)$ đúng."
+            ]
+          }
+        },
+        {
+          "id": "b1_callout_multivariable",
+          "block_type": "callout",
+          "content": {
+            "variant": "theorem",
+            "title": "Mệnh đề nhiều biến (Multivariable Logic)",
+            "body": "Khi xét vị từ $P(x, y)$, thứ tự lượng từ có ý nghĩa quyết định:\n- \"$\\forall x, \\forall y,\\; P(x, y)$\": Đúng với mọi cặp $(x, y)$.\n- \"$\\exists x, \\forall y,\\; P(x, y)$\": Tồn tại một phần tử $x_0$ cố định phục vụ cho tất cả $y$ (ví dụ: $x=1$ là phần tử trung hòa của phép nhân)."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "Phòng thí nghiệm Lượng từ Đa biến",
+      "blocks": [
+        {
+          "id": "b2_sandbox_multivariable",
+          "block_type": "interaction",
+          "content": {
+            "interactionType": "sandbox",
+            "lesson": {
+              "schemaVersion": "1.0",
+              "kind": "math.sandbox",
+              "id": "menh_de_06_multivariable",
+              "version": 1,
+              "archetypeId": "logic.quantifier",
+              "domainId": "logic",
+              "level": "application",
+              "recipe": "core",
+              "outcomeIds": [
+                "M10-LOGIC-06"
+              ],
+              "prerequisites": [],
+              "misconceptions": [],
+              "scene": {
+                "objects": []
+              },
+              "config": {},
+              "mode": "quantifier_negation",
+              "activity": {
+                "items": [
+                  {
+                    "id": "item1",
+                    "label": "∀x∈R, ∀y∈R: (x+y)² = x² + 2xy + y²",
+                    "controlVerdict": "c_v1",
+                    "controlNegation": "c_n1",
+                    "expectedVerdict": "true",
+                    "expectedNegation": "exists_pair_not_equal",
+                    "expectedWitness": "none"
+                  },
+                  {
+                    "id": "item2",
+                    "label": "∀x∈R, ∀y∈R: x² + y² > 0",
+                    "controlVerdict": "c_v2",
+                    "controlNegation": "c_n2",
+                    "expectedVerdict": "false",
+                    "expectedNegation": "exists_pair_le_zero",
+                    "expectedWitness": "x0_y0"
+                  },
+                  {
+                    "id": "item3",
+                    "label": "∃x∈R, ∀y∈R: x.y = y",
+                    "controlVerdict": "c_v3",
+                    "controlNegation": "c_n3",
+                    "expectedVerdict": "true",
+                    "expectedNegation": "forall_exists_not_equal",
+                    "expectedWitness": "x_equals_1"
+                  }
+                ]
+              },
+              "controls": [
+                {
+                  "id": "c_v1",
+                  "type": "choice",
+                  "label": "Chân trị của (1) Hằng đẳng thức (x+y)²",
+                  "initial": "false",
+                  "options": [
+                    "true",
+                    "false"
+                  ],
+                  "optionLabels": {
+                    "true": "Đúng (Đ)",
+                    "false": "Sai (S)"
+                  }
+                },
+                {
+                  "id": "c_n1",
+                  "type": "choice",
+                  "label": "Phủ định của (1)",
+                  "initial": "exists_pair_not_equal",
+                  "options": [
+                    "exists_pair_not_equal",
+                    "forall_pair_not_equal"
+                  ],
+                  "optionLabels": {
+                    "exists_pair_not_equal": "∃x, ∃y: (x+y)² ≠ x²+2xy+y²",
+                    "forall_pair_not_equal": "∀x, ∀y: (x+y)² ≠ x²+2xy+y²"
+                  }
+                },
+                {
+                  "id": "c_v2",
+                  "type": "choice",
+                  "label": "Chân trị của (2) x² + y² > 0",
+                  "initial": "true",
+                  "options": [
+                    "true",
+                    "false"
+                  ],
+                  "optionLabels": {
+                    "true": "Đúng (Đ)",
+                    "false": "Sai (S)"
+                  }
+                },
+                {
+                  "id": "c_n2",
+                  "type": "choice",
+                  "label": "Phản ví dụ chứng minh (2) sai",
+                  "initial": "none",
+                  "options": [
+                    "none",
+                    "x0_y0",
+                    "x1_y1"
+                  ],
+                  "optionLabels": {
+                    "none": "Không có",
+                    "x0_y0": "Cặp (x=0, y=0) làm x²+y²=0",
+                    "x1_y1": "Cặp (1, 1)"
+                  }
+                },
+                {
+                  "id": "c_v3",
+                  "type": "choice",
+                  "label": "Chân trị của (3) ∃x, ∀y: x.y = y",
+                  "initial": "false",
+                  "options": [
+                    "true",
+                    "false"
+                  ],
+                  "optionLabels": {
+                    "true": "Đúng (Đ)",
+                    "false": "Sai (S)"
+                  }
+                },
+                {
+                  "id": "c_n3",
+                  "type": "choice",
+                  "label": "Nhân chứng x chứng minh (3) đúng",
+                  "initial": "none",
+                  "options": [
+                    "none",
+                    "x_equals_1",
+                    "x_equals_0"
+                  ],
+                  "optionLabels": {
+                    "none": "Không có",
+                    "x_equals_1": "Chọn x = 1 (1.y = y với mọi y)",
+                    "x_equals_0": "Chọn x = 0"
+                  }
+                }
+              ],
+              "goals": [
+                {
+                  "id": "quantifier_multivariable_goals",
+                  "evidence": "structured_steps"
+                }
+              ],
+              "solutionGraph": {
+                "steps": [
+                  {
+                    "id": "check_scopes",
+                    "kind": "check",
+                    "hint": "Với ∀x∀y chỉ cần 1 phản ví dụ để bác bỏ; với ∃x∃y chỉ cần 1 cặp nghiệm."
+                  },
+                  {
+                    "id": "verify_universal_witness",
+                    "kind": "justify",
+                    "dependsOn": [
+                      "check_scopes"
+                    ],
+                    "hint": "Với ∃x∀y, giá trị x=1 là phần tử trung hòa của phép nhân trên R."
+                  }
+                ],
+                "terminalStepIds": [
+                  "verify_universal_witness"
+                ]
+              },
+              "assessment": [
+                {
+                  "id": "check-multivariable-quantifiers",
+                  "type": "structured_reasoning",
+                  "prompt": "Phân tích tính đúng sai của 3 mệnh đề lượng từ 2 biến.",
+                  "outcomeIds": [
+                    "M10-LOGIC-06"
+                  ]
+                }
+              ],
+              "accessibility": {
+                "keyboardControls": true,
+                "textAlternative": "Hằng đẳng thức đúng; x^2+y^2>0 sai tại (0,0); tồn tại x=1 đúng."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+      "blocks": [
+        {
+          "id": "b3_callout_takeaway",
+          "block_type": "callout",
+          "content": {
+            "variant": "tip",
+            "title": "Chiến lược chứng minh & Bác bỏ",
+            "body": "1. **Muốn chứng minh $\\forall x \\in X, P(x)$ ĐÚNG**: Phải chứng minh tổng quát với $x$ bất kỳ.\n2. **Muốn bác bỏ $\\forall x \\in X, P(x)$ (chứng minh SAI)**: Chỉ cần chỉ ra **1 phản ví dụ** $x_0 \\in X$ sao cho $P(x_0)$ sai.\n3. **Muốn chứng minh $\\exists x \\in X, P(x)$ ĐÚNG**: Chỉ cần chỉ ra **1 nhân chứng** $x_0 \\in X$ thỏa mãn $P(x_0)$ đúng."
+          }
+        },
+        {
+          "id": "b3_math_neg_rule",
+          "block_type": "math",
+          "content": {
+            "label": "Quy tắc phủ định 2 biến",
+            "latex": "\\overline{\\forall x, \\forall y,\\; P(x, y)} \\iff \\exists x, \\exists y,\\; \\overline{P(x, y)}"
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 4,
+      "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+      "blocks": [
+        {
+          "id": "b4_quiz_d1",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "multiple_choice",
+            "question": "Trong các mệnh đề sau, mệnh đề nào là **mệnh đề đúng**?",
+            "options": [
+              {
+                "id": "A",
+                "text": "$\\forall n \\in \\mathbb{N},\\; n^2 + 1 \\text{ không chia hết cho } 3$"
+              },
+              {
+                "id": "B",
+                "text": "$\\forall x \\in \\mathbb{R},\\; x^2 > 0$"
+              },
+              {
+                "id": "C",
+                "text": "$\\exists x \\in \\mathbb{Q},\\; x^2 = 3$"
+              },
+              {
+                "id": "D",
+                "text": "$\\forall n \\in \\mathbb{N},\\; 2^n + 1 \\text{ là số nguyên tố}$"
+              }
+            ],
+            "correct": "A",
+            "explanation": "Câu A đúng: Một số chính phương $n^2$ khi chia cho 3 chỉ có số dư là 0 hoặc 1. Do đó $n^2 + 1$ chia cho 3 chỉ có thể dư 1 hoặc 2, không bao giờ chia hết cho 3. (Câu B sai tại $x=0$, câu C sai vì $\\pm\\sqrt{3}$ vô tỉ, câu D sai tại $n=3$ vì $2^3+1=9$ hợp số)."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 5,
+      "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+      "blocks": [
+        {
+          "id": "b5_quiz_d2",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "true_false_group",
+            "question": "Xét tính đúng sai của các mệnh đề lượng từ sau:",
+            "items": [
+              {
+                "id": "a",
+                "label": "a) ∀x ∈ R, x² - 2x + 3 > 0.",
+                "correct": true
+              },
+              {
+                "id": "b",
+                "label": "b) ∃n ∈ N, n(n + 1) là số lẻ.",
+                "correct": false
+              },
+              {
+                "id": "c",
+                "label": "c) ∃x ∈ Q, 4x² - 1 = 0.",
+                "correct": true
+              },
+              {
+                "id": "d",
+                "label": "d) ∀x ∈ R, |x| ≥ x.",
+                "correct": true
+              }
+            ],
+            "explanation": "Ý a đúng vì $x^2-2x+3=(x-1)^2+2 \\ge 2 > 0$. Ý b sai vì tích 2 số tự nhiên liên tiếp luôn là số chẵn. Ý c đúng vì $x = \\pm 1/2 \\in \\mathbb{Q}$. Ý d đúng theo tính chất giá trị tuyệt đối."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 6,
+      "title": "Thử thách Dạng III · Điền đáp số",
+      "blocks": [
+        {
+          "id": "b6_quiz_d3",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "short_answer",
+            "question": "Tìm số tự nhiên $n$ nhỏ nhất thỏa mãn mệnh đề: $\\exists n \\in \\mathbb{N}: n^2 - 10n + 21 = 0$.",
+            "correct": "3",
+            "correct_answers": [
+              "3",
+              "n=3",
+              "ba"
+            ],
+            "explanation": "Phương trình $n^2 - 10n + 21 = 0 \\Leftrightarrow (n-3)(n-7) = 0 \\Leftrightarrow n = 3$ hoặc $n = 7$. Số tự nhiên $n$ nhỏ nhất là $n = 3$."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 7,
+      "title": "Tổng kết & Cầu nối Sư phạm",
+      "blocks": [
+        {
+          "id": "b7_callout_summary",
+          "block_type": "callout",
+          "content": {
+            "variant": "info",
+            "title": "Tổng kết Bài học 6",
+            "body": "Lượng từ $\\forall$ và $\\exists$ giúp hình thức hóa toàn bộ các định lý giải tích và hình học. Ở bài học cuối cùng, chúng ta sẽ bước vào thử thách đỉnh cao: **Bài toán logic chứa tham số $m$ và Vận dụng cao (VDC)**."
+          }
+        }
+      ]
+    }
+  ],
+  "order_index": 5
+}

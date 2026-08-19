@@ -1,0 +1,279 @@
+{
+  "id": "07-tong-hop-tham-so-phan-vi-du-vdc",
+  "title": "Tổng hợp tham số · Phản ví dụ và VDC",
+  "order": 6,
+  "description": "Giải quyết trọn vẹn các bài toán logic chứa tham số m, biện luận nghiệm tam thức và hệ vị từ phối hợp theo chuẩn GDPT 2018.",
+  "xp_reward": 150,
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Phương pháp Logic chứa Tham số m",
+      "blocks": [
+        {
+          "id": "b1_text_parameter_logic",
+          "block_type": "text",
+          "content": {
+            "heading": "Bài toán Logic chứa Tham số m",
+            "paragraphs": [
+              "Trong các đề thi THPT và học sinh giỏi, bài toán logic chứa tham số $m$ yêu cầu tìm điều kiện của $m$ để một mệnh đề lượng từ $\\forall x \\in X, P_m(x)$ hoặc $\\exists x \\in X, P_m(x)$ là **mệnh đề đúng**.",
+              "Để giải quyết, ta chuyển đổi bài toán logic sang bài toán giải tích / đại số tương đương (biện luận dấu tam thức bậc hai, định lý Viète, hoặc quan hệ tập nghiệm con)."
+            ]
+          }
+        },
+        {
+          "id": "b1_callout_quadratic_rules",
+          "block_type": "callout",
+          "content": {
+            "variant": "theorem",
+            "title": "Định lý Dấu Tam thức bậc hai",
+            "body": "Cho $f(x) = ax^2 + bx + c$ ($a \\neq 0$). Ta có các điều kiện cốt lõi:\n- $\\forall x \\in \\mathbb{R},\\; f(x) > 0 \\iff a > 0 \\text{ và } \\Delta < 0$.\n- $\\forall x \\in \\mathbb{R},\\; f(x) \\ge 0 \\iff a > 0 \\text{ và } \\Delta \\le 0$."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "Phòng thí nghiệm Tham số & Trục số",
+      "blocks": [
+        {
+          "id": "b2_sandbox_parameter",
+          "block_type": "interaction",
+          "content": {
+            "interactionType": "sandbox",
+            "lesson": {
+              "schemaVersion": "1.0",
+              "kind": "math.sandbox",
+              "id": "menh_de_07_parameter",
+              "version": 1,
+              "archetypeId": "logic.parameter_truth",
+              "domainId": "logic",
+              "level": "advanced_application",
+              "recipe": "core",
+              "outcomeIds": [
+                "M10-LOGIC-07"
+              ],
+              "prerequisites": [],
+              "misconceptions": [],
+              "scene": {
+                "objects": []
+              },
+              "config": {},
+              "mode": "parameter_implication",
+              "activity": {
+                "parameterName": "m",
+                "pTemplate": "x² - (m+2)x + 2m = 0",
+                "qTemplate": "x ≥ 0",
+                "domainRange": [
+                  -2,
+                  4
+                ],
+                "parameterControlId": "c_param_m",
+                "expectedParameter": 0,
+                "expectedRoots": [
+                  2,
+                  0
+                ]
+              },
+              "controls": [
+                {
+                  "id": "c_param_m",
+                  "type": "slider",
+                  "label": "Tham số m",
+                  "initial": -1,
+                  "min": -2,
+                  "max": 4,
+                  "step": 1
+                },
+                {
+                  "id": "c_conclude",
+                  "type": "choice",
+                  "label": "Khi m = 0, mệnh đề Pm ⇒ Q có đúng không?",
+                  "initial": "false",
+                  "options": [
+                    "true",
+                    "false"
+                  ],
+                  "optionLabels": {
+                    "true": "Đúng (2 nghiệm ≥ 0)",
+                    "false": "Sai"
+                  }
+                }
+              ],
+              "goals": [
+                {
+                  "id": "parameter_tuning_goals",
+                  "evidence": "parameter_root_accuracy"
+                }
+              ],
+              "solutionGraph": {
+                "steps": [
+                  {
+                    "id": "factor_roots",
+                    "kind": "simplify",
+                    "hint": "Phương trình có 2 nghiệm là x = 2 và x = m."
+                  },
+                  {
+                    "id": "check_roots_condition",
+                    "kind": "check",
+                    "dependsOn": [
+                      "factor_roots"
+                    ],
+                    "hint": "Để mọi nghiệm x ≥ 0 thì cần x = 2 ≥ 0 và x = m ≥ 0."
+                  }
+                ],
+                "terminalStepIds": [
+                  "check_roots_condition"
+                ]
+              },
+              "assessment": [
+                {
+                  "id": "check-parameter-implication-roots",
+                  "type": "structured_reasoning",
+                  "prompt": "Tìm điều kiện tham số m để mọi nghiệm đều không âm.",
+                  "outcomeIds": [
+                    "M10-LOGIC-07"
+                  ]
+                }
+              ],
+              "accessibility": {
+                "keyboardControls": true,
+                "textAlternative": "Nghiệm x=2 và x=m. Mọi nghiệm không âm khi m >= 0."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+      "blocks": [
+        {
+          "id": "b3_callout_takeaway",
+          "block_type": "callout",
+          "content": {
+            "variant": "tip",
+            "title": "Sơ đồ 3 bước chinh phục bài toán tham số",
+            "body": "1. **Bước 1 (Đại số hóa)**: Chuyển mệnh đề logic thành điều kiện nghiệm / dấu tam thức.\n2. **Bước 2 (Giải bất phương trình tham số)**: Lập hệ điều kiện cho $\\Delta$, $S$, $P$ hoặc giá trị biên.\n3. **Bước 3 (Đối soát tập số)**: Lấy giao các tập điều kiện và đếm số nghiệm nguyên."
+          }
+        },
+        {
+          "id": "b3_math_viet",
+          "block_type": "math",
+          "content": {
+            "label": "Hệ điều kiện 2 nghiệm dương phân biệt",
+            "latex": "\\begin{cases} \\Delta > 0 \\\\ S = x_1 + x_2 > 0 \\\\ P = x_1 x_2 > 0 \\end{cases}"
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 4,
+      "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+      "blocks": [
+        {
+          "id": "b4_quiz_d1",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "multiple_choice",
+            "question": "Tìm tất cả các giá trị thực của tham số $m$ để mệnh đề sau là **mệnh đề đúng**: \"$\\forall x \\in \\mathbb{R},\\; x^2 - 2mx + m + 6 > 0$\".",
+            "options": [
+              {
+                "id": "A",
+                "text": "$-2 < m < 3$"
+              },
+              {
+                "id": "B",
+                "text": "$m < -2 \\text{ hoặc } m > 3$"
+              },
+              {
+                "id": "C",
+                "text": "$-3 < m < 2$"
+              },
+              {
+                "id": "D",
+                "text": "$m \\le -2 \\text{ hoặc } m \\ge 3$"
+              }
+            ],
+            "correct": "A",
+            "explanation": "Tam thức $f(x) = x^2 - 2mx + m + 6$ có hệ số $a = 1 > 0$. Do đó $f(x) > 0$ với mọi $x \\in \\mathbb{R} \\Leftrightarrow \\Delta' < 0 \\Leftrightarrow m^2 - (m+6) < 0 \\Leftrightarrow m^2 - m - 6 < 0 \\Leftrightarrow -2 < m < 3$."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 5,
+      "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+      "blocks": [
+        {
+          "id": "b5_quiz_d2",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "true_false_group",
+            "question": "Cho mệnh đề chứa tham số $P(m): \"\\exists x \\in \\mathbb{R},\\; x^2 - 4x + m = 0\"$. Xét tính đúng sai của các khẳng định sau:",
+            "items": [
+              {
+                "id": "a",
+                "label": "a) Khi m = 4, mệnh đề P(4) là mệnh đề đúng.",
+                "correct": true
+              },
+              {
+                "id": "b",
+                "label": "b) Khi m = 5, mệnh đề P(5) là mệnh đề đúng.",
+                "correct": false
+              },
+              {
+                "id": "c",
+                "label": "c) Mệnh đề P(m) đúng khi và chỉ khi m ≤ 4.",
+                "correct": true
+              },
+              {
+                "id": "d",
+                "label": "d) Có đúng 4 giá trị nguyên dương của m để P(m) đúng.",
+                "correct": true
+              }
+            ],
+            "explanation": "Phương trình có nghiệm khi $\\Delta' = 4 - m \\ge 0 \\Leftrightarrow m \\le 4$. Với $m=4$ có nghiệm $x=2$ (ý a đúng). Với $m=5$ vô nghiệm (ý b sai). Ý c đúng. Ý d đúng vì các số nguyên dương $m \\le 4$ là $\\{1, 2, 3, 4\\}$ (4 giá trị)."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 6,
+      "title": "Thử thách Dạng III · Điền đáp số",
+      "blocks": [
+        {
+          "id": "b6_quiz_d3",
+          "block_type": "quiz",
+          "content": {
+            "quiz_type": "short_answer",
+            "question": "Tìm số giá trị nguyên của tham số $m \\in [-5; 5]$ để mệnh đề \"$\\forall x \\in \\mathbb{R},\\; x^2 - 2mx + 9 > 0$\" là **mệnh đề đúng**.",
+            "correct": "5",
+            "correct_answers": [
+              "5",
+              "năm",
+              "5 giá trị"
+            ],
+            "explanation": "Ta có $a = 1 > 0$. Bất phương trình đúng với mọi $x \\in \\mathbb{R} \\Leftrightarrow \\Delta' = m^2 - 9 < 0 \\Leftrightarrow -3 < m < 3$. Các giá trị nguyên của $m$ trong khoảng $(-3; 3)$ là $\\{-2, -1, 0, 1, 2\\}$. Vậy có đúng 5 giá trị nguyên."
+          }
+        }
+      ]
+    },
+    {
+      "slide_number": 7,
+      "title": "Tổng kết Chuyên đề Mệnh đề & Logic Toán 10",
+      "blocks": [
+        {
+          "id": "b7_callout_summary",
+          "block_type": "callout",
+          "content": {
+            "variant": "theorem",
+            "title": "Chúc mừng bạn đã hoàn thành Chuyên đề!",
+            "body": "Bạn đã làm chủ trọn vẹn toàn bộ 20 dạng toán (A01–A20) và 18 kỹ năng (S1–S18) của chuyên đề Mệnh đề và Logic Toán 10. Đây là nền tảng tư duy vững chắc nhất để tiếp tục chinh phục chuyên đề **Tập hợp và các phép toán tập hợp**."
+          }
+        }
+      ]
+    }
+  ],
+  "order_index": 6
+}

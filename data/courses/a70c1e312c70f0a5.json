@@ -14,1484 +14,2286 @@
   "chapters": [
     {
       "id": "menh-de",
-      "title": "Mệnh đề",
-      "description": "Từ câu khẳng định và mệnh đề chứa biến đến lượng từ, kéo theo, điều kiện cần - đủ và phản ví dụ.",
+      "title": "Mệnh đề và Logic Toán 10",
+      "description": "Toàn bộ 6 chủ đề lý thuyết và 3 dạng bài tập từ tài liệu nguồn: từ nhận diện mệnh đề, mệnh đề chứa biến đến phủ định, kéo theo, điều kiện cần - đủ, lượng từ đa biến và bài toán tham số vận dụng cao.",
       "order_index": 0,
       "steps": [
         {
-          "id": "menh-de-nhan-dien",
-          "title": "Nhận diện mệnh đề và mệnh đề chứa biến",
-          "description": "Phân biệt câu khẳng định có giá trị đúng sai với mệnh đề chứa biến và câu không phải mệnh đề.",
-          "xp_reward": 20,
-          "order_index": 0,
+          "id": "01-menh-de-va-tinh-dung-sai",
+          "title": "Mệnh đề và tính đúng sai",
+          "order": 0,
+          "description": "Nhận diện câu là mệnh đề logic, phân biệt câu hỏi/cảm thán và đánh giá tính đúng sai theo chuẩn GDPT 2018.",
+          "xp_reward": 120,
           "slides": [
             {
-              "order_index": 0,
+              "slide_number": 1,
+              "title": "Khái niệm Mệnh đề Logic",
               "blocks": [
                 {
-                  "id": "intro",
-                  "type": "text",
+                  "id": "b1_text_intro",
+                  "block_type": "text",
                   "content": {
-                    "heading": "Mệnh đề có giá trị đúng hoặc sai xác định",
+                    "heading": "Mệnh đề logic là gì?",
                     "paragraphs": [
-                      "Một câu khẳng định được gọi là mệnh đề khi nó xác định được một và chỉ một giá trị đúng hoặc sai.",
-                      "Câu có biến chưa được gán giá trị hoặc chưa có lượng từ là mệnh đề chứa biến. Không được kết luận đúng hoặc sai chỉ bằng cách thử một vài giá trị."
+                      "Trong toán học, **mệnh đề** (logic) là một câu khẳng định có tính chất: **hoặc đúng, hoặc sai**.",
+                      "Một câu khẳng định **không thể vừa đúng vừa sai**. Mỗi mệnh đề phải có một và chỉ một chân trị xác định: Đúng (ký hiệu là $1$ hay $\\text{Đ}$) hoặc Sai (ký hiệu là $0$ hay $\\text{S}$)."
                     ]
                   }
                 },
                 {
-                  "id": "warning",
-                  "type": "callout",
+                  "id": "b1_callout_rule",
+                  "block_type": "callout",
                   "content": {
-                    "variant": "warning",
-                    "title": "Điểm cần tránh",
-                    "body": "Câu $x^2+x+1>0$ vẫn là mệnh đề chứa biến nếu chưa nói rõ $x$ thuộc miền nào và chưa dùng lượng từ. Việc biểu thức luôn dương không làm biến mất biến $x$."
+                    "variant": "theorem",
+                    "title": "Nguyên lý loại tam (Law of Excluded Middle)",
+                    "body": "Một câu khẳng định chỉ có thể nhận giá trị **Đúng** hoặc **Sai**, không có trường hợp thứ ba. Các câu nghi vấn (hỏi), câu cảm thán, câu cầu khiến hay mệnh lệnh **không phải là mệnh đề**."
                   }
                 }
               ]
             },
             {
-              "order_index": 1,
+              "slide_number": 2,
+              "title": "Phòng thí nghiệm Phân loại Mệnh đề",
               "blocks": [
                 {
-                  "id": "classifier",
-                  "type": "interaction",
+                  "id": "b2_sandbox_classifier",
+                  "block_type": "interaction",
                   "content": {
                     "interactionType": "sandbox",
                     "lesson": {
-                      "prompt": "Phân loại từng câu. Hãy chú ý biến, miền biến và việc câu đã được lượng từ hóa hay chưa.",
                       "schemaVersion": "1.0",
                       "kind": "math.sandbox",
-                      "id": "menh-de-classifier-v1",
-                      "version": "1.0.0",
+                      "id": "menh_de_01_classifier",
+                      "version": 1,
+                      "archetypeId": "logic.proposition",
                       "domainId": "logic",
-                      "archetypeId": "logic.proposition_identification",
                       "level": "recognition",
-                      "recipe": "logic.proposition",
+                      "recipe": "core",
                       "outcomeIds": [
-                        "M10-SET-01"
+                        "M10-LOGIC-01"
                       ],
                       "prerequisites": [],
-                      "misconceptions": [
-                        "logic.variable_sentence_is_proposition",
-                        "logic.question_is_proposition"
-                      ],
+                      "misconceptions": [],
                       "scene": {
-                        "space": "condition_graph"
+                        "objects": []
+                      },
+                      "config": {},
+                      "mode": "proposition_classifier",
+                      "activity": {
+                        "items": [
+                          {
+                            "id": "p1",
+                            "label": "Hà Nội là thủ đô của Việt Nam",
+                            "controlId": "c_p1",
+                            "expectedType": "proposition"
+                          },
+                          {
+                            "id": "p2",
+                            "label": "Số 15 là số nguyên tố",
+                            "controlId": "c_p2",
+                            "expectedType": "proposition"
+                          },
+                          {
+                            "id": "p3",
+                            "label": "Học toán vui quá!",
+                            "controlId": "c_p3",
+                            "expectedType": "not_proposition"
+                          },
+                          {
+                            "id": "p4",
+                            "label": "2x + 1 = 5",
+                            "controlId": "c_p4",
+                            "expectedType": "open_sentence"
+                          }
+                        ]
                       },
                       "controls": [
                         {
-                          "id": "class:a",
+                          "id": "c_p1",
                           "type": "choice",
-                          "label": "a) x² + x + 1 > 0",
-                          "initial": "",
+                          "label": "Hà Nội là thủ đô của Việt Nam",
+                          "initial": "not_proposition",
                           "options": [
-                            "",
                             "proposition",
                             "open_sentence",
                             "not_proposition"
                           ],
                           "optionLabels": {
-                            "": "Chọn phân loại",
                             "proposition": "Mệnh đề",
-                            "open_sentence": "Mệnh đề chứa biến",
-                            "not_proposition": "Không phải mệnh đề"
+                            "open_sentence": "Chứa biến",
+                            "not_proposition": "Không phải"
                           }
                         },
                         {
-                          "id": "class:b",
+                          "id": "c_p2",
                           "type": "choice",
-                          "label": "b) 26 chia hết cho 2 và cho 13",
-                          "initial": "",
+                          "label": "Số 15 là số nguyên tố",
+                          "initial": "not_proposition",
                           "options": [
-                            "",
                             "proposition",
                             "open_sentence",
                             "not_proposition"
                           ],
                           "optionLabels": {
-                            "": "Chọn phân loại",
                             "proposition": "Mệnh đề",
-                            "open_sentence": "Mệnh đề chứa biến",
-                            "not_proposition": "Không phải mệnh đề"
+                            "open_sentence": "Chứa biến",
+                            "not_proposition": "Không phải"
                           }
                         },
                         {
-                          "id": "class:c",
+                          "id": "c_p3",
                           "type": "choice",
-                          "label": "c) x² + y² > 9",
-                          "initial": "",
+                          "label": "Học toán vui quá!",
+                          "initial": "proposition",
                           "options": [
-                            "",
                             "proposition",
                             "open_sentence",
                             "not_proposition"
                           ],
                           "optionLabels": {
-                            "": "Chọn phân loại",
                             "proposition": "Mệnh đề",
-                            "open_sentence": "Mệnh đề chứa biến",
-                            "not_proposition": "Không phải mệnh đề"
+                            "open_sentence": "Chứa biến",
+                            "not_proposition": "Không phải"
                           }
                         },
                         {
-                          "id": "class:d",
+                          "id": "c_p4",
                           "type": "choice",
-                          "label": "d) x − 2y và 2xy",
-                          "initial": "",
+                          "label": "2x + 1 = 5",
+                          "initial": "proposition",
                           "options": [
-                            "",
                             "proposition",
                             "open_sentence",
                             "not_proposition"
                           ],
                           "optionLabels": {
-                            "": "Chọn phân loại",
                             "proposition": "Mệnh đề",
-                            "open_sentence": "Mệnh đề chứa biến",
-                            "not_proposition": "Không phải mệnh đề"
+                            "open_sentence": "Chứa biến",
+                            "not_proposition": "Không phải"
                           }
                         }
                       ],
                       "goals": [
                         {
-                          "id": "classification",
-                          "evidence": "structured_steps"
+                          "id": "classify_propositions",
+                          "evidence": "classifier_accuracy"
                         }
                       ],
                       "solutionGraph": {
                         "steps": [
                           {
-                            "id": "variables",
+                            "id": "check_factual_truth",
                             "kind": "check",
-                            "hint": "Đánh dấu những câu còn chứa biến chưa được gán giá trị hoặc lượng từ."
+                            "hint": "Câu khẳng định có tính đúng sai rõ ràng là mệnh đề."
                           },
                           {
-                            "id": "truth_value",
-                            "kind": "justify",
+                            "id": "separate_exclamations",
+                            "kind": "simplify",
                             "dependsOn": [
-                              "variables"
+                              "check_factual_truth"
                             ],
-                            "hint": "Một mệnh đề phải là câu khẳng định và có đúng một giá trị đúng hoặc sai."
+                            "hint": "Câu cảm thán và câu hỏi bộc lộ cảm xúc, không có tính chân trị."
                           }
                         ],
                         "terminalStepIds": [
-                          "truth_value"
+                          "separate_exclamations"
                         ]
                       },
                       "assessment": [
                         {
-                          "id": "classify-four-statements",
+                          "id": "check-proposition-nature",
                           "type": "structured_reasoning",
-                          "prompt": "Phân loại bốn câu và giải thích câu nào còn chứa biến.",
+                          "prompt": "Phân loại chính xác 4 câu khẳng định.",
                           "outcomeIds": [
-                            "M10-SET-01"
+                            "M10-LOGIC-01"
                           ]
                         }
                       ],
                       "accessibility": {
                         "keyboardControls": true,
-                        "textAlternative": "Bốn câu cần phân loại thành mệnh đề, mệnh đề chứa biến hoặc không phải mệnh đề.",
-                        "highContrast": true
-                      },
-                      "config": {
-                        "mode": "proposition_classifier",
-                        "activity": {
-                          "items": [
-                            {
-                              "id": "a",
-                              "label": "a) x² + x + 1 > 0",
-                              "controlId": "class:a",
-                              "expectedType": "open_sentence"
-                            },
-                            {
-                              "id": "b",
-                              "label": "b) 26 chia hết cho 2 và cho 13",
-                              "controlId": "class:b",
-                              "expectedType": "proposition"
-                            },
-                            {
-                              "id": "c",
-                              "label": "c) x² + y² > 9",
-                              "controlId": "class:c",
-                              "expectedType": "open_sentence"
-                            },
-                            {
-                              "id": "d",
-                              "label": "d) x − 2y và 2xy",
-                              "controlId": "class:d",
-                              "expectedType": "not_proposition"
-                            }
-                          ]
-                        }
-                      },
-                      "analytics": [
-                        "predict",
-                        "classify_statement",
-                        "goal",
-                        "hint",
-                        "retry"
-                      ]
+                        "textAlternative": "Phân loại câu vào 3 hộp: Mệnh đề, Mệnh đề chứa biến, Không phải mệnh đề."
+                      }
                     }
                   }
                 }
               ]
             },
             {
-              "order_index": 2,
+              "slide_number": 3,
+              "title": "Khoảng dừng Ghi nhớ Cốt lõi",
               "blocks": [
                 {
-                  "id": "check",
-                  "type": "quiz",
-                  "content": {
-                    "question": "Câu nào sau đây là mệnh đề chứa biến?",
-                    "options": [
-                      {
-                        "value": "a",
-                        "label": "$25$ là số chính phương."
-                      },
-                      {
-                        "value": "b",
-                        "label": "$x^2+1>0$."
-                      },
-                      {
-                        "value": "c",
-                        "label": "Hãy giải phương trình này."
-                      },
-                      {
-                        "value": "d",
-                        "label": "$2+3=5$."
-                      }
-                    ],
-                    "correct": "b",
-                    "explanation": "Biểu thức còn chứa biến x chưa được gán giá trị hoặc lượng từ hóa."
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "menh-de-phu-dinh-luong-tu",
-          "title": "Mệnh đề phủ định và lượng từ",
-          "description": "Đọc đúng lượng từ với mọi, tồn tại; lập phủ định và tìm chứng minh hoặc phản ví dụ.",
-          "xp_reward": 25,
-          "order_index": 1,
-          "slides": [
-            {
-              "order_index": 0,
-              "blocks": [
-                {
-                  "id": "quantifier-theory",
-                  "type": "text",
-                  "content": {
-                    "heading": "Phủ định phải đổi cả lượng từ và quan hệ",
-                    "paragraphs": [
-                      "Phủ định của ∀x ∈ X, P(x) là ∃x ∈ X, ¬P(x). Phủ định của ∃x ∈ X, P(x) là ∀x ∈ X, ¬P(x).",
-                      "Khi phủ định bất đẳng thức, < đổi thành ≥, > đổi thành ≤ và ngược lại. Miền của biến vẫn phải được giữ nguyên."
-                    ]
-                  }
-                },
-                {
-                  "id": "proof-method",
-                  "type": "callout",
-                  "content": {
-                    "variant": "theorem",
-                    "title": "Hai cách kiểm tra",
-                    "body": "Mệnh đề với ∀ sai chỉ cần một phản ví dụ. Mệnh đề với ∃ đúng chỉ cần một giá trị chứng minh. Để chứng minh mệnh đề ∀ đúng, cần lập luận bao quát miền biến."
-                  }
-                }
-              ]
-            },
-            {
-              "order_index": 1,
-              "blocks": [
-                {
-                  "id": "quantifier-sandbox",
-                  "type": "interaction",
-                  "content": {
-                    "interactionType": "sandbox",
-                    "lesson": {
-                      "prompt": "Xét đúng sai, lập phủ định và chọn bằng chứng phù hợp cho từng mệnh đề.",
-                      "schemaVersion": "1.0",
-                      "kind": "math.sandbox",
-                      "id": "menh-de-quantifier-v1",
-                      "version": "1.0.0",
-                      "domainId": "logic",
-                      "archetypeId": "logic.negation",
-                      "level": "application",
-                      "recipe": "logic.quantifier",
-                      "outcomeIds": [
-                        "M10-SET-03",
-                        "M10-SET-07",
-                        "M10-SET-09"
-                      ],
-                      "prerequisites": [
-                        "M10-SET-01",
-                        "M10-SET-02"
-                      ],
-                      "misconceptions": [
-                        "logic.negation_changes_only_symbol",
-                        "logic.solve_without_domain",
-                        "logic.counterexample_outside_domain"
-                      ],
-                      "scene": {
-                        "space": "condition_graph"
-                      },
-                      "controls": [
-                        {
-                          "id": "verdict:div3",
-                          "type": "choice",
-                          "label": "1) ∀n∈N*, n(n²−1) chia hết cho 3",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "Đúng",
-                            "Sai"
-                          ]
-                        },
-                        {
-                          "id": "negation:div3",
-                          "type": "choice",
-                          "label": "Phủ định câu 1",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "∃n∈N*: n(n²−1) không chia hết cho 3",
-                            "∀n∈N*: n(n²−1) không chia hết cho 3"
-                          ]
-                        },
-                        {
-                          "id": "evidence:div3",
-                          "type": "choice",
-                          "label": "Bằng chứng câu 1",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "Phân tích (n−1)n(n+1)",
-                            "Thử n = 1, 2, 3"
-                          ]
-                        },
-                        {
-                          "id": "verdict:positive",
-                          "type": "choice",
-                          "label": "2) ∀x∈R, x²−6x+15 > 0",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "Đúng",
-                            "Sai"
-                          ]
-                        },
-                        {
-                          "id": "negation:positive",
-                          "type": "choice",
-                          "label": "Phủ định câu 2",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "∃x∈R: x²−6x+15 ≤ 0",
-                            "∀x∈R: x²−6x+15 ≤ 0"
-                          ]
-                        },
-                        {
-                          "id": "evidence:positive",
-                          "type": "choice",
-                          "label": "Bằng chứng câu 2",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "Viết (x−3)²+6 > 0",
-                            "Chỉ thử x = 0"
-                          ]
-                        },
-                        {
-                          "id": "verdict:root",
-                          "type": "choice",
-                          "label": "3) ∃x∈R: x²−6x+5 = 0",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "Đúng",
-                            "Sai"
-                          ]
-                        },
-                        {
-                          "id": "negation:root",
-                          "type": "choice",
-                          "label": "Phủ định câu 3",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "∀x∈R: x²−6x+5 ≠ 0",
-                            "∃x∈R: x²−6x+5 ≠ 0"
-                          ]
-                        },
-                        {
-                          "id": "witness:root",
-                          "type": "numeric_input",
-                          "label": "Một nghiệm chứng minh câu 3",
-                          "min": -10,
-                          "max": 10,
-                          "step": 1,
-                          "initial": 1
-                        }
-                      ],
-                      "goals": [
-                        {
-                          "id": "quantifier-negation",
-                          "evidence": "structured_steps"
-                        }
-                      ],
-                      "solutionGraph": {
-                        "steps": [
-                          {
-                            "id": "read-domain",
-                            "kind": "check",
-                            "hint": "Đọc chính xác miền N*, R trước khi xét đúng sai."
-                          },
-                          {
-                            "id": "negate-quantifier",
-                            "kind": "transform",
-                            "dependsOn": [
-                              "read-domain"
-                            ],
-                            "hint": "Đổi ∀ thành ∃ hoặc ∃ thành ∀, rồi phủ định mệnh đề bên trong."
-                          },
-                          {
-                            "id": "choose-evidence",
-                            "kind": "justify",
-                            "dependsOn": [
-                              "negate-quantifier"
-                            ],
-                            "hint": "Mệnh đề ∀ đúng cần lập luận bao quát; mệnh đề ∃ đúng cần một giá trị chứng minh."
-                          }
-                        ],
-                        "terminalStepIds": [
-                          "choose-evidence"
-                        ]
-                      },
-                      "assessment": [
-                        {
-                          "id": "negate-universal",
-                          "type": "structured_reasoning",
-                          "prompt": "Lập phủ định của một mệnh đề với lượng từ ∀ và giải thích miền biến.",
-                          "outcomeIds": [
-                            "M10-SET-03"
-                          ]
-                        },
-                        {
-                          "id": "quantifier-witness",
-                          "type": "structured_reasoning",
-                          "prompt": "Dùng phân tích hoặc phản ví dụ để xác định đúng sai.",
-                          "outcomeIds": [
-                            "M10-SET-07",
-                            "M10-SET-09"
-                          ]
-                        }
-                      ],
-                      "accessibility": {
-                        "keyboardControls": true,
-                        "textAlternative": "Ba mệnh đề có lượng từ cần được xét đúng sai, lập phủ định và chọn bằng chứng.",
-                        "highContrast": true
-                      },
-                      "config": {
-                        "mode": "quantifier_negation",
-                        "activity": {
-                          "items": [
-                            {
-                              "id": "div3",
-                              "label": "∀n∈N*: n(n²−1) chia hết cho 3",
-                              "controlId": "verdict:div3",
-                              "expectedVerdict": "Đúng",
-                              "expectedNegation": "∃n∈N*: n(n²−1) không chia hết cho 3",
-                              "negationControlId": "negation:div3",
-                              "expectedEvidence": "Phân tích (n−1)n(n+1)",
-                              "evidenceControlId": "evidence:div3"
-                            },
-                            {
-                              "id": "positive",
-                              "label": "∀x∈R: x²−6x+15 > 0",
-                              "controlId": "verdict:positive",
-                              "expectedVerdict": "Đúng",
-                              "expectedNegation": "∃x∈R: x²−6x+15 ≤ 0",
-                              "negationControlId": "negation:positive",
-                              "expectedEvidence": "Viết (x−3)²+6 > 0",
-                              "evidenceControlId": "evidence:positive"
-                            },
-                            {
-                              "id": "root",
-                              "label": "∃x∈R: x²−6x+5 = 0",
-                              "controlId": "verdict:root",
-                              "expectedVerdict": "Đúng",
-                              "expectedNegation": "∀x∈R: x²−6x+5 ≠ 0",
-                              "negationControlId": "negation:root",
-                              "expectedWitness": 1,
-                              "witnessControlId": "witness:root"
-                            }
-                          ]
-                        }
-                      },
-                      "analytics": [
-                        "predict",
-                        "quantifier_selected",
-                        "negation_selected",
-                        "witness_submitted",
-                        "goal",
-                        "hint",
-                        "retry"
-                      ]
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "order_index": 2,
-              "blocks": [
-                {
-                  "id": "negation-check",
-                  "type": "quiz",
-                  "content": {
-                    "question": "Phủ định của “∀x∈R, x²−6x+15 > 0” là gì?",
-                    "options": [
-                      {
-                        "value": "a",
-                        "label": "∃x∈R: x²−6x+15 ≤ 0"
-                      },
-                      {
-                        "value": "b",
-                        "label": "∀x∈R: x²−6x+15 ≤ 0"
-                      },
-                      {
-                        "value": "c",
-                        "label": "∃x∈R: x²−6x+15 > 0"
-                      },
-                      {
-                        "value": "d",
-                        "label": "∀x∈R: x²−6x+15 < 0"
-                      }
-                    ],
-                    "correct": "a",
-                    "explanation": "Phủ định của ∀ là ∃ và phủ định của > là ≤."
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "menh-de-keo-theo-dieu-kien",
-          "title": "Mệnh đề kéo theo và điều kiện cần, đủ",
-          "description": "Kiểm tra chiều kéo theo bằng phản ví dụ, phân biệt mệnh đề đảo và phát biểu điều kiện cần - đủ.",
-          "xp_reward": 30,
-          "order_index": 2,
-          "slides": [
-            {
-              "order_index": 0,
-              "blocks": [
-                {
-                  "id": "implication-theory",
-                  "type": "text",
-                  "content": {
-                    "heading": "Mệnh đề kéo theo chỉ sai ở một loại trường hợp",
-                    "paragraphs": [
-                      "Mệnh đề P ⇒ Q sai khi P đúng và Q sai. Vì vậy, để bác bỏ P ⇒ Q, chỉ cần tìm một phản ví dụ thuộc P nhưng không thuộc Q.",
-                      "Nếu Q ⇒ P đúng thì Q là điều kiện đủ của P, đồng thời P là điều kiện cần của Q. Hai chiều đúng mới cho phép kết luận điều kiện cần và đủ."
-                    ]
-                  }
-                },
-                {
-                  "id": "example",
-                  "type": "math",
-                  "content": {
-                    "latex": "P(a): 6\\mid a,\\quad Q(a): 2\\mid a,\\quad a\\in\\{2,4,6,12\\}"
-                  }
-                }
-              ]
-            },
-            {
-              "order_index": 1,
-              "blocks": [
-                {
-                  "id": "implication-sandbox",
-                  "type": "interaction",
-                  "content": {
-                    "interactionType": "sandbox",
-                    "lesson": {
-                      "prompt": "Kiểm tra hai chiều P ⇒ Q và Q ⇒ P. Hãy chọn phản ví dụ cho chiều sai.",
-                      "schemaVersion": "1.0",
-                      "kind": "math.sandbox",
-                      "id": "menh-de-implication-v1",
-                      "version": "1.0.0",
-                      "domainId": "logic",
-                      "archetypeId": "logic.implication_variants",
-                      "level": "application",
-                      "recipe": "logic.implication",
-                      "outcomeIds": [
-                        "M10-SET-05",
-                        "M10-SET-06",
-                        "M10-SET-09"
-                      ],
-                      "prerequisites": [
-                        "M10-SET-02",
-                        "M10-SET-04"
-                      ],
-                      "misconceptions": [
-                        "logic.reverse_implication",
-                        "logic.confuse_converse_with_contrapositive",
-                        "logic.swap_necessary_sufficient"
-                      ],
-                      "scene": {
-                        "space": "condition_graph"
-                      },
-                      "controls": [
-                        {
-                          "id": "p-to-q",
-                          "type": "choice",
-                          "label": "P ⇒ Q: Nếu 6|a thì 2|a",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "Đúng",
-                            "Sai"
-                          ]
-                        },
-                        {
-                          "id": "p-to-q-counterexample",
-                          "type": "choice",
-                          "label": "Phản ví dụ của P ⇒ Q",
-                          "initial": "none",
-                          "options": [
-                            "none",
-                            "2",
-                            "4",
-                            "6",
-                            "12"
-                          ],
-                          "optionLabels": {
-                            "none": "Không có",
-                            "2": "a = 2",
-                            "4": "a = 4",
-                            "6": "a = 6",
-                            "12": "a = 12"
-                          }
-                        },
-                        {
-                          "id": "q-to-p",
-                          "type": "choice",
-                          "label": "Q ⇒ P: Nếu 2|a thì 6|a",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "Đúng",
-                            "Sai"
-                          ]
-                        },
-                        {
-                          "id": "q-to-p-counterexample",
-                          "type": "choice",
-                          "label": "Phản ví dụ của Q ⇒ P",
-                          "initial": "none",
-                          "options": [
-                            "none",
-                            "2",
-                            "4",
-                            "6",
-                            "12"
-                          ],
-                          "optionLabels": {
-                            "none": "Không có",
-                            "2": "a = 2",
-                            "4": "a = 4",
-                            "6": "a = 6",
-                            "12": "a = 12"
-                          }
-                        }
-                      ],
-                      "goals": [
-                        {
-                          "id": "implication-direction",
-                          "evidence": "structured_steps"
-                        }
-                      ],
-                      "solutionGraph": {
-                        "steps": [
-                          {
-                            "id": "find-pq",
-                            "kind": "check",
-                            "hint": "Chỉ tìm các giá trị làm P đúng rồi kiểm tra Q."
-                          },
-                          {
-                            "id": "find-qp",
-                            "kind": "check",
-                            "dependsOn": [
-                              "find-pq"
-                            ],
-                            "hint": "Đổi chiều là một mệnh đề mới; phải kiểm tra lại từ đầu."
-                          },
-                          {
-                            "id": "name-conditions",
-                            "kind": "justify",
-                            "dependsOn": [
-                              "find-qp"
-                            ],
-                            "hint": "Từ chiều đúng Q ⇒ P, gọi Q là điều kiện đủ của P và P là điều kiện cần của Q."
-                          }
-                        ],
-                        "terminalStepIds": [
-                          "name-conditions"
-                        ]
-                      },
-                      "assessment": [
-                        {
-                          "id": "implication-direction",
-                          "type": "structured_reasoning",
-                          "prompt": "Xét hai chiều kéo theo và chỉ ra phản ví dụ cho chiều sai.",
-                          "outcomeIds": [
-                            "M10-SET-05",
-                            "M10-SET-09"
-                          ]
-                        },
-                        {
-                          "id": "necessary-sufficient",
-                          "type": "choice",
-                          "prompt": "Trong quan hệ Q ⇒ P, Q là điều kiện gì của P?",
-                          "outcomeIds": [
-                            "M10-SET-06"
-                          ]
-                        }
-                      ],
-                      "accessibility": {
-                        "keyboardControls": true,
-                        "textAlternative": "Bảng các giá trị a được dùng để kiểm tra hai chiều kéo theo và phản ví dụ.",
-                        "highContrast": true
-                      },
-                      "config": {
-                        "mode": "implication",
-                        "activity": {
-                          "pExpression": "divisible(x, 6)",
-                          "qExpression": "divisible(x, 2)",
-                          "domainValues": [
-                            2,
-                            4,
-                            6,
-                            12
-                          ],
-                          "pToQControlId": "p-to-q",
-                          "qToPControlId": "q-to-p",
-                          "pToQCounterexampleControlId": "p-to-q-counterexample",
-                          "qToPCounterexampleControlId": "q-to-p-counterexample",
-                          "expectedPToQ": true,
-                          "expectedQToP": false,
-                          "expectedPToQCounterexample": "none",
-                          "expectedQToPCounterexample": "4"
-                        }
-                      },
-                      "analytics": [
-                        "predict",
-                        "implication_direction",
-                        "counterexample_selected",
-                        "goal",
-                        "hint",
-                        "retry"
-                      ]
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "order_index": 2,
-              "blocks": [
-                {
-                  "id": "condition-check",
-                  "type": "quiz",
-                  "content": {
-                    "question": "Từ mệnh đề “Nếu a chia hết cho 6 thì a chia hết cho 2”, kết luận nào đúng?",
-                    "options": [
-                      {
-                        "value": "a",
-                        "label": "Chia hết cho 6 là điều kiện đủ để chia hết cho 2."
-                      },
-                      {
-                        "value": "b",
-                        "label": "Chia hết cho 6 là điều kiện cần để chia hết cho 2."
-                      },
-                      {
-                        "value": "c",
-                        "label": "Hai điều kiện tương đương."
-                      },
-                      {
-                        "value": "d",
-                        "label": "Không thể kết luận gì."
-                      }
-                    ],
-                    "correct": "a",
-                    "explanation": "P ⇒ Q nghĩa là P là điều kiện đủ của Q, còn Q là điều kiện cần của P."
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "menh-de-tham-so-phan-vi-du",
-          "title": "Vận dụng cao: tham số và phản ví dụ",
-          "description": "Chọn chiến lược, phân tích nghiệm theo tham số và chứng minh mệnh đề kéo theo bằng cách loại mọi trường hợp sai.",
-          "xp_reward": 40,
-          "order_index": 3,
-          "slides": [
-            {
-              "order_index": 0,
-              "blocks": [
-                {
-                  "id": "advanced-prompt",
-                  "type": "text",
-                  "content": {
-                    "heading": "Không thể chứng minh mệnh đề tổng quát bằng vài giá trị",
-                    "paragraphs": [
-                      "Xét Pₘ(x): x²−(m+1)x+m=0 và Q(x): x=1, với x∈R. Tìm m để Pₘ(x) ⇒ Q(x).",
-                      "Một chiến lược hợp lệ là phân tích Pₘ(x)=(x−1)(x−m), xác định toàn bộ nghiệm rồi kiểm tra khi nào mọi nghiệm đều bằng 1."
-                    ]
-                  }
-                },
-                {
-                  "id": "advanced-goal",
-                  "type": "callout",
+                  "id": "b3_callout_takeaway",
+                  "block_type": "callout",
                   "content": {
                     "variant": "tip",
-                    "title": "Mục tiêu vận dụng cao",
-                    "body": "Nếu m≠1, giá trị x=m là một phản ví dụ. Nếu m=1, phương trình có nghiệm kép x=1 và mệnh đề kéo theo đúng."
+                    "title": "Ghi nhớ nhanh · Mẹo nhận diện",
+                    "body": "1. **Mệnh đề SAI vẫn là mệnh đề!** (Ví dụ: '$4 > 7$' là mệnh đề sai).\n2. **Câu cảm thán / câu hỏi** có dấu chấm than ($!$) hoặc chấm hỏi ($?$) thường **không** phải mệnh đề.\n3. **Mệnh đề toán học** khẳng định một sự kiện trong toán học (tính chia hết, hình học, bất đẳng thức)."
+                  }
+                },
+                {
+                  "id": "b3_math_summary",
+                  "block_type": "math",
+                  "content": {
+                    "label": "Mô hình chân trị logic",
+                    "latex": "\\text{Chân trị}(P) \\in \\{\\text{Đúng (1)},\\; \\text{Sai (0)}\\}"
                   }
                 }
               ]
             },
             {
-              "order_index": 1,
+              "slide_number": 4,
+              "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
               "blocks": [
                 {
-                  "id": "parameter-sandbox",
-                  "type": "interaction",
+                  "id": "b4_quiz_d1",
+                  "block_type": "quiz",
                   "content": {
-                    "interactionType": "sandbox",
-                    "lesson": {
-                      "prompt": "Chọn chiến lược và điều chỉnh m. Hệ thống sẽ hiển thị hai nghiệm 1, m và phản ví dụ khi m ≠ 1.",
-                      "schemaVersion": "1.0",
-                      "kind": "math.sandbox",
-                      "id": "menh-de-parameter-v1",
-                      "version": "1.0.0",
-                      "domainId": "logic",
-                      "archetypeId": "logic.parameter_truth",
-                      "level": "advanced_application",
-                      "recipe": "logic.parameter_truth",
-                      "outcomeIds": [
-                        "M10-SET-07",
-                        "M10-SET-09"
-                      ],
-                      "prerequisites": [
-                        "M10-SET-03",
-                        "M10-SET-05",
-                        "M10-SET-06"
-                      ],
-                      "misconceptions": [
-                        "logic.forget_all_parameter_cases",
-                        "logic.single_example_proves_claim",
-                        "logic.solve_without_domain"
-                      ],
-                      "scene": {
-                        "space": "condition_graph"
-                      },
-                      "controls": [
-                        {
-                          "id": "parameter",
-                          "type": "numeric_input",
-                          "label": "Tham số m",
-                          "min": -3,
-                          "max": 3,
-                          "step": 1,
-                          "initial": 0
-                        },
-                        {
-                          "id": "strategy",
-                          "type": "choice",
-                          "label": "Chiến lược",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "factor_then_check",
-                            "try_some_values"
-                          ],
-                          "optionLabels": {
-                            "": "Chọn chiến lược",
-                            "factor_then_check": "Phân tích nhân tử rồi kiểm tra",
-                            "try_some_values": "Thử một vài giá trị"
-                          }
-                        }
-                      ],
-                      "goals": [
-                        {
-                          "id": "parameter-solved",
-                          "evidence": "structured_steps"
-                        }
-                      ],
-                      "solutionGraph": {
-                        "steps": [
-                          {
-                            "id": "factor",
-                            "kind": "transform",
-                            "hint": "Phân tích x²−(m+1)x+m thành (x−1)(x−m)."
-                          },
-                          {
-                            "id": "all-roots",
-                            "kind": "check",
-                            "dependsOn": [
-                              "factor"
-                            ],
-                            "hint": "Mệnh đề kéo theo phải đúng với mọi nghiệm của Pₘ, không chỉ một nghiệm."
-                          },
-                          {
-                            "id": "counterexample",
-                            "kind": "justify",
-                            "dependsOn": [
-                              "all-roots"
-                            ],
-                            "hint": "Với m khác 1, hãy thử x=m để bác bỏ mệnh đề."
-                          }
-                        ],
-                        "terminalStepIds": [
-                          "counterexample"
-                        ]
-                      },
-                      "assessment": [
-                        {
-                          "id": "parameter-value",
-                          "type": "numeric",
-                          "prompt": "Tìm m để Pₘ(x) ⇒ Q(x).",
-                          "outcomeIds": [
-                            "M10-SET-07"
-                          ]
-                        },
-                        {
-                          "id": "parameter-strategy",
-                          "type": "structured_reasoning",
-                          "prompt": "Giải thích vì sao m≠1 tạo ra phản ví dụ x=m.",
-                          "outcomeIds": [
-                            "M10-SET-09"
-                          ]
-                        }
-                      ],
-                      "accessibility": {
-                        "keyboardControls": true,
-                        "textAlternative": "Bảng hiển thị hai nghiệm 1 và m, điều kiện kéo theo và phản ví dụ theo tham số.",
-                        "highContrast": true
-                      },
-                      "config": {
-                        "mode": "parameter_implication",
-                        "activity": {
-                          "parameterControlId": "parameter",
-                          "strategyControlId": "strategy",
-                          "expectedParameter": 1,
-                          "expectedStrategy": "factor_then_check"
-                        }
-                      },
-                      "analytics": [
-                        "predict",
-                        "strategy_selected",
-                        "parameter_changed",
-                        "counterexample_seen",
-                        "goal",
-                        "hint",
-                        "retry"
-                      ]
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "order_index": 2,
-              "blocks": [
-                {
-                  "id": "parameter-check",
-                  "type": "quiz",
-                  "content": {
-                    "question": "Với m nào thì mệnh đề Pₘ(x) ⇒ x=1 đúng với mọi x∈R?",
+                    "quiz_type": "multiple_choice",
+                    "question": "Trong các câu sau, câu nào là **mệnh đề**?",
                     "options": [
                       {
-                        "value": "a",
-                        "label": "m = 0"
+                        "id": "A",
+                        "text": "Hôm nay trời đẹp quá!"
                       },
                       {
-                        "value": "b",
-                        "label": "m = 1"
+                        "id": "B",
+                        "text": "Số 17 là số chẵn."
                       },
                       {
-                        "value": "c",
-                        "label": "m = −1"
+                        "id": "C",
+                        "text": "Bạn có thích học Toán không?"
                       },
                       {
-                        "value": "d",
-                        "label": "Mọi m∈R"
+                        "id": "D",
+                        "text": "Hãy giải phương trình $x^2 - 4 = 0$."
                       }
                     ],
-                    "correct": "b",
-                    "explanation": "Nghiệm của Pₘ là 1 và m. Mọi nghiệm phải bằng 1 nên m=1."
+                    "correct": "B",
+                    "explanation": "Câu B là một câu khẳng định có tính chân trị (cụ thể là một mệnh đề sai vì 17 là số lẻ). Các câu A (cảm thán), C (hỏi), D (mệnh lệnh) đều không phải mệnh đề."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 5,
+              "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+              "blocks": [
+                {
+                  "id": "b5_quiz_d2",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "true_false_group",
+                    "question": "Xét tính đúng hay sai của mỗi khẳng định sau:",
+                    "items": [
+                      {
+                        "id": "a",
+                        "label": "a) Số $\\pi$ là một số vô tỉ.",
+                        "correct": true
+                      },
+                      {
+                        "id": "b",
+                        "label": "b) Tổng ba góc trong một tam giác bằng $180^\\circ$.",
+                        "correct": true
+                      },
+                      {
+                        "id": "c",
+                        "label": "c) Phương trình $x^2 + 1 = 0$ có nghiệm thực.",
+                        "correct": false
+                      },
+                      {
+                        "id": "d",
+                        "label": "d) Năm 2024 là năm nhuận.",
+                        "correct": true
+                      }
+                    ],
+                    "explanation": "Ý a đúng vì $\\pi \\approx 3.14159...$ là số vô tỉ. Ý b đúng theo định lý tổng các góc trong tam giác. Ý c sai vì $x^2 + 1 \\ge 1 > 0$ với mọi $x \\in \\mathbb{R}$. Ý d đúng vì $2024 \\;\\vdots\\; 4$ nên 2024 là năm nhuận."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 6,
+              "title": "Thử thách Dạng III · Điền đáp số",
+              "blocks": [
+                {
+                  "id": "b6_quiz_d3",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "short_answer",
+                    "question": "Cho các câu sau: (1) Số 2 là số nguyên tố chẵn duy nhất. (2) $3 + 5 = 9$. (3) $x + 2 > 5$. (4) Bạn tên gì? (5) Tam giác đều có ba cạnh bằng nhau. Hỏi có bao nhiêu câu là **mệnh đề**?",
+                    "correct": "3",
+                    "correct_answers": [
+                      "3",
+                      "ba",
+                      "3 câu"
+                    ],
+                    "explanation": "Có đúng 3 mệnh đề là: (1) - mệnh đề đúng, (2) - mệnh đề sai, (5) - mệnh đề đúng. Câu (3) chứa biến $x$ nên là mệnh đề chứa biến, câu (4) là câu hỏi."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 7,
+              "title": "Tổng kết & Cầu nối Sư phạm",
+              "blocks": [
+                {
+                  "id": "b7_callout_summary",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "info",
+                    "title": "Tổng kết Bài học 1",
+                    "body": "Bạn đã nắm vững: Mệnh đề là câu khẳng định đúng hoặc sai; phân biệt rạch ròi với câu hỏi/cảm thán và câu chứa biến. Ở bài tiếp theo, chúng ta sẽ khảo sát sâu về **Mệnh đề chứa biến $P(x)$** và cách gán giá trị biến để xác định chân trị."
                   }
                 }
               ]
             }
-          ]
+          ],
+          "order_index": 0
         },
         {
-          "id": "menh-de-bang-chan-tri",
-          "title": "Mệnh đề ghép và bảng chân trị",
-          "description": "Dùng bảng chân trị để xét phủ định, hội, tuyển, kéo theo và tương đương; không bỏ qua thứ tự ưu tiên của phép toán logic.",
-          "xp_reward": 30,
-          "order_index": 4,
+          "id": "02-menh-de-chua-bien",
+          "title": "Mệnh đề chứa biến",
+          "order": 1,
+          "description": "Hiểu cấu trúc vị từ P(x), thao tác thế biến P(a), tìm miền xác định và đếm số nghiệm thỏa mãn theo chuẩn GDPT 2018.",
+          "xp_reward": 120,
           "slides": [
             {
-              "order_index": 0,
+              "slide_number": 1,
+              "title": "Khái niệm Mệnh đề chứa biến",
               "blocks": [
                 {
-                  "id": "compound-theory",
-                  "type": "text",
+                  "id": "b1_text_open_sentence",
+                  "block_type": "text",
                   "content": {
-                    "heading": "Mỗi dòng của bảng chân trị là một trường hợp",
+                    "heading": "Mệnh đề chứa biến P(x) là gì?",
                     "paragraphs": [
-                      "Với hai mệnh đề p, q, bảng chân trị phải xét đủ bốn khả năng của (p, q). Mệnh đề p ∧ q chỉ đúng khi cả p và q đúng; p ∨ q đúng khi ít nhất một mệnh đề đúng.",
-                      "Mệnh đề kéo theo p ⇒ q tương đương với ¬p ∨ q, nên chỉ sai ở dòng p đúng, q sai. Hai mệnh đề tương đương khi có cùng giá trị ở mọi dòng; một vài trường hợp trùng nhau chưa đủ để kết luận tương đương."
+                      "Một câu khẳng định chứa một hay nhiều biến số (ký hiệu $x, y, n, ...$) mà tính đúng sai của nó phụ thuộc vào giá trị cụ thể của các biến đó được gọi là **mệnh đề chứa biến** (hay vị từ).",
+                      "Bản thân $P(x)$ **chưa phải là một mệnh đề**. Khi ta thay biến $x$ bằng một giá trị cụ thể $x = a$ thuộc tập xác định, ta nhận được một mệnh đề thông thường $P(a)$ có chân trị đúng hoặc sai."
                     ]
                   }
                 },
                 {
-                  "id": "precedence-warning",
-                  "type": "callout",
-                  "content": {
-                    "variant": "warning",
-                    "title": "Đặt ngoặc trước khi tính",
-                    "body": "Không đọc p ∨ q ∧ r như (p ∨ q) ∧ r. Hãy tách từng mệnh đề thành phần rồi đánh giá theo biểu thức đã đặt ngoặc."
-                  }
-                }
-              ]
-            },
-            {
-              "order_index": 1,
-              "blocks": [
-                {
-                  "id": "truth-table-sandbox",
-                  "type": "interaction",
-                  "content": {
-                    "interactionType": "sandbox",
-                    "lesson": {
-                      "prompt": "Bật/tắt p và q để kiểm tra biểu thức p ∧ ¬q. Bảng bên dưới luôn hiển thị đủ bốn dòng để em so sánh kết quả.",
-                      "schemaVersion": "1.0",
-                      "kind": "math.sandbox",
-                      "id": "menh-de-truth-table-v1",
-                      "version": "1.0.0",
-                      "domainId": "logic",
-                      "archetypeId": "logic.compound_truth_table",
-                      "level": "understanding",
-                      "recipe": "logic.truth_table",
-                      "outcomeIds": [
-                        "M10-SET-02",
-                        "M10-SET-04"
-                      ],
-                      "prerequisites": [
-                        "M10-SET-01"
-                      ],
-                      "misconceptions": [
-                        "logic.and_or_precedence",
-                        "logic.incomplete_truth_table",
-                        "logic.negation_changes_only_symbol"
-                      ],
-                      "scene": {
-                        "space": "truth_table"
-                      },
-                      "controls": [
-                        {
-                          "id": "p",
-                          "type": "toggle",
-                          "label": "p",
-                          "initial": false
-                        },
-                        {
-                          "id": "q",
-                          "type": "toggle",
-                          "label": "q",
-                          "initial": false
-                        }
-                      ],
-                      "goals": [
-                        {
-                          "id": "current-row",
-                          "evidence": "truth_value",
-                          "target": true
-                        }
-                      ],
-                      "solutionGraph": {
-                        "steps": [
-                          {
-                            "id": "list-cases",
-                            "kind": "check",
-                            "hint": "Hai mệnh đề có 2² = 4 tổ hợp giá trị đúng/sai."
-                          },
-                          {
-                            "id": "negate-q",
-                            "kind": "transform",
-                            "dependsOn": [
-                              "list-cases"
-                            ],
-                            "hint": "Đổi q thành ¬q trước khi thực hiện phép hội."
-                          },
-                          {
-                            "id": "read-result",
-                            "kind": "justify",
-                            "dependsOn": [
-                              "negate-q"
-                            ],
-                            "hint": "p ∧ ¬q chỉ đúng khi p đúng và q sai."
-                          }
-                        ],
-                        "terminalStepIds": [
-                          "read-result"
-                        ]
-                      },
-                      "assessment": [
-                        {
-                          "id": "truth-table-row",
-                          "type": "boolean",
-                          "prompt": "Với p đúng, q sai, giá trị của p ∧ ¬q là gì?",
-                          "outcomeIds": [
-                            "M10-SET-04"
-                          ]
-                        },
-                        {
-                          "id": "truth-table-complete",
-                          "type": "ordered_steps",
-                          "prompt": "Giải thích vì sao phải xét đủ bốn dòng khi có hai mệnh đề thành phần.",
-                          "outcomeIds": [
-                            "M10-SET-04"
-                          ]
-                        }
-                      ],
-                      "accessibility": {
-                        "keyboardControls": true,
-                        "textAlternative": "Bảng chân trị bốn dòng của biểu thức p và phủ định của q.",
-                        "highContrast": true
-                      },
-                      "config": {
-                        "mode": "truth_table",
-                        "variables": [
-                          "p",
-                          "q"
-                        ],
-                        "expression": "p && !q",
-                        "initialValues": {
-                          "p": false,
-                          "q": false
-                        }
-                      },
-                      "analytics": [
-                        "predict",
-                        "truth_table_row_changed",
-                        "goal",
-                        "hint",
-                        "retry"
-                      ]
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "order_index": 2,
-              "blocks": [
-                {
-                  "id": "truth-table-check",
-                  "type": "quiz",
-                  "content": {
-                    "question": "Mệnh đề p ⇒ q sai trong trường hợp nào?",
-                    "options": [
-                      {
-                        "value": "a",
-                        "label": "p đúng, q đúng"
-                      },
-                      {
-                        "value": "b",
-                        "label": "p đúng, q sai"
-                      },
-                      {
-                        "value": "c",
-                        "label": "p sai, q đúng"
-                      },
-                      {
-                        "value": "d",
-                        "label": "p sai, q sai"
-                      }
-                    ],
-                    "correct": "b",
-                    "explanation": "Kéo theo chỉ sai khi giả thiết đúng nhưng kết luận sai."
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "menh-de-dao-phan-dao-dieu-kien",
-          "title": "Mệnh đề đảo, phản đảo và điều kiện cần, đủ",
-          "description": "Tách hai chiều của mệnh đề kéo theo, nhận diện mệnh đề đảo và phản đảo, rồi phát biểu đúng điều kiện cần và điều kiện đủ.",
-          "xp_reward": 35,
-          "order_index": 5,
-          "slides": [
-            {
-              "order_index": 0,
-              "blocks": [
-                {
-                  "id": "direction-theory",
-                  "type": "text",
-                  "content": {
-                    "heading": "Đổi chiều là tạo ra một mệnh đề mới",
-                    "paragraphs": [
-                      "Với P: 6|a và Q: 3|a, P ⇒ Q đúng nhưng Q ⇒ P sai. Phản ví dụ của Q ⇒ P là a = 3: Q đúng nhưng P sai.",
-                      "Mệnh đề đảo của P ⇒ Q là Q ⇒ P. Mệnh đề phản đảo là ¬Q ⇒ ¬P và luôn tương đương với P ⇒ Q. Nếu P ⇒ Q đúng thì P là điều kiện đủ của Q, còn Q là điều kiện cần của P."
-                    ]
-                  }
-                },
-                {
-                  "id": "condition-language",
-                  "type": "callout",
+                  "id": "b1_callout_variable_rule",
+                  "block_type": "callout",
                   "content": {
                     "variant": "theorem",
-                    "title": "Hai chiều mới là cần và đủ",
-                    "body": "P ⇔ Q tương đương với (P ⇒ Q) ∧ (Q ⇒ P). Chỉ có một chiều thì chưa được dùng cụm “điều kiện cần và đủ”."
+                    "title": "Phép thế biến (Substitution)",
+                    "body": "Cho vị từ $P(x)$ với $x \\in X$. Khi gán $x = a$ ($a \\in X$), câu khẳng định $P(a)$ trở thành một mệnh đề toán học."
                   }
                 }
               ]
             },
             {
-              "order_index": 1,
+              "slide_number": 2,
+              "title": "Phòng thí nghiệm Khảo sát Biến số",
               "blocks": [
                 {
-                  "id": "direction-sandbox",
-                  "type": "interaction",
+                  "id": "b2_sandbox_open_sentence",
+                  "block_type": "interaction",
                   "content": {
                     "interactionType": "sandbox",
                     "lesson": {
-                      "prompt": "Kiểm tra P ⇒ Q, mệnh đề đảo Q ⇒ P và phản đảo ¬Q ⇒ ¬P trên miền a ∈ {3, 6, 9, 12}.",
                       "schemaVersion": "1.0",
                       "kind": "math.sandbox",
-                      "id": "menh-de-direction-v1",
-                      "version": "1.0.0",
+                      "id": "menh_de_02_variable",
+                      "version": 1,
+                      "archetypeId": "logic.proposition",
                       "domainId": "logic",
-                      "archetypeId": "logic.necessary_sufficient",
-                      "level": "application",
-                      "recipe": "logic.necessary_sufficient",
+                      "level": "understanding",
+                      "recipe": "core",
                       "outcomeIds": [
-                        "M10-SET-05",
-                        "M10-SET-06",
-                        "M10-SET-09"
+                        "M10-LOGIC-02"
                       ],
-                      "prerequisites": [
-                        "M10-SET-04"
-                      ],
-                      "misconceptions": [
-                        "logic.reverse_implication",
-                        "logic.confuse_converse_with_contrapositive",
-                        "logic.swap_necessary_sufficient"
-                      ],
+                      "prerequisites": [],
+                      "misconceptions": [],
                       "scene": {
-                        "space": "condition_graph"
+                        "objects": []
+                      },
+                      "config": {},
+                      "mode": "proposition_classifier",
+                      "activity": {
+                        "items": [
+                          {
+                            "id": "p1",
+                            "label": "P(x): x^2 - 4 = 0 khi x = 2",
+                            "controlId": "c_x1",
+                            "expectedType": "proposition"
+                          },
+                          {
+                            "id": "p2",
+                            "label": "P(x): x^2 - 4 = 0 khi x = 3",
+                            "controlId": "c_x2",
+                            "expectedType": "proposition"
+                          },
+                          {
+                            "id": "p3",
+                            "label": "Q(n): 2n + 1 chia hết cho 3",
+                            "controlId": "c_x3",
+                            "expectedType": "open_sentence"
+                          },
+                          {
+                            "id": "p4",
+                            "label": "Tìm x để x > 5",
+                            "controlId": "c_x4",
+                            "expectedType": "not_proposition"
+                          }
+                        ]
                       },
                       "controls": [
                         {
-                          "id": "p-to-q",
+                          "id": "c_x1",
                           "type": "choice",
-                          "label": "P ⇒ Q: Nếu 6|a thì 3|a",
-                          "initial": "",
+                          "label": "P(2): 2^2 - 4 = 0",
+                          "initial": "open_sentence",
                           "options": [
-                            "",
-                            "Đúng",
-                            "Sai"
-                          ]
+                            "proposition",
+                            "open_sentence",
+                            "not_proposition"
+                          ],
+                          "optionLabels": {
+                            "proposition": "Mệnh đề đúng",
+                            "open_sentence": "Chứa biến",
+                            "not_proposition": "Không phải"
+                          }
                         },
                         {
-                          "id": "q-to-p",
+                          "id": "c_x2",
                           "type": "choice",
-                          "label": "Q ⇒ P: Nếu 3|a thì 6|a",
-                          "initial": "",
+                          "label": "P(3): 3^2 - 4 = 0",
+                          "initial": "open_sentence",
                           "options": [
-                            "",
-                            "Đúng",
-                            "Sai"
-                          ]
+                            "proposition",
+                            "open_sentence",
+                            "not_proposition"
+                          ],
+                          "optionLabels": {
+                            "proposition": "Mệnh đề sai",
+                            "open_sentence": "Chứa biến",
+                            "not_proposition": "Không phải"
+                          }
                         },
                         {
-                          "id": "q-to-p-counterexample",
+                          "id": "c_x3",
                           "type": "choice",
-                          "label": "Phản ví dụ của Q ⇒ P",
+                          "label": "Q(n): 2n+1 chia hết cho 3",
+                          "initial": "proposition",
+                          "options": [
+                            "proposition",
+                            "open_sentence",
+                            "not_proposition"
+                          ],
+                          "optionLabels": {
+                            "proposition": "Mệnh đề",
+                            "open_sentence": "Mệnh đề chứa biến",
+                            "not_proposition": "Không phải"
+                          }
+                        },
+                        {
+                          "id": "c_x4",
+                          "type": "choice",
+                          "label": "Tìm x để x > 5",
+                          "initial": "open_sentence",
+                          "options": [
+                            "proposition",
+                            "open_sentence",
+                            "not_proposition"
+                          ],
+                          "optionLabels": {
+                            "proposition": "Mệnh đề",
+                            "open_sentence": "Chứa biến",
+                            "not_proposition": "Câu mệnh lệnh"
+                          }
+                        }
+                      ],
+                      "goals": [
+                        {
+                          "id": "classify_variables",
+                          "evidence": "classifier_accuracy"
+                        }
+                      ],
+                      "solutionGraph": {
+                        "steps": [
+                          {
+                            "id": "check_substitution",
+                            "kind": "check",
+                            "hint": "Sau khi thế x=2 hoặc x=3, câu trở thành mệnh đề có chân trị xác định."
+                          },
+                          {
+                            "id": "distinguish_unbound_variable",
+                            "kind": "simplify",
+                            "dependsOn": [
+                              "check_substitution"
+                            ],
+                            "hint": "Biến n chưa được gán giá trị thì câu vẫn là mệnh đề chứa biến."
+                          }
+                        ],
+                        "terminalStepIds": [
+                          "distinguish_unbound_variable"
+                        ]
+                      },
+                      "assessment": [
+                        {
+                          "id": "check-variable-propositions",
+                          "type": "structured_reasoning",
+                          "prompt": "Phân biệt mệnh đề chứa biến và mệnh đề sau khi thế.",
+                          "outcomeIds": [
+                            "M10-LOGIC-02"
+                          ]
+                        }
+                      ],
+                      "accessibility": {
+                        "keyboardControls": true,
+                        "textAlternative": "Khảo sát thế biến: P(2) đúng, P(3) sai, Q(n) chứa biến."
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 3,
+              "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+              "blocks": [
+                {
+                  "id": "b3_callout_takeaway",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "tip",
+                    "title": "Ghi nhớ nhanh · Tập chân lý (Truth Set)",
+                    "body": "Tập hợp tất cả các phần tử $x \\in X$ làm cho $P(x)$ trở thành mệnh đề đúng được gọi là **tập chân lý** (hay tập nghiệm) của vị từ:\n$$T_P = \\{x \\in X \\mid P(x) \\text{ đúng}\\}$$"
+                  }
+                },
+                {
+                  "id": "b3_math_example",
+                  "block_type": "math",
+                  "content": {
+                    "label": "Ví dụ tập chân lý",
+                    "latex": "P(x): \"x^2 - 5x + 6 = 0\" \\implies T_P = \\{2, 3\\}"
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 4,
+              "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+              "blocks": [
+                {
+                  "id": "b4_quiz_d1",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "multiple_choice",
+                    "question": "Cho mệnh đề chứa biến $P(x): \"x^2 - 3x + 2 = 0\"$ với $x \\in \\mathbb{R}$. Trong các mệnh đề sau, mệnh đề nào là **mệnh đề đúng**?",
+                    "options": [
+                      {
+                        "id": "A",
+                        "text": "$P(0)$"
+                      },
+                      {
+                        "id": "B",
+                        "text": "$P(1)$"
+                      },
+                      {
+                        "id": "C",
+                        "text": "$P(3)$"
+                      },
+                      {
+                        "id": "D",
+                        "text": "$P(-1)$"
+                      }
+                    ],
+                    "correct": "B",
+                    "explanation": "Thay $x = 1$ vào phương trình: $1^2 - 3(1) + 2 = 0$ (đúng), do đó $P(1)$ là mệnh đề đúng. Với $x=0, 3, -1$ thì biểu thức khác 0."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 5,
+              "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+              "blocks": [
+                {
+                  "id": "b5_quiz_d2",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "true_false_group",
+                    "question": "Cho mệnh đề chứa biến $P(n): \"2n + 1 \\text{ là số nguyên tố}\"$ với $n \\in \\mathbb{N}^*$. Xét tính đúng sai của các mệnh đề sau:",
+                    "items": [
+                      {
+                        "id": "a",
+                        "label": "a) P(1) là mệnh đề đúng.",
+                        "correct": true
+                      },
+                      {
+                        "id": "b",
+                        "label": "b) P(2) là mệnh đề đúng.",
+                        "correct": true
+                      },
+                      {
+                        "id": "c",
+                        "label": "c) P(3) là mệnh đề đúng.",
+                        "correct": true
+                      },
+                      {
+                        "id": "d",
+                        "label": "d) P(4) là mệnh đề đúng.",
+                        "correct": false
+                      }
+                    ],
+                    "explanation": "Với $n=1: 2(1)+1=3$ (nguyên tố, đúng). Với $n=2: 2(2)+1=5$ (nguyên tố, đúng). Với $n=3: 2(3)+1=7$ (nguyên tố, đúng). Với $n=4: 2(4)+1=9$ (hợp số vì chia hết cho 3, sai)."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 6,
+              "title": "Thử thách Dạng III · Điền đáp số",
+              "blocks": [
+                {
+                  "id": "b6_quiz_d3",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "short_answer",
+                    "question": "Cho mệnh đề chứa biến $P(x): \"3x - 11 > 0\"$ với $x \\in \\mathbb{Z}$. Tìm số nguyên dương $x$ **nhỏ nhất** để $P(x)$ là mệnh đề đúng.",
+                    "correct": "4",
+                    "correct_answers": [
+                      "4",
+                      "x=4",
+                      "bốn"
+                    ],
+                    "explanation": "Ta có bất phương trình $3x - 11 > 0 \\Leftrightarrow 3x > 11 \\Leftrightarrow x > \\frac{11}{3} \\approx 3.67$. Vì $x$ là số nguyên dương nhỏ nhất nên $x = 4$."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 7,
+              "title": "Tổng kết & Cầu nối Sư phạm",
+              "blocks": [
+                {
+                  "id": "b7_callout_summary",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "info",
+                    "title": "Tổng kết Bài học 2",
+                    "body": "Mệnh đề chứa biến là nền móng để xây dựng các phương trình, bất phương trình và phát biểu toán học tổng quát. Ở bài tiếp theo, ta sẽ học cách **Phủ định một mệnh đề $\\overline{P}$** và quy tắc biến đổi lượng từ."
+                  }
+                }
+              ]
+            }
+          ],
+          "order_index": 1
+        },
+        {
+          "id": "03-phu-dinh-menh-de",
+          "title": "Phủ định của mệnh đề",
+          "order": 2,
+          "description": "Nắm vững quy tắc phủ định mệnh đề thông thường, phủ định vị từ toán học và lượng từ theo chuẩn GDPT 2018.",
+          "xp_reward": 120,
+          "slides": [
+            {
+              "slide_number": 1,
+              "title": "Khái niệm Mệnh đề Phủ định",
+              "blocks": [
+                {
+                  "id": "b1_text_negation",
+                  "block_type": "text",
+                  "content": {
+                    "heading": "Phủ định của một mệnh đề là gì?",
+                    "paragraphs": [
+                      "Để phủ định một mệnh đề $P$, ta lập mệnh đề **\"Không phải $P$\"**, ký hiệu là $\\overline{P}$.",
+                      "Chân trị của $\\overline{P}$ luôn **đối lập hoàn toàn** với $P$:\n- Khi $P$ **Đúng**, thì $\\overline{P}$ **Sai**.\n- Khi $P$ **Sai**, thì $\\overline{P}$ **Đúng**."
+                    ]
+                  }
+                },
+                {
+                  "id": "b1_callout_negation_table",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "theorem",
+                    "title": "Bảng quy tắc phủ định quan hệ toán học",
+                    "body": "Khi phủ định các quan hệ so sánh, cần lưu ý chuyển đổi bù đầy đủ:\n- Phủ định của $>$ là $\\le$ (ngược lại, của $\\le$ là $>$).\n- Phủ định của $<$ là $\\ge$ (ngược lại, của $\\ge$ là $<$).\n- Phủ định của $=$ là $\\neq$ (ngược lại, của $\\neq$ là $=$)."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 2,
+              "title": "Phòng thí nghiệm Phủ định & Lượng từ",
+              "blocks": [
+                {
+                  "id": "b2_sandbox_negation",
+                  "block_type": "interaction",
+                  "content": {
+                    "interactionType": "sandbox",
+                    "lesson": {
+                      "schemaVersion": "1.0",
+                      "kind": "math.sandbox",
+                      "id": "menh_de_03_negation",
+                      "version": 1,
+                      "archetypeId": "logic.quantifier",
+                      "domainId": "logic",
+                      "level": "understanding",
+                      "recipe": "core",
+                      "outcomeIds": [
+                        "M10-LOGIC-03"
+                      ],
+                      "prerequisites": [],
+                      "misconceptions": [],
+                      "scene": {
+                        "objects": []
+                      },
+                      "config": {},
+                      "mode": "quantifier_negation",
+                      "activity": {
+                        "items": [
+                          {
+                            "id": "item1",
+                            "label": "Mọi số tự nhiên n thì n(n²-1) chia hết cho 3",
+                            "controlVerdict": "c_v1",
+                            "controlNegation": "c_n1",
+                            "expectedVerdict": "true",
+                            "expectedNegation": "exists_not_divisible",
+                            "expectedWitness": "none"
+                          },
+                          {
+                            "id": "item2",
+                            "label": "Tồn tại x thuộc Q sao cho x² = 2",
+                            "controlVerdict": "c_v2",
+                            "controlNegation": "c_n2",
+                            "expectedVerdict": "false",
+                            "expectedNegation": "forall_not_equal",
+                            "expectedWitness": "sqrt2_irrational"
+                          },
+                          {
+                            "id": "item3",
+                            "label": "Với mọi số thực x thì x² - 6x + 15 > 0",
+                            "controlVerdict": "c_v3",
+                            "controlNegation": "c_n3",
+                            "expectedVerdict": "true",
+                            "expectedNegation": "exists_le_zero",
+                            "expectedWitness": "none"
+                          }
+                        ]
+                      },
+                      "controls": [
+                        {
+                          "id": "c_v1",
+                          "type": "choice",
+                          "label": "Chân trị của P1: n(n²-1) chia hết cho 3",
+                          "initial": "false",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (Đ)",
+                            "false": "Sai (S)"
+                          }
+                        },
+                        {
+                          "id": "c_n1",
+                          "type": "choice",
+                          "label": "Phủ định của P1",
+                          "initial": "forall_not_equal",
+                          "options": [
+                            "exists_not_divisible",
+                            "forall_not_divisible",
+                            "forall_not_equal"
+                          ],
+                          "optionLabels": {
+                            "exists_not_divisible": "∃n: n(n²-1) không chia hết cho 3",
+                            "forall_not_divisible": "∀n: n(n²-1) không chia hết cho 3",
+                            "forall_not_equal": "∀n: n(n²-1) ≠ 0"
+                          }
+                        },
+                        {
+                          "id": "c_v2",
+                          "type": "choice",
+                          "label": "Chân trị của P2: ∃x∈Q, x²=2",
+                          "initial": "true",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (Đ)",
+                            "false": "Sai (S)"
+                          }
+                        },
+                        {
+                          "id": "c_n2",
+                          "type": "choice",
+                          "label": "Phủ định của P2",
+                          "initial": "exists_not_divisible",
+                          "options": [
+                            "forall_not_equal",
+                            "exists_not_equal"
+                          ],
+                          "optionLabels": {
+                            "forall_not_equal": "∀x∈Q, x² ≠ 2",
+                            "exists_not_equal": "∃x∈Q, x² ≠ 2"
+                          }
+                        },
+                        {
+                          "id": "c_v3",
+                          "type": "choice",
+                          "label": "Chân trị của P3: ∀x∈R, x²-6x+15 > 0",
+                          "initial": "false",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (Đ)",
+                            "false": "Sai (S)"
+                          }
+                        },
+                        {
+                          "id": "c_n3",
+                          "type": "choice",
+                          "label": "Phủ định của P3",
+                          "initial": "forall_not_equal",
+                          "options": [
+                            "exists_le_zero",
+                            "forall_le_zero"
+                          ],
+                          "optionLabels": {
+                            "exists_le_zero": "∃x∈R, x²-6x+15 ≤ 0",
+                            "forall_le_zero": "∀x∈R, x²-6x+15 ≤ 0"
+                          }
+                        }
+                      ],
+                      "goals": [
+                        {
+                          "id": "quantifier_negation_goals",
+                          "evidence": "quantifier_negation_accuracy"
+                        }
+                      ],
+                      "solutionGraph": {
+                        "steps": [
+                          {
+                            "id": "check_quantifier_swap",
+                            "kind": "check",
+                            "hint": "Phủ định của ∀ là ∃ và ngược lại; dấu so sánh đổi sang phần bù."
+                          },
+                          {
+                            "id": "verify_algebraic_truth",
+                            "kind": "justify",
+                            "dependsOn": [
+                              "check_quantifier_swap"
+                            ],
+                            "hint": "x²-6x+15 = (x-3)²+6 ≥ 6 > 0 luôn đúng với mọi x thực."
+                          }
+                        ],
+                        "terminalStepIds": [
+                          "verify_algebraic_truth"
+                        ]
+                      },
+                      "assessment": [
+                        {
+                          "id": "check-quantifier-negation",
+                          "type": "structured_reasoning",
+                          "prompt": "Xác định đúng chân trị và dạng phủ định.",
+                          "outcomeIds": [
+                            "M10-LOGIC-03"
+                          ]
+                        }
+                      ],
+                      "accessibility": {
+                        "keyboardControls": true,
+                        "textAlternative": "Khảo sát phủ định: P1 đúng, P2 sai, P3 đúng."
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 3,
+              "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+              "blocks": [
+                {
+                  "id": "b3_callout_takeaway",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "warning",
+                    "title": "Cạm bẫy thường gặp (Misconception)",
+                    "body": "1. **Quên đổi lượng từ**: Phủ định của \"Mọi số đều là...\" KHÔNG PHẢI là \"Mọi số đều không là...\". Mà là **\"Tồn tại ít nhất một số không là...\"**.\n2. **Bỏ sót dấu bằng**: Phủ định của $x > 5$ là $x \\le 5$, không phải $x < 5$."
+                  }
+                },
+                {
+                  "id": "b3_math_rules",
+                  "block_type": "math",
+                  "content": {
+                    "label": "Định luật De Morgan cho Lượng từ",
+                    "latex": "\\overline{\\forall x \\in X, P(x)} \\iff \\exists x \\in X, \\overline{P(x)} \\qquad \\text{và} \\qquad \\overline{\\exists x \\in X, P(x)} \\iff \\forall x \\in X, \\overline{P(x)}"
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 4,
+              "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+              "blocks": [
+                {
+                  "id": "b4_quiz_d1",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "multiple_choice",
+                    "question": "Phủ định của mệnh đề $P: \"\\forall x \\in \\mathbb{R},\\; x^2 - x + 1 > 0\"$ là mệnh đề nào sau đây?",
+                    "options": [
+                      {
+                        "id": "A",
+                        "text": "$\\overline{P}: \"\\exists x \\in \\mathbb{R},\\; x^2 - x + 1 \\le 0\"$"
+                      },
+                      {
+                        "id": "B",
+                        "text": "$\\overline{P}: \"\\forall x \\in \\mathbb{R},\\; x^2 - x + 1 \\le 0\"$"
+                      },
+                      {
+                        "id": "C",
+                        "text": "$\\overline{P}: \"\\exists x \\in \\mathbb{R},\\; x^2 - x + 1 < 0\"$"
+                      },
+                      {
+                        "id": "D",
+                        "text": "$\\overline{P}: \"\\forall x \\in \\mathbb{R},\\; x^2 - x + 1 < 0\"$"
+                      }
+                    ],
+                    "correct": "A",
+                    "explanation": "Theo quy tắc phủ định lượng từ: $\\overline{\\forall}$ đổi thành $\\exists$, và dấu $>$ đổi thành $\\le$. Do đó $\\overline{P}: \"\\exists x \\in \\mathbb{R},\\; x^2 - x + 1 \\le 0\"$."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 5,
+              "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+              "blocks": [
+                {
+                  "id": "b5_quiz_d2",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "true_false_group",
+                    "question": "Xét tính đúng sai của các mệnh đề phủ định sau:",
+                    "items": [
+                      {
+                        "id": "a",
+                        "label": "a) Phủ định của 'Số 13 là số nguyên tố' là 'Số 13 không là số nguyên tố' (mệnh đề sai).",
+                        "correct": true
+                      },
+                      {
+                        "id": "b",
+                        "label": "b) Phủ định của '∀x∈R, x² ≥ 0' là '∃x∈R, x² < 0' (mệnh đề sai).",
+                        "correct": true
+                      },
+                      {
+                        "id": "c",
+                        "label": "c) Phủ định của '∃n∈N, n² = n' là '∀n∈N, n² ≠ n' (mệnh đề đúng).",
+                        "correct": false
+                      },
+                      {
+                        "id": "d",
+                        "label": "d) Nếu P là mệnh đề sai thì phủ định P̄ là mệnh đề đúng.",
+                        "correct": true
+                      }
+                    ],
+                    "explanation": "Ý a đúng vì phủ định có chân trị sai. Ý b đúng vì mệnh đề gốc đúng nên phủ định sai. Ý c sai vì mệnh đề gốc '∃n∈N, n²=n' đúng (với n=0, 1), nên mệnh đề phủ định '∀n∈N, n²≠n' phải là SAI. Ý d đúng theo định nghĩa phủ định."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 6,
+              "title": "Thử thách Dạng III · Điền đáp số",
+              "blocks": [
+                {
+                  "id": "b6_quiz_d3",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "short_answer",
+                    "question": "Cho mệnh đề $P: \"\\exists x \\in \\mathbb{R},\\; x^2 + 4 = 0\"$. Mệnh đề phủ định $\\overline{P}$ có chân trị là gì? (Nhập 'Đúng' hoặc 'Sai')",
+                    "correct": "Đúng",
+                    "correct_answers": [
+                      "Đúng",
+                      "Dung",
+                      "true",
+                      "1"
+                    ],
+                    "explanation": "Mệnh đề $P$ là mệnh đề SAI (vì $x^2 + 4 \\ge 4 > 0$ với mọi $x \\in \\mathbb{R}$). Do đó mệnh đề phủ định $\\overline{P}: \"\\forall x \\in \\mathbb{R},\\; x^2 + 4 \\neq 0\"$ có chân trị là ĐÚNG."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 7,
+              "title": "Tổng kết & Cầu nối Sư phạm",
+              "blocks": [
+                {
+                  "id": "b7_callout_summary",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "info",
+                    "title": "Tổng kết Bài học 3",
+                    "body": "Nắm vững phủ định là chìa khóa của phương pháp **chứng minh phản chứng** trong hình học và đại số. Ở bài tiếp theo, chúng ta sẽ khảo sát cấu trúc của các định lý toán học: **Mệnh đề kéo theo $P \\Rightarrow Q$**."
+                  }
+                }
+              ]
+            }
+          ],
+          "order_index": 2
+        },
+        {
+          "id": "04-menh-de-keo-theo",
+          "title": "Mệnh đề kéo theo",
+          "order": 3,
+          "description": "Hiểu cấu trúc mệnh đề kéo theo P ⇒ Q, định lý toán học, bảng chân trị và phương pháp tìm phản ví dụ bác bỏ theo chuẩn GDPT 2018.",
+          "xp_reward": 120,
+          "slides": [
+            {
+              "slide_number": 1,
+              "title": "Khái niệm Mệnh đề Kéo theo",
+              "blocks": [
+                {
+                  "id": "b1_text_implication",
+                  "block_type": "text",
+                  "content": {
+                    "heading": "Mệnh đề kéo theo P ⇒ Q là gì?",
+                    "paragraphs": [
+                      "Cho hai mệnh đề $P$ và $Q$. Mệnh đề **\"Nếu $P$ thì $Q$\"** được gọi là **mệnh đề kéo theo**, ký hiệu là $P \\Rightarrow Q$.",
+                      "Trong mệnh đề $P \\Rightarrow Q$, mệnh đề $P$ được gọi là **giả thiết** (hay tiền đề), mệnh đề $Q$ được gọi là **kết luận** (hay hậu quả).",
+                      "Hầu hết các định lý toán học đều được phát biểu dưới dạng mệnh đề kéo theo: \"Nếu giả thiết thỏa mãn thì kết luận đúng\"."
+                    ]
+                  }
+                },
+                {
+                  "id": "b1_callout_truth_rule",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "theorem",
+                    "title": "Quy tắc chân trị của P ⇒ Q",
+                    "body": "Mệnh đề $P \\Rightarrow Q$ **chỉ SAI** trong trường hợp duy nhất: **$P$ Đúng mà $Q$ Sai**.\nTrong tất cả các trường hợp còn lại (kể cả khi giả thiết $P$ Sai), mệnh đề $P \\Rightarrow Q$ đều **Đúng**."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 2,
+              "title": "Phòng thí nghiệm Bao hàm & Phản ví dụ",
+              "blocks": [
+                {
+                  "id": "b2_sandbox_implication",
+                  "block_type": "interaction",
+                  "content": {
+                    "interactionType": "sandbox",
+                    "lesson": {
+                      "schemaVersion": "1.0",
+                      "kind": "math.sandbox",
+                      "id": "menh_de_04_implication",
+                      "version": 1,
+                      "archetypeId": "logic.implication",
+                      "domainId": "logic",
+                      "level": "understanding",
+                      "recipe": "core",
+                      "outcomeIds": [
+                        "M10-LOGIC-04"
+                      ],
+                      "prerequisites": [],
+                      "misconceptions": [],
+                      "scene": {
+                        "objects": []
+                      },
+                      "config": {},
+                      "mode": "implication",
+                      "activity": {
+                        "pExpression": "a chia hết cho 6",
+                        "qExpression": "a chia hết cho 2",
+                        "domainValues": [
+                          2,
+                          4,
+                          6,
+                          12
+                        ],
+                        "controlPToQ": "c_p_to_q",
+                        "controlQToP": "c_q_to_p",
+                        "controlCounterexample": "c_counterexample",
+                        "expectedPToQ": true,
+                        "expectedQToP": false,
+                        "expectedCounterexamples": [
+                          2,
+                          4
+                        ]
+                      },
+                      "controls": [
+                        {
+                          "id": "c_p_to_q",
+                          "type": "choice",
+                          "label": "Mệnh đề P ⇒ Q (Nếu a ⋮ 6 thì a ⋮ 2)",
+                          "initial": "false",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (Đ)",
+                            "false": "Sai (S)"
+                          }
+                        },
+                        {
+                          "id": "c_q_to_p",
+                          "type": "choice",
+                          "label": "Mệnh đề chiều ngược Q ⇒ P (Nếu a ⋮ 2 thì a ⋮ 6)",
+                          "initial": "true",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (Đ)",
+                            "false": "Sai (S)"
+                          }
+                        },
+                        {
+                          "id": "c_counterexample",
+                          "type": "choice",
+                          "label": "Phản ví dụ chứng minh Q ⇒ P sai",
                           "initial": "none",
                           "options": [
                             "none",
-                            "3",
+                            "2_or_4",
                             "6",
-                            "9",
                             "12"
                           ],
                           "optionLabels": {
                             "none": "Không có",
-                            "3": "a = 3",
+                            "2_or_4": "a = 2 hoặc a = 4",
                             "6": "a = 6",
-                            "9": "a = 9",
                             "12": "a = 12"
                           }
-                        },
-                        {
-                          "id": "contrapositive",
-                          "type": "choice",
-                          "label": "Phản đảo ¬Q ⇒ ¬P",
-                          "initial": "",
-                          "options": [
-                            "",
-                            "Đúng",
-                            "Sai"
-                          ]
                         }
                       ],
                       "goals": [
                         {
-                          "id": "direction-and-conditions",
-                          "evidence": "structured_steps"
+                          "id": "implication_analysis",
+                          "evidence": "implication_accuracy"
                         }
                       ],
                       "solutionGraph": {
                         "steps": [
                           {
-                            "id": "check-original",
+                            "id": "check_inclusion",
                             "kind": "check",
-                            "hint": "Mọi số chia hết cho 6 đều chia hết cho 3."
+                            "hint": "Tập số chia hết cho 6 là tập con của tập số chia hết cho 2 (P ⊂ Q)."
                           },
                           {
-                            "id": "find-converse-counterexample",
+                            "id": "identify_counterexample",
                             "kind": "justify",
                             "dependsOn": [
-                              "check-original"
+                              "check_inclusion"
                             ],
-                            "hint": "Chọn a = 3: chia hết cho 3 nhưng không chia hết cho 6."
-                          },
-                          {
-                            "id": "check-contrapositive",
-                            "kind": "check",
-                            "dependsOn": [
-                              "find-converse-counterexample"
-                            ],
-                            "hint": "Phản đảo là không chia hết cho 3 thì không chia hết cho 6; đó là một mệnh đề tương đương với chiều ban đầu."
-                          },
-                          {
-                            "id": "name-conditions",
-                            "kind": "justify",
-                            "dependsOn": [
-                              "check-contrapositive"
-                            ],
-                            "hint": "P là điều kiện đủ của Q; Q là điều kiện cần của P."
+                            "hint": "Với a = 2 hoặc 4, a chia hết cho 2 nhưng không chia hết cho 6."
                           }
                         ],
                         "terminalStepIds": [
-                          "name-conditions"
+                          "identify_counterexample"
                         ]
                       },
                       "assessment": [
                         {
-                          "id": "converse",
-                          "type": "choice",
-                          "prompt": "Mệnh đề đảo của P ⇒ Q là gì và đúng hay sai?",
-                          "outcomeIds": [
-                            "M10-SET-05"
-                          ]
-                        },
-                        {
-                          "id": "condition-naming",
+                          "id": "check-implication-truth",
                           "type": "structured_reasoning",
-                          "prompt": "Từ P ⇒ Q, phát biểu điều kiện cần và điều kiện đủ.",
+                          "prompt": "Phân tích tính đúng sai của mệnh đề kéo theo và chỉ ra phản ví dụ.",
                           "outcomeIds": [
-                            "M10-SET-06"
+                            "M10-LOGIC-04"
                           ]
                         }
                       ],
                       "accessibility": {
                         "keyboardControls": true,
-                        "textAlternative": "Sơ đồ kiểm tra mệnh đề kéo theo, mệnh đề đảo, phản đảo và phản ví dụ.",
-                        "highContrast": true
-                      },
-                      "config": {
-                        "mode": "implication",
-                        "activity": {
-                          "pExpression": "divisible(x, 6)",
-                          "qExpression": "divisible(x, 3)",
-                          "domainValues": [
-                            3,
-                            6,
-                            9,
-                            12
-                          ],
-                          "pToQControlId": "p-to-q",
-                          "qToPControlId": "q-to-p",
-                          "qToPCounterexampleControlId": "q-to-p-counterexample",
-                          "contrapositiveControlId": "contrapositive",
-                          "expectedPToQ": true,
-                          "expectedQToP": false,
-                          "expectedQToPCounterexample": 3,
-                          "expectedContrapositive": true
-                        }
-                      },
-                      "analytics": [
-                        "predict",
-                        "implication_direction",
-                        "counterexample_selected",
-                        "condition_named",
-                        "goal",
-                        "hint",
-                        "retry"
-                      ]
+                        "textAlternative": "Biểu đồ Venn: P={6,12} ⊂ Q={2,4,6,12}."
+                      }
                     }
                   }
                 }
               ]
             },
             {
-              "order_index": 2,
+              "slide_number": 3,
+              "title": "Khoảng dừng Ghi nhớ Cốt lõi",
               "blocks": [
                 {
-                  "id": "necessary-sufficient-check",
-                  "type": "quiz",
+                  "id": "b3_callout_takeaway",
+                  "block_type": "callout",
                   "content": {
-                    "question": "Từ mệnh đề “Nếu a chia hết cho 6 thì a chia hết cho 3”, phát biểu nào đúng?",
+                    "variant": "tip",
+                    "title": "Phương pháp Bác bỏ bằng Phản ví dụ",
+                    "body": "Để chứng minh mệnh đề kéo theo $P \\Rightarrow Q$ là **SAI**, ta chỉ cần tìm ra **một phần tử phản ví dụ** (counterexample) thỏa mãn:\n$$\\text{Giả thiết } P \\text{ ĐÚNG nhưng Kết luận } Q \\text{ SAI}$$"
+                  }
+                },
+                {
+                  "id": "b3_math_table",
+                  "block_type": "math",
+                  "content": {
+                    "label": "Bảng chân trị mệnh đề kéo theo",
+                    "latex": "\\begin{array}{|c|c|c|} \\hline P & Q & P \\Rightarrow Q \\\\ \\hline 1 & 1 & 1 \\\\ 1 & 0 & 0 \\\\ 0 & 1 & 1 \\\\ 0 & 0 & 1 \\\\ \\hline \\end{array}"
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 4,
+              "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+              "blocks": [
+                {
+                  "id": "b4_quiz_d1",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "multiple_choice",
+                    "question": "Trong các mệnh đề sau, mệnh đề nào là **mệnh đề sai**?",
                     "options": [
                       {
-                        "value": "a",
-                        "label": "a chia hết cho 6 là điều kiện cần để a chia hết cho 3"
+                        "id": "A",
+                        "text": "Nếu tứ giác $ABCD$ là hình thoi thì tứ giác $ABCD$ có hai đường chéo vuông góc."
                       },
                       {
-                        "value": "b",
-                        "label": "a chia hết cho 6 là điều kiện đủ để a chia hết cho 3"
+                        "id": "B",
+                        "text": "Nếu tam giác $ABC$ đều thì tam giác $ABC$ cân."
                       },
                       {
-                        "value": "c",
-                        "label": "Hai điều kiện là tương đương"
+                        "id": "C",
+                        "text": "Nếu số tự nhiên $n$ chia hết cho 9 thì $n$ chia hết cho 3."
                       },
                       {
-                        "value": "d",
-                        "label": "a chia hết cho 3 là điều kiện đủ để a chia hết cho 6"
+                        "id": "D",
+                        "text": "Nếu $a > b$ thì $a^2 > b^2$ (với $a, b \\in \\mathbb{R}$)."
                       }
                     ],
-                    "correct": "b",
-                    "explanation": "P ⇒ Q nghĩa là P là điều kiện đủ của Q và Q là điều kiện cần của P."
+                    "correct": "D",
+                    "explanation": "Câu D là mệnh đề sai. Phản ví dụ: chọn $a = 1, b = -3$. Rõ ràng $1 > -3$ ($P$ đúng), nhưng $1^2 = 1 < (-3)^2 = 9$ ($Q$ sai). Do đó $P \\Rightarrow Q$ sai."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 5,
+              "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+              "blocks": [
+                {
+                  "id": "b5_quiz_d2",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "true_false_group",
+                    "question": "Xét tính đúng sai của các mệnh đề kéo theo sau:",
+                    "items": [
+                      {
+                        "id": "a",
+                        "label": "a) Nếu n là số chẵn thì n chia hết cho 4.",
+                        "correct": false
+                      },
+                      {
+                        "id": "b",
+                        "label": "b) Nếu tứ giác ABCD là hình vuông thì ABCD là hình bình hành.",
+                        "correct": true
+                      },
+                      {
+                        "id": "c",
+                        "label": "c) Nếu a = b thì a + c = b + c (với mọi c ∈ R).",
+                        "correct": true
+                      },
+                      {
+                        "id": "d",
+                        "label": "d) Nếu tam giác ABC có AB = AC thì tam giác ABC đều.",
+                        "correct": false
+                      }
+                    ],
+                    "explanation": "Ý a sai (phản ví dụ n=6 là số chẵn nhưng không chia hết cho 4). Ý b đúng (hình vuông là trường hợp đặc biệt của hình bình hành). Ý c đúng (tính chất đẳng thức). Ý d sai (chỉ suy ra được tam giác cân, chưa đủ để đều)."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 6,
+              "title": "Thử thách Dạng III · Điền đáp số",
+              "blocks": [
+                {
+                  "id": "b6_quiz_d3",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "short_answer",
+                    "question": "Xét tập số $U = \\{2, 3, 4, 6, 9, 12\\}$ và mệnh đề $P(x): \"\\text{Nếu } x \\;\\vdots\\; 3 \\text{ thì } x \\;\\vdots\\; 6\"$. Có bao nhiêu phần tử $x \\in U$ là **phản ví dụ** chứng minh mệnh đề trên sai?",
+                    "correct": "2",
+                    "correct_answers": [
+                      "2",
+                      "hai",
+                      "2 phần tử"
+                    ],
+                    "explanation": "Các số chia hết cho 3 trong $U$ là: $\\{3, 6, 9, 12\\}$. Trong đó, $x = 3$ và $x = 9$ chia hết cho 3 nhưng không chia hết cho 6. Vậy có đúng 2 phần tử phản ví dụ là $x=3$ và $x=9$."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 7,
+              "title": "Tổng kết & Cầu nối Sư phạm",
+              "blocks": [
+                {
+                  "id": "b7_callout_summary",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "info",
+                    "title": "Tổng kết Bài học 4",
+                    "body": "Ta đã hiểu bản chất kéo theo và cách dùng phản ví dụ để bác bỏ một mệnh đề sai. Ở bài tiếp theo, chúng ta sẽ mở rộng sang **Mệnh đề đảo $Q \\Rightarrow P$** và chuẩn hóa thuật ngữ **Điều kiện cần, Điều kiện đủ, Tương đương**."
                   }
                 }
               ]
             }
-          ]
+          ],
+          "order_index": 3
+        },
+        {
+          "id": "05-dao-tuong-duong-dieu-kien-can-du",
+          "title": "Mệnh đề đảo · Tương đương · Điều kiện cần và đủ",
+          "order": 4,
+          "description": "Thành thạo mệnh đề đảo, mệnh đề tương đương, chuẩn hóa thuật ngữ điều kiện cần, điều kiện đủ và điều kiện cần và đủ theo chuẩn GDPT 2018.",
+          "xp_reward": 120,
+          "slides": [
+            {
+              "slide_number": 1,
+              "title": "Mệnh đề Đảo & Mệnh đề Tương đương",
+              "blocks": [
+                {
+                  "id": "b1_text_converse_equiv",
+                  "block_type": "text",
+                  "content": {
+                    "heading": "Mệnh đề đảo & Tương đương",
+                    "paragraphs": [
+                      "Cho mệnh đề kéo theo $P \\Rightarrow Q$. Mệnh đề $Q \\Rightarrow P$ được gọi là **mệnh đề đảo** của $P \\Rightarrow Q$.",
+                      "Nếu cả hai mệnh đề $P \\Rightarrow Q$ và $Q \\Rightarrow P$ đều đúng, ta nói $P$ và $Q$ là **hai mệnh đề tương đương**, ký hiệu là $P \\Leftrightarrow Q$ (đọc là \"$P$ tương đương $Q$\" hoặc \"$P$ khi và chỉ khi $Q$\")."
+                    ]
+                  }
+                },
+                {
+                  "id": "b1_callout_terms",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "theorem",
+                    "title": "Chuẩn hóa Thuật ngữ Cần & Đủ",
+                    "body": "Khi định lý $P \\Rightarrow Q$ đúng:\n- $P$ là **điều kiện đủ** để có $Q$.\n- $Q$ là **điều kiện cần** để có $P$.\n\nKhi $P \\Leftrightarrow Q$ đúng: $P$ là **điều kiện cần và đủ** để có $Q$."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 2,
+              "title": "Phòng thí nghiệm Điều kiện Cần & Đủ",
+              "blocks": [
+                {
+                  "id": "b2_sandbox_converse",
+                  "block_type": "interaction",
+                  "content": {
+                    "interactionType": "sandbox",
+                    "lesson": {
+                      "schemaVersion": "1.0",
+                      "kind": "math.sandbox",
+                      "id": "menh_de_05_necessary_sufficient",
+                      "version": 1,
+                      "archetypeId": "logic.necessary_sufficient",
+                      "domainId": "logic",
+                      "level": "application",
+                      "recipe": "core",
+                      "outcomeIds": [
+                        "M10-LOGIC-05"
+                      ],
+                      "prerequisites": [],
+                      "misconceptions": [],
+                      "scene": {
+                        "objects": []
+                      },
+                      "config": {},
+                      "mode": "implication",
+                      "activity": {
+                        "pExpression": "Tứ giác ABCD là hình vuông",
+                        "qExpression": "Tứ giác ABCD là hình chữ nhật",
+                        "domainValues": [
+                          "hinh_vuong",
+                          "hinh_chu_nhat",
+                          "hinh_thoi",
+                          "tu_giac_thuong"
+                        ],
+                        "controlPToQ": "c_p_to_q",
+                        "controlQToP": "c_q_to_p",
+                        "controlCounterexample": "c_counterexample",
+                        "expectedPToQ": true,
+                        "expectedQToP": false,
+                        "expectedCounterexamples": [
+                          "hinh_chu_nhat_khong_vuong"
+                        ]
+                      },
+                      "controls": [
+                        {
+                          "id": "c_p_to_q",
+                          "type": "choice",
+                          "label": "P ⇒ Q (Hình vuông ⇒ Hình chữ nhật)",
+                          "initial": "false",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (Đ)",
+                            "false": "Sai (S)"
+                          }
+                        },
+                        {
+                          "id": "c_q_to_p",
+                          "type": "choice",
+                          "label": "Đảo Q ⇒ P (Hình chữ nhật ⇒ Hình vuông)",
+                          "initial": "true",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (Đ)",
+                            "false": "Sai (S)"
+                          }
+                        },
+                        {
+                          "id": "c_counterexample",
+                          "type": "choice",
+                          "label": "Kết luận về điều kiện",
+                          "initial": "none",
+                          "options": [
+                            "sufficient_only",
+                            "necessary_only",
+                            "necessary_and_sufficient",
+                            "none"
+                          ],
+                          "optionLabels": {
+                            "sufficient_only": "P là ĐỦ, Q là CẦN",
+                            "necessary_only": "P là CẦN, Q là ĐỦ",
+                            "necessary_and_sufficient": "Cần và Đủ",
+                            "none": "Chưa xác định"
+                          }
+                        }
+                      ],
+                      "goals": [
+                        {
+                          "id": "condition_direction_goals",
+                          "evidence": "implication_accuracy"
+                        }
+                      ],
+                      "solutionGraph": {
+                        "steps": [
+                          {
+                            "id": "check_forward_backward",
+                            "kind": "check",
+                            "hint": "Hình vuông luôn là hình chữ nhật. Nhưng hình chữ nhật chưa chắc là hình vuông."
+                          },
+                          {
+                            "id": "conclude_terms",
+                            "kind": "justify",
+                            "dependsOn": [
+                              "check_forward_backward"
+                            ],
+                            "hint": "Do đó P là điều kiện đủ của Q, và Q là điều kiện cần của P."
+                          }
+                        ],
+                        "terminalStepIds": [
+                          "conclude_terms"
+                        ]
+                      },
+                      "assessment": [
+                        {
+                          "id": "check-direction-and-conditions",
+                          "type": "structured_reasoning",
+                          "prompt": "Xác định chính xác tính đúng sai của hai chiều.",
+                          "outcomeIds": [
+                            "M10-LOGIC-05"
+                          ]
+                        }
+                      ],
+                      "accessibility": {
+                        "keyboardControls": true,
+                        "textAlternative": "Hình vuông => Hình chữ nhật đúng; chiều đảo sai. P là điều kiện đủ, Q là điều kiện cần."
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 3,
+              "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+              "blocks": [
+                {
+                  "id": "b3_callout_takeaway",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "tip",
+                    "title": "Mẹo vàng phân biệt CẦN và ĐỦ",
+                    "body": "- **ĐỦ (Sufficient)**: Có $P$ là **đã đủ** để suy ra $Q$ ($P \\Rightarrow Q$).\n- **CẦN (Necessary)**: Bắt buộc **phải có** $Q$ thì mới mong có được $P$ ($P \\Rightarrow Q$, nếu không có $Q$ thì không thể có $P$).\n- Khi cả 2 chiều đều đúng ($P \\Leftrightarrow Q$): Ta dùng cụm từ **\"Khi và chỉ khi\"** hoặc **\"Điều kiện cần và đủ\"**."
+                  }
+                },
+                {
+                  "id": "b3_math_formula",
+                  "block_type": "math",
+                  "content": {
+                    "label": "Mô hình quan hệ tương đương",
+                    "latex": "(P \\iff Q) \\iff (P \\implies Q) \\land (Q \\implies P)"
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 4,
+              "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+              "blocks": [
+                {
+                  "id": "b4_quiz_d1",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "multiple_choice",
+                    "question": "Cho hai mệnh đề $P$: \"Tứ giác $ABCD$ là hình thoi\" và $Q$: \"Tứ giác $ABCD$ có hai đường chéo vuông góc\". Khẳng định nào sau đây là **đúng**?",
+                    "options": [
+                      {
+                        "id": "A",
+                        "text": "$P$ là điều kiện cần để có $Q$."
+                      },
+                      {
+                        "id": "B",
+                        "text": "$P$ là điều kiện đủ để có $Q$."
+                      },
+                      {
+                        "id": "C",
+                        "text": "$P$ là điều kiện cần và đủ để có $Q$."
+                      },
+                      {
+                        "id": "D",
+                        "text": "$Q$ là điều kiện đủ để có $P$."
+                      }
+                    ],
+                    "correct": "B",
+                    "explanation": "Mệnh đề $P \\Rightarrow Q$ đúng (mọi hình thoi đều có 2 đường chéo vuông góc). Nhưng chiều ngược lại $Q \\Rightarrow P$ sai (tứ giác có 2 đường chéo vuông góc chưa chắc là hình thoi, ví dụ hình cánh diều). Do đó $P$ là điều kiện đủ để có $Q$."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 5,
+              "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+              "blocks": [
+                {
+                  "id": "b5_quiz_d2",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "true_false_group",
+                    "question": "Xét tính đúng sai của các khẳng định về điều kiện cần và đủ sau:",
+                    "items": [
+                      {
+                        "id": "a",
+                        "label": "a) Tam giác ABC có 3 cạnh bằng nhau là điều kiện cần và đủ để tam giác ABC đều.",
+                        "correct": true
+                      },
+                      {
+                        "id": "b",
+                        "label": "b) Số tự nhiên a có chữ số tận cùng bằng 0 là điều kiện đủ để a chia hết cho 5.",
+                        "correct": true
+                      },
+                      {
+                        "id": "c",
+                        "label": "c) a = b là điều kiện cần và đủ để a² = b² (với a, b ∈ R).",
+                        "correct": false
+                      },
+                      {
+                        "id": "d",
+                        "label": "d) Tứ giác ABCD có 4 góc bằng nhau là điều kiện cần để ABCD là hình vuông.",
+                        "correct": true
+                      }
+                    ],
+                    "explanation": "Ý a đúng (định nghĩa tam giác đều). Ý b đúng (tận cùng bằng 0 chắc chắn chia hết cho 5). Ý c sai vì $a^2=b^2 \\Leftrightarrow a=\\pm b$. Ý d đúng vì hình vuông bắt buộc phải có 4 góc vuông (4 góc bằng nhau), nên đó là điều kiện cần."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 6,
+              "title": "Thử thách Dạng III · Điền đáp số",
+              "blocks": [
+                {
+                  "id": "b6_quiz_d3",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "short_answer",
+                    "question": "Cho các cặp mệnh đề sau: (1) $P: x > 1$ và $Q: x^2 > 1$. (2) $P: a=b$ và $Q: a+c=b+c$. (3) $P: x=2$ và $Q: x^2=4$. (4) $P: a \\;\\vdots\\; 6$ và $Q: (a \\;\\vdots\\; 2 \\text{ và } a \\;\\vdots\\; 3)$. Hỏi có bao nhiêu cặp thỏa mãn **$P \\Leftrightarrow Q$ là mệnh đề đúng**?",
+                    "correct": "2",
+                    "correct_answers": [
+                      "2",
+                      "hai",
+                      "2 cặp"
+                    ],
+                    "explanation": "Có đúng 2 cặp tương đương đúng là (2) (tính chất đại số) và (4) (dấu hiệu chia hết cho 6). Cặp (1) sai chiều ngược ($x=-2$). Cặp (3) sai chiều ngược ($x=-2$)."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 7,
+              "title": "Tổng kết & Cầu nối Sư phạm",
+              "blocks": [
+                {
+                  "id": "b7_callout_summary",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "info",
+                    "title": "Tổng kết Bài học 5",
+                    "body": "Bạn đã làm chủ các thuật ngữ định lý: Đảo, Tương đương, Cần & Đủ. Ở bài tiếp theo, chúng ta sẽ khảo sát công cụ biểu diễn toán học mạnh nhất: **Lượng từ $\\forall, \\exists$ và Mệnh đề nhiều biến**."
+                  }
+                }
+              ]
+            }
+          ],
+          "order_index": 4
+        },
+        {
+          "id": "06-voi-moi-ton-tai-va-nhieu-bien",
+          "title": "Lượng từ ∀, ∃ và mệnh đề nhiều biến",
+          "order": 5,
+          "description": "Làm chủ lượng từ với mọi ∀, tồn tại ∃, phủ định lượng từ và mở rộng mệnh đề nhiều biến theo chuẩn GDPT 2018.",
+          "xp_reward": 120,
+          "slides": [
+            {
+              "slide_number": 1,
+              "title": "Khái niệm Lượng từ ∀ và ∃",
+              "blocks": [
+                {
+                  "id": "b1_text_quantifiers",
+                  "block_type": "text",
+                  "content": {
+                    "heading": "Lượng từ Với mọi (∀) & Tồn tại (∃)",
+                    "paragraphs": [
+                      "Trong toán học, để khẳng định một tính chất $P(x)$ đúng với mọi phần tử hoặc tồn tại ít nhất một phần tử, ta dùng các **lượng từ logic**:",
+                      "- **Lượng từ với mọi ($\\forall$)**: \"$\\forall x \\in X,\\; P(x)$\" có nghĩa là $P(x)$ đúng với **tất cả** các giá trị $x \\in X$.",
+                      "- **Lượng từ tồn tại ($\\exists$)**: \"$\\exists x \\in X,\\; P(x)$\" có nghĩa là có **ít nhất một** giá trị $x \\in X$ làm cho $P(x)$ đúng."
+                    ]
+                  }
+                },
+                {
+                  "id": "b1_callout_multivariable",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "theorem",
+                    "title": "Mệnh đề nhiều biến (Multivariable Logic)",
+                    "body": "Khi xét vị từ $P(x, y)$, thứ tự lượng từ có ý nghĩa quyết định:\n- \"$\\forall x, \\forall y,\\; P(x, y)$\": Đúng với mọi cặp $(x, y)$.\n- \"$\\exists x, \\forall y,\\; P(x, y)$\": Tồn tại một phần tử $x_0$ cố định phục vụ cho tất cả $y$ (ví dụ: $x=1$ là phần tử trung hòa của phép nhân)."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 2,
+              "title": "Phòng thí nghiệm Lượng từ Đa biến",
+              "blocks": [
+                {
+                  "id": "b2_sandbox_multivariable",
+                  "block_type": "interaction",
+                  "content": {
+                    "interactionType": "sandbox",
+                    "lesson": {
+                      "schemaVersion": "1.0",
+                      "kind": "math.sandbox",
+                      "id": "menh_de_06_multivariable",
+                      "version": 1,
+                      "archetypeId": "logic.quantifier",
+                      "domainId": "logic",
+                      "level": "application",
+                      "recipe": "core",
+                      "outcomeIds": [
+                        "M10-LOGIC-06"
+                      ],
+                      "prerequisites": [],
+                      "misconceptions": [],
+                      "scene": {
+                        "objects": []
+                      },
+                      "config": {},
+                      "mode": "quantifier_negation",
+                      "activity": {
+                        "items": [
+                          {
+                            "id": "item1",
+                            "label": "∀x∈R, ∀y∈R: (x+y)² = x² + 2xy + y²",
+                            "controlVerdict": "c_v1",
+                            "controlNegation": "c_n1",
+                            "expectedVerdict": "true",
+                            "expectedNegation": "exists_pair_not_equal",
+                            "expectedWitness": "none"
+                          },
+                          {
+                            "id": "item2",
+                            "label": "∀x∈R, ∀y∈R: x² + y² > 0",
+                            "controlVerdict": "c_v2",
+                            "controlNegation": "c_n2",
+                            "expectedVerdict": "false",
+                            "expectedNegation": "exists_pair_le_zero",
+                            "expectedWitness": "x0_y0"
+                          },
+                          {
+                            "id": "item3",
+                            "label": "∃x∈R, ∀y∈R: x.y = y",
+                            "controlVerdict": "c_v3",
+                            "controlNegation": "c_n3",
+                            "expectedVerdict": "true",
+                            "expectedNegation": "forall_exists_not_equal",
+                            "expectedWitness": "x_equals_1"
+                          }
+                        ]
+                      },
+                      "controls": [
+                        {
+                          "id": "c_v1",
+                          "type": "choice",
+                          "label": "Chân trị của (1) Hằng đẳng thức (x+y)²",
+                          "initial": "false",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (Đ)",
+                            "false": "Sai (S)"
+                          }
+                        },
+                        {
+                          "id": "c_n1",
+                          "type": "choice",
+                          "label": "Phủ định của (1)",
+                          "initial": "exists_pair_not_equal",
+                          "options": [
+                            "exists_pair_not_equal",
+                            "forall_pair_not_equal"
+                          ],
+                          "optionLabels": {
+                            "exists_pair_not_equal": "∃x, ∃y: (x+y)² ≠ x²+2xy+y²",
+                            "forall_pair_not_equal": "∀x, ∀y: (x+y)² ≠ x²+2xy+y²"
+                          }
+                        },
+                        {
+                          "id": "c_v2",
+                          "type": "choice",
+                          "label": "Chân trị của (2) x² + y² > 0",
+                          "initial": "true",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (Đ)",
+                            "false": "Sai (S)"
+                          }
+                        },
+                        {
+                          "id": "c_n2",
+                          "type": "choice",
+                          "label": "Phản ví dụ chứng minh (2) sai",
+                          "initial": "none",
+                          "options": [
+                            "none",
+                            "x0_y0",
+                            "x1_y1"
+                          ],
+                          "optionLabels": {
+                            "none": "Không có",
+                            "x0_y0": "Cặp (x=0, y=0) làm x²+y²=0",
+                            "x1_y1": "Cặp (1, 1)"
+                          }
+                        },
+                        {
+                          "id": "c_v3",
+                          "type": "choice",
+                          "label": "Chân trị của (3) ∃x, ∀y: x.y = y",
+                          "initial": "false",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (Đ)",
+                            "false": "Sai (S)"
+                          }
+                        },
+                        {
+                          "id": "c_n3",
+                          "type": "choice",
+                          "label": "Nhân chứng x chứng minh (3) đúng",
+                          "initial": "none",
+                          "options": [
+                            "none",
+                            "x_equals_1",
+                            "x_equals_0"
+                          ],
+                          "optionLabels": {
+                            "none": "Không có",
+                            "x_equals_1": "Chọn x = 1 (1.y = y với mọi y)",
+                            "x_equals_0": "Chọn x = 0"
+                          }
+                        }
+                      ],
+                      "goals": [
+                        {
+                          "id": "quantifier_multivariable_goals",
+                          "evidence": "structured_steps"
+                        }
+                      ],
+                      "solutionGraph": {
+                        "steps": [
+                          {
+                            "id": "check_scopes",
+                            "kind": "check",
+                            "hint": "Với ∀x∀y chỉ cần 1 phản ví dụ để bác bỏ; với ∃x∃y chỉ cần 1 cặp nghiệm."
+                          },
+                          {
+                            "id": "verify_universal_witness",
+                            "kind": "justify",
+                            "dependsOn": [
+                              "check_scopes"
+                            ],
+                            "hint": "Với ∃x∀y, giá trị x=1 là phần tử trung hòa của phép nhân trên R."
+                          }
+                        ],
+                        "terminalStepIds": [
+                          "verify_universal_witness"
+                        ]
+                      },
+                      "assessment": [
+                        {
+                          "id": "check-multivariable-quantifiers",
+                          "type": "structured_reasoning",
+                          "prompt": "Phân tích tính đúng sai của 3 mệnh đề lượng từ 2 biến.",
+                          "outcomeIds": [
+                            "M10-LOGIC-06"
+                          ]
+                        }
+                      ],
+                      "accessibility": {
+                        "keyboardControls": true,
+                        "textAlternative": "Hằng đẳng thức đúng; x^2+y^2>0 sai tại (0,0); tồn tại x=1 đúng."
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 3,
+              "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+              "blocks": [
+                {
+                  "id": "b3_callout_takeaway",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "tip",
+                    "title": "Chiến lược chứng minh & Bác bỏ",
+                    "body": "1. **Muốn chứng minh $\\forall x \\in X, P(x)$ ĐÚNG**: Phải chứng minh tổng quát với $x$ bất kỳ.\n2. **Muốn bác bỏ $\\forall x \\in X, P(x)$ (chứng minh SAI)**: Chỉ cần chỉ ra **1 phản ví dụ** $x_0 \\in X$ sao cho $P(x_0)$ sai.\n3. **Muốn chứng minh $\\exists x \\in X, P(x)$ ĐÚNG**: Chỉ cần chỉ ra **1 nhân chứng** $x_0 \\in X$ thỏa mãn $P(x_0)$ đúng."
+                  }
+                },
+                {
+                  "id": "b3_math_neg_rule",
+                  "block_type": "math",
+                  "content": {
+                    "label": "Quy tắc phủ định 2 biến",
+                    "latex": "\\overline{\\forall x, \\forall y,\\; P(x, y)} \\iff \\exists x, \\exists y,\\; \\overline{P(x, y)}"
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 4,
+              "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+              "blocks": [
+                {
+                  "id": "b4_quiz_d1",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "multiple_choice",
+                    "question": "Trong các mệnh đề sau, mệnh đề nào là **mệnh đề đúng**?",
+                    "options": [
+                      {
+                        "id": "A",
+                        "text": "$\\forall n \\in \\mathbb{N},\\; n^2 + 1 \\text{ không chia hết cho } 3$"
+                      },
+                      {
+                        "id": "B",
+                        "text": "$\\forall x \\in \\mathbb{R},\\; x^2 > 0$"
+                      },
+                      {
+                        "id": "C",
+                        "text": "$\\exists x \\in \\mathbb{Q},\\; x^2 = 3$"
+                      },
+                      {
+                        "id": "D",
+                        "text": "$\\forall n \\in \\mathbb{N},\\; 2^n + 1 \\text{ là số nguyên tố}$"
+                      }
+                    ],
+                    "correct": "A",
+                    "explanation": "Câu A đúng: Một số chính phương $n^2$ khi chia cho 3 chỉ có số dư là 0 hoặc 1. Do đó $n^2 + 1$ chia cho 3 chỉ có thể dư 1 hoặc 2, không bao giờ chia hết cho 3. (Câu B sai tại $x=0$, câu C sai vì $\\pm\\sqrt{3}$ vô tỉ, câu D sai tại $n=3$ vì $2^3+1=9$ hợp số)."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 5,
+              "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+              "blocks": [
+                {
+                  "id": "b5_quiz_d2",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "true_false_group",
+                    "question": "Xét tính đúng sai của các mệnh đề lượng từ sau:",
+                    "items": [
+                      {
+                        "id": "a",
+                        "label": "a) ∀x ∈ R, x² - 2x + 3 > 0.",
+                        "correct": true
+                      },
+                      {
+                        "id": "b",
+                        "label": "b) ∃n ∈ N, n(n + 1) là số lẻ.",
+                        "correct": false
+                      },
+                      {
+                        "id": "c",
+                        "label": "c) ∃x ∈ Q, 4x² - 1 = 0.",
+                        "correct": true
+                      },
+                      {
+                        "id": "d",
+                        "label": "d) ∀x ∈ R, |x| ≥ x.",
+                        "correct": true
+                      }
+                    ],
+                    "explanation": "Ý a đúng vì $x^2-2x+3=(x-1)^2+2 \\ge 2 > 0$. Ý b sai vì tích 2 số tự nhiên liên tiếp luôn là số chẵn. Ý c đúng vì $x = \\pm 1/2 \\in \\mathbb{Q}$. Ý d đúng theo tính chất giá trị tuyệt đối."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 6,
+              "title": "Thử thách Dạng III · Điền đáp số",
+              "blocks": [
+                {
+                  "id": "b6_quiz_d3",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "short_answer",
+                    "question": "Tìm số tự nhiên $n$ nhỏ nhất thỏa mãn mệnh đề: $\\exists n \\in \\mathbb{N}: n^2 - 10n + 21 = 0$.",
+                    "correct": "3",
+                    "correct_answers": [
+                      "3",
+                      "n=3",
+                      "ba"
+                    ],
+                    "explanation": "Phương trình $n^2 - 10n + 21 = 0 \\Leftrightarrow (n-3)(n-7) = 0 \\Leftrightarrow n = 3$ hoặc $n = 7$. Số tự nhiên $n$ nhỏ nhất là $n = 3$."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 7,
+              "title": "Tổng kết & Cầu nối Sư phạm",
+              "blocks": [
+                {
+                  "id": "b7_callout_summary",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "info",
+                    "title": "Tổng kết Bài học 6",
+                    "body": "Lượng từ $\\forall$ và $\\exists$ giúp hình thức hóa toàn bộ các định lý giải tích và hình học. Ở bài học cuối cùng, chúng ta sẽ bước vào thử thách đỉnh cao: **Bài toán logic chứa tham số $m$ và Vận dụng cao (VDC)**."
+                  }
+                }
+              ]
+            }
+          ],
+          "order_index": 5
+        },
+        {
+          "id": "07-tong-hop-tham-so-phan-vi-du-vdc",
+          "title": "Tổng hợp tham số · Phản ví dụ và VDC",
+          "order": 6,
+          "description": "Giải quyết trọn vẹn các bài toán logic chứa tham số m, biện luận nghiệm tam thức và hệ vị từ phối hợp theo chuẩn GDPT 2018.",
+          "xp_reward": 150,
+          "slides": [
+            {
+              "slide_number": 1,
+              "title": "Phương pháp Logic chứa Tham số m",
+              "blocks": [
+                {
+                  "id": "b1_text_parameter_logic",
+                  "block_type": "text",
+                  "content": {
+                    "heading": "Bài toán Logic chứa Tham số m",
+                    "paragraphs": [
+                      "Trong các đề thi THPT và học sinh giỏi, bài toán logic chứa tham số $m$ yêu cầu tìm điều kiện của $m$ để một mệnh đề lượng từ $\\forall x \\in X, P_m(x)$ hoặc $\\exists x \\in X, P_m(x)$ là **mệnh đề đúng**.",
+                      "Để giải quyết, ta chuyển đổi bài toán logic sang bài toán giải tích / đại số tương đương (biện luận dấu tam thức bậc hai, định lý Viète, hoặc quan hệ tập nghiệm con)."
+                    ]
+                  }
+                },
+                {
+                  "id": "b1_callout_quadratic_rules",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "theorem",
+                    "title": "Định lý Dấu Tam thức bậc hai",
+                    "body": "Cho $f(x) = ax^2 + bx + c$ ($a \\neq 0$). Ta có các điều kiện cốt lõi:\n- $\\forall x \\in \\mathbb{R},\\; f(x) > 0 \\iff a > 0 \\text{ và } \\Delta < 0$.\n- $\\forall x \\in \\mathbb{R},\\; f(x) \\ge 0 \\iff a > 0 \\text{ và } \\Delta \\le 0$."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 2,
+              "title": "Phòng thí nghiệm Tham số & Trục số",
+              "blocks": [
+                {
+                  "id": "b2_sandbox_parameter",
+                  "block_type": "interaction",
+                  "content": {
+                    "interactionType": "sandbox",
+                    "lesson": {
+                      "schemaVersion": "1.0",
+                      "kind": "math.sandbox",
+                      "id": "menh_de_07_parameter",
+                      "version": 1,
+                      "archetypeId": "logic.parameter_truth",
+                      "domainId": "logic",
+                      "level": "advanced_application",
+                      "recipe": "core",
+                      "outcomeIds": [
+                        "M10-LOGIC-07"
+                      ],
+                      "prerequisites": [],
+                      "misconceptions": [],
+                      "scene": {
+                        "objects": []
+                      },
+                      "config": {},
+                      "mode": "parameter_implication",
+                      "activity": {
+                        "parameterName": "m",
+                        "pTemplate": "x² - (m+2)x + 2m = 0",
+                        "qTemplate": "x ≥ 0",
+                        "domainRange": [
+                          -2,
+                          4
+                        ],
+                        "parameterControlId": "c_param_m",
+                        "expectedParameter": 0,
+                        "expectedRoots": [
+                          2,
+                          0
+                        ]
+                      },
+                      "controls": [
+                        {
+                          "id": "c_param_m",
+                          "type": "slider",
+                          "label": "Tham số m",
+                          "initial": -1,
+                          "min": -2,
+                          "max": 4,
+                          "step": 1
+                        },
+                        {
+                          "id": "c_conclude",
+                          "type": "choice",
+                          "label": "Khi m = 0, mệnh đề Pm ⇒ Q có đúng không?",
+                          "initial": "false",
+                          "options": [
+                            "true",
+                            "false"
+                          ],
+                          "optionLabels": {
+                            "true": "Đúng (2 nghiệm ≥ 0)",
+                            "false": "Sai"
+                          }
+                        }
+                      ],
+                      "goals": [
+                        {
+                          "id": "parameter_tuning_goals",
+                          "evidence": "parameter_root_accuracy"
+                        }
+                      ],
+                      "solutionGraph": {
+                        "steps": [
+                          {
+                            "id": "factor_roots",
+                            "kind": "simplify",
+                            "hint": "Phương trình có 2 nghiệm là x = 2 và x = m."
+                          },
+                          {
+                            "id": "check_roots_condition",
+                            "kind": "check",
+                            "dependsOn": [
+                              "factor_roots"
+                            ],
+                            "hint": "Để mọi nghiệm x ≥ 0 thì cần x = 2 ≥ 0 và x = m ≥ 0."
+                          }
+                        ],
+                        "terminalStepIds": [
+                          "check_roots_condition"
+                        ]
+                      },
+                      "assessment": [
+                        {
+                          "id": "check-parameter-implication-roots",
+                          "type": "structured_reasoning",
+                          "prompt": "Tìm điều kiện tham số m để mọi nghiệm đều không âm.",
+                          "outcomeIds": [
+                            "M10-LOGIC-07"
+                          ]
+                        }
+                      ],
+                      "accessibility": {
+                        "keyboardControls": true,
+                        "textAlternative": "Nghiệm x=2 và x=m. Mọi nghiệm không âm khi m >= 0."
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 3,
+              "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+              "blocks": [
+                {
+                  "id": "b3_callout_takeaway",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "tip",
+                    "title": "Sơ đồ 3 bước chinh phục bài toán tham số",
+                    "body": "1. **Bước 1 (Đại số hóa)**: Chuyển mệnh đề logic thành điều kiện nghiệm / dấu tam thức.\n2. **Bước 2 (Giải bất phương trình tham số)**: Lập hệ điều kiện cho $\\Delta$, $S$, $P$ hoặc giá trị biên.\n3. **Bước 3 (Đối soát tập số)**: Lấy giao các tập điều kiện và đếm số nghiệm nguyên."
+                  }
+                },
+                {
+                  "id": "b3_math_viet",
+                  "block_type": "math",
+                  "content": {
+                    "label": "Hệ điều kiện 2 nghiệm dương phân biệt",
+                    "latex": "\\begin{cases} \\Delta > 0 \\\\ S = x_1 + x_2 > 0 \\\\ P = x_1 x_2 > 0 \\end{cases}"
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 4,
+              "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+              "blocks": [
+                {
+                  "id": "b4_quiz_d1",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "multiple_choice",
+                    "question": "Tìm tất cả các giá trị thực của tham số $m$ để mệnh đề sau là **mệnh đề đúng**: \"$\\forall x \\in \\mathbb{R},\\; x^2 - 2mx + m + 6 > 0$\".",
+                    "options": [
+                      {
+                        "id": "A",
+                        "text": "$-2 < m < 3$"
+                      },
+                      {
+                        "id": "B",
+                        "text": "$m < -2 \\text{ hoặc } m > 3$"
+                      },
+                      {
+                        "id": "C",
+                        "text": "$-3 < m < 2$"
+                      },
+                      {
+                        "id": "D",
+                        "text": "$m \\le -2 \\text{ hoặc } m \\ge 3$"
+                      }
+                    ],
+                    "correct": "A",
+                    "explanation": "Tam thức $f(x) = x^2 - 2mx + m + 6$ có hệ số $a = 1 > 0$. Do đó $f(x) > 0$ với mọi $x \\in \\mathbb{R} \\Leftrightarrow \\Delta' < 0 \\Leftrightarrow m^2 - (m+6) < 0 \\Leftrightarrow m^2 - m - 6 < 0 \\Leftrightarrow -2 < m < 3$."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 5,
+              "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+              "blocks": [
+                {
+                  "id": "b5_quiz_d2",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "true_false_group",
+                    "question": "Cho mệnh đề chứa tham số $P(m): \"\\exists x \\in \\mathbb{R},\\; x^2 - 4x + m = 0\"$. Xét tính đúng sai của các khẳng định sau:",
+                    "items": [
+                      {
+                        "id": "a",
+                        "label": "a) Khi m = 4, mệnh đề P(4) là mệnh đề đúng.",
+                        "correct": true
+                      },
+                      {
+                        "id": "b",
+                        "label": "b) Khi m = 5, mệnh đề P(5) là mệnh đề đúng.",
+                        "correct": false
+                      },
+                      {
+                        "id": "c",
+                        "label": "c) Mệnh đề P(m) đúng khi và chỉ khi m ≤ 4.",
+                        "correct": true
+                      },
+                      {
+                        "id": "d",
+                        "label": "d) Có đúng 4 giá trị nguyên dương của m để P(m) đúng.",
+                        "correct": true
+                      }
+                    ],
+                    "explanation": "Phương trình có nghiệm khi $\\Delta' = 4 - m \\ge 0 \\Leftrightarrow m \\le 4$. Với $m=4$ có nghiệm $x=2$ (ý a đúng). Với $m=5$ vô nghiệm (ý b sai). Ý c đúng. Ý d đúng vì các số nguyên dương $m \\le 4$ là $\\{1, 2, 3, 4\\}$ (4 giá trị)."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 6,
+              "title": "Thử thách Dạng III · Điền đáp số",
+              "blocks": [
+                {
+                  "id": "b6_quiz_d3",
+                  "block_type": "quiz",
+                  "content": {
+                    "quiz_type": "short_answer",
+                    "question": "Tìm số giá trị nguyên của tham số $m \\in [-5; 5]$ để mệnh đề \"$\\forall x \\in \\mathbb{R},\\; x^2 - 2mx + 9 > 0$\" là **mệnh đề đúng**.",
+                    "correct": "5",
+                    "correct_answers": [
+                      "5",
+                      "năm",
+                      "5 giá trị"
+                    ],
+                    "explanation": "Ta có $a = 1 > 0$. Bất phương trình đúng với mọi $x \\in \\mathbb{R} \\Leftrightarrow \\Delta' = m^2 - 9 < 0 \\Leftrightarrow -3 < m < 3$. Các giá trị nguyên của $m$ trong khoảng $(-3; 3)$ là $\\{-2, -1, 0, 1, 2\\}$. Vậy có đúng 5 giá trị nguyên."
+                  }
+                }
+              ]
+            },
+            {
+              "slide_number": 7,
+              "title": "Tổng kết Chuyên đề Mệnh đề & Logic Toán 10",
+              "blocks": [
+                {
+                  "id": "b7_callout_summary",
+                  "block_type": "callout",
+                  "content": {
+                    "variant": "theorem",
+                    "title": "Chúc mừng bạn đã hoàn thành Chuyên đề!",
+                    "body": "Bạn đã làm chủ trọn vẹn toàn bộ 20 dạng toán (A01–A20) và 18 kỹ năng (S1–S18) của chuyên đề Mệnh đề và Logic Toán 10. Đây là nền tảng tư duy vững chắc nhất để tiếp tục chinh phục chuyên đề **Tập hợp và các phép toán tập hợp**."
+                  }
+                }
+              ]
+            }
+          ],
+          "order_index": 6
         }
       ]
     }

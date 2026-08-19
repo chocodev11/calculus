@@ -110,11 +110,11 @@ export default function Story() {
   const needsEnrollment = !story.is_enrolled
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-16 font-sans">
+    <div className="w-full font-sans">
       
       {/* Top Breadcrumb Navigation */}
       <div className="bg-white border-b border-slate-200 sticky top-16 z-30 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link
               to="/explore"
@@ -135,20 +135,22 @@ export default function Story() {
       </div>
 
       {/* Main Two-Column Course View */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8 items-start">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8">
 
           {/* Left Column: Course Overview Card */}
-          <div className="lg:sticky lg:top-32">
-            <CourseOverviewCard
-              story={story}
-              totalLessons={totalLessons}
-              completedLessons={completedLessons}
-              needsEnrollment={needsEnrollment}
-              onEnroll={handleEnroll}
-              enrolling={enrolling}
-              user={user}
-            />
+          <div className="relative">
+            <div className="lg:sticky lg:top-[144px]">
+              <CourseOverviewCard
+                story={story}
+                totalLessons={totalLessons}
+                completedLessons={completedLessons}
+                needsEnrollment={needsEnrollment}
+                onEnroll={handleEnroll}
+                enrolling={enrolling}
+                user={user}
+              />
+            </div>
           </div>
 
           {/* Right Column: Interactive Lesson Path */}
