@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "validate:course": "vite-node --root .. ../tools/validate_course_sandboxes.ts",
     "test:run": "vitest run",
     "test": "vitest"
   },

@@ -13,4 +13,12 @@ describe('manifest contract', () => {
     expect(migrated.schemaVersion).toBe('1.0')
     expect(loadManifest(migrated).schemaVersion).toBe('1.0')
   })
+
+  it('accepts namespaced plugin-owned goal evidence', () => {
+    const result = validateManifest({
+      ...propositionFixture,
+      goals: [{ id: 'classifier', evidence: 'logic.classifier_complete' }],
+    })
+    expect(result.valid).toBe(true)
+  })
 })

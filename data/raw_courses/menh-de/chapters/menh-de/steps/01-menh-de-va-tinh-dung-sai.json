@@ -44,48 +44,50 @@
               "schemaVersion": "1.0",
               "kind": "math.sandbox",
               "id": "menh_de_01_classifier",
-              "version": 1,
+              "version": "1",
               "archetypeId": "logic.proposition",
               "domainId": "logic",
               "level": "recognition",
-              "recipe": "core",
+              "recipe": "logic.proposition",
               "outcomeIds": [
                 "M10-LOGIC-01"
               ],
               "prerequisites": [],
               "misconceptions": [],
               "scene": {
-                "objects": []
+                "objects": [],
+                "space": "condition_graph"
               },
-              "config": {},
-              "mode": "proposition_classifier",
-              "activity": {
-                "items": [
-                  {
-                    "id": "p1",
-                    "label": "Hà Nội là thủ đô của Việt Nam",
-                    "controlId": "c_p1",
-                    "expectedType": "proposition"
-                  },
-                  {
-                    "id": "p2",
-                    "label": "Số 15 là số nguyên tố",
-                    "controlId": "c_p2",
-                    "expectedType": "proposition"
-                  },
-                  {
-                    "id": "p3",
-                    "label": "Học toán vui quá!",
-                    "controlId": "c_p3",
-                    "expectedType": "not_proposition"
-                  },
-                  {
-                    "id": "p4",
-                    "label": "2x + 1 = 5",
-                    "controlId": "c_p4",
-                    "expectedType": "open_sentence"
-                  }
-                ]
+              "config": {
+                "mode": "proposition_classifier",
+                "activity": {
+                  "items": [
+                    {
+                      "id": "p1",
+                      "label": "Hà Nội là thủ đô của Việt Nam",
+                      "controlId": "c_p1",
+                      "expectedType": "proposition"
+                    },
+                    {
+                      "id": "p2",
+                      "label": "Số 15 là số nguyên tố",
+                      "controlId": "c_p2",
+                      "expectedType": "proposition"
+                    },
+                    {
+                      "id": "p3",
+                      "label": "Học toán vui quá!",
+                      "controlId": "c_p3",
+                      "expectedType": "not_proposition"
+                    },
+                    {
+                      "id": "p4",
+                      "label": "2x + 1 = 5",
+                      "controlId": "c_p4",
+                      "expectedType": "open_sentence"
+                    }
+                  ]
+                }
               },
               "controls": [
                 {
@@ -156,7 +158,7 @@
               "goals": [
                 {
                   "id": "classify_propositions",
-                  "evidence": "classifier_accuracy"
+                  "evidence": "logic.classifier_complete"
                 }
               ],
               "solutionGraph": {
@@ -191,7 +193,8 @@
               ],
               "accessibility": {
                 "keyboardControls": true,
-                "textAlternative": "Phân loại câu vào 3 hộp: Mệnh đề, Mệnh đề chứa biến, Không phải mệnh đề."
+                "textAlternative": "Phân loại câu vào 3 hộp: Mệnh đề, Mệnh đề chứa biến, Không phải mệnh đề.",
+                "highContrast": true
               }
             }
           }
@@ -223,92 +226,504 @@
     },
     {
       "slide_number": 4,
-      "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+      "title": "Luyện tập có hướng dẫn & kiểm tra độc lập · Trắc nghiệm",
       "blocks": [
         {
-          "id": "b4_quiz_d1",
-          "block_type": "quiz",
+          "id": "b4_assessment_pool_mc",
+          "block_type": "assessment_pool",
           "content": {
+            "poolId": "01-menh-de-va-tinh-dung-sai.multiple_choice",
             "quiz_type": "multiple_choice",
-            "question": "Trong các câu sau, câu nào là **mệnh đề**?",
-            "options": [
+            "items": [
               {
-                "id": "A",
-                "text": "Hôm nay trời đẹp quá!"
+                "quiz_type": "multiple_choice",
+                "question": "Trong các câu sau, câu nào là **mệnh đề**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Hôm nay trời đẹp quá!"
+                  },
+                  {
+                    "id": "B",
+                    "text": "Số 17 là số chẵn."
+                  },
+                  {
+                    "id": "C",
+                    "text": "Bạn có thích học Toán không?"
+                  },
+                  {
+                    "id": "D",
+                    "text": "Hãy giải phương trình $x^2 - 4 = 0$."
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Câu B là một câu khẳng định có tính chân trị (cụ thể là một mệnh đề sai vì 17 là số lẻ). Các câu A (cảm thán), C (hỏi), D (mệnh lệnh) đều không phải mệnh đề.",
+                "id": "mc_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C1"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
               },
               {
-                "id": "B",
-                "text": "Số 17 là số chẵn."
+                "id": "mc_02",
+                "quiz_type": "multiple_choice",
+                "question": "Câu nào sau đây **không phải là mệnh đề**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$2+3=5$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "Số 7 là số nguyên tố."
+                  },
+                  {
+                    "id": "C",
+                    "text": "Bạn có khỏe không?"
+                  },
+                  {
+                    "id": "D",
+                    "text": "Hà Nội là thủ đô của Việt Nam."
+                  }
+                ],
+                "correct": "C",
+                "explanation": "Câu hỏi không có giá trị đúng hoặc sai nên không phải mệnh đề.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C2"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
               },
               {
-                "id": "C",
-                "text": "Bạn có thích học Toán không?"
+                "id": "mc_03",
+                "quiz_type": "multiple_choice",
+                "question": "Câu nào là **mệnh đề chứa biến**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$2x+1=5$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$2+1=3$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "Số 9 là số chính phương."
+                  },
+                  {
+                    "id": "D",
+                    "text": "Hãy tính $x+1$."
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Biến x chưa được gán giá trị và chưa có lượng từ nên câu chưa có chân trị xác định.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C4"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
               },
               {
-                "id": "D",
-                "text": "Hãy giải phương trình $x^2 - 4 = 0$."
+                "id": "mc_04",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây là **mệnh đề sai**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$5^2=25$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "Số 15 là số nguyên tố."
+                  },
+                  {
+                    "id": "C",
+                    "text": "Tam giác đều có ba cạnh bằng nhau."
+                  },
+                  {
+                    "id": "D",
+                    "text": "$0<1$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "15 không phải số nguyên tố vì có ước 3 và 5.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C5"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A02"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_05",
+                "quiz_type": "multiple_choice",
+                "question": "Phát biểu nào vẫn là mệnh đề dù người nói **chưa biết** nó đúng hay sai?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Hôm nay ở Huế có mưa."
+                  },
+                  {
+                    "id": "B",
+                    "text": "Bạn có thích học Toán không?"
+                  },
+                  {
+                    "id": "C",
+                    "text": "Hãy mở sách."
+                  },
+                  {
+                    "id": "D",
+                    "text": "$x+1=2$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Việc chưa biết chân trị không làm mất tính đúng hoặc sai của một câu khẳng định.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C6"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A02"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_06",
+                "quiz_type": "multiple_choice",
+                "question": "Trong bốn câu sau, có bao nhiêu câu là mệnh đề? (1) $2+2=4$; (2) $x+1=2$; (3) Bạn tên gì?; (4) Hãy tính $3+4$.",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "1"
+                  },
+                  {
+                    "id": "B",
+                    "text": "2"
+                  },
+                  {
+                    "id": "C",
+                    "text": "3"
+                  },
+                  {
+                    "id": "D",
+                    "text": "4"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Chỉ câu (1) là câu khẳng định có chân trị xác định.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C3",
+                    "C8"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
               }
-            ],
-            "correct": "B",
-            "explanation": "Câu B là một câu khẳng định có tính chân trị (cụ thể là một mệnh đề sai vì 17 là số lẻ). Các câu A (cảm thán), C (hỏi), D (mệnh lệnh) đều không phải mệnh đề."
+            ]
+          }
+        },
+        {
+          "id": "b4_ref_mc_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "01-menh-de-va-tinh-dung-sai.multiple_choice",
+            "itemId": "mc_01",
+            "phase": "guided_practice"
+          }
+        },
+        {
+          "id": "b4_ref_mc_02",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "01-menh-de-va-tinh-dung-sai.multiple_choice",
+            "itemId": "mc_02",
+            "phase": "guided_practice"
+          }
+        },
+        {
+          "id": "b4_ref_mc_03",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "01-menh-de-va-tinh-dung-sai.multiple_choice",
+            "itemId": "mc_03",
+            "phase": "independent_check"
           }
         }
       ]
     },
     {
       "slide_number": 5,
-      "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+      "title": "Kiểm tra độc lập · Đúng / Sai 4 ý",
       "blocks": [
         {
-          "id": "b5_quiz_d2",
-          "block_type": "quiz",
+          "id": "b5_assessment_pool_tf",
+          "block_type": "assessment_pool",
           "content": {
+            "poolId": "01-menh-de-va-tinh-dung-sai.true_false_group",
             "quiz_type": "true_false_group",
-            "question": "Xét tính đúng hay sai của mỗi khẳng định sau:",
             "items": [
               {
-                "id": "a",
-                "label": "a) Số $\\pi$ là một số vô tỉ.",
-                "correct": true
+                "quiz_type": "true_false_group",
+                "question": "Xét tính đúng hay sai của mỗi khẳng định sau:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "a) Số $\\pi$ là một số vô tỉ.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "b) Tổng ba góc trong một tam giác bằng $180^\\circ$.",
+                    "correct": true
+                  },
+                  {
+                    "id": "c",
+                    "label": "c) Phương trình $x^2 + 1 = 0$ có nghiệm thực.",
+                    "correct": false
+                  },
+                  {
+                    "id": "d",
+                    "label": "d) Năm 2024 là năm nhuận.",
+                    "correct": true
+                  }
+                ],
+                "explanation": "Ý a đúng vì $\\pi \\approx 3.14159...$ là số vô tỉ. Ý b đúng theo định lý tổng các góc trong tam giác. Ý c sai vì $x^2 + 1 \\ge 1 > 0$ với mọi $x \\in \\mathbb{R}$. Ý d đúng vì $2024 \\;\\vdots\\; 4$ nên 2024 là năm nhuận.",
+                "id": "tf_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C52"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A02"
+                  ],
+                  "contentTier": "core"
+                }
               },
               {
-                "id": "b",
-                "label": "b) Tổng ba góc trong một tam giác bằng $180^\\circ$.",
-                "correct": true
-              },
-              {
-                "id": "c",
-                "label": "c) Phương trình $x^2 + 1 = 0$ có nghiệm thực.",
-                "correct": false
-              },
-              {
-                "id": "d",
-                "label": "d) Năm 2024 là năm nhuận.",
-                "correct": true
+                "id": "tf_02",
+                "quiz_type": "true_false_group",
+                "question": "Xét các phát biểu về nhận diện mệnh đề:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "Câu hỏi không có giá trị đúng hoặc sai nên không phải mệnh đề.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "$x+1=2$ với x chưa gán giá trị là một mệnh đề.",
+                    "correct": false
+                  },
+                  {
+                    "id": "c",
+                    "label": "Số 2 là số nguyên tố.",
+                    "correct": true
+                  },
+                  {
+                    "id": "d",
+                    "label": "Hãy giải phương trình $x^2-1=0$ là một mệnh đề.",
+                    "correct": false
+                  }
+                ],
+                "explanation": "Mệnh đề phải là câu khẳng định và có đúng một giá trị chân lý; câu chứa biến tự do, câu hỏi và mệnh lệnh không thỏa điều kiện này.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C7",
+                    "C9"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1",
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A01",
+                    "A02"
+                  ],
+                  "contentTier": "core"
+                }
               }
-            ],
-            "explanation": "Ý a đúng vì $\\pi \\approx 3.14159...$ là số vô tỉ. Ý b đúng theo định lý tổng các góc trong tam giác. Ý c sai vì $x^2 + 1 \\ge 1 > 0$ với mọi $x \\in \\mathbb{R}$. Ý d đúng vì $2024 \\;\\vdots\\; 4$ nên 2024 là năm nhuận."
+            ]
+          }
+        },
+        {
+          "id": "b5_ref_tf_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "01-menh-de-va-tinh-dung-sai.true_false_group",
+            "itemId": "tf_01",
+            "phase": "independent_check"
           }
         }
       ]
     },
     {
       "slide_number": 6,
-      "title": "Thử thách Dạng III · Điền đáp số",
+      "title": "Transfer · Trả lời ngắn và phản biện",
       "blocks": [
         {
-          "id": "b6_quiz_d3",
-          "block_type": "quiz",
+          "id": "b6_assessment_pool_short",
+          "block_type": "assessment_pool",
           "content": {
+            "poolId": "01-menh-de-va-tinh-dung-sai.short_answer",
             "quiz_type": "short_answer",
-            "question": "Cho các câu sau: (1) Số 2 là số nguyên tố chẵn duy nhất. (2) $3 + 5 = 9$. (3) $x + 2 > 5$. (4) Bạn tên gì? (5) Tam giác đều có ba cạnh bằng nhau. Hỏi có bao nhiêu câu là **mệnh đề**?",
-            "correct": "3",
-            "correct_answers": [
-              "3",
-              "ba",
-              "3 câu"
-            ],
-            "explanation": "Có đúng 3 mệnh đề là: (1) - mệnh đề đúng, (2) - mệnh đề sai, (5) - mệnh đề đúng. Câu (3) chứa biến $x$ nên là mệnh đề chứa biến, câu (4) là câu hỏi."
+            "items": [
+              {
+                "quiz_type": "short_answer",
+                "question": "Cho các câu sau: (1) Số 2 là số nguyên tố chẵn duy nhất. (2) $3 + 5 = 9$. (3) $x + 2 > 5$. (4) Bạn tên gì? (5) Tam giác đều có ba cạnh bằng nhau. Hỏi có bao nhiêu câu là **mệnh đề**?",
+                "correct": "3",
+                "correct_answers": [
+                  "3",
+                  "ba",
+                  "3 câu"
+                ],
+                "explanation": "Có đúng 3 mệnh đề là: (1) - mệnh đề đúng, (2) - mệnh đề sai, (5) - mệnh đề đúng. Câu (3) chứa biến $x$ nên là mệnh đề chứa biến, câu (4) là câu hỏi.",
+                "id": "short_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C3"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "short_02",
+                "quiz_type": "short_answer",
+                "question": "Trong các câu sau có bao nhiêu câu là mệnh đề? (1) $4+5=9$; (2) $x^2=1$; (3) Mở cửa sổ!; (4) Tam giác đều có ba cạnh bằng nhau; (5) Bạn đang học gì?",
+                "correct": "2",
+                "correct_answers": [
+                  "2",
+                  "hai",
+                  "2 câu"
+                ],
+                "explanation": "Chỉ (1) và (4) là câu khẳng định có chân trị xác định.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C10"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "short_03",
+                "quiz_type": "short_answer",
+                "question": "Trong năm câu sau, có bao nhiêu câu là mệnh đề? (1) $3<5$; (2) $x>0$; (3) $\\pi$ là số vô tỉ; (4) Hãy tính $2+2$; (5) Bạn có thích Toán không?",
+                "correct": "2",
+                "correct_answers": [
+                  "2",
+                  "hai",
+                  "2 câu"
+                ],
+                "explanation": "Các câu (1) và (3) là mệnh đề; (2) là mệnh đề chứa biến, còn (4) và (5) không phải câu khẳng định.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C11"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "b6_ref_short_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "01-menh-de-va-tinh-dung-sai.short_answer",
+            "itemId": "short_01",
+            "phase": "transfer"
           }
         }
       ]
@@ -329,5 +744,46 @@
       ]
     }
   ],
-  "order_index": 0
+  "order_index": 0,
+  "learning_scheme": {
+    "version": "1.0",
+    "authoring_pool": {
+      "theory": {
+        "min": 1,
+        "max": 2
+      },
+      "sandbox": {
+        "min": 1,
+        "max": 2
+      },
+      "multiple_choice": 6,
+      "true_false_group": 2,
+      "short_answer": 3,
+      "media": {
+        "min": 0,
+        "max": 2
+      }
+    },
+    "delivery": {
+      "guided_practice": {
+        "multiple_choice": 2
+      },
+      "independent_check": {
+        "multiple_choice": 1,
+        "true_false_group": 1
+      },
+      "transfer": {
+        "short_answer": 1
+      }
+    },
+    "interaction_policy": {
+      "required_evidence": [
+        "state_change",
+        "derived_evidence",
+        "pass_condition",
+        "hint_transition"
+      ],
+      "drag_only": false
+    }
+  }
 }

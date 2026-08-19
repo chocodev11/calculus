@@ -17,9 +17,8 @@ def collect_steps(steps_dir):
     for p in sorted(glob.glob(os.path.join(steps_dir, '*.json'))):
         try:
             steps.append(load_json(p))
-        except Exception:
-            # skip invalid json
-            continue
+        except Exception as exc:
+            raise ValueError(f"Invalid JSON in {p}") from exc
     return steps
 
 

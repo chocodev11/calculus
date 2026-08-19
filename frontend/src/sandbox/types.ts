@@ -57,6 +57,18 @@ export type MathValue =
   | PointValue
   | VectorValue
 
+export type GoalEvidence =
+  | 'truth_value'
+  | 'truth_table_complete'
+  | 'unit_circle_value'
+  | 'set_equal'
+  | 'interval_equal'
+  | 'triangle_valid'
+  | 'triangle_solved'
+  | 'measurement_consistent'
+  | 'structured_steps'
+  | `${string}.${string}`
+
 export type PrimitiveState = JsonObject
 
 export interface SceneSpec {
@@ -76,16 +88,7 @@ export interface ControlSpec {
 
 export interface GoalSpec {
   id: string
-  evidence:
-    | 'truth_value'
-    | 'truth_table_complete'
-    | 'unit_circle_value'
-    | 'set_equal'
-    | 'interval_equal'
-    | 'triangle_valid'
-    | 'triangle_solved'
-    | 'measurement_consistent'
-    | 'structured_steps'
+  evidence: GoalEvidence
   target?: JsonValue
   required?: boolean
 }

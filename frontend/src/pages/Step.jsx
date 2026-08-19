@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import api from '../lib/api'
 import { useAuthStore } from '../lib/store'
 import { decodeStepId, encodeStepId, cn } from '../lib/utils'
+import { materializeAssessmentPools } from '../lib/lessonScheme'
 import 'katex/dist/katex.min.css'
 import * as ReactKatexModule from 'react-katex'
 import { TactileButton } from '../components/ui/tactile-button'
@@ -87,7 +88,7 @@ export default function Step() {
       setHasXpBoost(!!boost)
 
       setStep(stepData)
-      setSlides(slidesData)
+      setSlides(materializeAssessmentPools(slidesData))
       setCurrentSlideIndex(0)
       setQuizAnswers({})
       setQuizSubmitted({})
@@ -195,7 +196,7 @@ export default function Step() {
       const quizzesTotal = quizEntries.length
       const quizzesCorrect = quizEntries.filter(r => r.correct).length
       const result = await api.post(`/steps/${id}/complete`, {
-        score: 100,
+        score: quizzesTotal > 0 ? Math.round((quizzesCorrect / quizzesTotal) * 100) : 100,
         time_spent_seconds: timeSpent,
         quizzes_correct: quizzesCorrect,
         quizzes_total: quizzesTotal,
@@ -259,6 +260,12 @@ export default function Step() {
           handleQuizSubmit(b.id, isCorrect, content.explanation)
         }
       })
+      return
+    }
+    if (hasQuiz && !allQuizzesCorrect) {
+      currentQuizBlocks
+        .filter(block => !quizResults[block.id]?.correct)
+        .forEach(block => handleQuizRetry(block.id))
       return
     }
     if (isLastSlide) {
@@ -496,8 +503,8 @@ export default function Step() {
                   onClick={handleFooterAction}
                   className="min-w-[140px]"
                 >
-                  {isLastSlide ? 'Hoàn thành' : 'Tiếp tục'}
-                  <ArrowRight className="w-5 h-5 ml-1.5" />
+                  {quizIsIncorrect ? 'Làm lại câu sai' : isLastSlide ? 'Hoàn thành' : 'Tiếp tục'}
+                  {quizIsIncorrect ? <RotateCcw className="w-5 h-5 ml-1.5" /> : <ArrowRight className="w-5 h-5 ml-1.5" />}
                 </TactileButton>
               </div>
             </>

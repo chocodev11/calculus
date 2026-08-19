@@ -101,7 +101,7 @@ function goalResults(
   evidence: unknown,
 ): RecomputeResult['goals'] {
   return manifest.goals.map(goal => {
-    if (goal.evidence === 'structured_steps') {
+    if (goal.evidence === 'structured_steps' || goal.evidence.startsWith('logic.')) {
       return { id: goal.id, required: goal.required !== false, reached: complete, evidence }
     }
     return { id: goal.id, required: goal.required !== false, reached: false, evidence }
@@ -156,10 +156,10 @@ function recomputeQuantifier(manifest: SandboxManifest, state: PrimitiveState): 
   const incorrect: Array<{ id: string; message: string; misconceptionId?: string }> = []
   const rows = items.map(item => {
     const verdict = state[item.controlId || `verdict:${item.id}`]
-    const negation = item.expectedNegation === undefined
+    const negation = item.negationControlId === undefined
       ? true
       : sameChoice(state[item.negationControlId || `negation:${item.id}`], item.expectedNegation)
-    const witness = item.expectedWitness === undefined
+    const witness = item.witnessControlId === undefined
       ? true
       : sameChoice(state[item.witnessControlId || `witness:${item.id}`], item.expectedWitness)
     const evidence = item.expectedEvidence === undefined
@@ -300,6 +300,18 @@ export const logicPlugin: SandboxPlugin = {
     const config = configOf(manifest)
     const mode = config.mode || 'truth_table'
     const issues: string[] = []
+    const supportedGoalEvidence = new Set([
+      'structured_steps',
+      'logic.classifier_complete',
+      'logic.quantifier_complete',
+      'logic.implication_complete',
+      'logic.parameter_complete',
+    ])
+    manifest.goals.forEach(goal => {
+      if (goal.evidence.startsWith('logic.') && !supportedGoalEvidence.has(goal.evidence)) {
+        issues.push(`Unsupported logic goal evidence: ${goal.evidence}`)
+      }
+    })
     const activityModes = new Set(['proposition_classifier', 'quantifier_negation', 'implication', 'parameter_implication'])
     if (activityModes.has(mode)) {
       if (!config.activity || !Array.isArray(config.activity.items) && mode !== 'implication' && mode !== 'parameter_implication') {

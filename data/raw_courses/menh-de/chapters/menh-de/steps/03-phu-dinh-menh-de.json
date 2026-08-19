@@ -44,51 +44,53 @@
               "schemaVersion": "1.0",
               "kind": "math.sandbox",
               "id": "menh_de_03_negation",
-              "version": 1,
+              "version": "1",
               "archetypeId": "logic.quantifier",
               "domainId": "logic",
               "level": "understanding",
-              "recipe": "core",
+              "recipe": "logic.quantifier",
               "outcomeIds": [
                 "M10-LOGIC-03"
               ],
               "prerequisites": [],
               "misconceptions": [],
               "scene": {
-                "objects": []
+                "objects": [],
+                "space": "condition_graph"
               },
-              "config": {},
-              "mode": "quantifier_negation",
-              "activity": {
-                "items": [
-                  {
-                    "id": "item1",
-                    "label": "Mọi số tự nhiên n thì n(n²-1) chia hết cho 3",
-                    "controlVerdict": "c_v1",
-                    "controlNegation": "c_n1",
-                    "expectedVerdict": "true",
-                    "expectedNegation": "exists_not_divisible",
-                    "expectedWitness": "none"
-                  },
-                  {
-                    "id": "item2",
-                    "label": "Tồn tại x thuộc Q sao cho x² = 2",
-                    "controlVerdict": "c_v2",
-                    "controlNegation": "c_n2",
-                    "expectedVerdict": "false",
-                    "expectedNegation": "forall_not_equal",
-                    "expectedWitness": "sqrt2_irrational"
-                  },
-                  {
-                    "id": "item3",
-                    "label": "Với mọi số thực x thì x² - 6x + 15 > 0",
-                    "controlVerdict": "c_v3",
-                    "controlNegation": "c_n3",
-                    "expectedVerdict": "true",
-                    "expectedNegation": "exists_le_zero",
-                    "expectedWitness": "none"
-                  }
-                ]
+              "config": {
+                "mode": "quantifier_negation",
+                "activity": {
+                  "items": [
+                    {
+                      "id": "item1",
+                      "label": "Mọi số tự nhiên n thì n(n²-1) chia hết cho 3",
+                      "expectedVerdict": "true",
+                      "expectedNegation": "exists_not_divisible",
+                      "expectedWitness": "none",
+                      "controlId": "c_v1",
+                      "negationControlId": "c_n1"
+                    },
+                    {
+                      "id": "item2",
+                      "label": "Tồn tại x thuộc Q sao cho x² = 2",
+                      "expectedVerdict": "false",
+                      "expectedNegation": "forall_not_equal",
+                      "expectedWitness": "sqrt2_irrational",
+                      "controlId": "c_v2",
+                      "negationControlId": "c_n2"
+                    },
+                    {
+                      "id": "item3",
+                      "label": "Với mọi số thực x thì x² - 6x + 15 > 0",
+                      "expectedVerdict": "true",
+                      "expectedNegation": "exists_le_zero",
+                      "expectedWitness": "none",
+                      "controlId": "c_v3",
+                      "negationControlId": "c_n3"
+                    }
+                  ]
+                }
               },
               "controls": [
                 {
@@ -181,7 +183,7 @@
               "goals": [
                 {
                   "id": "quantifier_negation_goals",
-                  "evidence": "quantifier_negation_accuracy"
+                  "evidence": "logic.quantifier_complete"
                 }
               ],
               "solutionGraph": {
@@ -216,7 +218,8 @@
               ],
               "accessibility": {
                 "keyboardControls": true,
-                "textAlternative": "Khảo sát phủ định: P1 đúng, P2 sai, P3 đúng."
+                "textAlternative": "Khảo sát phủ định: P1 đúng, P2 sai, P3 đúng.",
+                "highContrast": true
               }
             }
           }
@@ -248,93 +251,536 @@
     },
     {
       "slide_number": 4,
-      "title": "Luyện tập Dạng I · Trắc nghiệm 4 lựa chọn",
+      "title": "Luyện tập có hướng dẫn & kiểm tra độc lập · Trắc nghiệm",
       "blocks": [
         {
-          "id": "b4_quiz_d1",
-          "block_type": "quiz",
+          "id": "b4_assessment_pool_mc",
+          "block_type": "assessment_pool",
           "content": {
+            "poolId": "03-phu-dinh-menh-de.multiple_choice",
             "quiz_type": "multiple_choice",
-            "question": "Phủ định của mệnh đề $P: \"\\forall x \\in \\mathbb{R},\\; x^2 - x + 1 > 0\"$ là mệnh đề nào sau đây?",
-            "options": [
+            "items": [
               {
-                "id": "A",
-                "text": "$\\overline{P}: \"\\exists x \\in \\mathbb{R},\\; x^2 - x + 1 \\le 0\"$"
+                "quiz_type": "multiple_choice",
+                "question": "Phủ định của mệnh đề $P: \"\\forall x \\in \\mathbb{R},\\; x^2 - x + 1 > 0\"$ là mệnh đề nào sau đây?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\overline{P}: \"\\exists x \\in \\mathbb{R},\\; x^2 - x + 1 \\le 0\"$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\overline{P}: \"\\forall x \\in \\mathbb{R},\\; x^2 - x + 1 \\le 0\"$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\overline{P}: \"\\exists x \\in \\mathbb{R},\\; x^2 - x + 1 < 0\"$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\overline{P}: \"\\forall x \\in \\mathbb{R},\\; x^2 - x + 1 < 0\"$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Theo quy tắc phủ định lượng từ: $\\overline{\\forall}$ đổi thành $\\exists$, và dấu $>$ đổi thành $\\le$. Do đó $\\overline{P}: \"\\exists x \\in \\mathbb{R},\\; x^2 - x + 1 \\le 0\"$.",
+                "id": "mc_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C1"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
               },
               {
-                "id": "B",
-                "text": "$\\overline{P}: \"\\forall x \\in \\mathbb{R},\\; x^2 - x + 1 \\le 0\"$"
+                "id": "mc_02",
+                "quiz_type": "multiple_choice",
+                "question": "Phủ định của $P: \\exists x\\in\\mathbb{R},\\;x^2=1$ là mệnh đề nào?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;x^2\\ne1$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\exists x\\in\\mathbb{R},\\;x^2\\ne1$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;x^2=1$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\exists x\\in\\mathbb{R},\\;x^2\\le1$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Phủ định lượng từ tồn tại bằng lượng từ với mọi, đồng thời phủ định mệnh đề bên trong.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C22",
+                    "C29"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S8"
+                  ],
+                  "archetypeIds": [
+                    "A11"
+                  ],
+                  "contentTier": "core"
+                }
               },
               {
-                "id": "C",
-                "text": "$\\overline{P}: \"\\exists x \\in \\mathbb{R},\\; x^2 - x + 1 < 0\"$"
+                "id": "mc_03",
+                "quiz_type": "multiple_choice",
+                "question": "Phủ định của mệnh đề $x\\ge2$ là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$x>2$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$x\\ne2$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$x<2$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$x\\le2$"
+                  }
+                ],
+                "correct": "C",
+                "explanation": "Phủ định của quan hệ $\\ge$ là quan hệ $<$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C31"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S7"
+                  ],
+                  "archetypeIds": [
+                    "A09"
+                  ],
+                  "contentTier": "core"
+                }
               },
               {
-                "id": "D",
-                "text": "$\\overline{P}: \"\\forall x \\in \\mathbb{R},\\; x^2 - x + 1 < 0\"$"
+                "id": "mc_04",
+                "quiz_type": "multiple_choice",
+                "question": "Phủ định của phát biểu “Mọi số nguyên đều chẵn” là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Mọi số nguyên đều lẻ."
+                  },
+                  {
+                    "id": "B",
+                    "text": "Có một số nguyên lẻ."
+                  },
+                  {
+                    "id": "C",
+                    "text": "Không có số nguyên lẻ."
+                  },
+                  {
+                    "id": "D",
+                    "text": "Mọi số nguyên không chẵn."
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Phủ định của “mọi” là “tồn tại ít nhất một”, và phủ định của chẵn là lẻ.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C23",
+                    "C26"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S6"
+                  ],
+                  "archetypeIds": [
+                    "A08"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_05",
+                "quiz_type": "multiple_choice",
+                "question": "Phủ định của $\\exists n\\in\\mathbb{N}: n^2=4$ là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\exists n\\in\\mathbb{N}:n^2\\ne4$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall n\\in\\mathbb{N}:n^2=4$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists n\\in\\mathbb{N}:n^2<4$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\forall n\\in\\mathbb{N}:n^2\\ne4$"
+                  }
+                ],
+                "correct": "D",
+                "explanation": "Đổi $\\exists$ thành $\\forall$ và đổi $=$ thành $\\ne$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C30",
+                    "C34"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S8"
+                  ],
+                  "archetypeIds": [
+                    "A11"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_06",
+                "quiz_type": "multiple_choice",
+                "question": "Phủ định của $\\forall x\\in\\mathbb{R},\\;x^2+1>0$ là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\exists x\\in\\mathbb{R},\\;x^2+1\\le0$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;x^2+1\\le0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x\\in\\mathbb{R},\\;x^2+1<0$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;x^2+1<0$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Đổi $\\forall$ thành $\\exists$ và $>$ thành $\\le$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C27",
+                    "C32"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S8"
+                  ],
+                  "archetypeIds": [
+                    "A11"
+                  ],
+                  "contentTier": "core"
+                }
               }
-            ],
-            "correct": "A",
-            "explanation": "Theo quy tắc phủ định lượng từ: $\\overline{\\forall}$ đổi thành $\\exists$, và dấu $>$ đổi thành $\\le$. Do đó $\\overline{P}: \"\\exists x \\in \\mathbb{R},\\; x^2 - x + 1 \\le 0\"$."
+            ]
+          }
+        },
+        {
+          "id": "b4_ref_mc_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "03-phu-dinh-menh-de.multiple_choice",
+            "itemId": "mc_01",
+            "phase": "guided_practice"
+          }
+        },
+        {
+          "id": "b4_ref_mc_02",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "03-phu-dinh-menh-de.multiple_choice",
+            "itemId": "mc_02",
+            "phase": "guided_practice"
+          }
+        },
+        {
+          "id": "b4_ref_mc_03",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "03-phu-dinh-menh-de.multiple_choice",
+            "itemId": "mc_03",
+            "phase": "independent_check"
+          }
+        },
+        {
+          "id": "b4_ref_mc_04",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "03-phu-dinh-menh-de.multiple_choice",
+            "itemId": "mc_04",
+            "phase": "independent_check"
           }
         }
       ]
     },
     {
       "slide_number": 5,
-      "title": "Luyện tập Dạng II · Đúng / Sai 4 ý",
+      "title": "Kiểm tra độc lập · Đúng / Sai 4 ý",
       "blocks": [
         {
-          "id": "b5_quiz_d2",
-          "block_type": "quiz",
+          "id": "b5_assessment_pool_tf",
+          "block_type": "assessment_pool",
           "content": {
+            "poolId": "03-phu-dinh-menh-de.true_false_group",
             "quiz_type": "true_false_group",
-            "question": "Xét tính đúng sai của các mệnh đề phủ định sau:",
             "items": [
               {
-                "id": "a",
-                "label": "a) Phủ định của 'Số 13 là số nguyên tố' là 'Số 13 không là số nguyên tố' (mệnh đề sai).",
-                "correct": true
+                "quiz_type": "true_false_group",
+                "question": "Xét tính đúng sai của các mệnh đề phủ định sau:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "a) Phủ định của 'Số 13 là số nguyên tố' là 'Số 13 không là số nguyên tố' (mệnh đề sai).",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "b) Phủ định của '∀x∈R, x² ≥ 0' là '∃x∈R, x² < 0' (mệnh đề sai).",
+                    "correct": true
+                  },
+                  {
+                    "id": "c",
+                    "label": "c) Phủ định của '∃n∈N, n² = n' là '∀n∈N, n² ≠ n' (mệnh đề đúng).",
+                    "correct": false
+                  },
+                  {
+                    "id": "d",
+                    "label": "d) Nếu P là mệnh đề sai thì phủ định P̄ là mệnh đề đúng.",
+                    "correct": true
+                  }
+                ],
+                "explanation": "Ý a đúng vì phủ định có chân trị sai. Ý b đúng vì mệnh đề gốc đúng nên phủ định sai. Ý c sai vì mệnh đề gốc '∃n∈N, n²=n' đúng (với n=0, 1), nên mệnh đề phủ định '∀n∈N, n²≠n' phải là SAI. Ý d đúng theo định nghĩa phủ định.",
+                "id": "tf_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C52"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A02"
+                  ],
+                  "contentTier": "core"
+                }
               },
               {
-                "id": "b",
-                "label": "b) Phủ định của '∀x∈R, x² ≥ 0' là '∃x∈R, x² < 0' (mệnh đề sai).",
-                "correct": true
-              },
-              {
-                "id": "c",
-                "label": "c) Phủ định của '∃n∈N, n² = n' là '∀n∈N, n² ≠ n' (mệnh đề đúng).",
-                "correct": false
-              },
-              {
-                "id": "d",
-                "label": "d) Nếu P là mệnh đề sai thì phủ định P̄ là mệnh đề đúng.",
-                "correct": true
+                "id": "tf_02",
+                "quiz_type": "true_false_group",
+                "question": "Xét các quy tắc phủ định:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "$\\neg(\\forall x, P(x))\\Leftrightarrow\\exists x,\\neg P(x)$.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "$\\neg(\\exists x, P(x))\\Leftrightarrow\\exists x,\\neg P(x)$.",
+                    "correct": false
+                  },
+                  {
+                    "id": "c",
+                    "label": "Phủ định của $>$ là $\\le$.",
+                    "correct": true
+                  },
+                  {
+                    "id": "d",
+                    "label": "Phủ định của “P và Q” là “không P và không Q”.",
+                    "correct": false
+                  }
+                ],
+                "explanation": "Lượng từ phải đổi theo De Morgan; phủ định của “P và Q” là “không P hoặc không Q”.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C31",
+                    "C33"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S7",
+                    "S8"
+                  ],
+                  "archetypeIds": [
+                    "A09",
+                    "A11"
+                  ],
+                  "contentTier": "core"
+                }
               }
-            ],
-            "explanation": "Ý a đúng vì phủ định có chân trị sai. Ý b đúng vì mệnh đề gốc đúng nên phủ định sai. Ý c sai vì mệnh đề gốc '∃n∈N, n²=n' đúng (với n=0, 1), nên mệnh đề phủ định '∀n∈N, n²≠n' phải là SAI. Ý d đúng theo định nghĩa phủ định."
+            ]
+          }
+        },
+        {
+          "id": "b5_ref_tf_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "03-phu-dinh-menh-de.true_false_group",
+            "itemId": "tf_01",
+            "phase": "independent_check"
+          }
+        },
+        {
+          "id": "b5_ref_tf_02",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "03-phu-dinh-menh-de.true_false_group",
+            "itemId": "tf_02",
+            "phase": "independent_check"
           }
         }
       ]
     },
     {
       "slide_number": 6,
-      "title": "Thử thách Dạng III · Điền đáp số",
+      "title": "Transfer · Trả lời ngắn và phản biện",
       "blocks": [
         {
-          "id": "b6_quiz_d3",
-          "block_type": "quiz",
+          "id": "b6_assessment_pool_short",
+          "block_type": "assessment_pool",
           "content": {
+            "poolId": "03-phu-dinh-menh-de.short_answer",
             "quiz_type": "short_answer",
-            "question": "Cho mệnh đề $P: \"\\exists x \\in \\mathbb{R},\\; x^2 + 4 = 0\"$. Mệnh đề phủ định $\\overline{P}$ có chân trị là gì? (Nhập 'Đúng' hoặc 'Sai')",
-            "correct": "Đúng",
-            "correct_answers": [
-              "Đúng",
-              "Dung",
-              "true",
-              "1"
-            ],
-            "explanation": "Mệnh đề $P$ là mệnh đề SAI (vì $x^2 + 4 \\ge 4 > 0$ với mọi $x \\in \\mathbb{R}$). Do đó mệnh đề phủ định $\\overline{P}: \"\\forall x \\in \\mathbb{R},\\; x^2 + 4 \\neq 0\"$ có chân trị là ĐÚNG."
+            "items": [
+              {
+                "quiz_type": "short_answer",
+                "question": "Cho mệnh đề $P: \"\\exists x \\in \\mathbb{R},\\; x^2 + 4 = 0\"$. Mệnh đề phủ định $\\overline{P}$ có chân trị là gì? (Nhập 'Đúng' hoặc 'Sai')",
+                "correct": "Đúng",
+                "correct_answers": [
+                  "Đúng",
+                  "Dung",
+                  "true",
+                  "1"
+                ],
+                "explanation": "Mệnh đề $P$ là mệnh đề SAI (vì $x^2 + 4 \\ge 4 > 0$ với mọi $x \\in \\mathbb{R}$). Do đó mệnh đề phủ định $\\overline{P}: \"\\forall x \\in \\mathbb{R},\\; x^2 + 4 \\neq 0\"$ có chân trị là ĐÚNG.",
+                "id": "short_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C3"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "short_02",
+                "quiz_type": "short_answer",
+                "question": "Viết phủ định của mệnh đề $x>3$ dưới dạng bất đẳng thức. Đây là câu trả lời ngắn, nhập $x\\le3$.",
+                "correct": "x≤3",
+                "correct_answers": [
+                  "x≤3",
+                  "x <= 3",
+                  "x<=3"
+                ],
+                "explanation": "Phủ định của $x>3$ là $x\\le3$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C31"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S7"
+                  ],
+                  "archetypeIds": [
+                    "A09"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "short_03",
+                "quiz_type": "short_answer",
+                "question": "Trong phủ định của $\\forall x\\in\\mathbb{R},\\;\\exists y\\in\\mathbb{R},\\;P(x,y)$ có bao nhiêu lượng từ bị đổi?",
+                "correct": "2",
+                "correct_answers": [
+                  "2",
+                  "hai",
+                  "2 lượng từ"
+                ],
+                "explanation": "Cả $\\forall$ và $\\exists$ đều phải đổi khi phủ định.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C33",
+                    "C34"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S8"
+                  ],
+                  "archetypeIds": [
+                    "A11"
+                  ],
+                  "contentTier": "core"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "b6_ref_short_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "03-phu-dinh-menh-de.short_answer",
+            "itemId": "short_01",
+            "phase": "transfer"
+          }
+        },
+        {
+          "id": "b6_ref_short_02",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "03-phu-dinh-menh-de.short_answer",
+            "itemId": "short_02",
+            "phase": "transfer"
           }
         }
       ]
@@ -355,5 +801,46 @@
       ]
     }
   ],
-  "order_index": 2
+  "order_index": 2,
+  "learning_scheme": {
+    "version": "1.0",
+    "authoring_pool": {
+      "theory": {
+        "min": 1,
+        "max": 2
+      },
+      "sandbox": {
+        "min": 1,
+        "max": 2
+      },
+      "multiple_choice": 6,
+      "true_false_group": 2,
+      "short_answer": 3,
+      "media": {
+        "min": 0,
+        "max": 2
+      }
+    },
+    "delivery": {
+      "guided_practice": {
+        "multiple_choice": 2
+      },
+      "independent_check": {
+        "multiple_choice": 2,
+        "true_false_group": 2
+      },
+      "transfer": {
+        "short_answer": 2
+      }
+    },
+    "interaction_policy": {
+      "required_evidence": [
+        "state_change",
+        "derived_evidence",
+        "pass_condition",
+        "hint_transition"
+      ],
+      "drag_only": false
+    }
+  }
 }

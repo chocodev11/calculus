@@ -26,7 +26,7 @@ def _count_quiz_blocks_in_story(story) -> int:
                 for b in blocks:
                     if not isinstance(b, dict):
                         continue
-                    if b.get('type') == 'quiz' or b.get('block_type') == 'quiz':
+                    if b.get('type') == 'quiz' or b.get('block_type') in ('quiz', 'assessment_ref'):
                         total += 1
     return total
 

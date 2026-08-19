@@ -73,7 +73,12 @@
       "required": ["id", "evidence"],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
-        "evidence": { "enum": ["truth_value", "truth_table_complete", "unit_circle_value", "set_equal", "interval_equal", "triangle_valid", "triangle_solved", "measurement_consistent", "structured_steps"] },
+        "evidence": {
+          "anyOf": [
+            { "enum": ["truth_value", "truth_table_complete", "unit_circle_value", "set_equal", "interval_equal", "triangle_valid", "triangle_solved", "measurement_consistent", "structured_steps"] },
+            { "type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$" }
+          ]
+        },
         "target": {},
         "required": { "type": "boolean" }
       },

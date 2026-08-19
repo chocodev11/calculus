@@ -172,7 +172,7 @@ async def get_dashboard(
                     for b in blocks:
                         if not isinstance(b, dict):
                             continue
-                        if b.get('type') == 'quiz' or b.get('block_type') == 'quiz':
+                        if b.get('type') == 'quiz' or b.get('block_type') in ('quiz', 'assessment_ref'):
                             exercises_count += 1
 
         story_response = StoryDetailResponse(

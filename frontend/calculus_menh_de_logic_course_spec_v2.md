@@ -1905,6 +1905,45 @@ source MC
 → Mastery Check = MC hoặc constructed response
 ```
 
+## 31.1. LESSON SCHEME: AUTHORING POOL VS LEARNER DELIVERY
+
+Mỗi lesson dùng một contract mềm, không dùng số screen cố định. Baseline để
+authoring và review chất lượng là:
+
+```text
+1–2 khối lý thuyết
+1–2 sandbox
+6 câu trắc nghiệm nhiều lựa chọn
+2 nhóm Đúng / Sai, mỗi nhóm 4 ý
+3 câu trả lời ngắn
+0–2 media động viên xen giữa slide học thuật
+```
+
+Đây là **pool authoring**, không phải số câu bắt buộc phải hiển thị trong một
+lần học. Learner delivery được chọn theo mục tiêu của lesson và có thể thay
+đổi số lượng hoặc cấu trúc:
+
+```text
+guided practice → ít câu, có scaffold
+independent check → trộn MC và Đúng / Sai
+transfer → trả lời ngắn, witness, negation hoặc counterexample
+```
+
+Trong JSON canonical, `assessment_pool` chỉ là kho câu hỏi có metadata nguồn và
+không được render trực tiếp. `assessment_ref` là đường giao hàng deterministic;
+chỉ các ref được chọn mới trở thành quiz trong runtime. Pool còn lại dành cho
+review/adaptive routing sau này, không được coi là mastery đã đạt.
+
+Một lesson không đạt chỉ vì có ít hơn một con số screen cố định; lesson chỉ đạt
+khi đủ learning need, meaningful interaction, source coverage và assessment
+delivery đã khai báo. T/F và short answer phải đi qua cùng runtime contract như
+MC, không được để content generator tạo ra nhưng frontend bỏ qua.
+
+Sandbox chỉ được giữ khi action làm thay đổi mathematical/reasoning/evidence
+state. Dropdown, drag hoặc animation trang trí không tự được tính là
+interaction; mọi hint phải có trạng thái `available → revealed → satisfied` và
+để lại dấu vết khi learner đạt điều kiện, thay vì biến mất không giải thích.
+
 ---
 
 # 32. SOURCE-AUTHENTIC MASTERIES

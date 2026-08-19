@@ -39,6 +39,10 @@ function stringAt(value: Record<string, unknown>, key: string): string | null {
   return typeof value[key] === 'string' && value[key] ? value[key] as string : null
 }
 
+function isNamespacedEvidence(value: unknown): value is string {
+  return typeof value === 'string' && /^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$/.test(value)
+}
+
 function validateControl(value: unknown, index: number): ValidationIssue[] {
   const path = `controls[${index}]`
   if (!isObject(value)) return [issue(path, 'invalid_control', 'Control must be an object')]
@@ -120,7 +124,7 @@ export function validateManifest(input: unknown): ValidationResult {
     input.goals.forEach((goal, index) => {
       if (!isObject(goal) || typeof goal.id !== 'string' || typeof goal.evidence !== 'string') {
         issues.push(issue(`goals[${index}]`, 'invalid_goal', 'Goal id and evidence are required'))
-      } else if (!GOAL_EVIDENCE.has(goal.evidence)) {
+      } else if (!GOAL_EVIDENCE.has(goal.evidence) && !isNamespacedEvidence(goal.evidence)) {
         issues.push(issue(`goals[${index}].evidence`, 'invalid_goal_evidence', 'Unsupported goal evidence'))
       } else if (ids.has(goal.id)) {
         issues.push(issue(`goals[${index}].id`, 'duplicate_id', 'Goal ids must be unique'))

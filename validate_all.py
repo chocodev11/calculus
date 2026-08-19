@@ -448,6 +448,140 @@ def validate_quiz(filepath, block_id, content):
     if len(values) != len(set(str(v) for v in values)):
         err(filepath, f"Quiz {block_id}: duplicate option values detected")
 
+def validate_assessment_pool(filepath, block_id, content, pools):
+    """Validate an authoring-only assessment pool and index its items."""
+    pool_id = content.get("poolId")
+    quiz_type = content.get("quiz_type")
+    items = content.get("items")
+
+    if not isinstance(pool_id, str) or not pool_id:
+        err(filepath, f"Assessment pool {block_id}: missing 'poolId'")
+        return
+    if pool_id in pools:
+        err(filepath, f"Assessment pool {block_id}: duplicate poolId '{pool_id}'")
+    if quiz_type not in ("multiple_choice", "true_false_group", "short_answer"):
+        err(filepath, f"Assessment pool {block_id}: unsupported quiz_type '{quiz_type}'")
+    if not isinstance(items, list) or not items:
+        err(filepath, f"Assessment pool {block_id}: 'items' must be a non-empty array")
+        return
+
+    item_ids = set()
+    for index, item in enumerate(items):
+        if not isinstance(item, dict):
+            err(filepath, f"Assessment pool {block_id}: items[{index}] must be an object")
+            continue
+        item_id = item.get("id")
+        if not isinstance(item_id, str) or not item_id:
+            err(filepath, f"Assessment pool {block_id}: items[{index}] missing 'id'")
+        elif item_id in item_ids:
+            err(filepath, f"Assessment pool {block_id}: duplicate item id '{item_id}'")
+        else:
+            item_ids.add(item_id)
+        if item.get("quiz_type") != quiz_type:
+            err(filepath, f"Assessment pool {block_id}: item {item_id} quiz_type does not match pool")
+        validate_quiz(filepath, f"{block_id}.{item_id or index}", item)
+
+    pools[pool_id] = {"quiz_type": quiz_type, "items": {item.get("id"): item for item in items if isinstance(item, dict)}}
+
+def validate_learning_scheme(filepath, data, pool_blocks, ref_blocks):
+    """Validate the canonical lesson authoring pool and delivery contract."""
+    scheme = data.get("learning_scheme")
+    if not isinstance(scheme, dict):
+        if pool_blocks or ref_blocks:
+            err(filepath, "Assessment pools/references require a learning_scheme")
+        return
+
+    if scheme.get("version") != "1.0":
+        err(filepath, "learning_scheme.version must be '1.0'")
+
+    authoring_pool = scheme.get("authoring_pool")
+    if not isinstance(authoring_pool, dict):
+        err(filepath, "learning_scheme.authoring_pool must be an object")
+        authoring_pool = {}
+
+    for range_name in ("theory", "sandbox", "media"):
+        value = authoring_pool.get(range_name)
+        if not isinstance(value, dict) or not isinstance(value.get("min"), int) or not isinstance(value.get("max"), int):
+            err(filepath, f"learning_scheme.authoring_pool.{range_name} must define integer min/max")
+        elif value["min"] < 0 or value["min"] > value["max"]:
+            err(filepath, f"learning_scheme.authoring_pool.{range_name} has invalid min/max")
+
+    expected_pool_counts = {}
+    for quiz_type in ("multiple_choice", "true_false_group", "short_answer"):
+        count = authoring_pool.get(quiz_type)
+        if not isinstance(count, int) or count <= 0:
+            err(filepath, f"learning_scheme.authoring_pool.{quiz_type} must be a positive integer")
+        else:
+            expected_pool_counts[quiz_type] = count
+
+    policy = scheme.get("interaction_policy")
+    required_evidence = policy.get("required_evidence") if isinstance(policy, dict) else None
+    if not isinstance(required_evidence, list) or not required_evidence:
+        err(filepath, "learning_scheme.interaction_policy.required_evidence must be a non-empty list")
+    if isinstance(policy, dict) and not isinstance(policy.get("drag_only"), bool):
+        err(filepath, "learning_scheme.interaction_policy.drag_only must be boolean")
+
+    pools = {}
+    for block_id, content in pool_blocks:
+        validate_assessment_pool(filepath, block_id, content, pools)
+
+    pool_counts = {quiz_type: 0 for quiz_type in expected_pool_counts}
+    for pool in pools.values():
+        if pool["quiz_type"] in pool_counts:
+            pool_counts[pool["quiz_type"]] += len(pool["items"])
+    for quiz_type, expected in expected_pool_counts.items():
+        if pool_counts[quiz_type] != expected:
+            err(filepath, f"learning_scheme authoring pool has {pool_counts[quiz_type]} {quiz_type} items; expected {expected}")
+
+    delivery = scheme.get("delivery")
+    if not isinstance(delivery, dict) or not delivery:
+        err(filepath, "learning_scheme.delivery must be a non-empty object")
+        delivery = {}
+
+    delivered = {}
+    seen_refs = set()
+    for block_id, content in ref_blocks:
+        if not isinstance(content, dict):
+            err(filepath, f"Assessment reference {block_id}: content must be an object")
+            continue
+        pool_id = content.get("poolId")
+        item_id = content.get("itemId")
+        phase = content.get("phase")
+        if not isinstance(pool_id, str) or not pool_id:
+            err(filepath, f"Assessment reference {block_id}: missing 'poolId'")
+            continue
+        if not isinstance(item_id, str) or not item_id:
+            err(filepath, f"Assessment reference {block_id}: missing 'itemId'")
+            continue
+        if not isinstance(phase, str) or not phase:
+            err(filepath, f"Assessment reference {block_id}: missing 'phase'")
+            continue
+        pool = pools.get(pool_id)
+        if pool is None:
+            err(filepath, f"Assessment reference {block_id}: unknown pool '{pool_id}'")
+            continue
+        if item_id not in pool["items"]:
+            err(filepath, f"Assessment reference {block_id}: unknown item '{item_id}' in pool '{pool_id}'")
+            continue
+        ref_key = (phase, pool_id, item_id)
+        if ref_key in seen_refs:
+            err(filepath, f"Assessment reference {block_id}: duplicate delivery reference")
+        seen_refs.add(ref_key)
+        delivered.setdefault(phase, {})[pool["quiz_type"]] = delivered.setdefault(phase, {}).get(pool["quiz_type"], 0) + 1
+
+    phases = set(delivery) | set(delivered)
+    quiz_types = set(expected_pool_counts)
+    for phase in phases:
+        expected_phase = delivery.get(phase, {})
+        actual_phase = delivered.get(phase, {})
+        for quiz_type in quiz_types | set(expected_phase) | set(actual_phase):
+            expected = expected_phase.get(quiz_type, 0)
+            actual = actual_phase.get(quiz_type, 0)
+            if not isinstance(expected, int) or expected < 0:
+                err(filepath, f"learning_scheme.delivery.{phase}.{quiz_type} must be a non-negative integer")
+            elif actual != expected:
+                err(filepath, f"learning_scheme delivery has {actual} {quiz_type} items in {phase}; expected {expected}")
+
 def validate_text(filepath, block_id, content):
     """Validate text block content."""
     if "heading" not in content and "paragraphs" not in content and "content" not in content:
@@ -505,6 +639,8 @@ def validate_step(filepath, data):
     ids_seen = set()
     interaction_count = 0
     slide_indices = []
+    pool_blocks = []
+    ref_blocks = []
     
     for si, slide in enumerate(data["slides"]):
         slide_idx = slide.get("order_index", si)
@@ -554,6 +690,10 @@ def validate_step(filepath, data):
                     
             elif btype == "quiz":
                 validate_quiz(filepath, bid, content)
+            elif btype == "assessment_pool":
+                pool_blocks.append((bid, content))
+            elif btype == "assessment_ref":
+                ref_blocks.append((bid, content))
             elif btype == "text":
                 validate_text(filepath, bid, content)
             elif btype == "math":
@@ -574,6 +714,8 @@ def validate_step(filepath, data):
         warn(filepath, f"No interaction blocks found")
     elif interaction_count > 1:
         warn(filepath, f"Multiple interaction blocks ({interaction_count})")
+
+    validate_learning_scheme(filepath, data, pool_blocks, ref_blocks)
 
 def validate_chapter(filepath, data):
     """Validate a chapter.json file."""
@@ -668,12 +810,17 @@ def process_directory():
                 order_indices.append(oi)
                 
                 slide_count = len(sdata.get("slides", []))
-                quiz_count = sum(1 for s in sdata.get("slides", []) for b in s.get("blocks", []) if b.get("type") == "quiz")
+                quiz_count = sum(
+                    1
+                    for s in sdata.get("slides", [])
+                    for b in s.get("blocks", [])
+                    if b.get("type", b.get("block_type")) in ("quiz", "assessment_ref")
+                )
                 interaction_types = []
                 for s in sdata.get("slides", []):
                     for b in s.get("blocks", []):
-                        if b.get("type") == "interaction":
-                            c = b.get("content", {})
+                        if b.get("type", b.get("block_type")) == "interaction":
+                            c = b.get("content", b.get("block_data", {}))
                             it = c.get("interactionType", "?")
                             mode = c.get("lesson", {}).get("mode", "")
                             if mode:
