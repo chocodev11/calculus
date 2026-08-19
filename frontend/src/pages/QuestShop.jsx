@@ -6,7 +6,6 @@ import {
   Sparkles,
   Flame,
   Zap,
-  Target,
   Trophy,
   ScrollText,
   ShoppingBag,
@@ -24,6 +23,7 @@ import { useAuthStore, useQuestStore, useShopStore, useUIStore } from '../lib/st
 import { t } from '../lib/locale'
 import { TactileButton } from '../components/ui/tactile-button'
 import { GamifyBadge } from '../components/ui/gamify-badge'
+import { QuestIcon } from '../components/ui/semantic-icon'
 
 export default function QuestShop() {
   const location = useLocation()
@@ -95,10 +95,10 @@ export default function QuestShop() {
           {activeTab === 'quests' && (
             <motion.div
               key="quests"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.16, ease: 'easeOut' }}
             >
               <QuestsPanel />
             </motion.div>
@@ -107,10 +107,10 @@ export default function QuestShop() {
           {activeTab === 'shop' && (
             <motion.div
               key="shop"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.16, ease: 'easeOut' }}
             >
               <ShopPanel />
             </motion.div>
@@ -119,10 +119,10 @@ export default function QuestShop() {
           {activeTab === 'inventory' && (
             <motion.div
               key="inventory"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.16, ease: 'easeOut' }}
             >
               <InventoryPanel />
             </motion.div>
@@ -177,7 +177,7 @@ function QuestsPanel() {
     }
     await fetchUser()
     setClaimingAll(false)
-    showToast(`+${total} Xu đã nhận thành công! 🎉`, 'success')
+    showToast(`+${total} Xu đã nhận thành công!`, 'success')
   }
 
   if (isLoading) {
@@ -225,7 +225,7 @@ function QuestsPanel() {
             >
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 <div className="w-12 h-12 rounded-2xl bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-amber-600 shrink-0">
-                  <Target className="w-6 h-6" />
+                  <QuestIcon quest={quest} className="w-6 h-6" />
                 </div>
                 <div className="space-y-1.5 flex-1 min-w-0">
                   <h3 className="font-extrabold text-base text-slate-900 truncate">

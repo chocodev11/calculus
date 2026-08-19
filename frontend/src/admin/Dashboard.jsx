@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { BookOpen, Users, Award, TrendingUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { CourseIcon } from '../components/ui/semantic-icon'
 
 const API_URL = '/api/v1'
 
@@ -77,7 +78,9 @@ export default function AdminDashboard() {
               className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <span className="text-2xl">{course.icon}</span>
+                <span className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center">
+                  <CourseIcon course={course} className="w-5 h-5" />
+                </span>
                 <div>
                   <p className="font-medium">{course.title}</p>
                   <p className="text-sm text-gray-500">{course.difficulty}</p>

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
 import { t, fmt } from '../lib/locale'
 import {
   Flame,
@@ -32,7 +31,6 @@ import Landing from './Landing'
 import LearningStreakCard from '../components/LearningStreakCard'
 import HeartsCard from '../components/HeartsCard'
 import { TactileButton } from '../components/ui/tactile-button'
-import { GamifyBadge } from '../components/ui/gamify-badge'
 import { encodeStepId } from '../lib/utils'
 
 export default function Home() {
@@ -112,19 +110,15 @@ export default function Home() {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8 font-sans">
       
       {/* ─── Top Greeting Banner ────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-[0_4px_0_0_#E2E8F0]">
+      <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 shadow-[0_4px_0_0_#E2E8F0]">
         <div className="space-y-1">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Chào mừng, {user?.display_name || user?.username || 'Học viên'}! 👋
+            <span>Chào mừng, {user?.display_name || user?.username || 'Học viên'}!</span>
+            <Sparkles className="inline-block w-5 h-5 sm:w-6 sm:h-6 ml-1 text-indigo-500 align-[-2px]" aria-hidden="true" />
           </h1>
           <p className="text-sm font-medium text-slate-500">
             {friendlyLine}
           </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <GamifyBadge type="streak" value={user?.current_streak || 0} />
-          <GamifyBadge type="xp" value={user?.xp || 0} />
-          <GamifyBadge type="hearts" value={user?.hearts ?? 5} max={5} />
         </div>
       </div>
 

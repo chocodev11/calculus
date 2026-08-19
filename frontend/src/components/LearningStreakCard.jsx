@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Flame } from 'lucide-react'
+import { Check, Flame, Snowflake } from 'lucide-react'
 import api from '../lib/api'
 import { t, fmt } from '../lib/locale'
 
@@ -83,7 +83,7 @@ export default function LearningStreakCard() {
                       : 'bg-slate-100 text-slate-400'
                   }`}
                 >
-                  {frozen ? '❄' : done ? '✓' : d[0]}
+                  {frozen ? <Snowflake className="w-4 h-4" aria-hidden="true" /> : done ? <Check className="w-4 h-4 stroke-[3]" aria-hidden="true" /> : d[0]}
                 </div>
                 <span className={`text-[10px] font-bold ${isToday ? 'text-indigo-600' : 'text-slate-400'}`}>
                   {d}
@@ -98,11 +98,13 @@ export default function LearningStreakCard() {
       <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
         {todayCompleted ? (
           <span className="text-emerald-600 flex items-center gap-1">
-            ✓ {t.streakCard?.completedToday || 'Đã duy trì hôm nay!'}
+            <Check className="w-4 h-4 stroke-[3]" aria-hidden="true" />
+            {t.streakCard?.completedToday || 'Đã duy trì hôm nay!'}
           </span>
         ) : (
           <span className="text-amber-600 flex items-center gap-1">
-            🔥 {t.streakCard?.notCompletedToday || 'Học 1 bài để giữ chuỗi!'}
+            <Flame className="w-4 h-4 fill-amber-500" aria-hidden="true" />
+            {t.streakCard?.notCompletedToday || 'Học 1 bài để giữ chuỗi!'}
           </span>
         )}
       </div>

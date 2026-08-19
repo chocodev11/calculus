@@ -53,7 +53,7 @@ export function GamifyBadge({
       onClick={onClick}
       className={cn(
         'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-extrabold tracking-wide select-none',
-        'tabular-nums transition-all duration-150',
+        'tabular-nums transition-[transform,background-color,border-color,color] duration-150',
         config.bg,
         config.bevel,
         onClick ? 'cursor-pointer active:translate-y-0.5 active:border-b' : '',

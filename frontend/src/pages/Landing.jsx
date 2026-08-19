@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { 
   Sparkles, ArrowRight, CheckCircle2, Flame, Zap, Trophy, Heart, 
   Layers, Compass, Check, Star, ShieldCheck, Play, ArrowUpRight,
-  TrendingUp, BookOpen, Clock, Activity, Cpu, Sliders
+  TrendingUp, BookOpen, Clock, Activity, Cpu, Sliders, Rocket
 } from 'lucide-react'
 import { TactileButton } from '../components/ui/tactile-button'
 import { GamifyBadge } from '../components/ui/gamify-badge'
@@ -29,7 +28,7 @@ export default function Landing() {
             
             {/* Pill Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs sm:text-sm font-bold shadow-sm">
-              <span className="flex h-2 w-2 rounded-full bg-indigo-600 animate-ping" />
+              <span className="flex h-2 w-2 rounded-full bg-indigo-600" />
               <Sparkles className="w-4 h-4 text-indigo-600" />
               <span>Phương pháp trực quan hóa toán học tương tác</span>
             </div>
@@ -401,7 +400,10 @@ export default function Landing() {
                 <tr className="border-b border-slate-200 bg-slate-50">
                   <th className="py-4 px-6 font-bold text-slate-900">Tiêu chí học tập</th>
                   <th className="py-4 px-6 font-extrabold text-indigo-600 bg-indigo-50/70 border-x border-indigo-100">
-                    Calculus.app 🚀
+                    <span className="inline-flex items-center gap-1.5">
+                      Calculus.app
+                      <Rocket className="w-4 h-4" aria-hidden="true" />
+                    </span>
                   </th>
                   <th className="py-4 px-6 font-medium text-slate-500">Video bài giảng thụ động</th>
                   <th className="py-4 px-6 font-medium text-slate-500">Sách bài tập truyền thống</th>
@@ -607,7 +609,7 @@ function HeroInteractiveDemo() {
 
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+          <Activity className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
           <span className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
             Phòng Thí Nghiệm Tiếp Tuyến
           </span>

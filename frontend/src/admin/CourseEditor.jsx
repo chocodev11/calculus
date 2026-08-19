@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronDown, ChevronRight, Plus, Save, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { CourseIcon } from '../components/ui/semantic-icon'
 
 const API_URL = '/api/v1'
 
@@ -37,7 +38,9 @@ export default function AdminCourseEditor() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <span className="text-4xl">{course.icon}</span>
+          <span className="w-14 h-14 rounded-2xl bg-indigo-50 border-2 border-indigo-200 text-indigo-600 flex items-center justify-center shadow-[0_3px_0_0_#C7D2FE]">
+            <CourseIcon course={course} className="w-7 h-7" />
+          </span>
           <div>
             <h2 className="text-2xl font-bold text-gray-800">{course.title}</h2>
             <p className="text-gray-500">{course.slug}</p>

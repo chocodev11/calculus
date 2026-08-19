@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Compass, User, Flame, Zap, Coins, Settings, LogOut, HelpCircle, Bell, ScrollText, Sparkles } from 'lucide-react'
+import { Home, Compass, User, LogOut, ScrollText, Sparkles, Sigma } from 'lucide-react'
 import { useAuthStore, useUIStore, useQuestStore } from '../lib/store'
 import Toast from './Toast'
 import AnimatedOutlet from './AnimatedOutlet'
@@ -8,8 +8,6 @@ import { t } from '../lib/locale'
 import { GamifyBadge } from './ui/gamify-badge'
 import { TactileButton } from './ui/tactile-button'
 
-// shadcn/ui components
-import { Button } from './ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import {
   DropdownMenu,
@@ -58,7 +56,7 @@ export default function Layout() {
           {/* Left: Brand Identity with Mathematical Integral Icon */}
           <Link to="/" className="flex items-center gap-2.5 group select-none">
             <div className="w-10 h-10 rounded-xl bg-indigo-600 border-b-2 border-indigo-800 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
-              <span className="font-serif italic font-extrabold text-2xl leading-none">∫</span>
+              <Sigma className="w-6 h-6 stroke-[2.5]" aria-hidden="true" />
             </div>
             <div className="flex flex-col">
               <span className="font-extrabold text-xl tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
@@ -84,7 +82,7 @@ export default function Layout() {
                   <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
                   <span>{label}</span>
                   {path === '/quests' && claimableCount > 0 && (
-                    <span className="w-5 h-5 bg-amber-500 text-white text-[10px] rounded-full flex items-center justify-center font-extrabold shadow-sm animate-pulse">
+                    <span className="w-5 h-5 bg-amber-500 text-white text-[10px] rounded-full flex items-center justify-center font-extrabold shadow-sm">
                       {claimableCount}
                     </span>
                   )}

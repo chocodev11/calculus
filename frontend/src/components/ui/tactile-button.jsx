@@ -37,7 +37,7 @@ export const TactileButton = React.forwardRef(({
       disabled={disabled}
       className={cn(
         'relative inline-flex items-center justify-center font-sans tracking-wide select-none cursor-pointer whitespace-nowrap shrink-0',
-        'transition-all duration-100 ease-out active:translate-y-1',
+        'transition-[transform,background-color,border-color,box-shadow,color] duration-100 ease-out active:translate-y-1',
         'disabled:opacity-50 disabled:pointer-events-none disabled:active:translate-y-0 disabled:active:border-b-4',
         variantStyles[variant] || variantStyles.primary,
         sizeStyles[size] || sizeStyles.md,

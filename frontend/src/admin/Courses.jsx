@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react'
+import { CourseIcon } from '../components/ui/semantic-icon'
 
 const API_URL = '/api/v1'
 
@@ -45,7 +46,9 @@ export default function AdminCourses() {
               <tr key={course.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{course.icon}</span>
+                    <span className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center">
+                      <CourseIcon course={course} className="w-5 h-5" />
+                    </span>
                     <div>
                       <p className="font-medium text-gray-800">{course.title}</p>
                       <p className="text-sm text-gray-500">{course.slug}</p>

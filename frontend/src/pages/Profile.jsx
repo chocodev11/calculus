@@ -7,6 +7,7 @@ import api from '../lib/api'
 import { t } from '../lib/locale'
 import { TactileButton } from '../components/ui/tactile-button'
 import { GamifyBadge } from '../components/ui/gamify-badge'
+import { AchievementIcon } from '../components/ui/semantic-icon'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -225,10 +226,10 @@ export default function Profile() {
           {activeTab === 'overview' && (
             <motion.div
               key="overview"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.16, ease: 'easeOut' }}
               className="space-y-6"
             >
               {/* Stat Cards 3-Column */}
@@ -298,10 +299,10 @@ export default function Profile() {
           {activeTab === 'achievements' && (
             <motion.div
               key="achievements"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.16, ease: 'easeOut' }}
               className="space-y-4"
             >
               {/* Filter Pills */}
@@ -339,7 +340,7 @@ export default function Profile() {
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0 ${
                       ach.earned ? 'bg-amber-100' : 'bg-slate-100 grayscale'
                     }`}>
-                      {ach.icon || '🏅'}
+                      <AchievementIcon achievement={ach} className="w-6 h-6 text-amber-600" />
                     </div>
 
                     <div className="flex-1 min-w-0">

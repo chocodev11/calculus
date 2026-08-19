@@ -107,7 +107,7 @@ function CourseCard({ course }) {
     >
       {/* Visual Tile */}
       <motion.div
-        whileHover={{ y: -4 }}
+        whileHover={{ y: -2 }}
         whileTap={{ y: 0 }}
         className="relative w-44 h-44 sm:w-48 sm:h-48 bg-white border-2 border-slate-200 rounded-3xl shadow-[0_6px_0_0_#E2E8F0] group-hover:border-indigo-400 group-hover:shadow-[0_8px_0_0_#C7D2FE] flex flex-col items-center justify-center p-4 transition-all duration-200 cursor-pointer"
       >

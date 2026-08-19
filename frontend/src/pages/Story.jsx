@@ -15,7 +15,6 @@ import {
   X,
   GraduationCap
 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
 import api from '../lib/api'
 import { useAuthStore } from '../lib/store'
 import { encodeStepId, cn } from '../lib/utils'
@@ -422,8 +421,9 @@ function LessonModal({ lesson, isLocked, onClose, storySlug }) {
             </TactileButton>
           ) : (
             <div className="space-y-3">
-              <p className="text-xs text-rose-500 font-bold text-center">
-                🔒 Bài học này đang bị khóa. Hãy hoàn thành các bài học trước để mở khóa!
+              <p className="text-xs text-rose-500 font-bold text-center flex items-center justify-center gap-1.5">
+                <Lock className="w-4 h-4 shrink-0" aria-hidden="true" />
+                <span>Bài học này đang bị khóa. Hãy hoàn thành các bài học trước để mở khóa!</span>
               </p>
               <TactileButton variant="secondary" size="md" onClick={onClose} className="w-full">
                 Đã hiểu

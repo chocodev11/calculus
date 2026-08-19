@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { MathText } from './MathText'
 import { makeArrayEvaluator } from './legacyEvaluator'
+import { ArrowRight, TrendingDown, TrendingUp } from 'lucide-react'
 
 // ─── DEFAULT LESSON CONFIG ───────────────────────────────────────────────────
 
@@ -521,7 +522,7 @@ export default function InteractionTypeC({ lesson: lessonProp }) {
             label="Tốc độ thay đổi"
             value={velocity != null ? velocity.toFixed(3) : '—'}
             color={velocity > 0.05 ? COLORS.rising : velocity < -0.05 ? COLORS.falling : '#94a3b8'}
-            icon={velocity > 0.05 ? '↗' : velocity < -0.05 ? '↘' : '→'}
+            icon={velocity > 0.05 ? TrendingUp : velocity < -0.05 ? TrendingDown : ArrowRight}
           />
           <div style={{
             padding: '8px 10px', borderRadius: 6,
@@ -530,7 +531,7 @@ export default function InteractionTypeC({ lesson: lessonProp }) {
             fontSize: 13, lineHeight: 1.5,
             color: reflection ? '#78350f' : '#9ca3af',
           }}>
-            {reflection ? <MathText text={reflection} /> : 'Nhấn ▶ để bắt đầu...'}
+            {reflection ? <MathText text={reflection} /> : 'Nhấn nút phát để bắt đầu...'}
           </div>
         </div>
       </div>
@@ -539,6 +540,8 @@ export default function InteractionTypeC({ lesson: lessonProp }) {
 }
 
 function InfoCard({ label, value, color, icon }) {
+  const Icon = icon
+
   return (
     <div style={{
       background: '#f8f9fa', borderRadius: 6, padding: '8px 10px',
@@ -550,7 +553,7 @@ function InfoCard({ label, value, color, icon }) {
         fontVariantNumeric: 'tabular-nums',
         display: 'flex', alignItems: 'center', gap: 4,
       }}>
-        {icon && <span style={{ fontSize: 14 }}>{icon}</span>}
+        {Icon && <Icon size={14} strokeWidth={2.5} aria-hidden="true" />}
         {value}
       </div>
     </div>

@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   X as XIcon, Check, Sparkles, RotateCcw, HelpCircle,
   Eye, Lightbulb, AlertTriangle, Info, GraduationCap,
-  Copy, CheckCheck, Play, GripVertical, Trophy, Heart, Zap, ArrowRight
+  Copy, CheckCheck, Play, GripVertical, Trophy, Heart, Zap, ArrowRight, Medal
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '../lib/api'
@@ -13,6 +13,7 @@ import 'katex/dist/katex.min.css'
 import * as ReactKatexModule from 'react-katex'
 import { TactileButton } from '../components/ui/tactile-button'
 import { GamifyBadge } from '../components/ui/gamify-badge'
+import { AchievementIcon } from '../components/ui/semantic-icon'
 import InteractionSlide from '../components/interactions'
 
 const ReactKatex = ReactKatexModule.default || ReactKatexModule
@@ -417,10 +418,10 @@ export default function Step() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlideIndex}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.25, ease: 'easeInOut' }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
                   className="space-y-6"
                 >
                   {currentSlide?.blocks?.map((block, blockIdx) => (
@@ -538,9 +539,10 @@ export default function Step() {
             onClick={() => setShowExplanation(false)}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
+              initial={{ scale: 0.98, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.16, ease: 'easeOut' }}
               onClick={(e) => e.stopPropagation()}
               className="bg-white rounded-3xl border-2 border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden"
             >
@@ -1180,7 +1182,10 @@ function AchievementsScreen({ achievements = [], onContinue }) {
 
         <div className="space-y-1">
           <h1 className="text-2xl font-extrabold text-slate-900">
-            Mở khóa thành tựu! 🏅
+            <span className="inline-flex items-center gap-2">
+              Mở khóa thành tựu!
+              <Medal className="w-5 h-5 text-amber-500" aria-hidden="true" />
+            </span>
           </h1>
           <p className="text-xs text-slate-500 font-semibold">
             Chúc mừng bạn đã đạt cột mốc mới
@@ -1190,7 +1195,7 @@ function AchievementsScreen({ achievements = [], onContinue }) {
         <div className="space-y-3">
           {achievements.map((ach) => (
             <div key={ach.id} className="p-3.5 bg-amber-50/60 border border-amber-200 rounded-2xl flex items-center gap-3 text-left">
-              <span className="text-2xl">{ach.icon || '🏅'}</span>
+              <AchievementIcon achievement={ach} className="w-6 h-6 text-amber-600 shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-slate-900 text-xs truncate">{ach.title}</p>
                 <p className="text-[11px] text-amber-700 font-extrabold">+{ach.xp_reward} XP</p>
@@ -1215,9 +1220,9 @@ function AchievementUnlockedPopup({ achievements = [], onClose }) {
         <div
           key={ach.id}
           onClick={onClose}
-          className="bg-white border-2 border-amber-300 rounded-2xl p-4 shadow-xl flex items-center gap-3 cursor-pointer animate-in slide-in-from-top-4 duration-300"
+          className="bg-white border-2 border-amber-300 rounded-2xl p-4 shadow-xl flex items-center gap-3 cursor-pointer animate-in slide-in-from-top-2 duration-200"
         >
-          <span className="text-2xl">{ach.icon || '🏅'}</span>
+          <AchievementIcon achievement={ach} className="w-6 h-6 text-amber-600 shrink-0" />
           <div>
             <p className="text-xs font-bold text-slate-900">{ach.title}</p>
             <p className="text-[10px] font-extrabold text-amber-600">+{ach.xp_reward} XP Thành tựu</p>
