@@ -30,7 +30,8 @@
             "body": "Mệnh đề $P \\Rightarrow Q$ **chỉ SAI** trong trường hợp duy nhất: **$P$ Đúng mà $Q$ Sai**.\nTrong tất cả các trường hợp còn lại (kể cả khi giả thiết $P$ Sai), mệnh đề $P \\Rightarrow Q$ đều **Đúng**."
           }
         }
-      ]
+      ],
+      "order_index": 0
     },
     {
       "slide_number": 2,
@@ -172,7 +173,8 @@
             }
           }
         }
-      ]
+      ],
+      "order_index": 1
     },
     {
       "slide_number": 3,
@@ -195,11 +197,12 @@
             "latex": "\\begin{array}{|c|c|c|} \\hline P & Q & P \\Rightarrow Q \\\\ \\hline 1 & 1 & 1 \\\\ 1 & 0 & 0 \\\\ 0 & 1 & 1 \\\\ 0 & 0 & 1 \\\\ \\hline \\end{array}"
           }
         }
-      ]
+      ],
+      "order_index": 2
     },
     {
       "slide_number": 4,
-      "title": "Luyện tập có hướng dẫn & kiểm tra độc lập · Trắc nghiệm",
+      "title": "Luyện tập có hướng dẫn · Câu 1",
       "blocks": [
         {
           "id": "b4_assessment_pool_mc",
@@ -463,7 +466,14 @@
             "itemId": "mc_01",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 3
+    },
+    {
+      "slide_number": 5,
+      "title": "Luyện tập có hướng dẫn · Câu 2",
+      "blocks": [
         {
           "id": "b4_ref_mc_02",
           "block_type": "assessment_ref",
@@ -472,7 +482,14 @@
             "itemId": "mc_02",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 4
+    },
+    {
+      "slide_number": 6,
+      "title": "Kiểm tra độc lập · Câu 3",
+      "blocks": [
         {
           "id": "b4_ref_mc_03",
           "block_type": "assessment_ref",
@@ -481,7 +498,14 @@
             "itemId": "mc_03",
             "phase": "independent_check"
           }
-        },
+        }
+      ],
+      "order_index": 5
+    },
+    {
+      "slide_number": 7,
+      "title": "Kiểm tra độc lập · Câu 4",
+      "blocks": [
         {
           "id": "b4_ref_mc_04",
           "block_type": "assessment_ref",
@@ -491,10 +515,11 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 6
     },
     {
-      "slide_number": 5,
+      "slide_number": 8,
       "title": "Kiểm tra độc lập · Đúng / Sai 4 ý",
       "blocks": [
         {
@@ -605,11 +630,12 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 7
     },
     {
-      "slide_number": 6,
-      "title": "Transfer · Trả lời ngắn và phản biện",
+      "slide_number": 9,
+      "title": "Transfer · Câu 5",
       "blocks": [
         {
           "id": "b6_assessment_pool_short",
@@ -623,9 +649,7 @@
                 "question": "Xét tập số $U = \\{2, 3, 4, 6, 9, 12\\}$ và mệnh đề $P(x): \"\\text{Nếu } x \\;\\vdots\\; 3 \\text{ thì } x \\;\\vdots\\; 6\"$. Có bao nhiêu phần tử $x \\in U$ là **phản ví dụ** chứng minh mệnh đề trên sai?",
                 "correct": "2",
                 "correct_answers": [
-                  "2",
-                  "hai",
-                  "2 phần tử"
+                  "2"
                 ],
                 "explanation": "Các số chia hết cho 3 trong $U$ là: $\\{3, 6, 9, 12\\}$. Trong đó, $x = 3$ và $x = 9$ chia hết cho 3 nhưng không chia hết cho 6. Vậy có đúng 2 phần tử phản ví dụ là $x=3$ và $x=9$.",
                 "id": "short_01",
@@ -651,9 +675,7 @@
                 "question": "Cho $U=\\{1,2,3,4,6\\}$. Có bao nhiêu phần tử là phản ví dụ của $x\\vdots2\\Rightarrow x\\vdots4$?",
                 "correct": "2",
                 "correct_answers": [
-                  "2",
-                  "hai",
-                  "2 phần tử"
+                  "2"
                 ],
                 "explanation": "Các phản ví dụ là $2$ và $6$: chia hết cho 2 nhưng không chia hết cho 4.",
                 "sourceMapping": {
@@ -678,9 +700,7 @@
                 "question": "Trên $U=\\{-2,-1,1,2,3\\}$, có bao nhiêu giá trị làm $x>0\\Rightarrow x^2-4<0$ đúng?",
                 "correct": "3",
                 "correct_answers": [
-                  "3",
-                  "ba",
-                  "3 giá trị"
+                  "3"
                 ],
                 "explanation": "Các giá trị đúng là $-2,-1,1$? Với $x=-2,-1$ vế trước sai; với $x=1$ vế sau đúng. Vậy có 3 giá trị.",
                 "sourceMapping": {
@@ -711,7 +731,14 @@
             "itemId": "short_01",
             "phase": "transfer"
           }
-        },
+        }
+      ],
+      "order_index": 8
+    },
+    {
+      "slide_number": 10,
+      "title": "Transfer · Câu 6",
+      "blocks": [
         {
           "id": "b6_ref_short_02",
           "block_type": "assessment_ref",
@@ -721,10 +748,11 @@
             "phase": "transfer"
           }
         }
-      ]
+      ],
+      "order_index": 9
     },
     {
-      "slide_number": 7,
+      "slide_number": 11,
       "title": "Tổng kết & Cầu nối Sư phạm",
       "blocks": [
         {
@@ -736,7 +764,8 @@
             "body": "Ta đã hiểu bản chất kéo theo và cách dùng phản ví dụ để bác bỏ một mệnh đề sai. Ở bài tiếp theo, chúng ta sẽ mở rộng sang **Mệnh đề đảo $Q \\Rightarrow P$** và chuẩn hóa thuật ngữ **Điều kiện cần, Điều kiện đủ, Tương đương**."
           }
         }
-      ]
+      ],
+      "order_index": 10
     }
   ],
   "order_index": 3,
@@ -779,6 +808,7 @@
         "hint_transition"
       ],
       "drag_only": false
-    }
+    },
+    "delivery_layout": "one_assessment_ref_per_slide"
   }
 }

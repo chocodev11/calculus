@@ -29,7 +29,8 @@
             "body": "Khi định lý $P \\Rightarrow Q$ đúng:\n- $P$ là **điều kiện đủ** để có $Q$.\n- $Q$ là **điều kiện cần** để có $P$.\n\nKhi $P \\Leftrightarrow Q$ đúng: $P$ là **điều kiện cần và đủ** để có $Q$."
           }
         }
-      ]
+      ],
+      "order_index": 0
     },
     {
       "slide_number": 2,
@@ -171,7 +172,8 @@
             }
           }
         }
-      ]
+      ],
+      "order_index": 1
     },
     {
       "slide_number": 3,
@@ -194,11 +196,12 @@
             "latex": "(P \\iff Q) \\iff (P \\implies Q) \\land (Q \\implies P)"
           }
         }
-      ]
+      ],
+      "order_index": 2
     },
     {
       "slide_number": 4,
-      "title": "Luyện tập có hướng dẫn & kiểm tra độc lập · Trắc nghiệm",
+      "title": "Luyện tập có hướng dẫn · Câu 1",
       "blocks": [
         {
           "id": "b4_assessment_pool_mc",
@@ -459,7 +462,14 @@
             "itemId": "mc_01",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 3
+    },
+    {
+      "slide_number": 5,
+      "title": "Luyện tập có hướng dẫn · Câu 2",
+      "blocks": [
         {
           "id": "b4_ref_mc_02",
           "block_type": "assessment_ref",
@@ -468,7 +478,14 @@
             "itemId": "mc_02",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 4
+    },
+    {
+      "slide_number": 6,
+      "title": "Kiểm tra độc lập · Câu 3",
+      "blocks": [
         {
           "id": "b4_ref_mc_03",
           "block_type": "assessment_ref",
@@ -477,7 +494,14 @@
             "itemId": "mc_03",
             "phase": "independent_check"
           }
-        },
+        }
+      ],
+      "order_index": 5
+    },
+    {
+      "slide_number": 7,
+      "title": "Kiểm tra độc lập · Câu 4",
+      "blocks": [
         {
           "id": "b4_ref_mc_04",
           "block_type": "assessment_ref",
@@ -487,10 +511,11 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 6
     },
     {
-      "slide_number": 5,
+      "slide_number": 8,
       "title": "Kiểm tra độc lập · Đúng / Sai 4 ý",
       "blocks": [
         {
@@ -601,11 +626,12 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 7
     },
     {
-      "slide_number": 6,
-      "title": "Transfer · Trả lời ngắn và phản biện",
+      "slide_number": 9,
+      "title": "Transfer · Câu 5",
       "blocks": [
         {
           "id": "b6_assessment_pool_short",
@@ -619,9 +645,7 @@
                 "question": "Cho các cặp mệnh đề sau: (1) $P: x > 1$ và $Q: x^2 > 1$. (2) $P: a=b$ và $Q: a+c=b+c$. (3) $P: x=2$ và $Q: x^2=4$. (4) $P: a \\;\\vdots\\; 6$ và $Q: (a \\;\\vdots\\; 2 \\text{ và } a \\;\\vdots\\; 3)$. Hỏi có bao nhiêu cặp thỏa mãn **$P \\Leftrightarrow Q$ là mệnh đề đúng**?",
                 "correct": "2",
                 "correct_answers": [
-                  "2",
-                  "hai",
-                  "2 cặp"
+                  "2"
                 ],
                 "explanation": "Có đúng 2 cặp tương đương đúng là (2) (tính chất đại số) và (4) (dấu hiệu chia hết cho 6). Cặp (1) sai chiều ngược ($x=-2$). Cặp (3) sai chiều ngược ($x=-2$).",
                 "id": "short_01",
@@ -647,9 +671,7 @@
                 "question": "Nếu $P\\Rightarrow Q$ đúng nhưng $Q\\Rightarrow P$ sai, có bao nhiêu chiều của $P\\Leftrightarrow Q$ đúng?",
                 "correct": "1",
                 "correct_answers": [
-                  "1",
-                  "một",
-                  "1 chiều"
+                  "1"
                 ],
                 "explanation": "Chỉ chiều $P\\Rightarrow Q$ đúng.",
                 "sourceMapping": {
@@ -677,9 +699,6 @@
                 "question": "Trên $\\mathbb{Z}$, mệnh đề “$a\\vdots6$ khi và chỉ khi $a$ chia hết cho 2 và 3” là Đúng hay Sai?",
                 "correct": "Đúng",
                 "correct_answers": [
-                  "Đúng",
-                  "Dung",
-                  "true",
                   "1"
                 ],
                 "explanation": "Đây là tính chất chia hết: $6=2\\cdot3$ và 2, 3 nguyên tố cùng nhau.",
@@ -710,7 +729,14 @@
             "itemId": "short_01",
             "phase": "transfer"
           }
-        },
+        }
+      ],
+      "order_index": 8
+    },
+    {
+      "slide_number": 10,
+      "title": "Transfer · Câu 6",
+      "blocks": [
         {
           "id": "b6_ref_short_02",
           "block_type": "assessment_ref",
@@ -720,10 +746,11 @@
             "phase": "transfer"
           }
         }
-      ]
+      ],
+      "order_index": 9
     },
     {
-      "slide_number": 7,
+      "slide_number": 11,
       "title": "Tổng kết & Cầu nối Sư phạm",
       "blocks": [
         {
@@ -735,7 +762,8 @@
             "body": "Bạn đã làm chủ các thuật ngữ định lý: Đảo, Tương đương, Cần & Đủ. Ở bài tiếp theo, chúng ta sẽ khảo sát công cụ biểu diễn toán học mạnh nhất: **Lượng từ $\\forall, \\exists$ và Mệnh đề nhiều biến**."
           }
         }
-      ]
+      ],
+      "order_index": 10
     }
   ],
   "order_index": 4,
@@ -778,6 +806,7 @@
         "hint_transition"
       ],
       "drag_only": false
-    }
+    },
+    "delivery_layout": "one_assessment_ref_per_slide"
   }
 }

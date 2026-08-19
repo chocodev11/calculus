@@ -14,6 +14,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from split_logic_assessment_slides import split_step
+
 
 ROOT = Path(__file__).resolve().parents[1]
 STEPS_DIR = ROOT / "data/raw_courses/menh-de/chapters/menh-de/steps"
@@ -179,6 +181,7 @@ def lesson_scheme(delivery: dict[str, dict[str, list[str]]]) -> dict[str, Any]:
             ],
             "drag_only": False,
         },
+        "delivery_layout": "one_assessment_ref_per_slide",
     }
 
 
@@ -447,6 +450,8 @@ def migrate_step(path: Path, write: bool) -> bool:
         if block.get("block_type") == "callout" and content.get("variant") == "theorem":
             content["title"] = "Bạn đã hoàn thành bài học"
             content["body"] = "Bạn vừa đi qua phần khái niệm, sandbox, kiểm tra độc lập và bài transfer. Các câu còn lại trong pool được giữ lại cho ôn tập thích ứng và lần luyện sau."
+
+    split_step(data)
 
     if write:
         path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

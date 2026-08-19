@@ -1934,6 +1934,10 @@ không được render trực tiếp. `assessment_ref` là đường giao hàng 
 chỉ các ref được chọn mới trở thành quiz trong runtime. Pool còn lại dành cho
 review/adaptive routing sau này, không được coi là mastery đã đạt.
 
+Mỗi slide learner-facing chỉ được chứa **một `assessment_ref`**. Một nhóm Đúng /
+Sai vẫn là một exercise duy nhất vì bốn phát biểu tạo thành cùng một đơn vị suy
+luận; các câu MC và trả lời ngắn phải tách thành các slide riêng.
+
 Một lesson không đạt chỉ vì có ít hơn một con số screen cố định; lesson chỉ đạt
 khi đủ learning need, meaningful interaction, source coverage và assessment
 delivery đã khai báo. T/F và short answer phải đi qua cùng runtime contract như

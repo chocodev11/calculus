@@ -29,7 +29,8 @@
             "body": "Một câu khẳng định chỉ có thể nhận giá trị **Đúng** hoặc **Sai**, không có trường hợp thứ ba. Các câu nghi vấn (hỏi), câu cảm thán, câu cầu khiến hay mệnh lệnh **không phải là mệnh đề**."
           }
         }
-      ]
+      ],
+      "order_index": 0
     },
     {
       "slide_number": 2,
@@ -199,7 +200,8 @@
             }
           }
         }
-      ]
+      ],
+      "order_index": 1
     },
     {
       "slide_number": 3,
@@ -222,11 +224,12 @@
             "latex": "\\text{Chân trị}(P) \\in \\{\\text{Đúng (1)},\\; \\text{Sai (0)}\\}"
           }
         }
-      ]
+      ],
+      "order_index": 2
     },
     {
       "slide_number": 4,
-      "title": "Luyện tập có hướng dẫn & kiểm tra độc lập · Trắc nghiệm",
+      "title": "Luyện tập có hướng dẫn · Câu 1",
       "blocks": [
         {
           "id": "b4_assessment_pool_mc",
@@ -487,7 +490,14 @@
             "itemId": "mc_01",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 3
+    },
+    {
+      "slide_number": 5,
+      "title": "Luyện tập có hướng dẫn · Câu 2",
+      "blocks": [
         {
           "id": "b4_ref_mc_02",
           "block_type": "assessment_ref",
@@ -496,7 +506,14 @@
             "itemId": "mc_02",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 4
+    },
+    {
+      "slide_number": 6,
+      "title": "Kiểm tra độc lập · Câu 3",
+      "blocks": [
         {
           "id": "b4_ref_mc_03",
           "block_type": "assessment_ref",
@@ -506,10 +523,11 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 5
     },
     {
-      "slide_number": 5,
+      "slide_number": 7,
       "title": "Kiểm tra độc lập · Đúng / Sai 4 ý",
       "blocks": [
         {
@@ -620,10 +638,11 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 6
     },
     {
-      "slide_number": 6,
+      "slide_number": 8,
       "title": "Transfer · Trả lời ngắn và phản biện",
       "blocks": [
         {
@@ -638,9 +657,7 @@
                 "question": "Cho các câu sau: (1) Số 2 là số nguyên tố chẵn duy nhất. (2) $3 + 5 = 9$. (3) $x + 2 > 5$. (4) Bạn tên gì? (5) Tam giác đều có ba cạnh bằng nhau. Hỏi có bao nhiêu câu là **mệnh đề**?",
                 "correct": "3",
                 "correct_answers": [
-                  "3",
-                  "ba",
-                  "3 câu"
+                  "3"
                 ],
                 "explanation": "Có đúng 3 mệnh đề là: (1) - mệnh đề đúng, (2) - mệnh đề sai, (5) - mệnh đề đúng. Câu (3) chứa biến $x$ nên là mệnh đề chứa biến, câu (4) là câu hỏi.",
                 "id": "short_01",
@@ -666,9 +683,7 @@
                 "question": "Trong các câu sau có bao nhiêu câu là mệnh đề? (1) $4+5=9$; (2) $x^2=1$; (3) Mở cửa sổ!; (4) Tam giác đều có ba cạnh bằng nhau; (5) Bạn đang học gì?",
                 "correct": "2",
                 "correct_answers": [
-                  "2",
-                  "hai",
-                  "2 câu"
+                  "2"
                 ],
                 "explanation": "Chỉ (1) và (4) là câu khẳng định có chân trị xác định.",
                 "sourceMapping": {
@@ -693,9 +708,7 @@
                 "question": "Trong năm câu sau, có bao nhiêu câu là mệnh đề? (1) $3<5$; (2) $x>0$; (3) $\\pi$ là số vô tỉ; (4) Hãy tính $2+2$; (5) Bạn có thích Toán không?",
                 "correct": "2",
                 "correct_answers": [
-                  "2",
-                  "hai",
-                  "2 câu"
+                  "2"
                 ],
                 "explanation": "Các câu (1) và (3) là mệnh đề; (2) là mệnh đề chứa biến, còn (4) và (5) không phải câu khẳng định.",
                 "sourceMapping": {
@@ -726,10 +739,11 @@
             "phase": "transfer"
           }
         }
-      ]
+      ],
+      "order_index": 7
     },
     {
-      "slide_number": 7,
+      "slide_number": 9,
       "title": "Tổng kết & Cầu nối Sư phạm",
       "blocks": [
         {
@@ -741,7 +755,8 @@
             "body": "Bạn đã nắm vững: Mệnh đề là câu khẳng định đúng hoặc sai; phân biệt rạch ròi với câu hỏi/cảm thán và câu chứa biến. Ở bài tiếp theo, chúng ta sẽ khảo sát sâu về **Mệnh đề chứa biến $P(x)$** và cách gán giá trị biến để xác định chân trị."
           }
         }
-      ]
+      ],
+      "order_index": 8
     }
   ],
   "order_index": 0,
@@ -784,6 +799,7 @@
         "hint_transition"
       ],
       "drag_only": false
-    }
+    },
+    "delivery_layout": "one_assessment_ref_per_slide"
   }
 }

@@ -493,6 +493,8 @@ def validate_learning_scheme(filepath, data, pool_blocks, ref_blocks):
 
     if scheme.get("version") != "1.0":
         err(filepath, "learning_scheme.version must be '1.0'")
+    if scheme.get("delivery_layout") != "one_assessment_ref_per_slide":
+        err(filepath, "learning_scheme.delivery_layout must be 'one_assessment_ref_per_slide'")
 
     authoring_pool = scheme.get("authoring_pool")
     if not isinstance(authoring_pool, dict):
@@ -649,6 +651,15 @@ def validate_step(filepath, data):
         if "blocks" not in slide:
             err(filepath, f"Slide {si}: missing 'blocks'")
             continue
+
+        if data.get("learning_scheme", {}).get("delivery_layout") == "one_assessment_ref_per_slide":
+            ref_count = sum(
+                1
+                for block in slide["blocks"]
+                if block.get("type", block.get("block_type")) == "assessment_ref"
+            )
+            if ref_count > 1:
+                err(filepath, f"Slide {si}: delivery layout allows only one assessment_ref, got {ref_count}")
         
         for bi, block in enumerate(slide["blocks"]):
             bid = block.get("id")

@@ -269,6 +269,9 @@ function addLessonSchemeFindings(reference: LessonSchemeReference, findings: Fin
   if (scheme.version !== '1.0') {
     findings.push({ severity: 'error', source, message: "learning_scheme.version must be '1.0'" })
   }
+  if (scheme.delivery_layout !== 'one_assessment_ref_per_slide') {
+    findings.push({ severity: 'error', source, message: "learning_scheme.delivery_layout must be 'one_assessment_ref_per_slide'" })
+  }
 
   const authoringPool = isRecord(scheme.authoring_pool) ? scheme.authoring_pool : null
   if (!authoringPool) {
@@ -306,6 +309,10 @@ function addLessonSchemeFindings(reference: LessonSchemeReference, findings: Fin
   const refBlocks: Array<{ id: string; content: JsonRecord }> = []
   for (const slide of slides) {
     if (!isRecord(slide) || !Array.isArray(slide.blocks)) continue
+    const slideRefCount = slide.blocks.filter(rawBlock => isRecord(rawBlock) && blockType(rawBlock) === 'assessment_ref').length
+    if (scheme.delivery_layout === 'one_assessment_ref_per_slide' && slideRefCount > 1) {
+      findings.push({ severity: 'error', source, message: 'a delivery slide contains more than one assessment_ref' })
+    }
     for (const rawBlock of slide.blocks) {
       if (!isRecord(rawBlock)) continue
       const id = typeof rawBlock.id === 'string' ? rawBlock.id : '<missing-id>'

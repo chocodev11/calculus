@@ -29,7 +29,8 @@
             "body": "Cho $f(x) = ax^2 + bx + c$ ($a \\neq 0$). Ta có các điều kiện cốt lõi:\n- $\\forall x \\in \\mathbb{R},\\; f(x) > 0 \\iff a > 0 \\text{ và } \\Delta < 0$.\n- $\\forall x \\in \\mathbb{R},\\; f(x) \\ge 0 \\iff a > 0 \\text{ và } \\Delta \\le 0$."
           }
         }
-      ]
+      ],
+      "order_index": 0
     },
     {
       "slide_number": 2,
@@ -147,7 +148,8 @@
             }
           }
         }
-      ]
+      ],
+      "order_index": 1
     },
     {
       "slide_number": 3,
@@ -170,11 +172,12 @@
             "latex": "\\begin{cases} \\Delta > 0 \\\\ S = x_1 + x_2 > 0 \\\\ P = x_1 x_2 > 0 \\end{cases}"
           }
         }
-      ]
+      ],
+      "order_index": 2
     },
     {
       "slide_number": 4,
-      "title": "Luyện tập có hướng dẫn & kiểm tra độc lập · Trắc nghiệm",
+      "title": "Luyện tập có hướng dẫn · Câu 1",
       "blocks": [
         {
           "id": "b4_assessment_pool_mc",
@@ -446,7 +449,14 @@
             "itemId": "mc_01",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 3
+    },
+    {
+      "slide_number": 5,
+      "title": "Luyện tập có hướng dẫn · Câu 2",
+      "blocks": [
         {
           "id": "b4_ref_mc_02",
           "block_type": "assessment_ref",
@@ -455,7 +465,14 @@
             "itemId": "mc_02",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 4
+    },
+    {
+      "slide_number": 6,
+      "title": "Kiểm tra độc lập · Câu 3",
+      "blocks": [
         {
           "id": "b4_ref_mc_03",
           "block_type": "assessment_ref",
@@ -464,7 +481,14 @@
             "itemId": "mc_03",
             "phase": "independent_check"
           }
-        },
+        }
+      ],
+      "order_index": 5
+    },
+    {
+      "slide_number": 7,
+      "title": "Kiểm tra độc lập · Câu 4",
+      "blocks": [
         {
           "id": "b4_ref_mc_04",
           "block_type": "assessment_ref",
@@ -474,11 +498,12 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 6
     },
     {
-      "slide_number": 5,
-      "title": "Kiểm tra độc lập · Đúng / Sai 4 ý",
+      "slide_number": 8,
+      "title": "Kiểm tra độc lập · Câu 5",
       "blocks": [
         {
           "id": "b5_assessment_pool_tf",
@@ -585,7 +610,14 @@
             "itemId": "tf_01",
             "phase": "independent_check"
           }
-        },
+        }
+      ],
+      "order_index": 7
+    },
+    {
+      "slide_number": 9,
+      "title": "Kiểm tra độc lập · Câu 6",
+      "blocks": [
         {
           "id": "b5_ref_tf_02",
           "block_type": "assessment_ref",
@@ -595,11 +627,12 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 8
     },
     {
-      "slide_number": 6,
-      "title": "Transfer · Trả lời ngắn và phản biện",
+      "slide_number": 10,
+      "title": "Transfer · Câu 7",
       "blocks": [
         {
           "id": "b6_assessment_pool_short",
@@ -613,9 +646,7 @@
                 "question": "Tìm số giá trị nguyên của tham số $m \\in [-5; 5]$ để mệnh đề \"$\\forall x \\in \\mathbb{R},\\; x^2 - 2mx + 9 > 0$\" là **mệnh đề đúng**.",
                 "correct": "5",
                 "correct_answers": [
-                  "5",
-                  "năm",
-                  "5 giá trị"
+                  "5"
                 ],
                 "explanation": "Ta có $a = 1 > 0$. Bất phương trình đúng với mọi $x \\in \\mathbb{R} \\Leftrightarrow \\Delta' = m^2 - 9 < 0 \\Leftrightarrow -3 < m < 3$. Các giá trị nguyên của $m$ trong khoảng $(-3; 3)$ là $\\{-2, -1, 0, 1, 2\\}$. Vậy có đúng 5 giá trị nguyên.",
                 "id": "short_01",
@@ -641,9 +672,7 @@
                 "question": "Có bao nhiêu số nguyên $m\\in[-3,3]$ thỏa mãn $m>1$?",
                 "correct": "2",
                 "correct_answers": [
-                  "2",
-                  "hai",
-                  "2 giá trị"
+                  "2"
                 ],
                 "explanation": "Hai giá trị là $m=2$ và $m=3$.",
                 "sourceMapping": {
@@ -669,9 +698,7 @@
                 "question": "Trên $\\{-3,-2,-1,0,1,2,3\\}$, có bao nhiêu giá trị làm $x>0\\Rightarrow x^2-4<0$ đúng?",
                 "correct": "5",
                 "correct_answers": [
-                  "5",
-                  "năm",
-                  "5 giá trị"
+                  "5"
                 ],
                 "explanation": "Mệnh đề đúng với $x=-3,-2,-1,0,1$; sai tại $x=2,3$.",
                 "sourceMapping": {
@@ -704,7 +731,14 @@
             "itemId": "short_01",
             "phase": "transfer"
           }
-        },
+        }
+      ],
+      "order_index": 9
+    },
+    {
+      "slide_number": 11,
+      "title": "Transfer · Câu 8",
+      "blocks": [
         {
           "id": "b6_ref_short_02",
           "block_type": "assessment_ref",
@@ -713,7 +747,14 @@
             "itemId": "short_02",
             "phase": "transfer"
           }
-        },
+        }
+      ],
+      "order_index": 10
+    },
+    {
+      "slide_number": 12,
+      "title": "Transfer · Câu 9",
+      "blocks": [
         {
           "id": "b6_ref_short_03",
           "block_type": "assessment_ref",
@@ -722,7 +763,14 @@
             "itemId": "short_03",
             "phase": "transfer"
           }
-        },
+        }
+      ],
+      "order_index": 11
+    },
+    {
+      "slide_number": 13,
+      "title": "Transfer · Câu 10",
+      "blocks": [
         {
           "id": "b6_ref_mc_05",
           "block_type": "assessment_ref",
@@ -731,7 +779,14 @@
             "itemId": "mc_05",
             "phase": "transfer"
           }
-        },
+        }
+      ],
+      "order_index": 12
+    },
+    {
+      "slide_number": 14,
+      "title": "Transfer · Câu 11",
+      "blocks": [
         {
           "id": "b6_ref_mc_06",
           "block_type": "assessment_ref",
@@ -741,10 +796,11 @@
             "phase": "transfer"
           }
         }
-      ]
+      ],
+      "order_index": 13
     },
     {
-      "slide_number": 7,
+      "slide_number": 15,
       "title": "Tổng kết Chuyên đề Mệnh đề & Logic Toán 10",
       "blocks": [
         {
@@ -756,7 +812,8 @@
             "body": "Bạn vừa đi qua phần khái niệm, sandbox, kiểm tra độc lập và bài transfer. Các câu còn lại trong pool được giữ lại cho ôn tập thích ứng và lần luyện sau."
           }
         }
-      ]
+      ],
+      "order_index": 14
     }
   ],
   "order_index": 6,
@@ -800,6 +857,7 @@
         "hint_transition"
       ],
       "drag_only": false
-    }
+    },
+    "delivery_layout": "one_assessment_ref_per_slide"
   }
 }

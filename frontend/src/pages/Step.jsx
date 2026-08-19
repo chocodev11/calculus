@@ -16,6 +16,7 @@ import { TactileButton } from '../components/ui/tactile-button'
 import { GamifyBadge } from '../components/ui/gamify-badge'
 import { AchievementIcon } from '../components/ui/semantic-icon'
 import InteractionSlide from '../components/interactions'
+import { MathText } from '../components/interactions/MathText'
 
 const ReactKatex = ReactKatexModule.default || ReactKatexModule
 const { InlineMath, BlockMath } = ReactKatex
@@ -138,6 +139,11 @@ export default function Step() {
     return currentSlide.blocks.filter(b => (b.type || b.block_type) === 'quiz')
   }, [currentSlide])
 
+  const isTrueFalseOnlySlide = currentQuizBlocks.length > 0 && currentQuizBlocks.every((block) => {
+    const content = block.content || block.block_data || {}
+    return (content.quiz_type || (content.items ? 'true_false_group' : 'multiple_choice')) === 'true_false_group'
+  })
+
   const isQuizBlockSelected = useCallback((block) => {
     const content = block.content || block.block_data || {}
     const qType = content.quiz_type || (content.items ? 'true_false_group' : 'multiple_choice')
@@ -159,6 +165,14 @@ export default function Step() {
 
   const handleQuizAnswer = (blockId, answer) => {
     setQuizAnswers(prev => ({ ...prev, [blockId]: answer }))
+    if (quizSubmitted[blockId] && !quizResults[blockId]?.correct) {
+      setQuizSubmitted(prev => ({ ...prev, [blockId]: false }))
+      setQuizResults(prev => {
+        const copy = { ...prev }
+        delete copy[blockId]
+        return copy
+      })
+    }
   }
 
   const handleQuizSubmit = (blockId, isCorrect, explanation) => {
@@ -172,9 +186,11 @@ export default function Step() {
     }
   }
 
-  const handleQuizRetry = (blockId) => {
+  const handleQuizRetry = (blockId, { preserveAnswer = false } = {}) => {
     setQuizSubmitted(prev => ({ ...prev, [blockId]: false }))
-    setQuizAnswers(prev => ({ ...prev, [blockId]: null }))
+    if (!preserveAnswer) {
+      setQuizAnswers(prev => ({ ...prev, [blockId]: null }))
+    }
     setQuizResults(prev => {
       const copy = { ...prev }
       delete copy[blockId]
@@ -262,10 +278,19 @@ export default function Step() {
       })
       return
     }
+    if (hasQuiz && allQuizzesAnswered && isTrueFalseOnlySlide) {
+      if (isLastSlide) {
+        try { awardSlideXp(currentSlide?.id) } catch (e) {}
+        handleComplete()
+      } else {
+        goNext()
+      }
+      return
+    }
     if (hasQuiz && !allQuizzesCorrect) {
       currentQuizBlocks
         .filter(block => !quizResults[block.id]?.correct)
-        .forEach(block => handleQuizRetry(block.id))
+        .forEach(block => handleQuizRetry(block.id, { preserveAnswer: true }))
       return
     }
     if (isLastSlide) {
@@ -466,8 +491,8 @@ export default function Step() {
               {/* Feedback Message */}
               <div className="flex items-center gap-3.5">
                 <div className={cn(
-                  'w-11 h-11 rounded-2xl flex items-center justify-center text-white shrink-0 border-b-2 shadow-sm',
-                  quizIsCorrect ? 'bg-emerald-500 border-emerald-700' : 'bg-rose-500 border-rose-700'
+                  'w-11 h-11 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-md',
+                  quizIsCorrect ? 'bg-emerald-500 shadow-emerald-200' : 'bg-rose-500 shadow-rose-200'
                 )}>
                   {quizIsCorrect ? (
                     <Check className="w-6 h-6 stroke-[3]" />
@@ -477,10 +502,14 @@ export default function Step() {
                 </div>
                 <div>
                   <h4 className={cn('text-base font-extrabold', quizIsCorrect ? 'text-emerald-900' : 'text-rose-900')}>
-                    {quizIsCorrect ? 'Chính xác!' : 'Chưa đúng rồi!'}
+                    {quizIsCorrect ? 'Chính xác! Xuất sắc lắm!' : 'Chưa hoàn toàn chính xác!'}
                   </h4>
                   <p className={cn('text-xs font-semibold', quizIsCorrect ? 'text-emerald-700' : 'text-rose-600')}>
-                    {quizIsCorrect ? `+${currentSlideXp || 15} XP Tích lũy` : '-1 Năng lượng Tim'}
+                    {quizIsCorrect
+                      ? `+${currentSlideXp || 15} XP Tích lũy`
+                      : isTrueFalseOnlySlide
+                      ? 'Xem đối chiếu đáp án chi tiết ở từng ý bên trên'
+                      : 'Còn đáp án chưa đúng · bấm để thử lại hoặc xem lời giải'}
                   </p>
                 </div>
               </div>
@@ -503,8 +532,10 @@ export default function Step() {
                   onClick={handleFooterAction}
                   className="min-w-[140px]"
                 >
-                  {quizIsIncorrect ? 'Làm lại câu sai' : isLastSlide ? 'Hoàn thành' : 'Tiếp tục'}
-                  {quizIsIncorrect ? <RotateCcw className="w-5 h-5 ml-1.5" /> : <ArrowRight className="w-5 h-5 ml-1.5" />}
+                  {quizIsIncorrect && !isTrueFalseOnlySlide ? 'Sửa câu sai' : isLastSlide ? 'Hoàn thành' : 'Tiếp tục'}
+                  {quizIsIncorrect && !isTrueFalseOnlySlide
+                    ? <RotateCcw className="w-5 h-5 ml-1.5" />
+                    : <ArrowRight className="w-5 h-5 ml-1.5" />}
                 </TactileButton>
               </div>
             </>
@@ -647,25 +678,19 @@ function TextBlock({ block }) {
       )}
       {content.paragraphs?.map((p, idx) => (
         <p key={idx} className="text-base text-slate-700 leading-relaxed font-medium">
-          <MathText text={formatText(p)} html />
+          <MathText text={p} />
         </p>
       ))}
       {content.content && (
         <div className="text-base text-slate-700 leading-relaxed font-medium">
-          <MathText text={formatText(content.content)} html />
+          <MathText text={content.content} />
         </div>
       )}
     </div>
   )
 }
 
-function formatText(text) {
-  if (!text) return ''
-  return text
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-extrabold text-slate-900">$1</strong>')
-    .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
-    .replace(/_(.*?)_/g, '<em>$1</em>')
-}
+
 
 function MathBlock({ block }) {
   const content = block.content || block.block_data || {}
@@ -675,20 +700,20 @@ function MathBlock({ block }) {
 
   try {
     return (
-      <div className="my-4">
+      <div className="my-5">
         {label && (
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+          <p className="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">
             {label}
           </p>
         )}
         <div className={cn(
-          'bg-slate-50 rounded-2xl border-2 border-slate-200 px-6 py-5 shadow-sm text-slate-900',
+          'bg-slate-50 rounded-2xl border-2 border-slate-200 px-6 py-5 shadow-[0_3px_0_0_#E2E8F0] text-slate-900',
           isInline && 'inline-block bg-transparent border-0 p-0 shadow-none'
         )}>
           {isInline ? (
             <InlineMath math={latex} />
           ) : (
-            <div className="text-center overflow-x-auto text-lg">
+            <div className="text-center overflow-x-auto text-lg py-1">
               <BlockMath math={latex} />
             </div>
           )}
@@ -697,7 +722,7 @@ function MathBlock({ block }) {
     )
   } catch {
     return (
-      <div className="bg-rose-50 text-rose-600 rounded-xl p-3 text-xs font-mono">
+      <div className="bg-rose-50 text-rose-600 rounded-xl p-3 text-xs font-mono border border-rose-200">
         Lỗi render LaTeX: {latex}
       </div>
     )
@@ -768,104 +793,133 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
   const question = content.question || ''
   const qType = content.quiz_type || (content.items ? 'true_false_group' : 'multiple_choice')
 
-  // ─── Dạng II: Đúng / Sai 4 ý ─────────────────────────────────────────────
+  // ─── Dạng II: Đúng / Sai 4 ý (GDPT 2018 Standard) ─────────────────────────
   if (qType === 'true_false_group' || content.items) {
     const items = content.items || []
     const currentMap = typeof answer === 'object' && answer !== null ? answer : {}
 
-    const handleSelectOption = (itemId, boolVal) => {
+    const handleSelect = (itemId, choiceVal) => {
       if (submitted) return
-      onAnswer({ ...currentMap, [itemId]: boolVal })
+      // If clicking the current selection, toggle off or switch
+      const nextVal = currentMap[itemId] === choiceVal ? undefined : choiceVal
+      onAnswer({ ...currentMap, [itemId]: nextVal })
     }
 
     return (
-      <div className="space-y-6">
-        <div className="space-y-1 text-center">
-          <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-extrabold rounded-lg uppercase tracking-wider mb-2 border border-indigo-200">
-            Dạng II · Trắc nghiệm Đúng / Sai 4 ý
-          </span>
+      <div className="space-y-5">
+        {/* Header Badge & Title */}
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-extrabold rounded-xl uppercase tracking-wider border-2 border-indigo-200 shadow-[0_2px_0_0_#C7D2FE]">
+            <Sparkles className="w-3.5 h-3.5 fill-indigo-500 text-indigo-500" />
+            <span>Dạng II · Trắc nghiệm Đúng / Sai 4 ý</span>
+          </div>
           <p className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
             <MathText text={question} />
           </p>
+          <p className="text-xs sm:text-sm font-semibold text-slate-500">
+            Chọn <strong className="text-emerald-700 font-extrabold">Đúng</strong> hoặc <strong className="text-rose-700 font-extrabold">Sai</strong> cho từng khẳng định bên dưới:
+          </p>
         </div>
 
+        {/* List of Statements */}
         <div className="space-y-3">
           {items.map((item, idx) => {
             const itemKey = item.id || `item_${idx}`
             const selectedVal = currentMap[itemKey]
-            const isItemSubmitted = submitted
+            const isItemSubmitted = Boolean(submitted && result)
             const expected = item.correct === true || String(item.correct).toLowerCase() === 'đúng' || String(item.correct).toLowerCase() === 'true'
-            const isUserCorrect = isItemSubmitted && selectedVal === expected
+            const isItemCorrect = isItemSubmitted && selectedVal === expected
+            const isItemIncorrect = isItemSubmitted && selectedVal !== expected
 
             return (
               <div
                 key={itemKey}
                 className={cn(
-                  'rounded-2xl border-2 p-4 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white',
+                  'rounded-3xl border-2 p-4 sm:p-5 transition-all bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4',
                   isItemSubmitted
-                    ? isUserCorrect
-                      ? 'border-emerald-300 bg-emerald-50/40'
-                      : 'border-rose-300 bg-rose-50/40'
+                    ? isItemCorrect
+                      ? 'border-emerald-400 bg-emerald-50/40 shadow-[0_4px_0_0_#A7F3D0]'
+                      : 'border-rose-400 bg-rose-50/40 shadow-[0_4px_0_0_#FECDD3]'
                     : selectedVal !== undefined
-                    ? 'border-indigo-300 shadow-sm'
-                    : 'border-slate-200'
+                    ? 'border-indigo-300 bg-indigo-50/20 shadow-[0_4px_0_0_#C7D2FE]'
+                    : 'border-slate-200 shadow-[0_4px_0_0_#E2E8F0] hover:border-slate-300'
                 )}
               >
-                {/* Statement text */}
-                <div className="flex items-start gap-3 flex-1">
-                  <span className="w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 border border-slate-200">
+                {/* Statement with Letter Badge */}
+                <div className="flex items-start gap-3 flex-1 min-w-0">
+                  <span className={cn(
+                    'w-8 h-8 rounded-2xl font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 border shadow-sm transition-colors',
+                    isItemSubmitted
+                      ? isItemCorrect
+                        ? 'bg-emerald-600 text-white border-emerald-700 shadow-[0_2px_0_0_#047857]'
+                        : 'bg-rose-600 text-white border-rose-700 shadow-[0_2px_0_0_#BE123C]'
+                      : selectedVal !== undefined
+                      ? 'bg-indigo-600 text-white border-indigo-700 shadow-[0_2px_0_0_#4338CA]'
+                      : 'bg-slate-100 text-slate-700 border-slate-200'
+                  )}>
                     {String.fromCharCode(97 + idx)}
                   </span>
-                  <div className="text-sm sm:text-base font-bold text-slate-800 leading-snug pt-0.5">
+                  <div className="text-sm sm:text-base font-bold text-slate-800 leading-relaxed pt-0.5">
                     <MathText text={item.label || item.text || item.statement || ''} />
                   </div>
                 </div>
 
-                {/* True / False Buttons */}
-                <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                {/* Dual Tactile 2.5D Action Buttons */}
+                <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
                   <button
                     type="button"
-                    onClick={() => handleSelectOption(itemKey, true)}
+                    onClick={() => handleSelect(itemKey, true)}
                     disabled={submitted}
+                    aria-pressed={selectedVal === true}
                     className={cn(
-                      'px-4 py-2 rounded-xl text-xs font-extrabold border-2 transition-all cursor-pointer select-none',
+                      'px-4 py-2.5 rounded-2xl font-extrabold text-xs sm:text-sm transition-all duration-100 flex items-center gap-1.5 cursor-pointer select-none active:translate-y-1',
                       selectedVal === true
-                        ? isItemSubmitted
-                          ? expected === true
-                            ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
-                            : 'bg-rose-600 text-white border-rose-700 shadow-sm'
-                          : 'bg-indigo-600 text-white border-indigo-800 shadow-sm'
-                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300'
+                        ? 'bg-emerald-500 hover:bg-emerald-400 text-white border-b-4 border-emerald-700 active:border-b-0 shadow-sm'
+                        : 'bg-white hover:bg-slate-50 text-slate-800 border-2 border-slate-200 border-b-4 border-b-slate-300 active:border-b-2 shadow-sm',
+                      submitted && 'cursor-default pointer-events-none active:translate-y-0 disabled:opacity-80'
                     )}
                   >
-                    Đúng
+                    <Check className={cn('w-4 h-4 stroke-[3]', selectedVal === true ? 'text-white' : 'text-emerald-600')} />
+                    <span>Đúng</span>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => handleSelectOption(itemKey, false)}
+                    onClick={() => handleSelect(itemKey, false)}
                     disabled={submitted}
+                    aria-pressed={selectedVal === false}
                     className={cn(
-                      'px-4 py-2 rounded-xl text-xs font-extrabold border-2 transition-all cursor-pointer select-none',
+                      'px-4 py-2.5 rounded-2xl font-extrabold text-xs sm:text-sm transition-all duration-100 flex items-center gap-1.5 cursor-pointer select-none active:translate-y-1',
                       selectedVal === false
-                        ? isItemSubmitted
-                          ? expected === false
-                            ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
-                            : 'bg-rose-600 text-white border-rose-700 shadow-sm'
-                          : 'bg-indigo-600 text-white border-indigo-800 shadow-sm'
-                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300'
+                        ? 'bg-rose-500 hover:bg-rose-400 text-white border-b-4 border-rose-700 active:border-b-0 shadow-sm'
+                        : 'bg-white hover:bg-slate-50 text-slate-800 border-2 border-slate-200 border-b-4 border-b-slate-300 active:border-b-2 shadow-sm',
+                      submitted && 'cursor-default pointer-events-none active:translate-y-0 disabled:opacity-80'
                     )}
                   >
-                    Sai
+                    <XIcon className={cn('w-4 h-4 stroke-[3]', selectedVal === false ? 'text-white' : 'text-rose-600')} />
+                    <span>Sai</span>
                   </button>
 
+                  {/* Submission Feedback Tag */}
                   {isItemSubmitted && (
-                    <span className={cn(
-                      'text-xs font-extrabold px-2 py-1 rounded-lg ml-1 flex items-center gap-1',
-                      isUserCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                    <div className={cn(
+                      'inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-black border-2 shadow-sm shrink-0 ml-1',
+                      isItemCorrect
+                        ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-[0_2px_0_0_#A7F3D0]'
+                        : 'bg-rose-50 border-rose-300 text-rose-800 shadow-[0_2px_0_0_#FECDD3]'
                     )}>
-                      {isUserCorrect ? '✓ Đúng' : `✗ (${expected ? 'Đúng' : 'Sai'})`}
-                    </span>
+                      {isItemCorrect ? (
+                        <>
+                          <Check className="w-4 h-4 stroke-[3] text-emerald-600" />
+                          <span>Chính xác</span>
+                        </>
+                      ) : (
+                        <>
+                          <XIcon className="w-4 h-4 stroke-[3] text-rose-600" />
+                          <span>Đáp án: {expected ? 'Đúng' : 'Sai'}</span>
+                        </>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -884,16 +938,17 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
 
     return (
       <div className="space-y-6 max-w-lg mx-auto">
-        <div className="space-y-1 text-center">
-          <span className="inline-block px-3 py-1 bg-amber-50 text-amber-800 text-xs font-extrabold rounded-lg uppercase tracking-wider mb-2 border border-amber-200">
-            Dạng III · Điền đáp số / Trả lời ngắn
-          </span>
+        <div className="space-y-2 text-center">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 text-xs font-extrabold rounded-xl uppercase tracking-wider border-2 border-amber-200 shadow-[0_2px_0_0_#FDE68A]">
+            <Sparkles className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+            <span>Dạng III · Điền đáp số / Trả lời ngắn</span>
+          </div>
           <p className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
             <MathText text={question} />
           </p>
         </div>
 
-        <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+        <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-[0_4px_0_0_#E2E8F0] space-y-4">
           <label className="block text-xs font-extrabold text-slate-500 uppercase tracking-wider">
             Nhập kết quả hoặc số nguyên:
           </label>
@@ -908,22 +963,24 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                 'w-full py-3.5 px-4 rounded-2xl border-2 font-bold text-lg text-center outline-none transition-all',
                 submitted
                   ? isCorrect
-                    ? 'border-emerald-500 bg-emerald-50 text-emerald-900'
-                    : 'border-rose-500 bg-rose-50 text-rose-900'
-                  : 'border-slate-200 focus:border-indigo-600 bg-slate-50 focus:bg-white text-slate-900'
+                    ? 'border-emerald-500 bg-emerald-50 text-emerald-900 shadow-[0_2px_0_0_#A7F3D0]'
+                    : 'border-rose-500 bg-rose-50 text-rose-900 shadow-[0_2px_0_0_#FECDD3]'
+                  : 'border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 bg-slate-50 focus:bg-white text-slate-900 shadow-inner'
               )}
             />
           </div>
 
           {submitted && (
             <div className={cn(
-              'p-3.5 rounded-2xl border flex items-center justify-between text-xs sm:text-sm font-bold',
-              isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
+              'p-4 rounded-2xl border-2 flex items-center justify-between text-xs sm:text-sm font-bold shadow-sm',
+              isCorrect ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-rose-50 border-rose-300 text-rose-900'
             )}>
-              <span>{isCorrect ? 'Chính xác!' : 'Đáp án chính xác:'}</span>
-              <span className="font-extrabold px-2.5 py-1 rounded-lg bg-white shadow-sm border border-slate-200">
-                <MathText text={String(correctVal)} />
-              </span>
+              <span>{isCorrect ? 'Chính xác!' : 'Chưa đúng. Hãy xem lại kết quả.'}</span>
+              {isCorrect && (
+                <span className="font-extrabold px-3 py-1 rounded-xl bg-white shadow-sm border border-emerald-200 text-emerald-800">
+                  <MathText text={String(correctVal)} />
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -937,10 +994,11 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1 text-center">
-        <span className="inline-block px-3 py-1 bg-slate-100 text-slate-700 text-xs font-extrabold rounded-lg uppercase tracking-wider mb-2 border border-slate-200">
-          Dạng I · Trắc nghiệm 4 lựa chọn
-        </span>
+      <div className="space-y-2 text-center">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-extrabold rounded-xl uppercase tracking-wider border-2 border-indigo-200 shadow-[0_2px_0_0_#C7D2FE]">
+          <Sparkles className="w-3.5 h-3.5 fill-indigo-500 text-indigo-500" />
+          <span>Dạng I · Trắc nghiệm 4 lựa chọn</span>
+        </div>
         <p className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
           <MathText text={question} />
         </p>
@@ -951,8 +1009,8 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
           const optValue = opt.value ?? opt.id ?? idx
           const optLabel = opt.label || opt.text || (typeof opt === 'string' ? opt : String(opt))
           const isSelected = answer === optValue
-          const showCorrectMark = submitted && String(optValue) === String(correctAnswer)
-          const showWrongMark = submitted && isSelected && String(optValue) !== String(correctAnswer)
+          const showCorrectMark = submitted && result?.correct && String(optValue) === String(correctAnswer)
+          const showWrongMark = submitted && result && !result.correct && isSelected
 
           return (
             <motion.button
@@ -968,17 +1026,17 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                   : showWrongMark
                   ? 'bg-rose-50 border-rose-500 text-rose-900 shadow-[0_4px_0_0_#FECDD3]'
                   : isSelected
-                  ? 'bg-indigo-50 border-indigo-600 text-indigo-950 shadow-[0_4px_0_0_#C7D2FE]'
-                  : 'bg-white border-slate-200 text-slate-800 shadow-[0_4px_0_0_#E2E8F0] hover:border-indigo-300 hover:shadow-[0_6px_0_0_#CBD5E1]'
+                  ? 'bg-indigo-50/80 border-indigo-600 text-indigo-950 shadow-[0_4px_0_0_#818CF8]'
+                  : 'bg-white border-slate-200 text-slate-800 shadow-[0_4px_0_0_#E2E8F0] hover:border-indigo-300 hover:shadow-[0_5px_0_0_#CBD5E1]'
               )}
             >
-              {/* Top Option Letter */}
+              {/* Option Letter Chip */}
               <span className={cn(
-                'text-xs font-extrabold mb-1 px-2 py-0.5 rounded-md',
-                showCorrectMark ? 'bg-emerald-200 text-emerald-800' :
-                showWrongMark ? 'bg-rose-200 text-rose-800' :
-                isSelected ? 'bg-indigo-200 text-indigo-800' :
-                'bg-slate-100 text-slate-500'
+                'text-xs font-extrabold mb-1.5 px-2.5 py-0.5 rounded-lg border',
+                showCorrectMark ? 'bg-emerald-200 border-emerald-300 text-emerald-900' :
+                showWrongMark ? 'bg-rose-200 border-rose-300 text-rose-900' :
+                isSelected ? 'bg-indigo-600 border-indigo-700 text-white shadow-sm' :
+                'bg-slate-100 border-slate-200 text-slate-600'
               )}>
                 {String.fromCharCode(65 + idx)}
               </span>
@@ -996,10 +1054,10 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
 }
 
 const calloutConfig = {
-  info: { icon: Info, bg: 'bg-sky-50', border: 'border-sky-200', iconColor: 'text-sky-600', title: 'Thông tin' },
-  tip: { icon: Lightbulb, bg: 'bg-amber-50', border: 'border-amber-200', iconColor: 'text-amber-600', title: 'Mẹo học tập' },
-  warning: { icon: AlertTriangle, bg: 'bg-orange-50', border: 'border-orange-200', iconColor: 'text-orange-600', title: 'Lưu ý' },
-  theorem: { icon: GraduationCap, bg: 'bg-indigo-50', border: 'border-indigo-200', iconColor: 'text-indigo-600', title: 'Định lý' },
+  info: { icon: Info, bg: 'bg-sky-50', border: 'border-sky-200', shadow: 'shadow-[0_4px_0_0_#BAE6FD]', iconColor: 'text-sky-600', iconBg: 'bg-sky-100 border-sky-200', title: 'Thông tin' },
+  tip: { icon: Lightbulb, bg: 'bg-amber-50', border: 'border-amber-200', shadow: 'shadow-[0_4px_0_0_#FDE68A]', iconColor: 'text-amber-600', iconBg: 'bg-amber-100 border-amber-200', title: 'Mẹo học tập' },
+  warning: { icon: AlertTriangle, bg: 'bg-orange-50', border: 'border-orange-200', shadow: 'shadow-[0_4px_0_0_#FED7AA]', iconColor: 'text-orange-600', iconBg: 'bg-orange-100 border-orange-200', title: 'Lưu ý' },
+  theorem: { icon: GraduationCap, bg: 'bg-indigo-50', border: 'border-indigo-200', shadow: 'shadow-[0_4px_0_0_#C7D2FE]', iconColor: 'text-indigo-600', iconBg: 'bg-indigo-100 border-indigo-200', title: 'Định lý' },
 }
 
 function CalloutBlock({ block }) {
@@ -1009,27 +1067,27 @@ function CalloutBlock({ block }) {
   const Icon = cfg.icon
 
   return (
-    <div className={cn('my-6 rounded-3xl border-2 p-6 shadow-sm', cfg.bg, cfg.border)}>
+    <div className={cn('my-6 rounded-3xl border-2 p-6', cfg.bg, cfg.border, cfg.shadow)}>
       <div className="flex items-start gap-4">
-        <div className="p-2 bg-white rounded-2xl shadow-sm shrink-0">
+        <div className={cn('p-2.5 rounded-2xl border shadow-sm shrink-0', cfg.iconBg)}>
           <Icon className={cn('w-6 h-6', cfg.iconColor)} />
         </div>
-        <div className="space-y-1.5 min-w-0">
+        <div className="space-y-2 min-w-0 flex-1">
           <p className={cn('text-xs font-extrabold uppercase tracking-wider', cfg.iconColor)}>
-            {content.title || cfg.title}
+            <MathText text={content.title || cfg.title} />
           </p>
           {content.body && (
-            <div className="text-sm text-slate-800 font-medium leading-relaxed">
+            <div className="text-sm sm:text-base text-slate-800 font-medium leading-relaxed">
               <MathText text={content.body} />
             </div>
           )}
           {content.content && (
-            <div className="text-sm text-slate-800 font-medium leading-relaxed">
+            <div className="text-sm sm:text-base text-slate-800 font-medium leading-relaxed">
               <MathText text={content.content} />
             </div>
           )}
           {content.latex && (
-            <div className="mt-2 overflow-x-auto">
+            <div className="mt-3 p-3 bg-white/80 rounded-2xl border border-slate-200 overflow-x-auto shadow-sm">
               <BlockMath math={content.latex} />
             </div>
           )}
@@ -1046,27 +1104,29 @@ function RevealBlock({ block }) {
 
   return (
     <div className="my-6 rounded-3xl border-2 border-slate-200 bg-white overflow-hidden shadow-[0_4px_0_0_#E2E8F0]">
-      <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+      <div className="px-6 py-4 bg-slate-50 border-b-2 border-slate-200 flex items-center justify-between">
         <span className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
           <Eye className="w-4 h-4 text-indigo-600" />
           {content.title || 'Hướng dẫn giải từng bước'}
         </span>
-        <span className="text-xs font-bold text-slate-500 tabular-nums">{revealedCount}/{steps.length} bước</span>
+        <span className="text-xs font-extrabold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 rounded-lg tabular-nums">
+          {revealedCount}/{steps.length} bước
+        </span>
       </div>
       <div className="p-6 space-y-4">
         {steps.map((s, idx) => {
           const isRevealed = idx < revealedCount
           const stepText = typeof s === 'string' ? s : (s.content || s.text || '')
           return (
-            <div key={idx} className={cn('flex items-start gap-3 transition-opacity', isRevealed ? 'opacity-100' : 'opacity-30')}>
+            <div key={idx} className={cn('flex items-start gap-3 transition-all duration-200', isRevealed ? 'opacity-100 translate-y-0' : 'opacity-30')}>
               <span className={cn(
-                'w-7 h-7 rounded-xl text-xs font-extrabold flex items-center justify-center shrink-0 mt-0.5 border',
-                isRevealed ? 'bg-indigo-600 text-white border-indigo-800' : 'bg-slate-100 text-slate-400 border-slate-200'
+                'w-7 h-7 rounded-xl text-xs font-extrabold flex items-center justify-center shrink-0 mt-0.5 border shadow-sm',
+                isRevealed ? 'bg-indigo-600 text-white border-indigo-700' : 'bg-indigo-50 text-indigo-700 border-indigo-200'
               )}>
                 {idx + 1}
               </span>
-              <div className="text-sm text-slate-800 font-medium leading-relaxed min-w-0 pt-0.5">
-                {isRevealed ? <MathText text={stepText} /> : <span className="text-slate-300">• • •</span>}
+              <div className="text-sm sm:text-base text-slate-800 font-medium leading-relaxed min-w-0 pt-0.5">
+                {isRevealed ? <MathText text={stepText} /> : <span className="text-slate-300 font-bold tracking-widest">• • •</span>}
               </div>
             </div>
           )
@@ -1101,7 +1161,7 @@ function RevealBlock({ block }) {
 function VideoBlock({ block }) {
   const content = block.content || block.block_data || {}
   return (
-    <div className="my-6 rounded-2xl overflow-hidden border-2 border-slate-200 bg-black aspect-video">
+    <div className="my-6 rounded-3xl overflow-hidden border-2 border-slate-800 bg-black aspect-video shadow-[0_4px_0_0_#1E293B]">
       <video src={content.src} controls className="w-full h-full" poster={content.poster} />
     </div>
   )
@@ -1110,9 +1170,14 @@ function VideoBlock({ block }) {
 function FillBlankBlock({ block }) {
   const content = block.content || block.block_data || {}
   return (
-    <div className="my-4 p-5 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-3">
-      <p className="font-bold text-sm text-slate-700"><MathText text={content.prompt || 'Điền vào chỗ trống:'} /></p>
-      <div className="text-base text-slate-900 font-medium"><MathText text={content.template || ''} /></div>
+    <div className="my-6 p-6 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-3 shadow-[0_4px_0_0_#E2E8F0]">
+      <div className="flex items-center gap-2 text-indigo-700 text-xs font-extrabold uppercase tracking-wider">
+        <Sparkles className="w-3.5 h-3.5" />
+        <span>{content.prompt || 'Điền vào chỗ trống:'}</span>
+      </div>
+      <div className="text-base text-slate-900 font-bold leading-relaxed bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+        <MathText text={content.template || ''} />
+      </div>
     </div>
   )
 }
@@ -1121,12 +1186,21 @@ function OrderingBlock({ block }) {
   const content = block.content || block.block_data || {}
   const items = content.items || []
   return (
-    <div className="my-4 p-5 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-3">
-      <p className="font-bold text-sm text-slate-700">{content.prompt || 'Sắp xếp theo thứ tự đúng:'}</p>
-      <div className="space-y-2">
+    <div className="my-6 p-6 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-4 shadow-[0_4px_0_0_#E2E8F0]">
+      <div className="flex items-center gap-2 text-indigo-700 text-xs font-extrabold uppercase tracking-wider">
+        <GripVertical className="w-4 h-4" />
+        <span>{content.prompt || 'Sắp xếp theo thứ tự đúng:'}</span>
+      </div>
+      <div className="space-y-2.5">
         {items.map((item, idx) => (
-          <div key={idx} className="p-3 bg-white border border-slate-200 rounded-xl text-sm font-medium">
-            <MathText text={item} />
+          <div key={idx} className="p-4 bg-white border-2 border-slate-200 rounded-2xl text-sm sm:text-base font-bold text-slate-800 shadow-[0_2px_0_0_#E2E8F0] flex items-center gap-3">
+            <span className="w-6 h-6 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-extrabold text-xs flex items-center justify-center shrink-0">
+              {idx + 1}
+            </span>
+            <div className="flex-1">
+              <MathText text={item} />
+            </div>
+            <GripVertical className="w-4 h-4 text-slate-300 shrink-0" />
           </div>
         ))}
       </div>
@@ -1140,41 +1214,51 @@ function OrderingBlock({ block }) {
 
 function CompleteScreen({ xpEarned, stepTitle, onContinue }) {
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 font-sans">
-      <div className="w-full max-w-sm bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-[0_8px_0_0_#E2E8F0] text-center space-y-8 animate-in fade-in zoom-in-95 duration-200">
-        
-        {/* Celebration Icon */}
-        <div className="w-24 h-24 mx-auto bg-emerald-500 border-b-4 border-emerald-700 text-white rounded-3xl flex items-center justify-center shadow-lg">
-          <Check className="w-14 h-14 stroke-[3]" />
-        </div>
-
-        <div className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-            Hoàn thành bài học!
+    <main className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 sm:p-8 font-sans">
+      <section
+        aria-labelledby="lesson-complete-title"
+        className="w-full max-w-2xl overflow-hidden rounded-[2rem] bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+      >
+        <div className="bg-indigo-700 px-6 py-10 text-white sm:px-10 sm:py-14">
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400 text-emerald-950 shadow-[0_4px_0_0_#047857]">
+              <Check className="h-7 w-7 stroke-[3]" aria-hidden="true" />
+            </span>
+            <span className="text-xs font-extrabold uppercase tracking-[0.16em] text-indigo-100">
+              Bài học đã hoàn tất
+            </span>
+          </div>
+          <h1 id="lesson-complete-title" className="mt-8 text-4xl font-black tracking-tight sm:text-5xl">
+            Hoàn thành!
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-semibold truncate">
+          <p className="mt-3 max-w-xl text-base font-semibold leading-relaxed text-indigo-100 sm:text-lg">
             {stepTitle}
           </p>
         </div>
 
-        {/* XP Reward Badge */}
-        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 space-y-1">
-          <span className="text-[10px] font-extrabold text-amber-700 uppercase tracking-widest">
-            Phần thưởng kinh nghiệm
-          </span>
-          <div className="text-4xl font-extrabold text-amber-600 tabular-nums">
-            +{xpEarned} XP
+        <div className="px-6 py-7 sm:px-10 sm:py-9">
+          <div className="flex flex-col gap-6 border-b-2 border-slate-100 pb-7 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-slate-500">
+                Phần thưởng
+              </p>
+              <p className="mt-1 text-5xl font-black tabular-nums text-amber-600">
+                +{xpEarned} <span className="text-2xl">XP</span>
+              </p>
+            </div>
+            <p className="inline-flex items-center gap-2 text-sm font-extrabold text-emerald-700">
+              <Check className="h-5 w-5" aria-hidden="true" />
+              Kết quả đã ghi nhận
+            </p>
           </div>
+
+          <TactileButton variant="primary" size="lg" onClick={onContinue} className="mt-7 w-full text-base sm:text-lg">
+            <span>Tiếp tục học</span>
+            <ArrowRight className="ml-1.5 h-5 w-5" />
+          </TactileButton>
         </div>
-
-        {/* Continue Button */}
-        <TactileButton variant="primary" size="lg" onClick={onContinue} className="w-full text-base">
-          <span>Tiếp tục học</span>
-          <ArrowRight className="w-5 h-5 ml-1.5" />
-        </TactileButton>
-
-      </div>
-    </div>
+      </section>
+    </main>
   )
 }
 
@@ -1183,7 +1267,7 @@ function AchievementsScreen({ achievements = [], onContinue }) {
     <div className="min-h-screen bg-amber-50/50 flex flex-col items-center justify-center p-6 font-sans">
       <div className="w-full max-w-sm bg-white border-2 border-amber-200 rounded-3xl p-8 shadow-[0_8px_0_0_#FDE68A] text-center space-y-6">
         
-        <div className="w-20 h-20 mx-auto bg-amber-500 border-b-4 border-amber-700 text-white rounded-3xl flex items-center justify-center shadow-lg">
+        <div className="w-20 h-20 mx-auto bg-amber-500 text-white rounded-3xl flex items-center justify-center shadow-lg border-2 border-amber-600">
           <Trophy className="w-10 h-10" />
         </div>
 
@@ -1240,32 +1324,4 @@ function AchievementUnlockedPopup({ achievements = [], onClose }) {
   )
 }
 
-function MathText({ text, html = false }) {
-  if (!text) return null
-  const str = String(text)
-  const parts = str.split(/(\$[^$]+\$)/g)
-  const hasMath = parts.some(p => p.startsWith('$') && p.endsWith('$'))
 
-  if (!hasMath && html) {
-    return <span dangerouslySetInnerHTML={{ __html: str }} />
-  }
-
-  return (
-    <>
-      {parts.map((part, idx) => {
-        if (part.startsWith('$') && part.endsWith('$') && part.length > 1) {
-          const latex = part.slice(1, -1)
-          try {
-            return <InlineMath key={idx} math={latex} />
-          } catch {
-            return <code key={idx} className="text-rose-500 text-xs">{latex}</code>
-          }
-        }
-        if (html) {
-          return <span key={idx} dangerouslySetInnerHTML={{ __html: part }} />
-        }
-        return <span key={idx}>{part}</span>
-      })}
-    </>
-  )
-}

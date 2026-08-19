@@ -32,7 +32,8 @@ Each lesson that uses the scheme has a top-level `learning_scheme`:
       "hint_transition"
     ],
     "drag_only": false
-  }
+  },
+  "delivery_layout": "one_assessment_ref_per_slide"
 }
 ```
 
@@ -56,6 +57,9 @@ phase:
 The frontend materializes only refs into ordinary `quiz` blocks. This keeps the
 rendering path shared by multiple choice, four-statement true/false and short
 answer while leaving unselected pool items available for later review routing.
+At most one delivered ref is placed on a learner-facing slide. A true/false
+group remains one exercise because its four statements are the exercise's
+single reasoning unit; separate MC/short-answer items never share a slide.
 
 ## Validation and build order
 

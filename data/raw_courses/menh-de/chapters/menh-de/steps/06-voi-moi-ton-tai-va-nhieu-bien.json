@@ -30,7 +30,8 @@
             "body": "Khi xét vị từ $P(x, y)$, thứ tự lượng từ có ý nghĩa quyết định:\n- \"$\\forall x, \\forall y,\\; P(x, y)$\": Đúng với mọi cặp $(x, y)$.\n- \"$\\exists x, \\forall y,\\; P(x, y)$\": Tồn tại một phần tử $x_0$ cố định phục vụ cho tất cả $y$ (ví dụ: $x=1$ là phần tử trung hòa của phép nhân)."
           }
         }
-      ]
+      ],
+      "order_index": 0
     },
     {
       "slide_number": 2,
@@ -227,7 +228,8 @@
             }
           }
         }
-      ]
+      ],
+      "order_index": 1
     },
     {
       "slide_number": 3,
@@ -250,11 +252,12 @@
             "latex": "\\overline{\\forall x, \\forall y,\\; P(x, y)} \\iff \\exists x, \\exists y,\\; \\overline{P(x, y)}"
           }
         }
-      ]
+      ],
+      "order_index": 2
     },
     {
       "slide_number": 4,
-      "title": "Luyện tập có hướng dẫn & kiểm tra độc lập · Trắc nghiệm",
+      "title": "Luyện tập có hướng dẫn · Câu 1",
       "blocks": [
         {
           "id": "b4_assessment_pool_mc",
@@ -521,7 +524,14 @@
             "itemId": "mc_01",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 3
+    },
+    {
+      "slide_number": 5,
+      "title": "Luyện tập có hướng dẫn · Câu 2",
+      "blocks": [
         {
           "id": "b4_ref_mc_02",
           "block_type": "assessment_ref",
@@ -530,7 +540,14 @@
             "itemId": "mc_02",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 4
+    },
+    {
+      "slide_number": 6,
+      "title": "Kiểm tra độc lập · Câu 3",
+      "blocks": [
         {
           "id": "b4_ref_mc_03",
           "block_type": "assessment_ref",
@@ -539,7 +556,14 @@
             "itemId": "mc_03",
             "phase": "independent_check"
           }
-        },
+        }
+      ],
+      "order_index": 5
+    },
+    {
+      "slide_number": 7,
+      "title": "Kiểm tra độc lập · Câu 4",
+      "blocks": [
         {
           "id": "b4_ref_mc_04",
           "block_type": "assessment_ref",
@@ -549,11 +573,12 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 6
     },
     {
-      "slide_number": 5,
-      "title": "Kiểm tra độc lập · Đúng / Sai 4 ý",
+      "slide_number": 8,
+      "title": "Kiểm tra độc lập · Câu 5",
       "blocks": [
         {
           "id": "b5_assessment_pool_tf",
@@ -661,7 +686,14 @@
             "itemId": "tf_01",
             "phase": "independent_check"
           }
-        },
+        }
+      ],
+      "order_index": 7
+    },
+    {
+      "slide_number": 9,
+      "title": "Kiểm tra độc lập · Câu 6",
+      "blocks": [
         {
           "id": "b5_ref_tf_02",
           "block_type": "assessment_ref",
@@ -671,11 +703,12 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 8
     },
     {
-      "slide_number": 6,
-      "title": "Transfer · Trả lời ngắn và phản biện",
+      "slide_number": 10,
+      "title": "Transfer · Câu 7",
       "blocks": [
         {
           "id": "b6_assessment_pool_short",
@@ -689,9 +722,7 @@
                 "question": "Tìm số tự nhiên $n$ nhỏ nhất thỏa mãn mệnh đề: $\\exists n \\in \\mathbb{N}: n^2 - 10n + 21 = 0$.",
                 "correct": "3",
                 "correct_answers": [
-                  "3",
-                  "n=3",
-                  "ba"
+                  "3"
                 ],
                 "explanation": "Phương trình $n^2 - 10n + 21 = 0 \\Leftrightarrow (n-3)(n-7) = 0 \\Leftrightarrow n = 3$ hoặc $n = 7$. Số tự nhiên $n$ nhỏ nhất là $n = 3$.",
                 "id": "short_01",
@@ -717,9 +748,7 @@
                 "question": "Trong biểu thức $\\forall x\\in\\mathbb{R},\\;\\exists y\\in\\mathbb{R},\\;\\forall z\\in\\mathbb{R},\\;P(x,y,z)$ có bao nhiêu lượng từ?",
                 "correct": "3",
                 "correct_answers": [
-                  "3",
-                  "ba",
-                  "3 lượng từ"
+                  "3"
                 ],
                 "explanation": "Có ba ký hiệu lượng từ: $\\forall,\\exists,\\forall$.",
                 "sourceMapping": {
@@ -747,8 +776,7 @@
                 "question": "Chọn một nhân chứng dương cho mệnh đề $\\exists x\\in\\mathbb{Z}: x^2=1$. Nhập giá trị x.",
                 "correct": "1",
                 "correct_answers": [
-                  "1",
-                  "x=1"
+                  "1"
                 ],
                 "explanation": "$x=1$ là một nhân chứng hợp lệ.",
                 "sourceMapping": {
@@ -778,7 +806,14 @@
             "itemId": "short_01",
             "phase": "transfer"
           }
-        },
+        }
+      ],
+      "order_index": 9
+    },
+    {
+      "slide_number": 11,
+      "title": "Transfer · Câu 8",
+      "blocks": [
         {
           "id": "b6_ref_short_02",
           "block_type": "assessment_ref",
@@ -788,10 +823,11 @@
             "phase": "transfer"
           }
         }
-      ]
+      ],
+      "order_index": 10
     },
     {
-      "slide_number": 7,
+      "slide_number": 12,
       "title": "Tổng kết & Cầu nối Sư phạm",
       "blocks": [
         {
@@ -803,7 +839,8 @@
             "body": "Lượng từ $\\forall$ và $\\exists$ giúp hình thức hóa toàn bộ các định lý giải tích và hình học. Ở bài học cuối cùng, chúng ta sẽ bước vào thử thách đỉnh cao: **Bài toán logic chứa tham số $m$ và Vận dụng cao (VDC)**."
           }
         }
-      ]
+      ],
+      "order_index": 11
     }
   ],
   "order_index": 5,
@@ -846,6 +883,7 @@
         "hint_transition"
       ],
       "drag_only": false
-    }
+    },
+    "delivery_layout": "one_assessment_ref_per_slide"
   }
 }

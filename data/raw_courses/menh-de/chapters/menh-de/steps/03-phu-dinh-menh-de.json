@@ -29,7 +29,8 @@
             "body": "Khi phủ định các quan hệ so sánh, cần lưu ý chuyển đổi bù đầy đủ:\n- Phủ định của $>$ là $\\le$ (ngược lại, của $\\le$ là $>$).\n- Phủ định của $<$ là $\\ge$ (ngược lại, của $\\ge$ là $<$).\n- Phủ định của $=$ là $\\neq$ (ngược lại, của $\\neq$ là $=$)."
           }
         }
-      ]
+      ],
+      "order_index": 0
     },
     {
       "slide_number": 2,
@@ -224,7 +225,8 @@
             }
           }
         }
-      ]
+      ],
+      "order_index": 1
     },
     {
       "slide_number": 3,
@@ -247,11 +249,12 @@
             "latex": "\\overline{\\forall x \\in X, P(x)} \\iff \\exists x \\in X, \\overline{P(x)} \\qquad \\text{và} \\qquad \\overline{\\exists x \\in X, P(x)} \\iff \\forall x \\in X, \\overline{P(x)}"
           }
         }
-      ]
+      ],
+      "order_index": 2
     },
     {
       "slide_number": 4,
-      "title": "Luyện tập có hướng dẫn & kiểm tra độc lập · Trắc nghiệm",
+      "title": "Luyện tập có hướng dẫn · Câu 1",
       "blocks": [
         {
           "id": "b4_assessment_pool_mc",
@@ -515,7 +518,14 @@
             "itemId": "mc_01",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 3
+    },
+    {
+      "slide_number": 5,
+      "title": "Luyện tập có hướng dẫn · Câu 2",
+      "blocks": [
         {
           "id": "b4_ref_mc_02",
           "block_type": "assessment_ref",
@@ -524,7 +534,14 @@
             "itemId": "mc_02",
             "phase": "guided_practice"
           }
-        },
+        }
+      ],
+      "order_index": 4
+    },
+    {
+      "slide_number": 6,
+      "title": "Kiểm tra độc lập · Câu 3",
+      "blocks": [
         {
           "id": "b4_ref_mc_03",
           "block_type": "assessment_ref",
@@ -533,7 +550,14 @@
             "itemId": "mc_03",
             "phase": "independent_check"
           }
-        },
+        }
+      ],
+      "order_index": 5
+    },
+    {
+      "slide_number": 7,
+      "title": "Kiểm tra độc lập · Câu 4",
+      "blocks": [
         {
           "id": "b4_ref_mc_04",
           "block_type": "assessment_ref",
@@ -543,11 +567,12 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 6
     },
     {
-      "slide_number": 5,
-      "title": "Kiểm tra độc lập · Đúng / Sai 4 ý",
+      "slide_number": 8,
+      "title": "Kiểm tra độc lập · Câu 5",
       "blocks": [
         {
           "id": "b5_assessment_pool_tf",
@@ -656,7 +681,14 @@
             "itemId": "tf_01",
             "phase": "independent_check"
           }
-        },
+        }
+      ],
+      "order_index": 7
+    },
+    {
+      "slide_number": 9,
+      "title": "Kiểm tra độc lập · Câu 6",
+      "blocks": [
         {
           "id": "b5_ref_tf_02",
           "block_type": "assessment_ref",
@@ -666,11 +698,12 @@
             "phase": "independent_check"
           }
         }
-      ]
+      ],
+      "order_index": 8
     },
     {
-      "slide_number": 6,
-      "title": "Transfer · Trả lời ngắn và phản biện",
+      "slide_number": 10,
+      "title": "Transfer · Câu 7",
       "blocks": [
         {
           "id": "b6_assessment_pool_short",
@@ -684,9 +717,6 @@
                 "question": "Cho mệnh đề $P: \"\\exists x \\in \\mathbb{R},\\; x^2 + 4 = 0\"$. Mệnh đề phủ định $\\overline{P}$ có chân trị là gì? (Nhập 'Đúng' hoặc 'Sai')",
                 "correct": "Đúng",
                 "correct_answers": [
-                  "Đúng",
-                  "Dung",
-                  "true",
                   "1"
                 ],
                 "explanation": "Mệnh đề $P$ là mệnh đề SAI (vì $x^2 + 4 \\ge 4 > 0$ với mọi $x \\in \\mathbb{R}$). Do đó mệnh đề phủ định $\\overline{P}: \"\\forall x \\in \\mathbb{R},\\; x^2 + 4 \\neq 0\"$ có chân trị là ĐÚNG.",
@@ -711,12 +741,8 @@
                 "id": "short_02",
                 "quiz_type": "short_answer",
                 "question": "Viết phủ định của mệnh đề $x>3$ dưới dạng bất đẳng thức. Đây là câu trả lời ngắn, nhập $x\\le3$.",
-                "correct": "x≤3",
-                "correct_answers": [
-                  "x≤3",
-                  "x <= 3",
-                  "x<=3"
-                ],
+                "correct": "3",
+                "correct_answers": [],
                 "explanation": "Phủ định của $x>3$ là $x\\le3$.",
                 "sourceMapping": {
                   "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
@@ -740,9 +766,7 @@
                 "question": "Trong phủ định của $\\forall x\\in\\mathbb{R},\\;\\exists y\\in\\mathbb{R},\\;P(x,y)$ có bao nhiêu lượng từ bị đổi?",
                 "correct": "2",
                 "correct_answers": [
-                  "2",
-                  "hai",
-                  "2 lượng từ"
+                  "2"
                 ],
                 "explanation": "Cả $\\forall$ và $\\exists$ đều phải đổi khi phủ định.",
                 "sourceMapping": {
@@ -773,7 +797,14 @@
             "itemId": "short_01",
             "phase": "transfer"
           }
-        },
+        }
+      ],
+      "order_index": 9
+    },
+    {
+      "slide_number": 11,
+      "title": "Transfer · Câu 8",
+      "blocks": [
         {
           "id": "b6_ref_short_02",
           "block_type": "assessment_ref",
@@ -783,10 +814,11 @@
             "phase": "transfer"
           }
         }
-      ]
+      ],
+      "order_index": 10
     },
     {
-      "slide_number": 7,
+      "slide_number": 12,
       "title": "Tổng kết & Cầu nối Sư phạm",
       "blocks": [
         {
@@ -798,7 +830,8 @@
             "body": "Nắm vững phủ định là chìa khóa của phương pháp **chứng minh phản chứng** trong hình học và đại số. Ở bài tiếp theo, chúng ta sẽ khảo sát cấu trúc của các định lý toán học: **Mệnh đề kéo theo $P \\Rightarrow Q$**."
           }
         }
-      ]
+      ],
+      "order_index": 11
     }
   ],
   "order_index": 2,
@@ -841,6 +874,7 @@
         "hint_transition"
       ],
       "drag_only": false
-    }
+    },
+    "delivery_layout": "one_assessment_ref_per_slide"
   }
 }
