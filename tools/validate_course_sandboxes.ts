@@ -30,10 +30,19 @@ function isRecord(value: unknown): value is JsonRecord {
   return Boolean(value && typeof value === 'object' && !Array.isArray(value))
 }
 
+import { existsSync } from 'node:fs'
+
 function parseArgs(argv: string[]): { source: string; generated: string; strict: boolean } {
+  const defaultSource = existsSync(resolve(repoRoot, 'data/raw_courses'))
+    ? resolve(repoRoot, 'data/raw_courses')
+    : resolve(repoRoot, 'data/archive_legacy_json/raw_courses')
+  const defaultGenerated = existsSync(resolve(repoRoot, 'data/courses'))
+    ? resolve(repoRoot, 'data/courses')
+    : resolve(repoRoot, 'data/archive_legacy_json/courses')
+
   const values = {
-    source: resolve(repoRoot, 'data/raw_courses'),
-    generated: resolve(repoRoot, 'data/courses'),
+    source: defaultSource,
+    generated: defaultGenerated,
     strict: false,
   }
 

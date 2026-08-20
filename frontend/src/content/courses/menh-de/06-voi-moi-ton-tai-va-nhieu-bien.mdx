@@ -52,7 +52,6 @@ xp: 120
               "label": "∀x∈R, ∀y∈R: (x+y)² = x² + 2xy + y²",
               "expectedVerdict": "true",
               "expectedNegation": "exists_pair_not_equal",
-              "expectedWitness": "none",
               "controlId": "c_v1",
               "negationControlId": "c_n1"
             },
@@ -60,7 +59,6 @@ xp: 120
               "id": "item2",
               "label": "∀x∈R, ∀y∈R: x² + y² > 0",
               "expectedVerdict": "false",
-              "expectedNegation": "exists_pair_le_zero",
               "expectedWitness": "x0_y0",
               "controlId": "c_v2",
               "witnessControlId": "c_n2"
@@ -69,7 +67,6 @@ xp: 120
               "id": "item3",
               "label": "∃x∈R, ∀y∈R: x.y = y",
               "expectedVerdict": "true",
-              "expectedNegation": "forall_exists_not_equal",
               "expectedWitness": "x_equals_1",
               "controlId": "c_v3",
               "witnessControlId": "c_n3"
