@@ -17,6 +17,7 @@ import api from '../lib/api'
 import { t } from '../lib/locale'
 import { TactileButton } from '../components/ui/tactile-button'
 import { encodeStepId } from '../lib/utils'
+import soundFX from '../lib/soundEffects'
 
 export default function Story() {
   const { slug } = useParams()
@@ -330,9 +331,14 @@ function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }
 }
 
 function LessonNode({ step, index, isCompleted, isCurrent, isLocked, isEnrolled, storySlug, onSelect }) {
+  const handleClick = () => {
+    soundFX.click()
+    onSelect()
+  }
+
   return (
     <div
-      onClick={onSelect}
+      onClick={handleClick}
       className={`group flex items-center justify-between p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer select-none ${
         isCurrent
           ? 'bg-indigo-50/80 border-indigo-200 text-indigo-950 font-bold'
@@ -346,12 +352,12 @@ function LessonNode({ step, index, isCompleted, isCurrent, isLocked, isEnrolled,
       <div className="flex items-center gap-3.5 min-w-0">
         
         {/* Status Node Icon */}
-        <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shrink-0 border-b-2 transition-transform group-hover:scale-105 ${
+        <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${
           isCompleted
-            ? 'bg-emerald-500 border-emerald-700 text-white'
+            ? 'bg-emerald-500 text-white shadow-sm'
             : isCurrent
-            ? 'bg-indigo-600 border-indigo-800 text-white'
-            : 'bg-slate-100 border-slate-200 text-slate-400'
+            ? 'bg-indigo-600 text-white shadow-sm'
+            : 'bg-slate-100 border border-slate-200 text-slate-400'
         }`}>
           {isCompleted ? (
             <Check className="w-5 h-5 stroke-[3]" />

@@ -72,11 +72,11 @@
   }
 }
 
-/* 2.5D Tactile UI Components */
+/* 2.5D Tactile UI Components (Zero-CLS Architecture) */
 @layer components {
-  /* Standard Container Card across all pages - Clean, crisp, no blurry outer shadows */
+  /* Standard Container Card across all pages - Clean, crisp */
   .card-container {
-    @apply bg-white border border-slate-200 rounded-3xl p-6 sm:p-8;
+    @apply bg-white border border-slate-200 rounded-3xl p-5 sm:p-8;
   }
 
   /* Interactive Node / Step Card */
@@ -84,46 +84,71 @@
     @apply bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 transition-all select-none;
   }
 
-  /* Tactile Button Base - Pure physical bevel, no blurry shadows */
+  /* Tactile Button Base - Pure physical bevel with Zero Layout Shift */
   .btn-tactile {
-    @apply relative inline-flex items-center justify-center font-bold select-none cursor-pointer
-           transition-[transform,background-color,border-color,color] duration-100 ease-out active:translate-y-1 disabled:opacity-50 disabled:pointer-events-none;
+    @apply relative inline-flex items-center justify-center font-bold select-none cursor-pointer border border-transparent
+           transition-[transform,box-shadow,background-color,color] duration-100 ease-out
+           disabled:opacity-50 disabled:pointer-events-none;
   }
 
   /* Primary Euler Indigo */
   .btn-tactile-primary {
-    @apply btn-tactile bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl
-           border-b-4 border-indigo-800 active:border-b-0;
+    @apply btn-tactile bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl;
+    box-shadow: 0 4px 0 #3730A3;
+  }
+  .btn-tactile-primary:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #3730A3;
   }
 
   /* Tangent Cyan */
   .btn-tactile-cyan {
-    @apply btn-tactile bg-sky-500 hover:bg-sky-400 text-white rounded-2xl
-           border-b-4 border-sky-700 active:border-b-0;
+    @apply btn-tactile bg-sky-500 hover:bg-sky-400 text-white rounded-2xl;
+    box-shadow: 0 4px 0 #0369A1;
+  }
+  .btn-tactile-cyan:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #0369A1;
   }
 
   /* Vector Emerald / Success */
   .btn-tactile-success {
-    @apply btn-tactile bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl
-           border-b-4 border-emerald-700 active:border-b-0;
+    @apply btn-tactile bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl;
+    box-shadow: 0 4px 0 #047857;
+  }
+  .btn-tactile-success:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #047857;
   }
 
   /* Kinetic Amber / Rewards / Streak */
   .btn-tactile-amber {
-    @apply btn-tactile bg-amber-500 hover:bg-amber-400 text-white rounded-2xl
-           border-b-4 border-amber-700 active:border-b-0;
+    @apply btn-tactile bg-amber-500 hover:bg-amber-400 text-white rounded-2xl;
+    box-shadow: 0 4px 0 #B45309;
+  }
+  .btn-tactile-amber:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #B45309;
   }
 
   /* Heart Crimson / Danger */
   .btn-tactile-danger {
-    @apply btn-tactile bg-rose-500 hover:bg-rose-400 text-white rounded-2xl
-           border-b-4 border-rose-700 active:border-b-0;
+    @apply btn-tactile bg-rose-500 hover:bg-rose-400 text-white rounded-2xl;
+    box-shadow: 0 4px 0 #BE123C;
+  }
+  .btn-tactile-danger:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #BE123C;
   }
 
-  /* Secondary / Ghost-border button */
+  /* Secondary / Neutral border button */
   .btn-tactile-secondary {
-    @apply btn-tactile bg-white hover:bg-slate-50 text-slate-700 rounded-2xl
-           border-2 border-slate-200 border-b-4 border-b-slate-300 active:border-b-2;
+    @apply btn-tactile bg-white hover:bg-slate-50 text-slate-700 rounded-2xl border border-slate-200;
+    box-shadow: 0 4px 0 #CBD5E1;
+  }
+  .btn-tactile-secondary:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #CBD5E1;
   }
 
   /* Subtle ghost button */
@@ -136,6 +161,38 @@
   .card-tactile {
     @apply bg-white border border-slate-200 rounded-2xl hover:border-indigo-300 transition-colors duration-150;
   }
+}
+
+/* Mobile Safe Area & Gamification Utilities */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 16px));
+}
+
+.shimmer-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer-swipe 2.2s infinite linear;
+}
+
+@keyframes shimmer-swipe {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 /* Custom crisp scrollbar */

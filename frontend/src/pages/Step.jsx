@@ -17,6 +17,8 @@ import { GamifyBadge } from '../components/ui/gamify-badge'
 import { AchievementIcon } from '../components/ui/semantic-icon'
 import InteractionSlide from '../components/interactions'
 import { MathText } from '../components/interactions/MathText'
+import soundFX from '../lib/soundEffects'
+import { fireConfetti, fireLessonCompleteConfetti } from '../lib/confetti'
 
 const ReactKatex = ReactKatexModule.default || ReactKatexModule
 const { InlineMath, BlockMath } = ReactKatex
@@ -161,11 +163,11 @@ export default function Step() {
   const hasQuiz = currentQuizBlocks.length > 0
   const allQuizzesAnswered = currentQuizBlocks.every(b => quizSubmitted[b.id])
   const allQuizzesCorrect = currentQuizBlocks.every(b => quizResults[b.id]?.correct)
-  const allQuizzesSelected = currentQuizBlocks.length > 0 && currentQuizBlocks.every(isQuizBlockSelected)
 
   const handleQuizAnswer = (blockId, answer) => {
+    soundFX.pop()
     setQuizAnswers(prev => ({ ...prev, [blockId]: answer }))
-    if (quizSubmitted[blockId] && !quizResults[blockId]?.correct) {
+    if (quizSubmitted[blockId]) {
       setQuizSubmitted(prev => ({ ...prev, [blockId]: false }))
       setQuizResults(prev => {
         const copy = { ...prev }
@@ -180,8 +182,11 @@ export default function Step() {
     setQuizSubmitted(prev => ({ ...prev, [blockId]: true }))
     setQuizResults(prev => ({ ...prev, [blockId]: { correct: isCorrect, xp, explanation } }))
     
-    // If incorrect, deduct 1 heart in optimistic UI
-    if (!isCorrect) {
+    if (isCorrect) {
+      soundFX.success()
+      fireConfetti({ particleCount: 35, origin: { x: 0.5, y: 0.7 } })
+    } else {
+      soundFX.error()
       setLocalHearts(h => Math.max(0, h - 1))
     }
   }
@@ -202,6 +207,8 @@ export default function Step() {
     const correctCount = Object.values(quizResults).filter(r => r.correct).length
     const baseXp = (step?.xp_reward || 0) + correctCount * 15
     setTotalXpEarned(hasXpBoost ? baseXp * 2 : baseXp)
+    soundFX.complete()
+    fireLessonCompleteConfetti()
     setShowCompleteScreen(true)
   }
 
@@ -444,9 +451,9 @@ export default function Step() {
             </motion.div>
           </AnimatePresence>
         ) : (
-          // Standard slide content (scrollable with max-width)
-          <div className="h-full overflow-y-auto flex items-center justify-center px-4 sm:px-8 py-6">
-            <div className="w-full max-w-2xl">
+          // Standard slide content (scrollable with max-width and safe mobile padding)
+          <div className="h-full overflow-y-auto min-h-0 flex flex-col justify-start px-4 sm:px-8 pt-4 pb-36">
+            <div className="w-full max-w-2xl mx-auto">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlideIndex}
@@ -477,7 +484,7 @@ export default function Step() {
 
       {/* ─── Bottom Feedback Drawer (Duolingo-style) ─────────────────── */}
       <footer className={cn(
-        'shrink-0 border-t-2 transition-all duration-300 px-6 py-4 relative z-30',
+        'shrink-0 border-t-2 transition-colors duration-200 px-4 sm:px-6 py-3.5 pb-safe relative z-30',
         quizIsCorrect
           ? 'bg-emerald-50 border-emerald-300'
           : quizIsIncorrect
@@ -865,18 +872,18 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                 </div>
 
                 {/* Dual Tactile 2.5D Action Buttons */}
-                <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                   <button
                     type="button"
                     onClick={() => handleSelect(itemKey, true)}
                     disabled={submitted}
                     aria-pressed={selectedVal === true}
                     className={cn(
-                      'px-4 py-2.5 rounded-2xl font-extrabold text-xs sm:text-sm transition-all duration-100 flex items-center gap-1.5 cursor-pointer select-none active:translate-y-1',
+                      'px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer select-none min-h-[38px] transition-all',
                       selectedVal === true
-                        ? 'bg-emerald-500 hover:bg-emerald-400 text-white border-b-4 border-emerald-700 active:border-b-0'
-                        : 'bg-white hover:bg-slate-50 text-slate-800 border-2 border-slate-200 border-b-4 border-b-slate-300 active:border-b-2',
-                      submitted && 'cursor-default pointer-events-none active:translate-y-0 disabled:opacity-80'
+                        ? 'btn-tactile-success'
+                        : 'btn-tactile-secondary',
+                      submitted && 'cursor-default pointer-events-none opacity-85'
                     )}
                   >
                     <Check className={cn('w-4 h-4 stroke-[3]', selectedVal === true ? 'text-white' : 'text-emerald-600')} />
@@ -889,11 +896,11 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                     disabled={submitted}
                     aria-pressed={selectedVal === false}
                     className={cn(
-                      'px-4 py-2.5 rounded-2xl font-extrabold text-xs sm:text-sm transition-all duration-100 flex items-center gap-1.5 cursor-pointer select-none active:translate-y-1',
+                      'px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer select-none min-h-[38px] transition-all',
                       selectedVal === false
-                        ? 'bg-rose-500 hover:bg-rose-400 text-white border-b-4 border-rose-700 active:border-b-0'
-                        : 'bg-white hover:bg-slate-50 text-slate-800 border-2 border-slate-200 border-b-4 border-b-slate-300 active:border-b-2',
-                      submitted && 'cursor-default pointer-events-none active:translate-y-0 disabled:opacity-80'
+                        ? 'btn-tactile-danger'
+                        : 'btn-tactile-secondary',
+                      submitted && 'cursor-default pointer-events-none opacity-85'
                     )}
                   >
                     <XIcon className={cn('w-4 h-4 stroke-[3]', selectedVal === false ? 'text-white' : 'text-rose-600')} />
@@ -1017,22 +1024,22 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
               key={optValue}
               onClick={() => !submitted && onAnswer(optValue)}
               disabled={submitted}
-              whileHover={!submitted ? { y: -2 } : {}}
-              whileTap={!submitted ? { y: 1 } : {}}
+              whileHover={!submitted ? { scale: 1.01 } : {}}
+              whileTap={!submitted ? { scale: 0.99 } : {}}
               className={cn(
-                'relative w-full min-h-[96px] rounded-2xl border-2 transition-all flex flex-col items-start justify-center p-5 cursor-pointer text-left',
+                'relative w-full min-h-[72px] sm:min-h-[84px] rounded-2xl border-2 flex flex-col items-start justify-center p-3.5 sm:p-5 cursor-pointer text-left transition-colors',
                 showCorrectMark
                   ? 'bg-emerald-50 border-emerald-500 text-emerald-900'
                   : showWrongMark
                   ? 'bg-rose-50 border-rose-500 text-rose-900'
                   : isSelected
-                  ? 'bg-indigo-50/80 border-indigo-600 text-indigo-950'
+                  ? 'bg-indigo-50/80 border-indigo-600 text-indigo-950 shadow-sm'
                   : 'bg-white border-slate-200 text-slate-800 hover:border-indigo-300'
               )}
             >
               {/* Option Letter Chip */}
               <span className={cn(
-                'text-xs font-extrabold mb-1.5 px-2.5 py-0.5 rounded-lg border',
+                'text-xs font-extrabold mb-1 px-2.5 py-0.5 rounded-lg border transition-colors',
                 showCorrectMark ? 'bg-emerald-200 border-emerald-300 text-emerald-900' :
                 showWrongMark ? 'bg-rose-200 border-rose-300 text-rose-900' :
                 isSelected ? 'bg-indigo-600 border-indigo-700 text-white' :
@@ -1042,7 +1049,7 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
               </span>
 
               {/* Option Text */}
-              <span className="text-base font-bold leading-snug">
+              <span className="text-sm sm:text-base font-bold leading-snug">
                 <MathText text={typeof optLabel === 'string' ? optLabel : String(optLabel)} />
               </span>
             </motion.button>
