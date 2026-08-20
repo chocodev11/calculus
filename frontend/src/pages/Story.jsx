@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -29,6 +29,15 @@ export default function Story() {
   const [loading, setLoading] = useState(true)
   const [enrolling, setEnrolling] = useState(false)
   const [currentLesson, setCurrentLesson] = useState(null)
+
+  const { totalLessons, completedLessons } = useMemo(() => {
+    const allSteps = (story?.chapters || []).flatMap(ch => ch.steps || [])
+    const total = allSteps.length
+    const completed = allSteps.filter(s => s.is_completed).length
+    return { totalLessons: total, completedLessons: completed }
+  }, [story])
+
+  const needsEnrollment = Boolean(story && !story.is_enrolled)
 
   useEffect(() => {
     loadStory()
@@ -111,8 +120,6 @@ export default function Story() {
     )
   }
 
-  const needsEnrollment = !story.is_enrolled
-
   return (
     <div className="w-full font-sans">
       
@@ -132,7 +139,7 @@ export default function Story() {
           </div>
           {story.is_enrolled && (
             <span className="shrink-0 text-xs font-extrabold px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 tabular-nums">
-              {Math.round(story.progress || 0)}% Hoàn thành
+              {Math.round(story.progress || (totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0))}% Hoàn thành
             </span>
           )}
         </div>
@@ -147,8 +154,8 @@ export default function Story() {
             <div className="lg:sticky lg:top-[144px]">
               <CourseOverviewCard
                 story={story}
-                totalLessons={story.total_steps || story.steps_count || 0}
-                completedLessons={story.completed_steps || 0}
+                totalLessons={totalLessons}
+                completedLessons={completedLessons}
                 needsEnrollment={needsEnrollment}
                 onEnroll={handleEnroll}
                 enrolling={enrolling}

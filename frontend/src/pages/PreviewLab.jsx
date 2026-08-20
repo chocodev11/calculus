@@ -398,8 +398,8 @@ export default function PreviewLab() {
           </div>
 
           {/* ─── LESSON SLIDE CONTENT (Unclipped Vertical Scroll & Center) ── */}
-          <div className="flex-1 overflow-y-auto min-h-0 flex flex-col px-4 sm:px-8 pt-4 pb-36">
-            <div className="max-w-xl w-full mx-auto my-auto py-6 space-y-6">
+          <div className="flex-1 overflow-y-auto min-h-0 flex flex-col px-4 sm:px-8 py-4 sm:py-6">
+            <div className="max-w-xl w-full mx-auto my-auto space-y-6">
               
               {!isCompleted ? (
                 <AnimatePresence mode="wait">
@@ -623,7 +623,7 @@ export default function PreviewLab() {
           </div>
 
           {/* ─── STICKY BOTTOM ACTION FOOTER (Safe Area Aware) ────────── */}
-          <footer className="absolute bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-slate-200 px-4 sm:px-6 py-3.5 pb-safe">
+          <footer className="shrink-0 z-40 bg-white/95 backdrop-blur border-t border-slate-200 px-4 sm:px-6 py-3.5 pb-safe">
             <div className="max-w-xl mx-auto flex items-center justify-between gap-3">
               
               {!isCompleted ? (

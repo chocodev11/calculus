@@ -423,7 +423,7 @@ export default function Step() {
       </header>
 
       {/* ─── Main Slide Content Body ─────────────────────────────────── */}
-      <main className="flex-1 shrink-0 overflow-hidden relative">
+      <main className="flex-1 min-h-0 relative flex flex-col overflow-hidden">
         {isInteractionSlide ? (
           // Full-bleed interactive math engine slide with scroll support
           <AnimatePresence mode="wait">
@@ -433,7 +433,7 @@ export default function Step() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="w-full h-full overflow-y-auto"
+              className="w-full h-full overflow-y-auto flex flex-col"
             >
               {(() => {
                 const blocks = currentSlide?.blocks || []
@@ -441,7 +441,7 @@ export default function Step() {
                 if (interactionBlock) {
                   const content = interactionBlock.content || interactionBlock.block_data || {}
                   return (
-                    <div className="w-full min-h-full max-w-4xl mx-auto p-3 sm:p-6 pb-24">
+                    <div className="w-full max-w-4xl mx-auto my-auto p-3 sm:p-6">
                       <InteractionSlide
                         interactionType={content.interactionType}
                         lesson={content.lesson}
@@ -454,9 +454,9 @@ export default function Step() {
             </motion.div>
           </AnimatePresence>
         ) : (
-          // Standard slide content (scrollable with max-width and safe mobile padding, vertically centered)
-          <div className="h-full overflow-y-auto min-h-0 flex flex-col px-4 sm:px-8 pt-4 pb-36">
-            <div className="w-full max-w-2xl mx-auto my-auto py-6">
+          // Standard slide content (only scrolls when viewport is insufficient, vertically centered)
+          <div className="h-full overflow-y-auto flex flex-col px-4 sm:px-8 py-4 sm:py-6">
+            <div className="w-full max-w-2xl mx-auto my-auto space-y-6">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlideIndex}

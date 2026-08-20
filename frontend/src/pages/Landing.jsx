@@ -9,12 +9,16 @@ import { TactileButton } from '../components/ui/tactile-button'
 import { GamifyBadge } from '../components/ui/gamify-badge'
 import 'katex/dist/katex.min.css'
 import * as ReactKatexModule from 'react-katex'
+import { getFeaturedCourse } from '../lib/courseRegistry'
 
 const ReactKatex = ReactKatexModule.default || ReactKatexModule
 const { InlineMath, BlockMath } = ReactKatex
 
 export default function Landing() {
   const navigate = useNavigate()
+  const featuredCourse = getFeaturedCourse()
+  const totalLessons = featuredCourse?.chapters?.reduce((acc, ch) => acc + (ch.steps?.length || ch.step_ids?.length || 0), 0) || 7
+  const totalChapters = featuredCourse?.chapters?.length || 1
 
   return (
     <div className="w-full flex flex-col items-center bg-slate-50 overflow-hidden font-sans select-none">
@@ -284,24 +288,32 @@ export default function Landing() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          {/* Course 1: Featured Course Menh De */}
+          {/* Course 1: Featured Course */}
           <div className="bg-white border-2 border-indigo-200 shadow-md shadow-indigo-100 rounded-3xl p-6 space-y-4 relative md:col-span-2">
             <div className="absolute -top-3 right-6 bg-indigo-600 text-white text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider">
-              Khóa học nổi bật • Lớp 10
+              {featuredCourse?.is_featured ? 'Khóa học nổi bật' : 'Khóa học tiêu biểu'} • {featuredCourse?.grade_title || 'Lớp 10'}
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">Lớp 10</span>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">Chủ điểm: Mệnh đề</span>
+                <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">
+                  {featuredCourse?.grade_title || 'Lớp 10'}
+                </span>
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
+                  Chủ điểm: {featuredCourse?.topic_title || 'Mệnh đề'}
+                </span>
               </div>
-              <span className="text-xs font-bold text-slate-400">1 Chương • 7 Bài học</span>
+              <span className="text-xs font-bold text-slate-400">
+                {totalChapters} Chương • {totalLessons} Bài học
+              </span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">Mệnh đề và Logic Toán 10</h3>
+            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+              {featuredCourse?.title || 'Mệnh đề và Logic'}
+            </h3>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Nhận diện mệnh đề, mệnh đề chứa biến, lượng từ đa biến, kiểm tra kéo theo, điều kiện cần - đủ và phản ví dụ thực tiễn.
+              {featuredCourse?.description || 'Nhận diện mệnh đề, mệnh đề chứa biến, lượng từ đa biến, kiểm tra kéo theo, điều kiện cần - đủ và phản ví dụ thực tiễn.'}
             </p>
             <div className="pt-2 flex flex-col sm:flex-row gap-3">
-              <TactileButton variant="primary" size="md" onClick={() => navigate('/course/menh-de')} className="flex-1">
+              <TactileButton variant="primary" size="md" onClick={() => navigate(`/course/${featuredCourse?.slug || 'menh-de'}`)} className="flex-1">
                 Học ngay bây giờ
               </TactileButton>
               <TactileButton variant="secondary" size="md" onClick={() => navigate('/explore')} className="flex-1">

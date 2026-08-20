@@ -5,12 +5,13 @@ import { Sparkles, GraduationCap, Compass, BookOpen, Layers, CheckCircle2, Chevr
 import api from '../lib/api'
 import { t } from '../lib/locale'
 import { TactileButton } from '../components/ui/tactile-button'
+import { getFallbackLearningPaths } from '../lib/courseRegistry'
 
 const GRADES = [
-  { id: 'all', label: 'Tất cả các lớp', badge: 'Toàn bộ' },
-  { id: '10', label: 'Lớp 10', badge: 'Chương trình mới' },
-  { id: '11', label: 'Lớp 11', badge: 'Sắp ra mắt' },
-  { id: '12', label: 'Lớp 12', badge: 'Sắp ra mắt' }
+  { id: 'all', label: 'Tất cả các lớp' },
+  { id: '10', label: 'Lớp 10' },
+  { id: '11', label: 'Lớp 11' },
+  { id: '12', label: 'Lớp 12' }
 ]
 
 export default function Explore() {
@@ -29,43 +30,24 @@ export default function Explore() {
         setLearningPaths(data)
       } else {
         const storiesData = await api.get('/courses')
-        setLearningPaths([
-          {
-            id: 'toan-10',
-            grade: '10',
-            title: 'Toán Lớp 10',
-            description: 'Các chủ điểm kiến thức trọng tâm Toán 10: Mệnh đề, Tập hợp, Bất phương trình...',
-            iconUrl: 'https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204',
-            courses: storiesData || []
-          }
-        ])
+        if (Array.isArray(storiesData) && storiesData.length > 0) {
+          setLearningPaths([
+            {
+              id: 'toan-10',
+              grade: '10',
+              title: 'Toán Lớp 10',
+              description: 'Các chủ điểm kiến thức trọng tâm Toán 10: Mệnh đề, Tập hợp, Bất phương trình...',
+              iconUrl: 'https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204',
+              courses: storiesData
+            }
+          ])
+        } else {
+          setLearningPaths(getFallbackLearningPaths())
+        }
       }
     } catch (e) {
       console.error('Failed to load learning paths:', e)
-      // Fallback local data
-      setLearningPaths([
-        {
-          id: 'toan-10',
-          grade: '10',
-          title: 'Toán Lớp 10',
-          description: 'Các chủ điểm kiến thức trọng tâm Toán 10: Mệnh đề, Tập hợp, Bất phương trình...',
-          iconUrl: 'https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204',
-          courses: [
-            {
-              slug: 'menh-de',
-              title: 'Mệnh đề và Logic Toán 10',
-              grade: '10',
-              grade_title: 'Lớp 10',
-              topic: 'menh-de',
-              topic_title: 'Mệnh đề',
-              illustration: 'https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204',
-              isNew: true,
-              chapter_count: 1,
-              exercises: 7
-            }
-          ]
-        }
-      ])
+      setLearningPaths(getFallbackLearningPaths())
     } finally {
       setLoading(false)
     }
@@ -93,7 +75,7 @@ export default function Explore() {
       <div className="space-y-4 max-w-3xl">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold">
           <Compass className="w-3.5 h-3.5" />
-          <span>Thư viện khóa học phân theo Lớp & Chủ điểm</span>
+          <span>Thư viện khóa học</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           {t.explore?.title || 'Khám Phá Các Khóa Học'}
@@ -111,20 +93,13 @@ export default function Explore() {
             <button
               key={grade.id}
               onClick={() => setSelectedGrade(grade.id)}
-              className={`px-4 py-2.5 rounded-2xl font-bold text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer shrink-0 ${
+              className={`px-5 py-2.5 rounded-2xl font-bold text-sm transition-all duration-200 cursor-pointer shrink-0 ${
                 isActive
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200 border-2 border-indigo-600'
                   : 'bg-white text-slate-700 hover:bg-slate-100 border-2 border-slate-200'
               }`}
             >
-              <span>{grade.label}</span>
-              {grade.badge && (
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full uppercase tracking-wider font-extrabold ${
-                  isActive ? 'bg-indigo-700 text-indigo-100' : 'bg-slate-100 text-slate-500'
-                }`}>
-                  {grade.badge}
-                </span>
-              )}
+              {grade.label}
             </button>
           )
         })}
@@ -156,14 +131,7 @@ export default function Explore() {
                       </div>
                     )}
                     <div>
-                      <div className="flex items-center gap-2">
-                        <h2 className="text-lg sm:text-xl font-extrabold text-slate-900">{path.title}</h2>
-                        {path.grade && (
-                          <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold">
-                            Lớp {path.grade}
-                          </span>
-                        )}
-                      </div>
+                      <h2 className="text-lg sm:text-xl font-extrabold text-slate-900">{path.title}</h2>
                       <p className="text-xs sm:text-sm text-slate-500 font-medium">{path.description}</p>
                     </div>
                   </div>

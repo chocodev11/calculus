@@ -2,7 +2,7 @@
   {
     "id": "menh-de",
     "slug": "menh-de",
-    "title": "Mệnh đề và Logic Toán 10",
+    "title": "Mệnh đề và Logic",
     "grade": "10",
     "grade_title": "Lớp 10",
     "topic": "menh-de",
@@ -19,7 +19,7 @@
     "chapters": [
       {
         "id": "menh-de",
-        "title": "Mệnh đề và Logic Toán 10",
+        "title": "Chuyên đề Mệnh đề & Logic",
         "description": "Toàn bộ 6 chủ đề lý thuyết và 3 dạng bài tập từ tài liệu nguồn: từ nhận diện mệnh đề, mệnh đề chứa biến đến phủ định, kéo theo, điều kiện cần - đủ, lượng từ đa biến và bài toán tham số vận dụng cao.",
         "order_index": 0,
         "step_ids": [

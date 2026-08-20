@@ -98,6 +98,27 @@ export function getCourse(slug: string): Course | null {
   return courses.find(c => c.slug === slug) || null
 }
 
+export function getFeaturedCourse(): Course | null {
+  const courses = getAllCourses()
+  return courses.find(c => c.is_featured) || courses[0] || null
+}
+
+export function getFallbackLearningPaths() {
+  const courses = getAllCourses()
+  const grade10Courses = courses.filter(c => c.grade === '10' || !c.grade)
+
+  return [
+    {
+      id: 'toan-10',
+      grade: '10',
+      title: 'Toán Lớp 10',
+      description: 'Các chủ điểm kiến thức trọng tâm Toán 10: Mệnh đề, Tập hợp, Bất phương trình...',
+      iconUrl: 'https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204',
+      courses: grade10Courses.length > 0 ? grade10Courses : courses
+    }
+  ]
+}
+
 export async function getStep(courseSlug: string, stepId: string) {
   // Find step module in glob
   // Path pattern: ../content/courses/{courseSlug}/{stepId}.mdx

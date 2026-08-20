@@ -165,13 +165,13 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8 font-sans">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-6 space-y-6 font-sans">
       
       {/* ─── Main 2-Column Grid: 8 cols Learning Focus + 4 cols Companion Sidebar ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* ── Left Column: Primary Learning Stream (70% width on desktop) ── */}
-        <main className="lg:col-span-8 space-y-8" aria-label="Khu vực học tập chính">
+        <main className="lg:col-span-8 space-y-6" aria-label="Khu vực học tập chính">
           
           {/* 1. Next Lesson Hero Card (Single Focal Point) */}
           <NextLessonHero
@@ -195,9 +195,9 @@ export default function Home() {
 
           {/* 3. Other In-Progress Courses (If enrolled in multiple courses) */}
           {courses.length > 1 && (
-            <section aria-label="Các khóa học khác đang học" className="space-y-4 pt-2">
+            <section aria-label="Các khóa học khác đang học" className="space-y-3 pt-1">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-indigo-600" aria-hidden="true" />
                   <span>Các khóa học khác đang học</span>
                 </h3>
@@ -206,30 +206,33 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {courses.slice(1).map((c) => (
-                  <div
-                    key={c.slug}
-                    onClick={() => navigate(`/course/${c.slug}`)}
-                    className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 hover:border-indigo-300 transition-all cursor-pointer space-y-3 group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 tabular-nums">
-                        {Math.round(c.progress_percent ?? c.progress ?? 0)}% hoàn thành
-                      </span>
-                      <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                {courses.slice(1).map((c) => {
+                  const p = Math.round(c.progress_percent ?? c.progress ?? 0)
+                  return (
+                    <div
+                      key={c.slug}
+                      onClick={() => navigate(`/course/${c.slug}`)}
+                      className="bg-white border border-slate-200 rounded-2xl p-4 hover:border-indigo-300 transition-all cursor-pointer space-y-2.5 group shadow-xs"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 tabular-nums">
+                          {p}% hoàn thành
+                        </span>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 transition-colors" />
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
+                        {c.title}
+                      </h4>
+                      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/60">
+                        <div
+                          className="h-full bg-indigo-600 rounded-full"
+                          style={{ width: `${p === 0 ? 0 : Math.max(3, p)}%` }}
+                        />
+                      </div>
                     </div>
-                    <h4 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
-                      {c.title}
-                    </h4>
-                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/60">
-                      <div
-                        className="h-full bg-indigo-600 rounded-full"
-                        style={{ width: `${Math.max(4, c.progress_percent ?? c.progress ?? 0)}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </section>
           )}
@@ -237,7 +240,7 @@ export default function Home() {
         </main>
 
         {/* ── Right Column: Companion Sidebar (30% width on desktop) ── */}
-        <aside className="lg:col-span-4 space-y-6" aria-label="Tiện ích đồng hành">
+        <aside className="lg:col-span-4 space-y-5" aria-label="Tiện ích đồng hành">
           
           {/* Module 1: Daily Focus & Priority Quests */}
           <DailyFocusCard
@@ -259,7 +262,7 @@ export default function Home() {
           />
 
           {/* Module 3: Tactical Micro-Tip */}
-          <div className="p-4 rounded-2xl bg-slate-100/70 border border-slate-200 text-slate-500 text-xs font-medium leading-relaxed space-y-1">
+          <div className="p-3.5 rounded-xl bg-slate-100/70 border border-slate-200 text-slate-500 text-xs font-medium leading-relaxed space-y-1">
             <p className="font-bold text-slate-700 flex items-center gap-1.5">
               <span>💡 Gợi ý học tập</span>
             </p>
@@ -275,12 +278,12 @@ export default function Home() {
       {/* ─── Full Leaderboard Modal ─────────────────────────────────────────── */}
       {showLeaderboard && (
         <div 
-          className="fixed inset-0 z-50 bg-slate-900/40 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-slate-900/40 flex items-center justify-center p-4 backdrop-blur-xs"
           role="dialog"
           aria-modal="true"
           aria-labelledby="leaderboard-modal-title"
         >
-          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150 shadow-xl">
             
             {/* Header */}
             <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
