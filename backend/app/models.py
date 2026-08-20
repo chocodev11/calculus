@@ -73,6 +73,8 @@ class Story(Base):
     is_published = Column(Boolean, default=False)
     is_featured = Column(Boolean, default=False)
     order_index = Column(Integer, default=0)
+    grade = Column(String(20), nullable=True)
+    topic = Column(String(100), nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     
     category = relationship("Category", back_populates="stories")

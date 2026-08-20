@@ -95,6 +95,8 @@ async def process_course(session: AsyncSession, course_data: dict, categories_ma
             is_published=course_data.get("is_published", True),
             is_featured=course_data.get("is_featured", False),
             order_index=course_data.get("order_index", 0),
+            grade=course_data.get("grade", "10"),
+            topic=course_data.get("topic", "menh-de"),
             category_id=category.id if category else None
         )
         session.add(story)
@@ -110,6 +112,8 @@ async def process_course(session: AsyncSession, course_data: dict, categories_ma
         story.is_published = course_data.get("is_published", story.is_published)
         story.is_featured = course_data.get("is_featured", story.is_featured)
         story.order_index = course_data.get("order_index", story.order_index)
+        story.grade = course_data.get("grade", story.grade or "10")
+        story.topic = course_data.get("topic", story.topic or "menh-de")
         if category:
             story.category_id = category.id
 

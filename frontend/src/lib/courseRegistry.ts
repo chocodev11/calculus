@@ -37,10 +37,19 @@ export interface Course {
   slug: string
   description?: string
   icon?: string
+  grade?: string
+  grade_title?: string
+  topic?: string
+  topic_title?: string
   category_id?: string
+  category_slug?: string
+  illustration?: string
+  color?: string
+  difficulty?: string
   level?: string
   order_index?: number
   is_published?: boolean
+  is_featured?: boolean
   chapters?: Chapter[]
 }
 

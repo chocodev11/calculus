@@ -17,6 +17,28 @@
 - **Node.js** >= 18
 - **Python** >= 3.10
 
+### Quick Start với Just (Khuyên dùng)
+
+Nếu đã cài [just](https://github.com/casey/just):
+
+```bash
+# Cài đặt toàn bộ dependencies
+just install
+
+# Chạy đồng thời cả Backend và Frontend
+just host
+```
+
+Các lệnh tiện ích khác:
+- `just sync`: Đồng bộ dữ liệu JSON vào Database SQLite.
+- `just backend`: Chỉ chạy FastAPI backend.
+- `just frontend`: Chỉ chạy Vite frontend.
+- `just validate`: Kiểm tra tính hợp lệ của toàn bộ dữ liệu khóa học.
+
+---
+
+### Cài đặt thủ công
+
 ### 1. Install Python Dependencies
 
 ```bash

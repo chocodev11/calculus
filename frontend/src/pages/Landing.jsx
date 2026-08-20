@@ -272,68 +272,58 @@ export default function Landing() {
         
         <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
           <span className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
-            Chương trình đào tạo
+            Chương trình theo Lớp & Chủ điểm
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Lộ Trình Giải Tích Toàn Diện
+            Lộ Trình Học Toán Trực Quan Toàn Diện
           </h2>
           <p className="text-base text-slate-600">
-            Mỗi học phần được cấu trúc theo lộ trình bài bản, từng bước mở khóa kiến thức.
+            Phân loại rõ ràng theo từng khối lớp và chủ điểm kiến thức cốt lõi, từng bước mở khóa tư duy toán học.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          {/* Course 1 */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">Cơ bản</span>
-              <span className="text-xs font-bold text-slate-400">3 Chương • 6 Bài</span>
-            </div>
-            <h3 className="text-xl font-bold text-slate-900">Giới Hạn Hàm Số</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Khái niệm tiệm cận, vô cùng bé, giới hạn một bên và quy tắc L'Hôpital trực quan.
-            </p>
-            <div className="pt-2">
-              <TactileButton variant="secondary" size="sm" onClick={() => navigate('/course/gioi-han-ham-so')} className="w-full">
-                Khám phá khoá học
-              </TactileButton>
-            </div>
-          </div>
-
-          {/* Course 2 */}
-          <div className="bg-white border-2 border-indigo-200 rounded-3xl p-6 space-y-4 relative">
+          {/* Course 1: Featured Course Menh De */}
+          <div className="bg-white border-2 border-indigo-200 shadow-md shadow-indigo-100 rounded-3xl p-6 space-y-4 relative md:col-span-2">
             <div className="absolute -top-3 right-6 bg-indigo-600 text-white text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider">
-              Phổ biến nhất
+              Khóa học nổi bật • Lớp 10
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">Trọng tâm</span>
-              <span className="text-xs font-bold text-slate-400">3 Chương • 9 Bài</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">Lớp 10</span>
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">Chủ điểm: Mệnh đề</span>
+              </div>
+              <span className="text-xs font-bold text-slate-400">1 Chương • 7 Bài học</span>
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Đạo Hàm & Ứng Dụng</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Ý nghĩa tiếp tuyến, quy tắc chuỗi, tìm cực trị và bài toán tối ưu hóa thực tế.
+            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">Mệnh đề và Logic Toán 10</h3>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Nhận diện mệnh đề, mệnh đề chứa biến, lượng từ đa biến, kiểm tra kéo theo, điều kiện cần - đủ và phản ví dụ thực tiễn.
             </p>
-            <div className="pt-2">
-              <TactileButton variant="primary" size="sm" onClick={() => navigate('/course/dao-ham')} className="w-full">
+            <div className="pt-2 flex flex-col sm:flex-row gap-3">
+              <TactileButton variant="primary" size="md" onClick={() => navigate('/course/menh-de')} className="flex-1">
                 Học ngay bây giờ
               </TactileButton>
+              <TactileButton variant="secondary" size="md" onClick={() => navigate('/explore')} className="flex-1">
+                Xem toàn bộ chủ điểm
+              </TactileButton>
             </div>
           </div>
 
-          {/* Course 3 */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700">Nâng cao</span>
-              <span className="text-xs font-bold text-slate-400">3 Chương • 8 Bài</span>
+          {/* Catalog Explore Card */}
+          <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-3xl p-6 space-y-4 flex flex-col justify-between">
+            <div className="space-y-3">
+              <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+                Thư viện mở rộng
+              </span>
+              <h3 className="text-xl font-bold text-white">Khám Phá Theo Khối Lớp</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Khám phá hệ thống học phần được phân nhóm rõ ràng theo Lớp 10, Lớp 11 và Lớp 12.
+              </p>
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Tích Phân & Diện Tích</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Tổng Riemann, định lý cơ bản của giải tích và tính diện tích hình phẳng cong.
-            </p>
             <div className="pt-2">
-              <TactileButton variant="secondary" size="sm" onClick={() => navigate('/course/tich-phan')} className="w-full">
-                Khám phá khoá học
+              <TactileButton variant="secondary" size="sm" onClick={() => navigate('/explore')} className="w-full">
+                Mở thư viện khóa học
               </TactileButton>
             </div>
           </div>

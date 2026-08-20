@@ -397,9 +397,9 @@ export default function PreviewLab() {
             </div>
           </div>
 
-          {/* ─── LESSON SLIDE CONTENT (Unclipped Vertical Scroll) ──────── */}
-          <div className="flex-1 overflow-y-auto min-h-0 px-4 sm:px-8 pt-4 pb-36">
-            <div className="max-w-xl mx-auto space-y-6">
+          {/* ─── LESSON SLIDE CONTENT (Unclipped Vertical Scroll & Center) ── */}
+          <div className="flex-1 overflow-y-auto min-h-0 flex flex-col px-4 sm:px-8 pt-4 pb-36">
+            <div className="max-w-xl w-full mx-auto my-auto py-6 space-y-6">
               
               {!isCompleted ? (
                 <AnimatePresence mode="wait">
@@ -679,7 +679,7 @@ export default function PreviewLab() {
         </div>
       </div>
 
-      {/* ─── BOTTOM HUD (CLS Inspector & Metrics) ───────────────────────── */}
+      {/* ─── BOTTOM HUD (CLS Inspector & Metrics & Soundboard Audition) ─── */}
       <div className="bg-slate-950 border-t border-slate-800 px-4 py-2 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2 shrink-0">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
@@ -687,19 +687,59 @@ export default function PreviewLab() {
           </span>
           <span className="hidden md:inline text-slate-600">|</span>
           <span className="hidden md:flex items-center gap-1 text-slate-400">
-            <Cpu className="w-3.5 h-3.5 text-indigo-400" /> GPU Compositing: Transform & Box-Shadow
+            <Cpu className="w-3.5 h-3.5 text-indigo-400" /> Duolingo Physical Modal Synthesis Engine
           </span>
+        </div>
+
+        {/* Quick Sound Audition Soundboard */}
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] font-bold text-slate-500 mr-1 hidden sm:inline">Thử âm:</span>
+          <button
+            type="button"
+            onClick={() => soundFX.success()}
+            className="px-2 py-1 rounded bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 text-[11px] font-bold hover:bg-emerald-900 active:scale-95 transition-all cursor-pointer"
+            title="Đúng (F#5 -> A#5 Celesta + Mallet)"
+          >
+            Đúng ✨
+          </button>
+          <button
+            type="button"
+            onClick={() => soundFX.error()}
+            className="px-2 py-1 rounded bg-rose-950/80 border border-rose-700/60 text-rose-300 text-[11px] font-bold hover:bg-rose-900 active:scale-95 transition-all cursor-pointer"
+            title="Sai (F#4 -> C4 Tritone + Sub Thud)"
+          >
+            Sai ❌
+          </button>
+          <button
+            type="button"
+            onClick={() => soundFX.pop()}
+            className="px-2 py-1 rounded bg-indigo-950/80 border border-indigo-700/60 text-indigo-300 text-[11px] font-bold hover:bg-indigo-900 active:scale-95 transition-all cursor-pointer"
+            title="Pop Marimba Wood Strike"
+          >
+            Pop 🪵
+          </button>
+          <button
+            type="button"
+            onClick={() => soundFX.streakZap()}
+            className="px-2 py-1 rounded bg-amber-950/80 border border-amber-700/60 text-amber-300 text-[11px] font-bold hover:bg-amber-900 active:scale-95 transition-all cursor-pointer"
+            title="Streak Lightning Zap"
+          >
+            Streak ⚡
+          </button>
+          <button
+            type="button"
+            onClick={() => soundFX.complete()}
+            className="px-2 py-1 rounded bg-violet-950/80 border border-violet-700/60 text-violet-300 text-[11px] font-bold hover:bg-violet-900 active:scale-95 transition-all cursor-pointer"
+            title="Complete Fanfare F# Pentatonic"
+          >
+            Fanfare 🏆
+          </button>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="font-mono text-[11px] bg-slate-900 px-2 py-0.5 rounded text-slate-400">
             Active: {currentDevice.name} {isLandscape ? '(Ngang)' : '(Dọc)'}
           </span>
-          {clsEvents.length > 0 && (
-            <span className="text-amber-400 font-mono text-[10px]">
-              Shifts: {clsEvents.length}
-            </span>
-          )}
         </div>
       </div>
     </div>

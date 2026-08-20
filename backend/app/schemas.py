@@ -68,7 +68,11 @@ class StoryListResponse(BaseModel):
     description: Optional[str]
     icon: Optional[str]
     color: Optional[str]
-    category_name: Optional[str]
+    category_name: Optional[str] = None
+    grade: Optional[str] = None
+    grade_title: Optional[str] = None
+    topic: Optional[str] = None
+    topic_title: Optional[str] = None
     chapter_count: int = 0
     exercises: int = 0
     progress: int = 0

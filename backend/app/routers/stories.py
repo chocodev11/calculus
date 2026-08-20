@@ -34,6 +34,8 @@ def _count_quiz_blocks_in_story(story) -> int:
 @router.get("", response_model=list[StoryListResponse])
 async def get_stories(
     search: Optional[str] = None,
+    grade: Optional[str] = None,
+    topic: Optional[str] = None,
     featured: Optional[bool] = None,
     enrolled: Optional[bool] = None,
     limit: int = Query(default=20, le=100),
@@ -52,6 +54,12 @@ async def get_stories(
     if search:
         query = query.where(Story.title.ilike(f"%{search}%"))
     
+    if grade:
+        query = query.where(Story.grade == grade)
+
+    if topic:
+        query = query.where(Story.topic == topic)
+
     if featured:
         query = query.where(Story.is_featured == True)
 
@@ -101,6 +109,9 @@ async def get_stories(
         exercises_count = _count_quiz_blocks_in_story(story)
         is_completed = (progress == 100)
         
+        grade_title = f"Lớp {story.grade}" if story.grade else (category_name if category_name and "Lớp" in category_name else None)
+        topic_title = "Mệnh đề" if story.topic == "menh-de" else (story.topic.title() if story.topic else None)
+
         response.append(StoryListResponse(
             id=story.id,
             slug=story.slug,
@@ -111,6 +122,10 @@ async def get_stories(
             icon=story.icon,
             color=story.color,
             category_name=category_name,
+            grade=story.grade,
+            grade_title=grade_title,
+            topic=story.topic,
+            topic_title=topic_title,
             chapter_count=chapter_count,
             exercises=exercises_count,
             progress=progress,
@@ -130,23 +145,29 @@ async def get_learning_paths(
     
     paths_dict = {}
     for story in stories_data:
-        cat_name = story.category_name or "Khóa học đại cương"
-        if cat_name not in paths_dict:
-            cat_slug = cat_name.lower().replace(" ", "-")
-            paths_dict[cat_name] = {
-                "id": cat_slug,
-                "title": cat_name,
-                "description": f"Lộ trình học tập chuyên đề {cat_name}.",
+        grade_key = story.grade or (story.category_name if story.category_name and "Lớp" in story.category_name else "10")
+        group_title = f"Toán Lớp {grade_key}" if str(grade_key).isdigit() else (story.category_name or "Toán Học Trực Quan")
+        group_id = f"toan-{grade_key}".lower()
+
+        if group_id not in paths_dict:
+            paths_dict[group_id] = {
+                "id": group_id,
+                "grade": str(grade_key),
+                "title": group_title,
+                "description": f"Chương trình toán học và các chủ điểm trọng tâm cho {group_title}.",
+                "iconUrl": "https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204",
                 "courses": []
             }
-        paths_dict[cat_name]["courses"].append(story)
+        paths_dict[group_id]["courses"].append(story)
     
     if not paths_dict:
         return [
             {
-                "id": "calculus-core",
-                "title": "Hành trình Giải tích & Toán học",
-                "description": "Khám phá thế giới toán học từ nền tảng trực quan đến nâng cao.",
+                "id": "toan-10",
+                "grade": "10",
+                "title": "Toán Lớp 10",
+                "description": "Các chủ điểm kiến thức trọng tâm Toán 10: Mệnh đề, Tập hợp, Bất phương trình...",
+                "iconUrl": "https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204",
                 "courses": []
             }
         ]
@@ -253,6 +274,10 @@ async def get_story(
         icon=story.icon,
         color=story.color,
         category_name=category_name,
+        grade=story.grade,
+        grade_title=f"Lớp {story.grade}" if story.grade else (category_name if category_name and "Lớp" in category_name else None),
+        topic=story.topic,
+        topic_title="Mệnh đề" if story.topic == "menh-de" else (story.topic.title() if story.topic else None),
         chapter_count=len(chapters),
         exercises=exercises_count,
         progress=progress,

@@ -161,6 +161,9 @@ export default function Step() {
   }, [quizAnswers])
 
   const hasQuiz = currentQuizBlocks.length > 0
+  const allQuizzesSelected = useMemo(() => {
+    return currentQuizBlocks.length > 0 && currentQuizBlocks.every(b => isQuizBlockSelected(b))
+  }, [currentQuizBlocks, isQuizBlockSelected])
   const allQuizzesAnswered = currentQuizBlocks.every(b => quizSubmitted[b.id])
   const allQuizzesCorrect = currentQuizBlocks.every(b => quizResults[b.id]?.correct)
 
@@ -451,9 +454,9 @@ export default function Step() {
             </motion.div>
           </AnimatePresence>
         ) : (
-          // Standard slide content (scrollable with max-width and safe mobile padding)
-          <div className="h-full overflow-y-auto min-h-0 flex flex-col justify-start px-4 sm:px-8 pt-4 pb-36">
-            <div className="w-full max-w-2xl mx-auto">
+          // Standard slide content (scrollable with max-width and safe mobile padding, vertically centered)
+          <div className="h-full overflow-y-auto min-h-0 flex flex-col px-4 sm:px-8 pt-4 pb-36">
+            <div className="w-full max-w-2xl mx-auto my-auto py-6">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlideIndex}

@@ -1,74 +1,40 @@
 {
   "categories": [
     {
-      "id": "giai-tich",
-      "name": "Giải tích",
-      "slug": "giai-tich",
-      "icon": "∫"
+      "id": "lop-10",
+      "name": "Lớp 10",
+      "slug": "lop-10",
+      "icon": "🔟"
     },
     {
-      "id": "dai-so",
-      "name": "Đại số",
-      "slug": "dai-so",
-      "icon": "Σ"
+      "id": "lop-11",
+      "name": "Lớp 11",
+      "slug": "lop-11",
+      "icon": "🔢"
     },
     {
-      "id": "hinh-hoc",
-      "name": "Hình học",
-      "slug": "hinh-hoc",
-      "icon": "△"
+      "id": "lop-12",
+      "name": "Lớp 12",
+      "slug": "lop-12",
+      "icon": "📐"
     }
   ],
   "learningPaths": [
     {
-      "id": 1,
-      "slug": "giai-tich-co-ban",
-      "title": "Giải Tích Cơ Bản",
-      "description": "Khám phá các khái niệm nền tảng của giải tích: giới hạn, đạo hàm, tích phân.",
-      "iconUrl": "https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png",
-      "courses": [
-        {
-          "slug": "chuyen-dong",
-          "title": "Chuyển động & Thay đổi",
-          "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Proportional_Reasoning-5aofQr.png?width=204",
-          "isNew": true
-        },
-        {
-          "slug": "gioi-han",
-          "title": "Giới hạn",
-          "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Arithmetic_Thinking-KaQBTB.png?width=204",
-          "isNew": false
-        },
-        {
-          "slug": "dao-ham",
-          "title": "Đạo hàm",
-          "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Coordinate_Plane-TjmV5y.png?width=204",
-          "isNew": false
-        },
-        {
-          "slug": "tich-phan",
-          "title": "Tích phân",
-          "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Visual_Algebra_1-wiJeeI.png?width=204",
-          "isNew": false
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "slug": "dai-so-co-ban",
-      "title": "Đại Số Cơ Bản",
-      "description": "Biểu thức, phương trình, hàm số — nền tảng toán học cho mọi nhánh.",
+      "id": 10,
+      "slug": "toan-10",
+      "grade": "10",
+      "title": "Toán Lớp 10",
+      "description": "Các chủ điểm kiến thức trọng tâm Toán 10: Mệnh đề, Tập hợp, Bất phương trình, Hàm số...",
       "iconUrl": "https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204",
       "courses": [
         {
-          "slug": "dai-so",
-          "title": "Đại số & Hàm số",
-          "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Linear_Equations_1-KOclY7.png?width=204",
-          "isNew": true
-        },
-        {
           "slug": "menh-de",
           "title": "Mệnh đề và Logic Toán 10",
+          "grade": "10",
+          "grade_title": "Lớp 10",
+          "topic": "menh-de",
+          "topic_title": "Mệnh đề",
           "illustration": "https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204",
           "isNew": true
         }

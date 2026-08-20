@@ -35,10 +35,10 @@ export default function NextLessonHero({
         </div>
         <div className="space-y-1.5 max-w-md mx-auto">
           <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-            Khám phá lộ trình Giải tích
+            Khám phá chương trình Toán học
           </h2>
           <p className="text-sm text-slate-500 font-medium leading-relaxed">
-            Bạn chưa tham gia khóa học nào. Hãy chọn một chủ đề trong mục Khám phá để bắt đầu hành trình toán học trực quan!
+            Bạn chưa tham gia khóa học nào. Hãy chọn một chủ điểm trong mục Khám phá để bắt đầu học toán trực quan!
           </p>
         </div>
         <TactileButton variant="primary" size="md" onClick={onViewOutline} className="mx-auto">

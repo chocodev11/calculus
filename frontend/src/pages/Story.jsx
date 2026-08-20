@@ -201,8 +201,14 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
 
       {/* Info */}
       <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+            {story.grade_title || (story.grade ? `Lớp ${story.grade}` : 'Lớp 10')}
+          </span>
+          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+            Chủ điểm: {story.topic_title || (story.topic === 'menh-de' ? 'Mệnh đề' : 'Mệnh đề')}
+          </span>
+          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
             {story.difficulty || t.story?.beginner || 'Cơ bản'}
           </span>
         </div>
@@ -210,7 +216,7 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
           {story.title}
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-          {story.description || 'Làm chủ các khái niệm giải tích thông qua mô phỏng trực quan và thực hành giải đố.'}
+          {story.description || 'Làm chủ các khái niệm toán học thông qua mô phỏng trực quan và thực hành tương tác.'}
         </p>
       </div>
 
