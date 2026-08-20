@@ -31,13 +31,11 @@ export function Sandbox({
   }
 
   return (
-    <div className="my-6 w-full rounded-3xl overflow-hidden border-2 border-slate-200 bg-white">
-      <div className="min-h-[420px]">
-        <InteractionSlide
-          content={blockContent}
-          onComplete={onComplete}
-        />
-      </div>
+    <div className="my-3 w-full rounded-2xl border border-slate-200 bg-white overflow-hidden">
+      <InteractionSlide
+        content={blockContent}
+        onComplete={onComplete}
+      />
     </div>
   )
 }

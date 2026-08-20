@@ -74,7 +74,10 @@ npm run dev
 ```
 
 - **App**: http://localhost:3000
+- **Content Studio & Preview**: http://localhost:3000/studio *(Xem trước trực tiếp bài học MDX & kiểm thử đa thiết bị)*
 - **Admin**: http://localhost:3000/admin (hidden)
+
+> 📖 Xem hướng dẫn tác giả khóa học tại [Calculus Studio Guide](docs/STUDIO_GUIDE.md).
 
 ---
 

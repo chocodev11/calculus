@@ -139,6 +139,7 @@ xp: 120
       "goals": [
         {
           "id": "classify_variables",
+          "label": "Phân loại mệnh đề chứa biến và mệnh đề sau khi thế giá trị",
           "evidence": "logic.classifier_complete"
         }
       ],
@@ -146,11 +147,13 @@ xp: 120
         "steps": [
           {
             "id": "check_substitution",
+            "label": "Kiểm tra phép thế biến",
             "kind": "check",
             "hint": "Sau khi thế x=2 hoặc x=3, câu trở thành mệnh đề có chân trị xác định."
           },
           {
             "id": "distinguish_unbound_variable",
+            "label": "Nhận diện biến tự do",
             "kind": "simplify",
             "dependsOn": [
               "check_substitution"

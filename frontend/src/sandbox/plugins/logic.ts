@@ -24,6 +24,8 @@ interface LogicActivityItem {
   expectedEvidence?: string
   evidenceControlId?: string
   misconceptionId?: string
+  explanation?: string
+  misconceptionFeedback?: string
 }
 
 interface LogicActivity {
@@ -101,10 +103,15 @@ function goalResults(
   evidence: unknown,
 ): RecomputeResult['goals'] {
   return manifest.goals.map(goal => {
-    if (goal.evidence === 'structured_steps' || goal.evidence.startsWith('logic.')) {
-      return { id: goal.id, required: goal.required !== false, reached: complete, evidence }
+    const isLogic = goal.evidence === 'structured_steps' || goal.evidence.startsWith('logic.')
+    return {
+      id: goal.id,
+      label: goal.label || goal.title,
+      title: goal.title || goal.label,
+      required: goal.required !== false,
+      reached: isLogic ? complete : false,
+      evidence,
     }
-    return { id: goal.id, required: goal.required !== false, reached: false, evidence }
   })
 }
 
@@ -113,7 +120,7 @@ function activityFeedback(
   incorrect: Array<{ id: string; message: string; misconceptionId?: string }>,
 ): RecomputeResult['feedback'] {
   if (complete) {
-    return [{ id: 'logic-complete', kind: 'goal', message: 'Các bước suy luận đã đúng.' }]
+    return [{ id: 'logic-complete', kind: 'goal', message: 'Xuất sắc! Bạn đã hoàn thành chính xác tất cả các yêu cầu logic.' }]
   }
   return incorrect.map(item => ({
     id: `logic-feedback-${item.id}`,
@@ -123,21 +130,41 @@ function activityFeedback(
   }))
 }
 
+function classifierItemFeedback(item: LogicActivityItem, selected: unknown): string {
+  if (item.explanation) return item.explanation
+  if (item.misconceptionFeedback) return item.misconceptionFeedback
+  if (item.expectedType === 'proposition') {
+    return `Câu "${item.label}" là câu khẳng định có tính đúng hoặc sai rõ ràng, do đó là một Mệnh đề.`
+  }
+  if (item.expectedType === 'open_sentence') {
+    return `Câu "${item.label}" có chứa biến số chưa được gán giá trị cụ thể, do đó là Mệnh đề chứa biến.`
+  }
+  return `Câu "${item.label}" là câu hỏi, câu cảm thán hoặc mệnh lệnh, không mang tính đúng/sai nên Không phải mệnh đề.`
+}
+
 function recomputeClassifier(manifest: SandboxManifest, state: PrimitiveState): RecomputeResult {
   const activity = configOf(manifest).activity || {}
   const items = activity.items || []
   const incorrect: Array<{ id: string; message: string; misconceptionId?: string }> = []
   const rows = items.map(item => {
     const selected = state[item.controlId || `class:${item.id}`]
+    const hasSelected = selected !== undefined && selected !== ''
     const correct = sameChoice(selected, item.expectedType)
-    if (!correct) {
+    if (!correct && hasSelected) {
       incorrect.push({
         id: item.id,
-        message: `${item.id}: hãy kiểm tra xem biến đã được gán giá trị hoặc lượng từ hóa chưa.`,
+        message: classifierItemFeedback(item, selected),
         misconceptionId: item.misconceptionId,
       })
     }
-    return { id: item.id, statement: item.label, selected: selected ?? '', correct }
+    return {
+      id: item.id,
+      statement: item.label,
+      selected: selected ?? '',
+      correct,
+      explanation: item.explanation,
+      expectedType: item.expectedType,
+    }
   })
   const complete = items.length > 0 && rows.every(row => row.correct)
   const render = renderModel(rows, 'proposition_classifier', { items })

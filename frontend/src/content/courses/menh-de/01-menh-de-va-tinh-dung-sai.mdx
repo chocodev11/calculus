@@ -8,18 +8,25 @@ order: 0
 xp: 120
 ---
 
-<Slide title="Khái niệm Mệnh đề Logic">
-  ### Mệnh đề logic là gì?
+<Slide title="Khái niệm Mệnh đề">
+  ### Mệnh đề là gì?
   
-  Trong toán học, **mệnh đề** (logic) là một câu khẳng định có tính chất: **hoặc đúng, hoặc sai**.
+  Trong đời sống và trong toán học, chúng ta thường gặp các câu phát biểu khẳng định một sự việc, sự kiện.
   
-  Một câu khẳng định **không thể vừa đúng vừa sai**. Mỗi mệnh đề phải có một và chỉ một chân trị xác định: Đúng (ký hiệu là $1$ hay $\text{Đ}$) hoặc Sai (ký hiệu là $0$ hay $\text{S}$).
-  <Callout variant="theorem" title="Nguyên lý loại tam (Law of Excluded Middle)">
-    Một câu khẳng định chỉ có thể nhận giá trị **Đúng** hoặc **Sai**, không có trường hợp thứ ba. Các câu nghi vấn (hỏi), câu cảm thán, câu cầu khiến hay mệnh lệnh **không phải là mệnh đề**.
+  **Mệnh đề** (hay mệnh đề logic) là một câu khẳng định có tính chất: **hoặc đúng, hoặc sai**.
+  
+  - Một khẳng định đúng được gọi là **mệnh đề đúng**.
+  - Một khẳng định sai được gọi là **mệnh đề sai**.
+  - Một câu khẳng định **không thể vừa đúng vừa sai**.
+
+  <Callout variant="theorem" title="Đặc trưng cốt lõi của Mệnh đề (SGK Toán 10)">
+    1. **Chân trị xác định:** Mỗi mệnh đề chỉ nhận một trong hai giá trị chân lý: **Đúng** (ký hiệu là $\text{Đ}$ hoặc $1$) hoặc **Sai** (ký hiệu là $\text{S}$ hoặc $0$).
+    2. **Khẳng định sai vẫn là mệnh đề:** Một câu như *"Số 15 là số nguyên tố"* hay *"$4 > 7$"* là một khẳng định sai, nhưng nó **vẫn là một mệnh đề** (mệnh đề sai).
+    3. **Không phải mệnh đề:** Các câu hỏi, câu cảm thán, câu cầu khiến hay câu mệnh lệnh (ví dụ: *"Bạn mấy tuổi?"*, *"Học toán vui quá!"*, *"Hãy giải phương trình!"*) không khẳng định tính đúng sai nên **không phải là mệnh đề**.
   </Callout>
 </Slide>
 
-<Slide title="Phòng thí nghiệm Phân loại Mệnh đề">
+<Slide title="Thực hành Phân loại & Khảo sát Chân trị">
   <Sandbox type="sandbox" manifest={
     {
       "schemaVersion": "1.0",
@@ -30,6 +37,7 @@ xp: 120
       "domainId": "logic",
       "level": "recognition",
       "recipe": "logic.proposition",
+      "prompt": "Trong toán học và thực tế, các câu khẳng định có thể có tính đúng/sai rõ ràng, có thể chứa biến hoặc là câu cảm xúc. Hãy phân loại các câu dưới đây vào đúng 3 nhóm chuẩn SGK Toán 10:",
       "outcomeIds": [
         "M10-LOGIC-01"
       ],
@@ -47,25 +55,29 @@ xp: 120
               "id": "p1",
               "label": "Hà Nội là thủ đô của Việt Nam",
               "controlId": "c_p1",
-              "expectedType": "proposition"
+              "expectedType": "proposition",
+              "explanation": "'Hà Nội là thủ đô của Việt Nam' là một câu khẳng định đúng, do đó là một Mệnh đề."
             },
             {
               "id": "p2",
               "label": "Số 15 là số nguyên tố",
               "controlId": "c_p2",
-              "expectedType": "proposition"
+              "expectedType": "proposition",
+              "explanation": "'Số 15 là số nguyên tố' là câu khẳng định sai (15 chia hết cho 3 và 5). Vì có tính đúng sai rõ ràng nên đây vẫn là Mệnh đề (mệnh đề sai)."
             },
             {
               "id": "p3",
               "label": "Học toán vui quá!",
               "controlId": "c_p3",
-              "expectedType": "not_proposition"
+              "expectedType": "not_proposition",
+              "explanation": "'Học toán vui quá!' là câu cảm thán bộc lộ cảm xúc, không khẳng định sự thật đúng hay sai nên không phải mệnh đề."
             },
             {
               "id": "p4",
               "label": "2x + 1 = 5",
               "controlId": "c_p4",
-              "expectedType": "open_sentence"
+              "expectedType": "open_sentence",
+              "explanation": "'2x + 1 = 5' chứa biến số x chưa gán giá trị cụ thể, tính đúng sai phụ thuộc vào x nên là Mệnh đề chứa biến."
             }
           ]
         }
@@ -73,9 +85,9 @@ xp: 120
       "controls": [
         {
           "id": "c_p1",
-          "type": "choice",
+          "type": "drag_item",
           "label": "Hà Nội là thủ đô của Việt Nam",
-          "initial": "not_proposition",
+          "initial": "",
           "options": [
             "proposition",
             "open_sentence",
@@ -89,9 +101,9 @@ xp: 120
         },
         {
           "id": "c_p2",
-          "type": "choice",
+          "type": "drag_item",
           "label": "Số 15 là số nguyên tố",
-          "initial": "not_proposition",
+          "initial": "",
           "options": [
             "proposition",
             "open_sentence",
@@ -105,9 +117,9 @@ xp: 120
         },
         {
           "id": "c_p3",
-          "type": "choice",
+          "type": "drag_item",
           "label": "Học toán vui quá!",
-          "initial": "proposition",
+          "initial": "",
           "options": [
             "proposition",
             "open_sentence",
@@ -121,9 +133,9 @@ xp: 120
         },
         {
           "id": "c_p4",
-          "type": "choice",
+          "type": "drag_item",
           "label": "2x + 1 = 5",
-          "initial": "proposition",
+          "initial": "",
           "options": [
             "proposition",
             "open_sentence",
@@ -139,6 +151,7 @@ xp: 120
       "goals": [
         {
           "id": "classify_propositions",
+          "label": "Phân loại chính xác 4 câu vào 3 nhóm theo định nghĩa SGK",
           "evidence": "logic.classifier_complete"
         }
       ],
@@ -146,16 +159,18 @@ xp: 120
         "steps": [
           {
             "id": "check_factual_truth",
+            "label": "Kiểm tra tính đúng / sai",
             "kind": "check",
-            "hint": "Câu khẳng định có tính đúng sai rõ ràng là mệnh đề."
+            "hint": "Một câu khẳng định có tính đúng hoặc sai rõ ràng là Mệnh đề (kể cả khẳng định sai)."
           },
           {
             "id": "separate_exclamations",
+            "label": "Loại trừ câu cảm thán & câu hỏi",
             "kind": "simplify",
             "dependsOn": [
               "check_factual_truth"
             ],
-            "hint": "Câu cảm thán và câu hỏi bộc lộ cảm xúc, không có tính chân trị."
+            "hint": "Câu cảm thán (có dấu !) và câu hỏi (có dấu ?) không có tính chân lý nên không phải mệnh đề."
           }
         ],
         "terminalStepIds": [
@@ -166,7 +181,7 @@ xp: 120
         {
           "id": "check-proposition-nature",
           "type": "structured_reasoning",
-          "prompt": "Phân loại chính xác 4 câu khẳng định.",
+          "prompt": "Phân loại chính xác 4 câu khẳng định vào 3 nhóm Mệnh đề, Mệnh đề chứa biến và Không phải mệnh đề.",
           "outcomeIds": [
             "M10-LOGIC-01"
           ]

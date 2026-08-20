@@ -43,9 +43,9 @@ function truthTable(model: RenderModel): string {
 
 function renderClassifierBins(rows: Record<string, unknown>[]): string {
   const bins = [
-    { id: 'proposition', title: 'MỆNH ĐỀ', subtitle: 'Có giá trị đúng / sai', color: '#4338ca', bg: '#eef2ff', stroke: '#c7d2fe', x: 20 },
-    { id: 'open_sentence', title: 'MỆNH ĐỀ CHỨA BIẾN', subtitle: 'Chưa có lượng từ / miền', color: '#b45309', bg: '#fffbeb', stroke: '#fde68a', x: 226 },
-    { id: 'not_proposition', title: 'KHÔNG PHẢI MỆNH ĐỀ', subtitle: 'Biểu thức / câu hỏi', color: '#334155', bg: '#f1f5f9', stroke: '#cbd5e1', x: 432 },
+    { id: 'proposition', title: 'MỆNH ĐỀ', subtitle: 'Khẳng định đúng hoặc sai', color: '#4338ca', bg: '#eef2ff', stroke: '#c7d2fe', x: 20 },
+    { id: 'open_sentence', title: 'MỆNH ĐỀ CHỨA BIẾN', subtitle: 'Khẳng định chứa biến số', color: '#b45309', bg: '#fffbeb', stroke: '#fde68a', x: 226 },
+    { id: 'not_proposition', title: 'KHÔNG PHẢI MỆNH ĐỀ', subtitle: 'Câu hỏi, cảm thán, mệnh lệnh', color: '#334155', bg: '#f1f5f9', stroke: '#cbd5e1', x: 432 },
   ]
 
   const binContent = bins.map(bin => {

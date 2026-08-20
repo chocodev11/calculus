@@ -88,6 +88,8 @@ export interface ControlSpec {
 
 export interface GoalSpec {
   id: string
+  label?: string
+  title?: string
   evidence: GoalEvidence
   target?: JsonValue
   required?: boolean
@@ -95,7 +97,9 @@ export interface GoalSpec {
 
 export interface SolutionStepSpec {
   id: string
-  kind: 'select' | 'transform' | 'justify' | 'calculate' | 'check'
+  label?: string
+  title?: string
+  kind: 'select' | 'transform' | 'justify' | 'calculate' | 'check' | 'simplify'
   dependsOn?: string[]
   acceptedValues?: JsonValue[]
   misconceptionIds?: string[]
@@ -171,6 +175,8 @@ export interface ValidationResult {
 
 export interface GoalResult {
   id: string
+  label?: string
+  title?: string
   reached: boolean
   required: boolean
   evidence?: unknown
