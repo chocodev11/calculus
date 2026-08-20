@@ -13,7 +13,7 @@ export default function DailyFocusCard({
   const overallPercent = totalCount > 0 ? Math.min(100, Math.round((completedCount / totalCount) * 100)) : 0
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-xs">
+    <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3.5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -32,7 +32,7 @@ export default function DailyFocusCard({
       </div>
 
       {/* Overall Daily Goal Bar */}
-      <div className="space-y-1.5 p-3 rounded-xl bg-indigo-50/50 border border-indigo-100">
+      <div className="space-y-1.5 p-3 rounded-xl bg-indigo-50/60">
         <div className="flex justify-between text-xs font-bold">
           <span className="text-slate-700">Tiến độ nhiệm vụ</span>
           <span className="text-indigo-700 tabular-nums">
@@ -47,7 +47,7 @@ export default function DailyFocusCard({
         </div>
       </div>
 
-      {/* Priority Quests List */}
+      {/* Priority Quests List (No-Card Frameless Items) */}
       <div className="space-y-2">
         {quests.slice(0, 2).map((q) => {
           const isComplete = q.is_complete
@@ -57,7 +57,7 @@ export default function DailyFocusCard({
           return (
             <div
               key={q.id}
-              className="p-2.5 bg-slate-50/80 border border-slate-200 rounded-xl flex items-center justify-between gap-3"
+              className="p-2.5 bg-slate-50/80 rounded-xl flex items-center justify-between gap-3 hover:bg-slate-100/70 transition-colors"
             >
               <div className="space-y-1 flex-1 min-w-0">
                 <div className="flex items-center justify-between text-xs font-bold">

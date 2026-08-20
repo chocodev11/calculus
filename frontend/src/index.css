@@ -33,6 +33,9 @@
   * {
     @apply border-border;
   }
+  html {
+    scrollbar-gutter: stable;
+  }
   body {
     @apply bg-background text-foreground;
     font-family: 'Plus Jakarta Sans', 'Nunito', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -157,9 +160,40 @@
            hover:text-slate-900 hover:bg-slate-100 transition-colors select-none cursor-pointer;
   }
 
-  /* Flat Tactile Interactive Card */
-  .card-tactile {
-    @apply bg-white border border-slate-200 rounded-2xl hover:border-indigo-300 transition-colors duration-150;
+  /* Flat Card Containers (Zero Blur, Crisp 1px border) */
+  .card-flat {
+    @apply bg-white border border-slate-200 rounded-2xl p-5 sm:p-6;
+  }
+
+  .card-flat-interactive {
+    @apply bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 transition-all duration-150 cursor-pointer select-none
+           hover:border-indigo-300 hover:bg-slate-50/40;
+  }
+
+  /* Backward compatibility alias for interactive card */
+  .card-tactile-interactive {
+    @apply card-flat-interactive;
+  }
+
+  /* 2.5D Tactile Filter Pill / Tab */
+  .pill-tactile {
+    @apply relative inline-flex items-center justify-center font-extrabold text-sm px-5 py-2.5 rounded-2xl cursor-pointer select-none border transition-all duration-100 ease-out shrink-0;
+  }
+  .pill-tactile-active {
+    @apply pill-tactile bg-indigo-600 hover:bg-indigo-500 text-white border-indigo-700;
+    box-shadow: 0 3px 0 #312E81;
+  }
+  .pill-tactile-active:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #312E81;
+  }
+  .pill-tactile-inactive {
+    @apply pill-tactile bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border-slate-200 hover:border-slate-300;
+    box-shadow: 0 3px 0 #CBD5E1;
+  }
+  .pill-tactile-inactive:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #CBD5E1;
   }
 }
 

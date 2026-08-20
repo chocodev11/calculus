@@ -60,6 +60,17 @@ export default function Story() {
           }
           if (found) break
         }
+        if (!found) {
+          for (const ch of data.chapters) {
+            for (const st of ch.steps || []) {
+              if (!st.is_completed) {
+                found = { chapter: ch, step: st }
+                break
+              }
+            }
+            if (found) break
+          }
+        }
         if (!found && data.chapters.length > 0) {
           const firstCh = data.chapters[0]
           if (firstCh.steps && firstCh.steps.length > 0) {
@@ -94,11 +105,23 @@ export default function Story() {
     }
   }
 
+  const handleContinueLearning = () => {
+    if (needsEnrollment) {
+      handleEnroll()
+      return
+    }
+    if (currentLesson?.step) {
+      navigate(`/course/${slug}/step/${encodeStepId(currentLesson.step.id)}`)
+    } else if (story?.chapters?.[0]?.steps?.[0]) {
+      navigate(`/course/${slug}/step/${encodeStepId(story.chapters[0].steps[0].id)}`)
+    }
+  }
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 py-8">
+      <div className="min-h-screen bg-slate-50 py-8 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-8">
             <div className="h-96 animate-pulse bg-slate-200 rounded-3xl" />
             <div className="h-96 animate-pulse bg-slate-200 rounded-3xl" />
           </div>
@@ -109,7 +132,7 @@ export default function Story() {
 
   if (!story) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
         <div className="text-center bg-white border border-slate-200 rounded-3xl p-8 space-y-4 max-w-sm">
           <p className="text-slate-600 font-bold">{t.story?.courseNotFound || 'Không tìm thấy khoá học'}</p>
           <TactileButton variant="secondary" onClick={() => navigate('/explore')} className="w-full">
@@ -121,50 +144,46 @@ export default function Story() {
   }
 
   return (
-    <div className="w-full font-sans">
+    <div className="w-full font-sans pb-20">
       
-      {/* Top Breadcrumb Navigation */}
-      <div className="bg-white border-b border-slate-200 sticky top-16 z-30">
+      {/* ─── Clean Header Bar ────────────────────────────────────────────── */}
+      <header className="bg-white border-b border-slate-200 sticky top-16 z-30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link
               to="/explore"
               className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
+              title="Quay lại Khám phá"
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="font-extrabold text-slate-900 truncate text-base sm:text-lg">
+            <span className="font-extrabold text-slate-900 truncate text-sm sm:text-base">
               {story.title}
-            </h1>
-          </div>
-          {story.is_enrolled && (
-            <span className="shrink-0 text-xs font-extrabold px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 tabular-nums">
-              {Math.round(story.progress || (totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0))}% Hoàn thành
             </span>
-          )}
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Main Two-Column Course View */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8">
+      {/* ─── Main Two-Column View ────────────────────────────────────────── */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-8 items-start">
 
-          {/* Left Column: Course Overview Card */}
+          {/* ── Left Column: Course Overview (Sticky) ── */}
           <div className="relative">
-            <div className="lg:sticky lg:top-[144px]">
+            <div className="lg:sticky lg:top-[140px]">
               <CourseOverviewCard
                 story={story}
                 totalLessons={totalLessons}
                 completedLessons={completedLessons}
                 needsEnrollment={needsEnrollment}
-                onEnroll={handleEnroll}
+                onAction={handleContinueLearning}
                 enrolling={enrolling}
                 user={user}
               />
             </div>
           </div>
 
-          {/* Right Column: Chapters & Lessons Path */}
+          {/* ── Right Column: Chapters & Lesson Stream ── */}
           <div className="space-y-6">
             {story.chapters?.map((chapter, index) => (
               <ChapterSection
@@ -179,21 +198,28 @@ export default function Story() {
           </div>
 
         </div>
-      </div>
+      </main>
 
     </div>
   )
 }
 
-function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnrollment, onEnroll, enrolling, user }) {
+/**
+ * Left Column: Focused Course Info Card
+ * Adheres strictly to Less is More: No redundant badge soup, active primary CTA
+ */
+function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnrollment, onAction, enrolling, user }) {
   const progressPercent = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
+  const isAllCompleted = totalLessons > 0 && completedLessons >= totalLessons
   const illustrationUrl = story.illustration || story.thumbnail_url
+  const gradeLabel = story.grade_title || (story.grade ? `Toán ${story.grade}` : 'Toán 10')
+  const topicLabel = story.topic_title || 'Mệnh đề & Logic'
 
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6">
+    <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 space-y-5">
       
       {/* Icon / Illustration */}
-      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-indigo-50 border border-indigo-100 flex items-center justify-center p-3">
+      <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center p-2.5">
         {illustrationUrl ? (
           <img
             src={illustrationUrl}
@@ -202,130 +228,124 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
             onError={e => { e.target.style.display = 'none' }}
           />
         ) : (
-          <GraduationCap className="w-10 h-10 sm:w-12 sm:h-12 text-indigo-600" />
+          <GraduationCap className="w-8 h-8 text-indigo-600" />
         )}
       </div>
 
-      {/* Info */}
-      <div className="space-y-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
-            {story.grade_title || (story.grade ? `Lớp ${story.grade}` : 'Lớp 10')}
-          </span>
-          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
-            Chủ điểm: {story.topic_title || (story.topic === 'menh-de' ? 'Mệnh đề' : 'Mệnh đề')}
-          </span>
-          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
-            {story.difficulty || t.story?.beginner || 'Cơ bản'}
-          </span>
-        </div>
-        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight">
+      {/* Info: Unified Metadata Line (No Stacked Candy Badges) */}
+      <div className="space-y-1.5">
+        <p className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+          <span className="text-indigo-600 font-extrabold">{gradeLabel}</span>
+          <span>·</span>
+          <span>Chủ điểm {topicLabel}</span>
+        </p>
+        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-snug">
           {story.title}
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-          {story.description || 'Làm chủ các khái niệm toán học thông qua mô phỏng trực quan và thực hành tương tác.'}
+          {story.description || 'Làm chủ các khái niệm toán học thông qua mô phỏng trực quan và bài tập tương tác.'}
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 py-3 border-y border-slate-100">
-        <div className="flex items-center gap-2">
-          <Layers className="w-4 h-4 text-indigo-600" />
-          <span className="text-xs font-bold text-slate-700 tabular-nums">
-            {totalLessons} bài học
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-amber-500" />
-          <span className="text-xs font-bold text-slate-700 tabular-nums">
-            {story.chapters?.length || 0} chương
-          </span>
-        </div>
+      {/* Meta Specs (Quiet, No Heavy Border Divider) */}
+      <div className="flex items-center gap-4 text-xs font-semibold text-slate-500 pt-1">
+        <span className="flex items-center gap-1.5">
+          <Layers className="w-3.5 h-3.5 text-indigo-500" aria-hidden="true" />
+          <span className="tabular-nums">{totalLessons} bài học</span>
+        </span>
+        <span className="flex items-center gap-1.5">
+          <BookOpen className="w-3.5 h-3.5 text-amber-500" aria-hidden="true" />
+          <span className="tabular-nums">{story.chapters?.length || 1} chương</span>
+        </span>
       </div>
 
-      {/* Progress if enrolled */}
+      {/* Progress Section (Only when enrolled) */}
       {!needsEnrollment && (
-        <div className="space-y-2">
+        <div className="space-y-2 pt-2">
           <div className="flex justify-between text-xs font-bold">
-            <span className="text-slate-600">Tiến độ của bạn</span>
-            <span className="text-emerald-600 tabular-nums">{progressPercent}%</span>
+            <span className="text-slate-700">Tiến độ khóa học</span>
+            <span className="text-indigo-600 tabular-nums font-extrabold">{progressPercent}%</span>
           </div>
-          <div className="h-2 rounded-full bg-slate-100 overflow-hidden border border-slate-200/60">
+          <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
             <div
-              className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+              className="h-full bg-indigo-600 rounded-full transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
           <p className="text-[11px] text-slate-400 font-medium text-right tabular-nums">
-            Đã hoàn thành {completedLessons} / {totalLessons} bài
+            Đã xong {completedLessons} / {totalLessons} bài
           </p>
         </div>
       )}
 
-      {/* Enroll Action CTA */}
-      <TactileButton
-        variant={needsEnrollment ? 'primary' : 'secondary'}
-        size="lg"
-        onClick={onEnroll}
-        disabled={enrolling || !needsEnrollment}
-        className="w-full text-base"
-      >
-        {needsEnrollment
-          ? enrolling
-          ? 'Đang đăng ký...'
-          : user
-          ? 'Bắt đầu học ngay'
-          : 'Đăng nhập để học'
-          : '✓ Đã tham gia khoá học'}
-      </TactileButton>
+      {/* Active Primary Action Button */}
+      <div className="pt-2">
+        <TactileButton
+          variant={isAllCompleted ? 'amber' : 'primary'}
+          size="md"
+          onClick={onAction}
+          disabled={enrolling}
+          className="w-full text-sm font-extrabold"
+        >
+          {needsEnrollment ? (
+            enrolling ? 'Đang đăng ký...' : user ? 'Bắt đầu học ngay' : 'Đăng nhập để học'
+          ) : isAllCompleted ? (
+            'Ôn tập lại khóa học'
+          ) : (
+            <>
+              <Play className="w-4 h-4 mr-1.5 fill-white" />
+              <span>Tiếp tục học ngay</span>
+            </>
+          )}
+        </TactileButton>
+      </div>
 
     </div>
   )
 }
 
+/**
+ * Right Column: Chapter Section with Frameless Step Rows
+ * Eliminates the Card-in-Card nesting problem.
+ */
 function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }) {
   const [selectedLesson, setSelectedLesson] = useState(null)
   const steps = chapter.steps || []
   const completedCount = steps.filter(s => s.is_completed).length
 
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6">
+    <section className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-7 space-y-4">
       
-      {/* Chapter Header */}
-      <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 font-extrabold text-xs flex items-center justify-center">
+      {/* Chapter Title & Header */}
+      <div className="flex items-center justify-between border-b border-slate-100 pb-3.5">
+        <div className="flex items-center gap-2.5">
+          <span className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-700 font-extrabold text-xs flex items-center justify-center tabular-nums shrink-0">
             {index + 1}
-          </div>
-          <div>
-            <h3 className="text-base sm:text-lg font-extrabold text-slate-900">
-              {chapter.title}
-            </h3>
-            <p className="text-xs text-slate-400 font-medium">Chương {index + 1}</p>
-          </div>
+          </span>
+          <h3 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">
+            {chapter.title}
+          </h3>
         </div>
-        <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 tabular-nums">
-          {completedCount}/{steps.length} bài
+        <span className="text-xs font-extrabold text-slate-400 tabular-nums">
+          {completedCount}/{steps.length} xong
         </span>
       </div>
 
-      {/* Lessons Path Grid */}
-      <div className="space-y-2.5">
+      {/* Clean Step List (No Card-in-Card Nesting) */}
+      <div className="space-y-1">
         {steps.map((step, stepIndex) => {
           const isCurrentStep = currentLesson?.step?.id === step.id
           const isCompleted = step.is_completed
           const isLocked = !isEnrolled || (!isCompleted && !isCurrentStep)
 
           return (
-            <LessonNode
+            <LessonRow
               key={step.id}
               step={step}
               index={stepIndex}
               isCompleted={isCompleted}
               isCurrent={isCurrentStep}
               isLocked={isLocked}
-              isEnrolled={isEnrolled}
-              storySlug={storySlug}
               onSelect={() => setSelectedLesson({ step, isLocked })}
             />
           )
@@ -339,11 +359,14 @@ function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }
         onClose={() => setSelectedLesson(null)}
         storySlug={storySlug}
       />
-    </div>
+    </section>
   )
 }
 
-function LessonNode({ step, index, isCompleted, isCurrent, isLocked, isEnrolled, storySlug, onSelect }) {
+/**
+ * Streamlined Lesson Row (Frameless, clean typographic focus)
+ */
+function LessonRow({ step, index, isCompleted, isCurrent, isLocked, onSelect }) {
   const handleClick = () => {
     soundFX.click()
     onSelect()
@@ -352,63 +375,67 @@ function LessonNode({ step, index, isCompleted, isCurrent, isLocked, isEnrolled,
   return (
     <div
       onClick={handleClick}
-      className={`group flex items-center justify-between p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer select-none ${
+      className={`group flex items-center justify-between p-3 rounded-xl transition-colors cursor-pointer select-none ${
         isCurrent
-          ? 'bg-indigo-50/80 border-indigo-200 text-indigo-950 font-bold'
+          ? 'bg-indigo-50/80 text-indigo-950 font-bold'
           : isCompleted
-          ? 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
+          ? 'hover:bg-slate-50 text-slate-800'
           : isLocked
-          ? 'bg-slate-50/50 border-slate-100 text-slate-400 opacity-60'
-          : 'bg-white border-slate-200 hover:border-indigo-300'
+          ? 'text-slate-400 opacity-50 cursor-not-allowed'
+          : 'hover:bg-slate-50 text-slate-700'
       }`}
     >
-      <div className="flex items-center gap-3.5 min-w-0">
+      <div className="flex items-center gap-3 min-w-0">
         
-        {/* Status Node Icon */}
-        <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${
-          isCompleted
-            ? 'bg-emerald-500 text-white shadow-sm'
-            : isCurrent
-            ? 'bg-indigo-600 text-white shadow-sm'
-            : 'bg-slate-100 border border-slate-200 text-slate-400'
-        }`}>
+        {/* Crisp Status Node */}
+        <div
+          className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
+            isCompleted
+              ? 'bg-emerald-500 text-white'
+              : isCurrent
+              ? 'bg-indigo-600 text-white'
+              : 'bg-slate-100 text-slate-400'
+          }`}
+        >
           {isCompleted ? (
-            <Check className="w-5 h-5 stroke-[3]" />
+            <Check className="w-4 h-4 stroke-[3]" />
           ) : isCurrent ? (
-            <Play className="w-4 h-4 fill-white ml-0.5" />
+            <Play className="w-3 h-3 fill-white ml-0.5" />
           ) : (
-            <Lock className="w-4 h-4" />
+            <Lock className="w-3 h-3" />
           )}
         </div>
 
-        {/* Info */}
-        <div className="space-y-0.5 min-w-0">
-          <p className={`text-xs sm:text-sm font-bold truncate ${
-            isCurrent ? 'text-indigo-950 font-extrabold' : isCompleted ? 'text-slate-700' : 'text-slate-800'
-          }`}>
-            <span className="tabular-nums font-bold mr-1.5 opacity-60">
+        {/* Step Title */}
+        <div className="min-w-0">
+          <p className={`text-xs sm:text-sm truncate ${isCurrent ? 'font-extrabold text-indigo-950' : 'font-semibold'}`}>
+            <span className="tabular-nums mr-1.5 opacity-60">
               {String(index + 1).padStart(2, '0')}.
             </span>
             {step.title}
           </p>
-          <p className="text-[11px] text-slate-400 font-medium">
-            {step.duration || '3 - 5 phút'}
-          </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 shrink-0 ml-2">
-        {isCurrent && (
-          <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
+      {/* Status Label (Only when active or completed) */}
+      <div className="shrink-0 ml-2">
+        {isCurrent ? (
+          <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-600 text-white">
             Đang học
           </span>
-        )}
-        <ChevronRight className={`w-4 h-4 ${isCurrent ? 'text-indigo-600' : 'text-slate-300'}`} />
+        ) : isCompleted ? (
+          <span className="text-xs font-bold text-slate-400 group-hover:text-indigo-600 transition-colors">
+            Ôn lại
+          </span>
+        ) : null}
       </div>
     </div>
   )
 }
 
+/**
+ * Clean Lesson Modal
+ */
 function LessonModal({ lesson, isLocked, onClose, storySlug }) {
   const navigate = useNavigate()
   if (!lesson) return null
@@ -419,38 +446,45 @@ function LessonModal({ lesson, isLocked, onClose, storySlug }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/40 flex items-center justify-center p-4">
-      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 bg-slate-900/40 flex items-center justify-center p-4 backdrop-blur-xs">
+      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 sm:p-7 space-y-5 animate-in fade-in zoom-in-95 duration-150 shadow-xl">
         
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+          <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600">
             {lesson.duration || '3 - 5 phút'}
           </span>
-          <button type="button" onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-slate-600 cursor-pointer">
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 cursor-pointer"
+            aria-label="Đóng"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="space-y-2">
-          <h3 className="text-xl font-extrabold text-slate-900">{lesson.title}</h3>
-          <p className="text-sm text-slate-600 font-medium leading-relaxed">
-            {lesson.description || 'Thực hành các câu hỏi tương tác và nắm bắt trực quan toán học.'}
+        <div className="space-y-1.5">
+          <h3 className="text-lg font-extrabold text-slate-900 tracking-tight leading-snug">
+            {lesson.title}
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+            {lesson.description || 'Thực hành các câu hỏi trực quan để nắm vững trực giác toán học.'}
           </p>
         </div>
 
-        <div className="flex flex-col gap-2.5 pt-2">
+        <div className="pt-2">
           {!isLocked ? (
-            <TactileButton variant="primary" size="lg" onClick={handleStart} className="w-full">
-              <Play className="w-5 h-5 mr-1.5 fill-white" />
-              Bắt đầu bài học
+            <TactileButton variant="primary" size="md" onClick={handleStart} className="w-full">
+              <Play className="w-4 h-4 mr-1.5 fill-white" />
+              <span>Bắt đầu bài học</span>
             </TactileButton>
           ) : (
             <div className="space-y-3">
               <p className="text-xs text-rose-500 font-bold text-center flex items-center justify-center gap-1.5">
-                <Lock className="w-4 h-4 shrink-0" aria-hidden="true" />
-                <span>Bài học này đang bị khóa. Hãy hoàn thành các bài học trước để mở khóa!</span>
+                <Lock className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>Bài học đang bị khóa. Hãy hoàn thành bài trước để mở!</span>
               </p>
-              <TactileButton variant="secondary" size="md" onClick={onClose} className="w-full">
+              <TactileButton variant="secondary" size="sm" onClick={onClose} className="w-full">
                 Đã hiểu
               </TactileButton>
             </div>

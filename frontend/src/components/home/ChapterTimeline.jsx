@@ -1,10 +1,12 @@
 import React from 'react'
-import { Check, Play, Lock, Sparkles } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Check, Play, Lock, Sparkles, ChevronRight } from 'lucide-react'
 
 export default function ChapterTimeline({
   chapter,
   currentStepId,
   courseSlug,
+  totalChapters = 1,
   onSelectStep
 }) {
   if (!chapter || !chapter.steps || chapter.steps.length === 0) {
@@ -15,20 +17,33 @@ export default function ChapterTimeline({
   const completedCount = steps.filter(s => s.is_completed).length
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
+    <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4">
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
+        <div className="flex items-start sm:items-center justify-between gap-3">
+          <div className="space-y-0.5 min-w-0">
             <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
               Lộ trình học phần
             </span>
-            <h3 className="text-sm sm:text-base font-extrabold text-slate-900">
+            <h3 className="text-sm sm:text-base font-extrabold text-slate-900 truncate">
               {chapter.title}
             </h3>
           </div>
-          <span className="text-xs sm:text-sm font-extrabold text-indigo-600 tabular-nums">
-            {completedCount}/{steps.length} bài xong !
-          </span>
+
+          <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1.5 sm:gap-3 shrink-0">
+            <span className="text-xs sm:text-sm font-extrabold text-indigo-600 tabular-nums">
+              {completedCount}/{steps.length} bài xong !
+            </span>
+            {courseSlug && totalChapters > 1 && (
+              <Link
+                to={`/course/${courseSlug}`}
+                className="text-xs font-bold text-slate-500 hover:text-indigo-600 inline-flex items-center gap-0.5 transition-colors"
+                title="Xem toàn bộ các chương của khóa học"
+              >
+                <span>Tất cả {totalChapters} chương</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Segmented Pill Progress Bar */}
@@ -54,8 +69,8 @@ export default function ChapterTimeline({
         </div>
       </div>
 
-      {/* Steps List */}
-      <div className="space-y-2 pt-0.5">
+      {/* Steps List (No-Card Frameless Rows) */}
+      <div className="space-y-1.5 pt-0.5">
         {steps.map((step, idx) => {
           const isCurrent = step.id === currentStepId || step.is_current
           const isCompleted = step.is_completed
@@ -69,12 +84,12 @@ export default function ChapterTimeline({
                   onSelectStep(step)
                 }
               }}
-              className={`flex items-center justify-between p-3 rounded-xl border transition-all select-none ${
+              className={`flex items-center justify-between p-3 rounded-xl transition-all select-none ${
                 isCurrent
-                  ? 'bg-indigo-50/70 border-indigo-200 text-indigo-950 font-bold cursor-pointer shadow-xs'
+                  ? 'bg-indigo-50/80 text-indigo-950 font-bold cursor-pointer'
                   : isCompleted
-                  ? 'bg-slate-50/70 border-slate-200 text-slate-700 hover:bg-slate-100/70 cursor-pointer'
-                  : 'bg-white/40 border-slate-100 text-slate-400 opacity-60 cursor-not-allowed'
+                  ? 'bg-slate-50/70 text-slate-700 hover:bg-slate-100/70 cursor-pointer'
+                  : 'bg-transparent text-slate-400 opacity-60 cursor-not-allowed'
               }`}
             >
               <div className="flex items-center gap-2.5 min-w-0">
@@ -82,7 +97,7 @@ export default function ChapterTimeline({
                 <div
                   className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform ${
                     isCurrent
-                      ? 'bg-indigo-600 text-white shadow-xs'
+                      ? 'bg-indigo-600 text-white'
                       : isCompleted
                       ? 'bg-emerald-500 text-white'
                       : 'bg-slate-100 text-slate-400'

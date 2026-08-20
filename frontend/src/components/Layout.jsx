@@ -54,8 +54,8 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 h-16">
           
           {/* Left: Brand Identity with Mathematical Integral Icon */}
-          <Link to="/" className="flex items-center gap-2.5 group select-none">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 border-b-2 border-indigo-800 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+          <Link to="/" className="flex items-center gap-2.5 group select-none shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white group-hover:scale-105 transition-transform shrink-0">
               <Sigma className="w-6 h-6 stroke-[2.5]" aria-hidden="true" />
             </div>
             <div className="flex flex-col">
@@ -66,23 +66,23 @@ export default function Layout() {
           </Link>
 
           {/* Desktop Navigation (Center) */}
-          <nav className="hidden md:flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-2xl border border-slate-200/60">
+          <nav className="hidden md:flex items-center gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200/80 shrink-0">
             {navItems.map(({ path, icon: Icon, label }) => {
               const isActive = location.pathname === path
               return (
                 <Link
                   key={path}
                   to={path}
-                  className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-150 select-none ${
+                  className={`relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors duration-150 select-none border ${
                     isActive
-                      ? 'bg-white text-indigo-600 border border-slate-200/80'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                      ? 'bg-white text-indigo-600 border-slate-200/80'
+                      : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
                   <span>{label}</span>
                   {path === '/quests' && claimableCount > 0 && (
-                    <span className="w-5 h-5 bg-amber-500 text-white text-[10px] rounded-full flex items-center justify-center font-extrabold">
+                    <span className="w-5 h-5 bg-amber-500 text-white text-[10px] rounded-full flex items-center justify-center font-extrabold shrink-0">
                       {claimableCount}
                     </span>
                   )}
@@ -92,12 +92,11 @@ export default function Layout() {
           </nav>
 
           {/* Right Section: Gamification Badges or Auth Buttons */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {user ? (
               <>
                 {/* Gamification stat capsules */}
-                <div className="hidden sm:flex items-center gap-2">
-                  <GamifyBadge type="streak" value={user.current_streak || 0} />
+                <div className="hidden sm:flex items-center gap-2 shrink-0">
                   <GamifyBadge type="xp" value={user.xp || 0} />
                   <GamifyBadge 
                     type="coins" 
@@ -110,7 +109,7 @@ export default function Layout() {
                 {/* User Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="relative h-10 w-10 rounded-full border-2 border-slate-200 hover:border-indigo-400 transition-colors p-0.5 outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer">
+                    <button className="relative h-10 w-10 rounded-full border-2 border-slate-200 hover:border-indigo-400 transition-colors p-0.5 outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer shrink-0">
                       <Avatar className="h-full w-full">
                         <AvatarImage src={user.avatar_url} alt={user.display_name || user.username} />
                         <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold text-sm">
@@ -128,13 +127,13 @@ export default function Layout() {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link to="/profile" className="flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors">
+                      <Link to="/profile" className="flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors">
                         <User className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
                         <span>{t.layout?.dropdown?.profile || 'Hồ sơ cá nhân'}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/quests" className="flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors">
+                      <Link to="/quests" className="flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors">
                         <ScrollText className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
                         <span>{t.layout?.dropdown?.quests || 'Nhiệm vụ & Cửa hàng'}</span>
                       </Link>
@@ -177,7 +176,7 @@ export default function Layout() {
       </header>
 
       {/* Main Page Body */}
-      <main className="flex-1 w-full pb-20 md:pb-0">
+      <main className="flex-1 w-full pb-20 md:pb-6">
         <AnimatedOutlet />
       </main>
 

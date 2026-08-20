@@ -1036,7 +1036,7 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                   : showWrongMark
                   ? 'bg-rose-50 border-rose-500 text-rose-900'
                   : isSelected
-                  ? 'bg-indigo-50/80 border-indigo-600 text-indigo-950 shadow-sm'
+                  ? 'bg-indigo-50/80 border-indigo-600 text-indigo-950'
                   : 'bg-white border-slate-200 text-slate-800 hover:border-indigo-300'
               )}
             >

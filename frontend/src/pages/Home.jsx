@@ -15,7 +15,7 @@ import { encodeStepId } from '../lib/utils'
 
 // Home Subcomponents
 import NextLessonHero from '../components/home/NextLessonHero'
-import ChapterTimeline from '../components/home/ChapterTimeline'
+import SuggestedCoursesCard from '../components/home/SuggestedCoursesCard'
 import DailyFocusCard from '../components/home/DailyFocusCard'
 import MiniLeaderboardCard from '../components/home/MiniLeaderboardCard'
 
@@ -25,6 +25,7 @@ export default function Home() {
   const navigate = useNavigate()
 
   const [dashboardData, setDashboardData] = useState(null)
+  const [allAvailableCourses, setAllAvailableCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [leaderboardUsers, setLeaderboardUsers] = useState([])
@@ -45,6 +46,14 @@ export default function Home() {
     try {
       const data = await api.get('/progress/dashboard')
       setDashboardData(data)
+      try {
+        const storiesRes = await api.get('/courses')
+        if (Array.isArray(storiesRes)) {
+          setAllAvailableCourses(storiesRes)
+        }
+      } catch (e) {
+        console.debug('Failed to fetch courses', e)
+      }
       try {
         const rankRes = await api.get('/progress/leaderboard?limit=5')
         if (rankRes?.users) {
@@ -131,6 +140,24 @@ export default function Home() {
     }
   }, [primaryCourse])
 
+  // Suggested courses that user has not finished and are not the primary course
+  const suggestedCourses = useMemo(() => {
+    const inProgressOther = (dashboardData?.in_progress_stories || []).filter(
+      c => c.slug !== primaryCourse?.slug && (c.progress_percent ?? c.progress ?? 0) < 100
+    )
+
+    const inProgressSlugs = new Set(inProgressOther.map(c => c.slug))
+    if (primaryCourse) {
+      inProgressSlugs.add(primaryCourse.slug)
+    }
+
+    const uncompletedOther = allAvailableCourses.filter(
+      c => !inProgressSlugs.has(c.slug) && (c.progress_percent ?? c.progress ?? 0) < 100
+    )
+
+    return [...inProgressOther, ...uncompletedOther].slice(0, 4)
+  }, [dashboardData, primaryCourse, allAvailableCourses])
+
   const handleContinueLesson = () => {
     if (primaryCourse && nextStepId) {
       navigate(`/course/${primaryCourse.slug}/step/${encodeStepId(nextStepId)}`)
@@ -138,12 +165,6 @@ export default function Home() {
       navigate(`/course/${primaryCourse.slug}`)
     } else {
       navigate('/explore')
-    }
-  }
-
-  const handleSelectStep = (step) => {
-    if (primaryCourse && step?.id) {
-      navigate(`/course/${primaryCourse.slug}/step/${encodeStepId(step.id)}`)
     }
   }
 
@@ -173,7 +194,7 @@ export default function Home() {
         {/* ── Left Column: Primary Learning Stream (70% width on desktop) ── */}
         <main className="lg:col-span-8 space-y-6" aria-label="Khu vực học tập chính">
           
-          {/* 1. Next Lesson Hero Card (Single Focal Point) */}
+          {/* 1. Next Lesson Hero Card (Single Focal Point + Integrated Progress Bar) */}
           <NextLessonHero
             course={primaryCourse}
             currentChapter={currentChapter}
@@ -183,59 +204,11 @@ export default function Home() {
             loading={loading}
           />
 
-          {/* 2. Mini Chapter Timeline (Upcoming & in-progress steps) */}
-          {primaryCourse && currentChapter && (
-            <ChapterTimeline
-              chapter={currentChapter}
-              currentStepId={nextStepId}
-              courseSlug={primaryCourse.slug}
-              onSelectStep={handleSelectStep}
-            />
-          )}
-
-          {/* 3. Other In-Progress Courses (If enrolled in multiple courses) */}
-          {courses.length > 1 && (
-            <section aria-label="Các khóa học khác đang học" className="space-y-3 pt-1">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-indigo-600" aria-hidden="true" />
-                  <span>Các khóa học khác đang học</span>
-                </h3>
-                <Link to="/explore" className="text-xs font-bold text-indigo-600 hover:underline">
-                  Xem tất cả
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {courses.slice(1).map((c) => {
-                  const p = Math.round(c.progress_percent ?? c.progress ?? 0)
-                  return (
-                    <div
-                      key={c.slug}
-                      onClick={() => navigate(`/course/${c.slug}`)}
-                      className="bg-white border border-slate-200 rounded-2xl p-4 hover:border-indigo-300 transition-all cursor-pointer space-y-2.5 group shadow-xs"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 tabular-nums">
-                          {p}% hoàn thành
-                        </span>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 transition-colors" />
-                      </div>
-                      <h4 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
-                        {c.title}
-                      </h4>
-                      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/60">
-                        <div
-                          className="h-full bg-indigo-600 rounded-full"
-                          style={{ width: `${p === 0 ? 0 : Math.max(3, p)}%` }}
-                        />
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </section>
-          )}
+          {/* 2. Suggested & Other Uncompleted Courses (Not the active lesson) */}
+          <SuggestedCoursesCard
+            courses={suggestedCourses}
+            loading={loading}
+          />
 
         </main>
 

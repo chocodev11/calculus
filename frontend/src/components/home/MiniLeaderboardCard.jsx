@@ -17,7 +17,7 @@ export default function MiniLeaderboardCard({
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-xs">
+    <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3.5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -31,8 +31,8 @@ export default function MiniLeaderboardCard({
         </span>
       </div>
 
-      {/* User Current Rank Banner - Clean, No Redundant Medal Icon */}
-      <div className="p-3 bg-slate-50/90 border border-slate-200 rounded-xl flex items-center justify-between">
+      {/* User Current Rank Banner - Clean Frameless Background */}
+      <div className="p-3 bg-slate-50 rounded-xl flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className={`w-8 h-8 rounded-lg font-extrabold flex items-center justify-center text-xs tabular-nums border ${getRankBadgeStyle(rank)}`}>
             #{rank}

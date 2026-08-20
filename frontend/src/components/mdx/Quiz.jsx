@@ -155,7 +155,7 @@ export function Option({ value, correct = false, explanation = '', children }) {
 
   const stateStyles = {
     default: 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-indigo-300 dark:hover:border-indigo-600',
-    selected: 'bg-indigo-50/80 dark:bg-indigo-950/50 border-indigo-500 dark:border-indigo-500 text-indigo-900 dark:text-indigo-100 shadow-sm',
+    selected: 'bg-indigo-50/80 dark:bg-indigo-950/50 border-indigo-500 dark:border-indigo-500 text-indigo-900 dark:text-indigo-100',
     correct: 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500 text-emerald-900 dark:text-emerald-100',
     incorrect: 'bg-rose-50 dark:bg-rose-950/50 border-rose-500 text-rose-900 dark:text-rose-100',
     'revealed-correct': 'bg-emerald-50/40 dark:bg-emerald-950/30 border-dashed border-emerald-400 text-emerald-800 dark:text-emerald-300',
