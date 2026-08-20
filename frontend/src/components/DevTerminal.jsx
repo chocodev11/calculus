@@ -108,7 +108,7 @@ export default function DevTerminal() {
         onClick={() => setOpen(o => !o)}
         title="Dev Terminal"
         className={`fixed bottom-5 right-5 z-[9999] w-12 h-12 rounded-full flex items-center justify-center
-          font-mono font-bold text-sm shadow-lg transition-all duration-200
+          font-mono font-bold text-sm border border-[#313244] transition-all duration-200
           ${open
             ? 'bg-[#1e1e2e] text-[#a6e3a1] ring-2 ring-[#a6e3a1]/40 rotate-45'
             : 'bg-[#1e1e2e] text-[#cdd6f4] hover:ring-2 hover:ring-[#cdd6f4]/30'
@@ -122,7 +122,7 @@ export default function DevTerminal() {
         <div
           className="fixed bottom-20 right-5 z-[9998] flex flex-col
             w-[420px] h-[520px] max-h-[80vh]
-            rounded-2xl overflow-hidden shadow-2xl
+            rounded-2xl overflow-hidden
             border border-[#313244]"
           style={{ background: '#1e1e2e' }}
         >

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "less-is-more-ui": {
+      "source": "Mendiak/less-is-more-ui",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "3e85f4dbd1049b9fbc8b86fcc4eaf8f0c1e7ec680dc2d0321697ca1ddf026e50"
+    }
+  }
+}

@@ -22,62 +22,62 @@ export default function AdminCourses() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-800">Courses Management</h2>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <Plus size={20} />
+        <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-bold text-sm">
+          <Plus size={18} />
           New Course
         </button>
       </div>
 
       {/* Courses Table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Course</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Category</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Difficulty</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Chapters</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Status</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Course</th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Category</th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Difficulty</th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Chapters</th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-slate-100">
             {courses?.map(course => (
-              <tr key={course.id} className="hover:bg-gray-50">
+              <tr key={course.id} className="hover:bg-slate-50/60">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <span className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center">
                       <CourseIcon course={course} className="w-5 h-5" />
                     </span>
                     <div>
-                      <p className="font-medium text-gray-800">{course.title}</p>
-                      <p className="text-sm text-gray-500">{course.slug}</p>
+                      <p className="font-bold text-slate-800 text-sm">{course.title}</p>
+                      <p className="text-xs text-slate-400 font-medium">{course.slug}</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-gray-600">
+                <td className="px-6 py-4 text-xs font-medium text-slate-600">
                   {course.category?.name || '—'}
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${
-                    course.difficulty === 'beginner' ? 'bg-green-100 text-green-700' :
-                    course.difficulty === 'intermediate' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-red-100 text-red-700'
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold ${
+                    course.difficulty === 'beginner' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                    course.difficulty === 'intermediate' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                    'bg-rose-50 text-rose-700 border border-rose-200'
                   }`}>
                     {course.difficulty}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-gray-600">
+                <td className="px-6 py-4 text-xs font-bold text-slate-600 tabular-nums">
                   {course.chapter_count || 0}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-xs font-bold">
                   {course.is_published ? (
-                    <span className="flex items-center gap-1 text-green-600">
-                      <Eye size={16} /> Published
+                    <span className="flex items-center gap-1 text-emerald-600">
+                      <Eye size={15} /> Published
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1 text-gray-400">
-                      <EyeOff size={16} /> Draft
+                    <span className="flex items-center gap-1 text-slate-400">
+                      <EyeOff size={15} /> Draft
                     </span>
                   )}
                 </td>
@@ -85,12 +85,12 @@ export default function AdminCourses() {
                   <div className="flex items-center gap-2">
                     <Link
                       to={`/admin/courses/${course.slug}`}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                      className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                     >
-                      <Edit size={18} />
+                      <Edit size={16} />
                     </Link>
-                    <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
-                      <Trash2 size={18} />
+                    <button className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </td>

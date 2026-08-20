@@ -78,7 +78,7 @@ export default function AdminServerStatus() {
       {/* Services Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {services.map(service => (
-          <div key={service.name} className="bg-white rounded-xl shadow-sm p-6">
+          <div key={service.name} className="bg-white rounded-2xl border border-slate-200 p-6">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <div className={`p-3 rounded-lg ${
@@ -114,7 +114,7 @@ export default function AdminServerStatus() {
       </div>
 
       {/* Quick Commands */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6">
         <h3 className="font-semibold mb-4">Quick Commands</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 bg-gray-50 rounded-lg">
@@ -139,7 +139,7 @@ export default function AdminServerStatus() {
       </div>
 
       {/* Ports Overview */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6">
         <h3 className="font-semibold mb-4">Ports Overview</h3>
         <table className="w-full">
           <thead>

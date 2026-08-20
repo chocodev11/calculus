@@ -90,13 +90,11 @@ export default function HeartsCard() {
     : 1
 
   return (
-    <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 shadow-[0_4px_0_0_#E2E8F0] space-y-4">
+    <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-4 font-sans">
       {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center border-b-2 ${
-            isFull ? 'bg-rose-50 border-rose-200 text-rose-500' : 'bg-rose-50 border-rose-200 text-rose-500'
-          }`}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-rose-50 border border-rose-200 text-rose-500">
             <Heart className="w-5 h-5 fill-rose-500" />
           </div>
           <div>
@@ -125,7 +123,7 @@ export default function HeartsCard() {
               key={i}
               className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
                 active 
-                  ? 'bg-rose-500 text-white border-b-2 border-rose-700 shadow-sm' 
+                  ? 'bg-rose-500 text-white border-b-2 border-rose-700' 
                   : 'bg-slate-200 text-slate-400 border-b-2 border-slate-300'
               }`}
             >

@@ -50,12 +50,12 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
       {/* Top Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 h-16">
           
           {/* Left: Brand Identity with Mathematical Integral Icon */}
           <Link to="/" className="flex items-center gap-2.5 group select-none">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 border-b-2 border-indigo-800 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 border-b-2 border-indigo-800 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
               <Sigma className="w-6 h-6 stroke-[2.5]" aria-hidden="true" />
             </div>
             <div className="flex flex-col">
@@ -75,14 +75,14 @@ export default function Layout() {
                   to={path}
                   className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-150 select-none ${
                     isActive
-                      ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/60'
+                      ? 'bg-white text-indigo-600 border border-slate-200/80'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
                   <span>{label}</span>
                   {path === '/quests' && claimableCount > 0 && (
-                    <span className="w-5 h-5 bg-amber-500 text-white text-[10px] rounded-full flex items-center justify-center font-extrabold shadow-sm">
+                    <span className="w-5 h-5 bg-amber-500 text-white text-[10px] rounded-full flex items-center justify-center font-extrabold">
                       {claimableCount}
                     </span>
                   )}
@@ -110,7 +110,7 @@ export default function Layout() {
                 {/* User Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="relative h-10 w-10 rounded-full border-2 border-slate-200 hover:border-indigo-400 transition-colors p-0.5 outline-none focus:ring-2 focus:ring-indigo-300">
+                    <button className="relative h-10 w-10 rounded-full border-2 border-slate-200 hover:border-indigo-400 transition-colors p-0.5 outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer">
                       <Avatar className="h-full w-full">
                         <AvatarImage src={user.avatar_url} alt={user.display_name || user.username} />
                         <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold text-sm">
@@ -119,30 +119,30 @@ export default function Layout() {
                       </Avatar>
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 rounded-2xl p-1.5 shadow-lg border-slate-200" align="end" forceMount>
+                  <DropdownMenuContent className="w-56 rounded-2xl p-1.5 border border-slate-200 bg-white" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal px-3 py-2">
                       <div className="flex flex-col space-y-0.5">
                         <p className="text-sm font-bold text-slate-900 leading-none">{user.display_name || user.username}</p>
                         <p className="text-xs text-slate-500 truncate">{user.email}</p>
                       </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="my-1" />
-                    <DropdownMenuItem asChild className="cursor-pointer rounded-xl font-medium">
-                      <Link to="/profile" className="flex items-center gap-2.5 px-3 py-2 text-slate-700">
-                        <User className="w-4 h-4 text-slate-400" />
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors">
+                        <User className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
                         <span>{t.layout?.dropdown?.profile || 'Hồ sơ cá nhân'}</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild className="cursor-pointer rounded-xl font-medium">
-                      <Link to="/quests" className="flex items-center gap-2.5 px-3 py-2 text-slate-700">
-                        <ScrollText className="w-4 h-4 text-slate-400" />
+                    <DropdownMenuItem asChild>
+                      <Link to="/quests" className="flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors">
+                        <ScrollText className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
                         <span>{t.layout?.dropdown?.quests || 'Nhiệm vụ & Cửa hàng'}</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator className="my-1" />
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem 
                       onClick={handleLogout} 
-                      className="cursor-pointer rounded-xl font-medium text-rose-600 focus:text-rose-600 focus:bg-rose-50 flex items-center gap-2.5 px-3 py-2"
+                      className="cursor-pointer rounded-xl font-medium text-rose-600 hover:text-rose-700 hover:bg-rose-50 focus:text-rose-700 focus:bg-rose-50 flex items-center gap-2.5 px-3 py-2"
                     >
                       <LogOut className="w-4 h-4 text-rose-500" />
                       <span>{t.layout?.dropdown?.logout || 'Đăng xuất'}</span>
@@ -164,7 +164,7 @@ export default function Layout() {
                   variant="primary" 
                   size="sm" 
                   onClick={() => navigate('/register')}
-                  className="h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm font-extrabold shadow-sm"
+                  className="h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm font-extrabold"
                 >
                   <Sparkles className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
                   <span className="hidden sm:inline">{t.layout?.auth?.register || 'Bắt đầu miễn phí'}</span>
@@ -182,7 +182,7 @@ export default function Layout() {
       </main>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 md:hidden shadow-lg">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 md:hidden">
         <div className="flex justify-around items-center py-1.5 px-2">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = location.pathname === path

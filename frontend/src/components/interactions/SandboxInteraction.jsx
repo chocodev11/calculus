@@ -63,7 +63,7 @@ function TactileSegmentedGroup({ control, value, onChange }) {
   const currentStr = String(value ?? '')
 
   return (
-    <div className="bg-white border-2 border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-2.5 flex flex-col justify-between transition-all hover:border-slate-300">
+    <div className="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-2.5 flex flex-col justify-between transition-all hover:border-slate-300">
       <div className="flex items-center justify-between gap-2">
         <span className="text-xs sm:text-sm font-extrabold text-slate-800 leading-snug">
           <MathText text={control.label} />
@@ -77,11 +77,11 @@ function TactileSegmentedGroup({ control, value, onChange }) {
           const label = labels[opt] || labels[optValStr] || optValStr
 
           // Contextual accent colors for boolean verdicts
-          let activeStyles = 'bg-indigo-600 text-white border-indigo-700 shadow-[0_2px_0_0_#3730A3]'
+          let activeStyles = 'bg-indigo-600 text-white border-indigo-700'
           if (optValStr === 'true' || optValStr === 'Đúng') {
-            activeStyles = 'bg-emerald-600 text-white border-emerald-700 shadow-[0_2px_0_0_#065F46]'
+            activeStyles = 'bg-emerald-600 text-white border-emerald-700'
           } else if (optValStr === 'false' || optValStr === 'Sai') {
-            activeStyles = 'bg-rose-600 text-white border-rose-700 shadow-[0_2px_0_0_#9F1239]'
+            activeStyles = 'bg-rose-600 text-white border-rose-700'
           }
 
           return (
@@ -89,10 +89,10 @@ function TactileSegmentedGroup({ control, value, onChange }) {
               key={optValStr}
               type="button"
               onClick={() => onChange(opt)}
-              className={`py-2 px-2.5 rounded-xl font-extrabold text-xs sm:text-[13px] border-2 transition-all flex items-center justify-center text-center cursor-pointer select-none active:translate-y-0.5 ${
+              className={`min-h-[44px] py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-[13px] border-2 transition-all flex items-center justify-center text-center cursor-pointer select-none active:translate-y-0.5 ${
                 isSelected
                   ? `${activeStyles} scale-[1.01]`
-                  : 'bg-slate-50 hover:bg-slate-100/80 text-slate-700 border-slate-200 shadow-[0_2px_0_0_#E2E8F0] hover:border-slate-300'
+                  : 'bg-slate-50 hover:bg-slate-100/80 text-slate-700 border-slate-200 hover:border-slate-300'
               }`}
             >
               <MathText text={label} />
@@ -121,7 +121,7 @@ function Control({ control, value, onChange }) {
     }
 
     return (
-      <div className="bg-white border-2 border-slate-200/90 rounded-2xl p-3.5 shadow-sm flex flex-col justify-between transition-all hover:border-slate-300">
+      <div className="bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between transition-all hover:border-slate-300">
         <TactileSelect
           label={control.label}
           value={current}
@@ -138,7 +138,7 @@ function Control({ control, value, onChange }) {
   if (control.type === 'toggle') {
     const isChecked = current === true || current === 'true'
     return (
-      <div className="bg-white border-2 border-slate-200/90 rounded-2xl p-4 shadow-sm flex items-center justify-between gap-4 transition-all hover:border-slate-300">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between gap-4 transition-all hover:border-slate-300">
         <span className="text-xs sm:text-sm font-extrabold text-slate-800">
           <MathText text={control.label} />
         </span>
@@ -152,7 +152,7 @@ function Control({ control, value, onChange }) {
           }`}
         >
           <div
-            className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
+            className={`w-5 h-5 rounded-full bg-white transform transition-transform ${
               isChecked ? 'translate-x-6' : 'translate-x-0'
             }`}
           />
@@ -164,7 +164,7 @@ function Control({ control, value, onChange }) {
   // 3. Slider Control
   if (control.type === 'slider') {
     return (
-      <div className="bg-white border-2 border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-3 transition-all hover:border-slate-300">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 transition-all hover:border-slate-300">
         <div className="flex items-center justify-between">
           <span className="text-xs sm:text-sm font-extrabold text-slate-800">
             <MathText text={control.label} />
@@ -199,7 +199,7 @@ function Control({ control, value, onChange }) {
   const step = control.step || 1
 
   return (
-    <div className="bg-white border-2 border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2.5 transition-all hover:border-slate-300">
+    <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-2.5 transition-all hover:border-slate-300">
       <label className="block text-xs sm:text-sm font-extrabold text-slate-800 leading-snug">
         <MathText text={control.label} />
       </label>
@@ -208,7 +208,7 @@ function Control({ control, value, onChange }) {
           <button
             type="button"
             onClick={() => onChange(numVal - step)}
-            className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-lg flex items-center justify-center transition-colors border-2 border-slate-200 shadow-[0_2px_0_0_#E2E8F0] active:translate-y-0.5 active:shadow-none cursor-pointer shrink-0"
+            className="min-w-[44px] min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-lg flex items-center justify-center transition-colors border border-slate-200 active:translate-y-0.5 cursor-pointer shrink-0"
           >
             -
           </button>
@@ -220,14 +220,14 @@ function Control({ control, value, onChange }) {
           step={control.step}
           value={String(current)}
           onChange={event => onChange(isNumeric ? Number(event.target.value) : event.target.value)}
-          className="w-full py-2 px-3.5 bg-slate-50 focus:bg-white border-2 border-slate-200 focus:border-indigo-600 rounded-xl text-xs sm:text-sm font-extrabold text-slate-800 text-center outline-none transition-all"
+          className="w-full min-h-[44px] py-2 px-3.5 bg-slate-50 focus:bg-white border border-slate-200 focus:border-indigo-600 rounded-xl text-xs sm:text-sm font-extrabold text-slate-800 text-center outline-none transition-all"
           aria-label={control.label}
         />
         {isNumeric && (
           <button
             type="button"
             onClick={() => onChange(numVal + step)}
-            className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-lg flex items-center justify-center transition-colors border-2 border-slate-200 shadow-[0_2px_0_0_#E2E8F0] active:translate-y-0.5 active:shadow-none cursor-pointer shrink-0"
+            className="min-w-[44px] min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-lg flex items-center justify-center transition-colors border border-slate-200 active:translate-y-0.5 cursor-pointer shrink-0"
           >
             +
           </button>
@@ -416,10 +416,10 @@ export default function SandboxInteraction({ lesson }) {
             <button
               type="button"
               onClick={() => setShowPrompt(!showPrompt)}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-extrabold text-xs border-2 transition-all cursor-pointer select-none active:translate-y-0.5 ${
+              className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-extrabold text-xs border transition-all cursor-pointer select-none active:translate-y-0.5 ${
                 showPrompt 
-                  ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm'
-                  : 'bg-white hover:bg-slate-50 text-indigo-700 border-indigo-200 shadow-[0_2px_0_0_#C7D2FE]'
+                  ? 'bg-indigo-600 text-white border-indigo-700'
+                  : 'bg-white hover:bg-slate-50 text-indigo-700 border-indigo-200'
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
@@ -431,7 +431,7 @@ export default function SandboxInteraction({ lesson }) {
             type="button"
             onClick={() => dispatch({ type: 'undo' })}
             disabled={snapshot.historyDepth === 0}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs border-2 border-slate-200 shadow-[0_2px_0_0_#E2E8F0] active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer select-none"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs border border-slate-200 active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer select-none"
           >
             <Undo2 className="w-3.5 h-3.5" />
             <span>Hoàn tác</span>
@@ -440,7 +440,7 @@ export default function SandboxInteraction({ lesson }) {
           <button
             type="button"
             onClick={() => { setActiveHint(null); dispatch({ type: 'reset' }) }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs border-2 border-slate-200 shadow-[0_2px_0_0_#E2E8F0] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer select-none"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs border border-slate-200 active:translate-y-0.5 transition-all cursor-pointer select-none"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Đặt lại</span>
@@ -450,7 +450,7 @@ export default function SandboxInteraction({ lesson }) {
 
       {/* ─── Problem Prompt Callout ─────────────────────────────────── */}
       {promptText && showPrompt && (
-        <div className="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-4 text-sm text-indigo-950 flex items-start gap-3 animate-in fade-in zoom-in-95 duration-150 shadow-sm">
+        <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 text-sm text-indigo-950 flex items-start gap-3 animate-in fade-in zoom-in-95 duration-150">
           <BookOpen className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
           <div className="space-y-1 flex-1">
             <p className="font-extrabold text-indigo-900 text-xs uppercase tracking-wider">Yêu cầu bài toán</p>
@@ -480,7 +480,7 @@ export default function SandboxInteraction({ lesson }) {
           </span>
         </div>
         <div 
-          className="rounded-3xl border-2 border-slate-200/90 bg-white p-3 shadow-sm overflow-hidden" 
+          className="rounded-3xl border border-slate-200 bg-white p-3 overflow-hidden" 
           dangerouslySetInnerHTML={{ __html: svg }} 
         />
       </div>
@@ -529,13 +529,13 @@ export default function SandboxInteraction({ lesson }) {
               <div
                 key={goal.id}
                 className={isReached
-                  ? "rounded-2xl border-2 p-3.5 flex items-center justify-between transition-all bg-emerald-50/90 border-emerald-300 text-emerald-950 shadow-sm"
-                  : "rounded-2xl border-2 p-3.5 flex items-center justify-between transition-all bg-white border-slate-200 text-slate-800"
+                  ? "rounded-2xl border p-3.5 flex items-center justify-between transition-all bg-emerald-50/90 border-emerald-300 text-emerald-950"
+                  : "rounded-2xl border p-3.5 flex items-center justify-between transition-all bg-white border-slate-200 text-slate-800"
                 }
               >
                 <div className="flex items-center gap-2.5">
                   <div className={isReached
-                    ? "w-7 h-7 rounded-xl flex items-center justify-center shrink-0 bg-emerald-600 text-white shadow-sm"
+                    ? "w-7 h-7 rounded-xl flex items-center justify-center shrink-0 bg-emerald-600 text-white"
                     : "w-7 h-7 rounded-xl flex items-center justify-center shrink-0 bg-slate-100 text-slate-400"
                   }>
                     {isReached ? <Check className="w-4 h-4 stroke-[3]" /> : <span className="text-xs font-extrabold">○</span>}
@@ -567,7 +567,7 @@ export default function SandboxInteraction({ lesson }) {
           {snapshot.feedback.map(item => (
             <div
               key={item.id}
-              className={`rounded-2xl p-4 border-2 text-xs sm:text-sm font-extrabold flex items-start gap-2.5 shadow-sm ${
+              className={`rounded-2xl p-4 border text-xs sm:text-sm font-extrabold flex items-start gap-2.5 ${
                 item.kind === 'goal'
                   ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
                   : 'bg-amber-50 border-amber-200 text-amber-950'
@@ -582,7 +582,7 @@ export default function SandboxInteraction({ lesson }) {
 
       {/* ─── Smart Hint Lifecycle ──────────────────────────────────── */}
       {activeHint && (
-        <div role="status" className="rounded-2xl border-2 border-amber-300 bg-amber-50/90 p-4 text-xs sm:text-sm font-bold text-amber-950 flex items-start justify-between gap-3 shadow-sm animate-in fade-in duration-150">
+        <div role="status" className="rounded-2xl border border-amber-300 bg-amber-50/90 p-4 text-xs sm:text-sm font-bold text-amber-950 flex items-start justify-between gap-3 animate-in fade-in duration-150">
           <div className="flex items-start gap-2.5">
             <Lightbulb className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <div className="space-y-0.5">
@@ -615,7 +615,7 @@ export default function SandboxInteraction({ lesson }) {
                 setActiveHint(step.hint || 'Hãy kiểm tra điều kiện của bước này.')
                 dispatch({ type: 'show_hint', hintId: step.id })
               }}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border-2 border-amber-200 bg-amber-50/80 hover:bg-amber-100 text-amber-900 font-extrabold text-xs transition-all shadow-[0_1px_0_0_#FDE68A] active:translate-y-0.5 cursor-pointer"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/80 hover:bg-amber-100 text-amber-900 font-extrabold text-xs transition-all active:translate-y-0.5 cursor-pointer"
             >
               <Lightbulb className="w-3 h-3 text-amber-600" />
               <span>{step.id}</span>

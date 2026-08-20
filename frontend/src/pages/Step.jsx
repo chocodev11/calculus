@@ -315,7 +315,7 @@ export default function Step() {
   if (!step || slides.length === 0) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
-        <div className="text-center bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm space-y-4 max-w-sm">
+        <div className="text-center bg-white border border-slate-200 rounded-3xl p-8 space-y-4 max-w-sm">
           <p className="text-slate-600 font-bold">Không tìm thấy nội dung cho bài học này.</p>
           <TactileButton variant="secondary" onClick={() => navigate(`/course/${slug}`)} className="w-full">
             Quay lại khoá học
@@ -491,8 +491,8 @@ export default function Step() {
               {/* Feedback Message */}
               <div className="flex items-center gap-3.5">
                 <div className={cn(
-                  'w-11 h-11 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-md',
-                  quizIsCorrect ? 'bg-emerald-500 shadow-emerald-200' : 'bg-rose-500 shadow-rose-200'
+                  'w-11 h-11 rounded-2xl flex items-center justify-center text-white shrink-0',
+                  quizIsCorrect ? 'bg-emerald-500' : 'bg-rose-500'
                 )}>
                   {quizIsCorrect ? (
                     <Check className="w-6 h-6 stroke-[3]" />
@@ -582,7 +582,7 @@ export default function Step() {
               exit={{ scale: 0.98, opacity: 0 }}
               transition={{ duration: 0.16, ease: 'easeOut' }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl border-2 border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden"
+              className="bg-white rounded-3xl border border-slate-200 max-w-lg w-full overflow-hidden"
             >
               <div className="px-6 py-4 bg-amber-50 border-b border-amber-200 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-amber-800">
@@ -655,7 +655,7 @@ function InteractionBlock({ block }) {
   const isCanvas = ['A', 'B', 'C', 'E'].includes(content.interactionType)
 
   return (
-    <div className={`my-6 rounded-3xl overflow-hidden border-2 border-slate-200 shadow-[0_4px_0_0_#E2E8F0] bg-white flex flex-col ${
+    <div className={`my-6 rounded-3xl overflow-hidden border border-slate-200 bg-white flex flex-col ${
       isCanvas ? 'h-[520px]' : 'min-h-[560px] h-auto'
     }`}>
       <InteractionSlide
@@ -707,7 +707,7 @@ function MathBlock({ block }) {
           </p>
         )}
         <div className={cn(
-          'bg-slate-50 rounded-2xl border-2 border-slate-200 px-6 py-5 shadow-[0_3px_0_0_#E2E8F0] text-slate-900',
+          'bg-slate-50 rounded-2xl border border-slate-200 px-6 py-5 text-slate-900',
           isInline && 'inline-block bg-transparent border-0 p-0 shadow-none'
         )}>
           {isInline ? (
@@ -809,7 +809,7 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
       <div className="space-y-5">
         {/* Header Badge & Title */}
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-extrabold rounded-xl uppercase tracking-wider border-2 border-indigo-200 shadow-[0_2px_0_0_#C7D2FE]">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-extrabold rounded-xl uppercase tracking-wider border border-indigo-200">
             <Sparkles className="w-3.5 h-3.5 fill-indigo-500 text-indigo-500" />
             <span>Dạng II · Trắc nghiệm Đúng / Sai 4 ý</span>
           </div>
@@ -838,23 +838,23 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                   'rounded-3xl border-2 p-4 sm:p-5 transition-all bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4',
                   isItemSubmitted
                     ? isItemCorrect
-                      ? 'border-emerald-400 bg-emerald-50/40 shadow-[0_4px_0_0_#A7F3D0]'
-                      : 'border-rose-400 bg-rose-50/40 shadow-[0_4px_0_0_#FECDD3]'
+                      ? 'border-emerald-400 bg-emerald-50/40'
+                      : 'border-rose-400 bg-rose-50/40'
                     : selectedVal !== undefined
-                    ? 'border-indigo-300 bg-indigo-50/20 shadow-[0_4px_0_0_#C7D2FE]'
-                    : 'border-slate-200 shadow-[0_4px_0_0_#E2E8F0] hover:border-slate-300'
+                    ? 'border-indigo-300 bg-indigo-50/20'
+                    : 'border-slate-200 hover:border-slate-300'
                 )}
               >
                 {/* Statement with Letter Badge */}
                 <div className="flex items-start gap-3 flex-1 min-w-0">
                   <span className={cn(
-                    'w-8 h-8 rounded-2xl font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 border shadow-sm transition-colors',
+                    'w-8 h-8 rounded-2xl font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 border transition-colors',
                     isItemSubmitted
                       ? isItemCorrect
-                        ? 'bg-emerald-600 text-white border-emerald-700 shadow-[0_2px_0_0_#047857]'
-                        : 'bg-rose-600 text-white border-rose-700 shadow-[0_2px_0_0_#BE123C]'
+                        ? 'bg-emerald-600 text-white border-emerald-700'
+                        : 'bg-rose-600 text-white border-rose-700'
                       : selectedVal !== undefined
-                      ? 'bg-indigo-600 text-white border-indigo-700 shadow-[0_2px_0_0_#4338CA]'
+                      ? 'bg-indigo-600 text-white border-indigo-700'
                       : 'bg-slate-100 text-slate-700 border-slate-200'
                   )}>
                     {String.fromCharCode(97 + idx)}
@@ -874,8 +874,8 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                     className={cn(
                       'px-4 py-2.5 rounded-2xl font-extrabold text-xs sm:text-sm transition-all duration-100 flex items-center gap-1.5 cursor-pointer select-none active:translate-y-1',
                       selectedVal === true
-                        ? 'bg-emerald-500 hover:bg-emerald-400 text-white border-b-4 border-emerald-700 active:border-b-0 shadow-sm'
-                        : 'bg-white hover:bg-slate-50 text-slate-800 border-2 border-slate-200 border-b-4 border-b-slate-300 active:border-b-2 shadow-sm',
+                        ? 'bg-emerald-500 hover:bg-emerald-400 text-white border-b-4 border-emerald-700 active:border-b-0'
+                        : 'bg-white hover:bg-slate-50 text-slate-800 border-2 border-slate-200 border-b-4 border-b-slate-300 active:border-b-2',
                       submitted && 'cursor-default pointer-events-none active:translate-y-0 disabled:opacity-80'
                     )}
                   >
@@ -891,8 +891,8 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                     className={cn(
                       'px-4 py-2.5 rounded-2xl font-extrabold text-xs sm:text-sm transition-all duration-100 flex items-center gap-1.5 cursor-pointer select-none active:translate-y-1',
                       selectedVal === false
-                        ? 'bg-rose-500 hover:bg-rose-400 text-white border-b-4 border-rose-700 active:border-b-0 shadow-sm'
-                        : 'bg-white hover:bg-slate-50 text-slate-800 border-2 border-slate-200 border-b-4 border-b-slate-300 active:border-b-2 shadow-sm',
+                        ? 'bg-rose-500 hover:bg-rose-400 text-white border-b-4 border-rose-700 active:border-b-0'
+                        : 'bg-white hover:bg-slate-50 text-slate-800 border-2 border-slate-200 border-b-4 border-b-slate-300 active:border-b-2',
                       submitted && 'cursor-default pointer-events-none active:translate-y-0 disabled:opacity-80'
                     )}
                   >
@@ -903,10 +903,10 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                   {/* Submission Feedback Tag */}
                   {isItemSubmitted && (
                     <div className={cn(
-                      'inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-black border-2 shadow-sm shrink-0 ml-1',
+                      'inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-black border-2 shrink-0 ml-1',
                       isItemCorrect
-                        ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-[0_2px_0_0_#A7F3D0]'
-                        : 'bg-rose-50 border-rose-300 text-rose-800 shadow-[0_2px_0_0_#FECDD3]'
+                        ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                        : 'bg-rose-50 border-rose-300 text-rose-800'
                     )}>
                       {isItemCorrect ? (
                         <>
@@ -939,7 +939,7 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
     return (
       <div className="space-y-6 max-w-lg mx-auto">
         <div className="space-y-2 text-center">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 text-xs font-extrabold rounded-xl uppercase tracking-wider border-2 border-amber-200 shadow-[0_2px_0_0_#FDE68A]">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 text-xs font-extrabold rounded-xl uppercase tracking-wider border border-amber-200">
             <Sparkles className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
             <span>Dạng III · Điền đáp số / Trả lời ngắn</span>
           </div>
@@ -948,7 +948,7 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
           </p>
         </div>
 
-        <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-[0_4px_0_0_#E2E8F0] space-y-4">
+        <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4">
           <label className="block text-xs font-extrabold text-slate-500 uppercase tracking-wider">
             Nhập kết quả hoặc số nguyên:
           </label>
@@ -963,21 +963,21 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                 'w-full py-3.5 px-4 rounded-2xl border-2 font-bold text-lg text-center outline-none transition-all',
                 submitted
                   ? isCorrect
-                    ? 'border-emerald-500 bg-emerald-50 text-emerald-900 shadow-[0_2px_0_0_#A7F3D0]'
-                    : 'border-rose-500 bg-rose-50 text-rose-900 shadow-[0_2px_0_0_#FECDD3]'
-                  : 'border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 bg-slate-50 focus:bg-white text-slate-900 shadow-inner'
+                    ? 'border-emerald-500 bg-emerald-50 text-emerald-900'
+                    : 'border-rose-500 bg-rose-50 text-rose-900'
+                  : 'border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 bg-slate-50 focus:bg-white text-slate-900'
               )}
             />
           </div>
 
           {submitted && (
             <div className={cn(
-              'p-4 rounded-2xl border-2 flex items-center justify-between text-xs sm:text-sm font-bold shadow-sm',
+              'p-4 rounded-2xl border-2 flex items-center justify-between text-xs sm:text-sm font-bold',
               isCorrect ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-rose-50 border-rose-300 text-rose-900'
             )}>
               <span>{isCorrect ? 'Chính xác!' : 'Chưa đúng. Hãy xem lại kết quả.'}</span>
               {isCorrect && (
-                <span className="font-extrabold px-3 py-1 rounded-xl bg-white shadow-sm border border-emerald-200 text-emerald-800">
+                <span className="font-extrabold px-3 py-1 rounded-xl bg-white border border-emerald-200 text-emerald-800">
                   <MathText text={String(correctVal)} />
                 </span>
               )}
@@ -995,7 +995,7 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-extrabold rounded-xl uppercase tracking-wider border-2 border-indigo-200 shadow-[0_2px_0_0_#C7D2FE]">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-extrabold rounded-xl uppercase tracking-wider border border-indigo-200">
           <Sparkles className="w-3.5 h-3.5 fill-indigo-500 text-indigo-500" />
           <span>Dạng I · Trắc nghiệm 4 lựa chọn</span>
         </div>
@@ -1022,12 +1022,12 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
               className={cn(
                 'relative w-full min-h-[96px] rounded-2xl border-2 transition-all flex flex-col items-start justify-center p-5 cursor-pointer text-left',
                 showCorrectMark
-                  ? 'bg-emerald-50 border-emerald-500 text-emerald-900 shadow-[0_4px_0_0_#A7F3D0]'
+                  ? 'bg-emerald-50 border-emerald-500 text-emerald-900'
                   : showWrongMark
-                  ? 'bg-rose-50 border-rose-500 text-rose-900 shadow-[0_4px_0_0_#FECDD3]'
+                  ? 'bg-rose-50 border-rose-500 text-rose-900'
                   : isSelected
-                  ? 'bg-indigo-50/80 border-indigo-600 text-indigo-950 shadow-[0_4px_0_0_#818CF8]'
-                  : 'bg-white border-slate-200 text-slate-800 shadow-[0_4px_0_0_#E2E8F0] hover:border-indigo-300 hover:shadow-[0_5px_0_0_#CBD5E1]'
+                  ? 'bg-indigo-50/80 border-indigo-600 text-indigo-950'
+                  : 'bg-white border-slate-200 text-slate-800 hover:border-indigo-300'
               )}
             >
               {/* Option Letter Chip */}
@@ -1035,7 +1035,7 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
                 'text-xs font-extrabold mb-1.5 px-2.5 py-0.5 rounded-lg border',
                 showCorrectMark ? 'bg-emerald-200 border-emerald-300 text-emerald-900' :
                 showWrongMark ? 'bg-rose-200 border-rose-300 text-rose-900' :
-                isSelected ? 'bg-indigo-600 border-indigo-700 text-white shadow-sm' :
+                isSelected ? 'bg-indigo-600 border-indigo-700 text-white' :
                 'bg-slate-100 border-slate-200 text-slate-600'
               )}>
                 {String.fromCharCode(65 + idx)}
@@ -1054,10 +1054,10 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
 }
 
 const calloutConfig = {
-  info: { icon: Info, bg: 'bg-sky-50', border: 'border-sky-200', shadow: 'shadow-[0_4px_0_0_#BAE6FD]', iconColor: 'text-sky-600', iconBg: 'bg-sky-100 border-sky-200', title: 'Thông tin' },
-  tip: { icon: Lightbulb, bg: 'bg-amber-50', border: 'border-amber-200', shadow: 'shadow-[0_4px_0_0_#FDE68A]', iconColor: 'text-amber-600', iconBg: 'bg-amber-100 border-amber-200', title: 'Mẹo học tập' },
-  warning: { icon: AlertTriangle, bg: 'bg-orange-50', border: 'border-orange-200', shadow: 'shadow-[0_4px_0_0_#FED7AA]', iconColor: 'text-orange-600', iconBg: 'bg-orange-100 border-orange-200', title: 'Lưu ý' },
-  theorem: { icon: GraduationCap, bg: 'bg-indigo-50', border: 'border-indigo-200', shadow: 'shadow-[0_4px_0_0_#C7D2FE]', iconColor: 'text-indigo-600', iconBg: 'bg-indigo-100 border-indigo-200', title: 'Định lý' },
+  info: { icon: Info, bg: 'bg-sky-50', border: 'border-sky-200', iconColor: 'text-sky-600', iconBg: 'bg-sky-100 border-sky-200', title: 'Thông tin' },
+  tip: { icon: Lightbulb, bg: 'bg-amber-50', border: 'border-amber-200', iconColor: 'text-amber-600', iconBg: 'bg-amber-100 border-amber-200', title: 'Mẹo học tập' },
+  warning: { icon: AlertTriangle, bg: 'bg-orange-50', border: 'border-orange-200', iconColor: 'text-orange-600', iconBg: 'bg-orange-100 border-orange-200', title: 'Lưu ý' },
+  theorem: { icon: GraduationCap, bg: 'bg-indigo-50', border: 'border-indigo-200', iconColor: 'text-indigo-600', iconBg: 'bg-indigo-100 border-indigo-200', title: 'Định lý' },
 }
 
 function CalloutBlock({ block }) {
@@ -1067,9 +1067,9 @@ function CalloutBlock({ block }) {
   const Icon = cfg.icon
 
   return (
-    <div className={cn('my-6 rounded-3xl border-2 p-6', cfg.bg, cfg.border, cfg.shadow)}>
+    <div className={cn('my-6 rounded-3xl border-2 p-6', cfg.bg, cfg.border)}>
       <div className="flex items-start gap-4">
-        <div className={cn('p-2.5 rounded-2xl border shadow-sm shrink-0', cfg.iconBg)}>
+        <div className={cn('p-2.5 rounded-2xl border shrink-0', cfg.iconBg)}>
           <Icon className={cn('w-6 h-6', cfg.iconColor)} />
         </div>
         <div className="space-y-2 min-w-0 flex-1">
@@ -1087,7 +1087,7 @@ function CalloutBlock({ block }) {
             </div>
           )}
           {content.latex && (
-            <div className="mt-3 p-3 bg-white/80 rounded-2xl border border-slate-200 overflow-x-auto shadow-sm">
+            <div className="mt-3 p-3 bg-white/80 rounded-2xl border border-slate-200 overflow-x-auto">
               <BlockMath math={content.latex} />
             </div>
           )}
@@ -1103,7 +1103,7 @@ function RevealBlock({ block }) {
   const [revealedCount, setRevealedCount] = useState(0)
 
   return (
-    <div className="my-6 rounded-3xl border-2 border-slate-200 bg-white overflow-hidden shadow-[0_4px_0_0_#E2E8F0]">
+    <div className="my-6 rounded-3xl border-2 border-slate-200 bg-white overflow-hidden">
       <div className="px-6 py-4 bg-slate-50 border-b-2 border-slate-200 flex items-center justify-between">
         <span className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
           <Eye className="w-4 h-4 text-indigo-600" />
@@ -1120,7 +1120,7 @@ function RevealBlock({ block }) {
           return (
             <div key={idx} className={cn('flex items-start gap-3 transition-all duration-200', isRevealed ? 'opacity-100 translate-y-0' : 'opacity-30')}>
               <span className={cn(
-                'w-7 h-7 rounded-xl text-xs font-extrabold flex items-center justify-center shrink-0 mt-0.5 border shadow-sm',
+                'w-7 h-7 rounded-xl text-xs font-extrabold flex items-center justify-center shrink-0 mt-0.5 border',
                 isRevealed ? 'bg-indigo-600 text-white border-indigo-700' : 'bg-indigo-50 text-indigo-700 border-indigo-200'
               )}>
                 {idx + 1}
@@ -1161,7 +1161,7 @@ function RevealBlock({ block }) {
 function VideoBlock({ block }) {
   const content = block.content || block.block_data || {}
   return (
-    <div className="my-6 rounded-3xl overflow-hidden border-2 border-slate-800 bg-black aspect-video shadow-[0_4px_0_0_#1E293B]">
+    <div className="my-6 rounded-3xl overflow-hidden border-2 border-slate-800 bg-black aspect-video">
       <video src={content.src} controls className="w-full h-full" poster={content.poster} />
     </div>
   )
@@ -1170,12 +1170,12 @@ function VideoBlock({ block }) {
 function FillBlankBlock({ block }) {
   const content = block.content || block.block_data || {}
   return (
-    <div className="my-6 p-6 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-3 shadow-[0_4px_0_0_#E2E8F0]">
+    <div className="my-6 p-6 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-3">
       <div className="flex items-center gap-2 text-indigo-700 text-xs font-extrabold uppercase tracking-wider">
         <Sparkles className="w-3.5 h-3.5" />
         <span>{content.prompt || 'Điền vào chỗ trống:'}</span>
       </div>
-      <div className="text-base text-slate-900 font-bold leading-relaxed bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="text-base text-slate-900 font-bold leading-relaxed bg-white p-4 rounded-2xl border border-slate-200">
         <MathText text={content.template || ''} />
       </div>
     </div>
@@ -1186,14 +1186,14 @@ function OrderingBlock({ block }) {
   const content = block.content || block.block_data || {}
   const items = content.items || []
   return (
-    <div className="my-6 p-6 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-4 shadow-[0_4px_0_0_#E2E8F0]">
+    <div className="my-6 p-6 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-4">
       <div className="flex items-center gap-2 text-indigo-700 text-xs font-extrabold uppercase tracking-wider">
         <GripVertical className="w-4 h-4" />
         <span>{content.prompt || 'Sắp xếp theo thứ tự đúng:'}</span>
       </div>
       <div className="space-y-2.5">
         {items.map((item, idx) => (
-          <div key={idx} className="p-4 bg-white border-2 border-slate-200 rounded-2xl text-sm sm:text-base font-bold text-slate-800 shadow-[0_2px_0_0_#E2E8F0] flex items-center gap-3">
+          <div key={idx} className="p-4 bg-white border-2 border-slate-200 rounded-2xl text-sm sm:text-base font-bold text-slate-800 flex items-center gap-3">
             <span className="w-6 h-6 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-extrabold text-xs flex items-center justify-center shrink-0">
               {idx + 1}
             </span>
@@ -1217,11 +1217,11 @@ function CompleteScreen({ xpEarned, stepTitle, onContinue }) {
     <main className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 sm:p-8 font-sans">
       <section
         aria-labelledby="lesson-complete-title"
-        className="w-full max-w-2xl overflow-hidden rounded-[2rem] bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-2xl overflow-hidden rounded-[2rem] bg-white border border-slate-800 animate-in fade-in zoom-in-95 duration-200"
       >
         <div className="bg-indigo-700 px-6 py-10 text-white sm:px-10 sm:py-14">
           <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400 text-emerald-950 shadow-[0_4px_0_0_#047857]">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400 text-emerald-950">
               <Check className="h-7 w-7 stroke-[3]" aria-hidden="true" />
             </span>
             <span className="text-xs font-extrabold uppercase tracking-[0.16em] text-indigo-100">
@@ -1265,9 +1265,9 @@ function CompleteScreen({ xpEarned, stepTitle, onContinue }) {
 function AchievementsScreen({ achievements = [], onContinue }) {
   return (
     <div className="min-h-screen bg-amber-50/50 flex flex-col items-center justify-center p-6 font-sans">
-      <div className="w-full max-w-sm bg-white border-2 border-amber-200 rounded-3xl p-8 shadow-[0_8px_0_0_#FDE68A] text-center space-y-6">
+      <div className="w-full max-w-sm bg-white border-2 border-amber-200 rounded-3xl p-8 text-center space-y-6">
         
-        <div className="w-20 h-20 mx-auto bg-amber-500 text-white rounded-3xl flex items-center justify-center shadow-lg border-2 border-amber-600">
+        <div className="w-20 h-20 mx-auto bg-amber-500 text-white rounded-3xl flex items-center justify-center border-2 border-amber-600">
           <Trophy className="w-10 h-10" />
         </div>
 
@@ -1311,7 +1311,7 @@ function AchievementUnlockedPopup({ achievements = [], onClose }) {
         <div
           key={ach.id}
           onClick={onClose}
-          className="bg-white border-2 border-amber-300 rounded-2xl p-4 shadow-xl flex items-center gap-3 cursor-pointer animate-in slide-in-from-top-2 duration-200"
+          className="bg-white border-2 border-amber-300 rounded-2xl p-4 flex items-center gap-3 cursor-pointer animate-in slide-in-from-top-2 duration-200"
         >
           <AchievementIcon achievement={ach} className="w-6 h-6 text-amber-600 shrink-0" />
           <div>

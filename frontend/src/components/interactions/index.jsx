@@ -57,7 +57,7 @@ function StatementPopup({ text, isSandbox }) {
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Xem đề bài"
-          className="absolute top-3.5 right-3.5 z-30 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-indigo-700 font-extrabold text-xs border-2 border-indigo-200 shadow-[0_2px_0_0_#C7D2FE] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer select-none"
+          className="absolute top-3.5 right-3.5 z-30 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-indigo-700 font-extrabold text-xs border border-indigo-200 active:translate-y-0.5 transition-all cursor-pointer select-none"
         >
           <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
           <span>Đề bài</span>
@@ -73,7 +73,7 @@ function StatementPopup({ text, isSandbox }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-7 shadow-2xl max-w-lg w-full space-y-5"
+              className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 max-w-lg w-full space-y-5"
               onClick={e => e.stopPropagation()}
             >
               {/* Header */}

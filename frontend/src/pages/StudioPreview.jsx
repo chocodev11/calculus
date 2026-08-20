@@ -72,7 +72,7 @@ export default function StudioPreview() {
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col">
       {/* Top Studio Bar */}
-      <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+      <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Link
             to="/"
@@ -146,7 +146,7 @@ export default function StudioPreview() {
         {!loading && !error && stepData && (
           <div className="space-y-6">
             {/* Step Header */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border-2 border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border-2 border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-1">
                   <span>{currentCourse?.title}</span>
@@ -171,7 +171,7 @@ export default function StudioPreview() {
             </div>
 
             {/* Rendered MDX Container */}
-            <div className="bg-white dark:bg-slate-900 p-6 md:p-10 rounded-3xl border-2 border-slate-200 dark:border-slate-800 shadow-sm min-h-[500px]">
+            <div className="bg-white dark:bg-slate-900 p-6 md:p-10 rounded-3xl border-2 border-slate-200 dark:border-slate-800 min-h-[500px]">
               {StepComponent && (
                 <StepComponent components={mdxComponents} />
               )}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Check, Flame, Snowflake } from 'lucide-react'
 import api from '../lib/api'
-import { t, fmt } from '../lib/locale'
+import { t } from '../lib/locale'
 
 export default function LearningStreakCard() {
   const [streak, setStreak] = useState(0)
@@ -39,12 +39,12 @@ export default function LearningStreakCard() {
   }, [])
 
   return (
-    <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 shadow-[0_4px_0_0_#E2E8F0] space-y-4">
+    <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-4 font-sans">
       {/* Header */}
       <div className="flex items-center gap-3.5">
         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-b-2 ${
           streak >= 7 
-            ? 'bg-amber-500 border-amber-700 text-white shadow-sm' 
+            ? 'bg-amber-500 border-amber-700 text-white' 
             : 'bg-amber-50 border-amber-200 text-amber-600'
         }`}>
           <Flame className={`w-6 h-6 ${streak >= 7 ? 'fill-white' : 'fill-amber-500'}`} />
@@ -75,9 +75,9 @@ export default function LearningStreakCard() {
                 <div
                   className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-extrabold transition-all ${
                     done
-                      ? 'bg-amber-500 text-white border-b-2 border-amber-700 shadow-sm'
+                      ? 'bg-amber-500 text-white border-b-2 border-amber-700'
                       : frozen
-                      ? 'bg-sky-400 text-white border-b-2 border-sky-600 shadow-sm'
+                      ? 'bg-sky-400 text-white border-b-2 border-sky-600'
                       : isToday
                       ? 'bg-slate-100 text-slate-700 border-2 border-dashed border-indigo-400'
                       : 'bg-slate-100 text-slate-400'

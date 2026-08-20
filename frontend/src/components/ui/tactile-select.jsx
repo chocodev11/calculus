@@ -112,12 +112,12 @@ export function TactileSelect({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={cn(
           'w-full min-h-[46px] py-2.5 px-3.5 rounded-2xl flex items-center justify-between gap-3 text-left transition-all duration-150',
-          'border-2 bg-slate-50 hover:bg-white focus:bg-white outline-none cursor-pointer',
+          'border bg-slate-50 hover:bg-white focus:bg-white outline-none cursor-pointer',
           isOpen
-            ? 'border-indigo-600 ring-4 ring-indigo-100 shadow-sm bg-white'
+            ? 'border-indigo-600 ring-4 ring-indigo-100 bg-white'
             : isSelected
-            ? 'border-indigo-200 hover:border-indigo-400 bg-white shadow-[0_2px_0_0_#E2E8F0] active:translate-y-0.5 active:shadow-none'
-            : 'border-slate-200 hover:border-slate-300 shadow-[0_2px_0_0_#E2E8F0] active:translate-y-0.5 active:shadow-none',
+            ? 'border-indigo-200 hover:border-indigo-400 bg-white active:translate-y-0.5'
+            : 'border-slate-200 hover:border-slate-300 active:translate-y-0.5',
           disabled && 'opacity-50 cursor-not-allowed bg-slate-100'
         )}
       >
@@ -148,7 +148,7 @@ export function TactileSelect({
             transition={{ duration: 0.15, ease: 'easeOut' }}
             ref={listRef}
             role="listbox"
-            className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white border-2 border-slate-200 rounded-2xl shadow-xl p-1.5 max-h-60 overflow-y-auto space-y-1"
+            className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white border border-slate-200 rounded-2xl p-1.5 max-h-60 overflow-y-auto space-y-1"
           >
             {normalizedOptions.map((opt, index) => {
               const active = String(opt.value) === String(value)
@@ -164,7 +164,7 @@ export function TactileSelect({
                   className={cn(
                     'w-full text-left px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center justify-between gap-2 cursor-pointer',
                     active
-                      ? 'bg-indigo-600 text-white shadow-sm'
+                      ? 'bg-indigo-600 text-white'
                       : isPlaceholderOpt
                       ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
                       : 'text-slate-800 hover:bg-slate-100 hover:text-indigo-600'

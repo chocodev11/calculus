@@ -83,7 +83,7 @@ export default function AdminLayout() {
         "transition-[margin] duration-200",
         sidebarOpen ? "ml-64" : "ml-16"
       )}>
-        <header className="h-16 bg-white border-b border-slate-200 shadow-sm flex items-center px-6">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center px-6">
           <h1 className="text-xl font-semibold text-slate-900">
             Calculus Admin Panel
           </h1>

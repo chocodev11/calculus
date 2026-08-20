@@ -74,7 +74,7 @@ export default function AdminDataManager() {
       )}
 
       {/* Data Files */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           <FolderOpen size={20} className="text-yellow-500" />
           <h3 className="font-semibold">Data Files (calculus/data/)</h3>
@@ -110,7 +110,7 @@ export default function AdminDataManager() {
       </div>
 
       {/* Database Info */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           <Database size={20} className="text-purple-500" />
           <h3 className="font-semibold">Database</h3>

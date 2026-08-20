@@ -1,59 +1,46 @@
 import React, { useState, createContext, useContext } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Check, X, Sparkles, HelpCircle, AlertCircle } from 'lucide-react'
+import { Check, X, HelpCircle, Sparkles } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { TactileButton } from '../ui/tactile-button'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const QuizContext = createContext(null)
 
 export function Quiz({
   question,
   explanation,
-  onComplete,
-  children,
   allowRetry = true,
-  id
+  children
 }) {
   const [selectedOption, setSelectedOption] = useState(null)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [isCorrect, setIsCorrect] = useState(null)
-  const [showExplanation, setShowExplanation] = useState(false)
   const [options, setOptions] = useState({})
+  const [showExplanation, setShowExplanation] = useState(false)
 
-  const registerOption = (value, isOptCorrect, optExplanation) => {
+  const registerOption = (value, correct, exp) => {
     setOptions(prev => ({
       ...prev,
-      [value]: { isCorrect: isOptCorrect, explanation: optExplanation }
+      [value]: { correct, explanation: exp }
     }))
   }
 
+  const isCorrect = selectedOption && options[selectedOption]?.correct
+
   const handleSubmit = () => {
-    if (!selectedOption || isSubmitted) return
-    const optInfo = options[selectedOption]
-    const correct = optInfo ? Boolean(optInfo.isCorrect) : false
-    setIsCorrect(correct)
+    if (!selectedOption) return
     setIsSubmitted(true)
     setShowExplanation(true)
-
-    if (onComplete) {
-      onComplete({
-        quizId: id,
-        isCorrect: correct,
-        selected: selectedOption
-      })
-    }
   }
 
   const handleRetry = () => {
     setIsSubmitted(false)
-    setIsCorrect(null)
     setSelectedOption(null)
     setShowExplanation(false)
   }
 
   return (
     <QuizContext.Provider value={{ selectedOption, setSelectedOption, isSubmitted, isCorrect, registerOption }}>
-      <div className="my-6 p-5 md:p-6 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-[0_4px_0_0_#E2E8F0] dark:shadow-[0_4px_0_0_#1E293B]">
+      <div className="my-6 p-5 md:p-6 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
           <Sparkles className="w-4 h-4" />
           <span>Câu hỏi kiểm tra nhanh</span>
@@ -97,7 +84,7 @@ export function Quiz({
                 <button
                   type="button"
                   onClick={handleRetry}
-                  className="text-xs font-black text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 underline underline-offset-4"
+                  className="text-xs font-black text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 underline underline-offset-4 cursor-pointer"
                 >
                   Thử lại
                 </button>
@@ -158,10 +145,10 @@ export function Option({ value, correct = false, explanation = '', children }) {
   }
 
   const stateStyles = {
-    default: 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-indigo-300 dark:hover:border-indigo-600 shadow-[0_2px_0_0_#E2E8F0] dark:shadow-[0_2px_0_0_#1E293B]',
-    selected: 'bg-indigo-50/80 dark:bg-indigo-950/50 border-indigo-500 dark:border-indigo-500 text-indigo-900 dark:text-indigo-100 shadow-[0_3px_0_0_#6366F1]',
-    correct: 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500 text-emerald-900 dark:text-emerald-100 shadow-[0_3px_0_0_#10B981]',
-    incorrect: 'bg-rose-50 dark:bg-rose-950/50 border-rose-500 text-rose-900 dark:text-rose-100 shadow-[0_3px_0_0_#F43F5E]',
+    default: 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-indigo-300 dark:hover:border-indigo-600',
+    selected: 'bg-indigo-50/80 dark:bg-indigo-950/50 border-indigo-500 dark:border-indigo-500 text-indigo-900 dark:text-indigo-100',
+    correct: 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500 text-emerald-900 dark:text-emerald-100',
+    incorrect: 'bg-rose-50 dark:bg-rose-950/50 border-rose-500 text-rose-900 dark:text-rose-100',
     'revealed-correct': 'bg-emerald-50/40 dark:bg-emerald-950/30 border-dashed border-emerald-400 text-emerald-800 dark:text-emerald-300',
   }
 

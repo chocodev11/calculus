@@ -1,17 +1,18 @@
 import { useNavigate } from 'react-router-dom'
-import { User, Settings, LogOut, Trophy, Flame, Star, X, ChevronRight, Bell, Sparkles, KeyRound, Medal, CheckCircle2, Zap } from 'lucide-react'
-import { useAuthStore, useShopStore } from '../lib/store'
+import { Settings, LogOut, Trophy, Flame, Star, X, KeyRound, Medal, Zap, Sparkles } from 'lucide-react'
+import { useAuthStore, useShopStore, useUIStore } from '../lib/store'
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import api from '../lib/api'
-import { t } from '../lib/locale'
 import { TactileButton } from '../components/ui/tactile-button'
-import { GamifyBadge } from '../components/ui/gamify-badge'
+import { SegmentedControl } from '../components/ui/segmented-control'
+import { ActionList, ActionRow } from '../components/ui/action-row'
 import { AchievementIcon } from '../components/ui/semantic-icon'
 
 export default function Profile() {
   const navigate = useNavigate()
   const { user, logout, isAuthenticated, updateProfile, changePassword, fetchUser } = useAuthStore()
+  const { showToast } = useUIStore()
 
   const [showEditProfile, setShowEditProfile] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
@@ -27,7 +28,7 @@ export default function Profile() {
   })
   const [passwordError, setPasswordError] = useState('')
 
-  // Achievements state
+  // Achievements & Stats state
   const [statsData, setStatsData] = useState(null)
   const [loadingStats, setLoadingStats] = useState(false)
   const [achFilter, setAchFilter] = useState('all') // 'all' | 'earned' | 'locked'
@@ -73,17 +74,19 @@ export default function Profile() {
 
   const handleLogout = () => {
     logout()
+    showToast('Đã đăng xuất tài khoản', 'info')
     navigate('/')
   }
 
   const handleSaveProfile = async () => {
+    if (!displayName.trim()) return
     setSaving(true)
     try {
-      await updateProfile({ display_name: displayName })
+      await updateProfile({ display_name: displayName.trim() })
+      showToast('Đã cập nhật tên hiển thị thành công!', 'success')
       setShowEditProfile(false)
     } catch (err) {
-      console.error(err)
-      alert("Không thể cập nhật hồ sơ")
+      showToast(err.message || 'Không thể cập nhật hồ sơ', 'error')
     } finally {
       setSaving(false)
     }
@@ -103,11 +106,11 @@ export default function Profile() {
     setSaving(true)
     try {
       await changePassword(passwordData.old_password, passwordData.new_password)
-      alert("Đổi mật khẩu thành công!")
+      showToast('Đổi mật khẩu thành công!', 'success')
       setShowChangePassword(false)
       setPasswordData({ old_password: '', new_password: '', confirm_password: '' })
     } catch (err) {
-      setPasswordError(err.message || "Mật khẩu cũ không chính xác")
+      setPasswordError(err.message || 'Mật khẩu cũ không chính xác')
     } finally {
       setSaving(false)
     }
@@ -117,26 +120,41 @@ export default function Profile() {
   const level = Math.floor(xp / 100) + 1
   const xpProgress = xp % 100
 
+  const mainTabOptions = [
+    { value: 'overview', label: 'Tổng quan thống kê', icon: Star },
+    {
+      value: 'achievements',
+      label: `Thành tựu (${statsData ? `${statsData.stats.achievements_earned}/${statsData.stats.total_achievements}` : '17'})`,
+      icon: Medal
+    }
+  ]
+
+  const achFilterOptions = [
+    { value: 'all', label: 'Tất cả' },
+    { value: 'earned', label: 'Đã đạt' },
+    { value: 'locked', label: 'Chưa mở' }
+  ]
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6 font-sans">
       
       {/* ─── Profile Header Card ───────────────────────────────────────── */}
-      <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-[0_4px_0_0_#E2E8F0] relative overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 relative overflow-hidden">
         
         <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
           
           {/* Avatar Container with Frame */}
           <div className="relative shrink-0">
             {(() => {
-              let borderStyle = "border-4 border-indigo-600 shadow-indigo-100"
+              let borderStyle = 'border-4 border-indigo-600'
               if (equippedFrame) {
                 const name = equippedFrame.name.toLowerCase()
-                if (name.includes("gold")) borderStyle = "border-4 border-amber-400 ring-4 ring-amber-100 shadow-amber-200"
-                else if (name.includes("diamond")) borderStyle = "border-4 border-sky-400 ring-4 ring-sky-100 shadow-sky-200"
-                else borderStyle = "border-4 border-purple-400 ring-4 ring-purple-100 shadow-purple-200"
+                if (name.includes('gold')) borderStyle = 'border-4 border-amber-400 ring-4 ring-amber-100'
+                else if (name.includes('diamond')) borderStyle = 'border-4 border-sky-400 ring-4 ring-sky-100'
+                else borderStyle = 'border-4 border-purple-400 ring-4 ring-purple-100'
               }
               return (
-                <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 shadow-md bg-white ${borderStyle} flex items-center justify-center`}>
+                <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-white ${borderStyle} flex items-center justify-center`}>
                   <div className="w-full h-full bg-indigo-50 rounded-full flex items-center justify-center">
                     <span className="text-3xl sm:text-4xl font-extrabold text-indigo-700">
                       {user?.display_name?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase() || 'U'}
@@ -146,14 +164,14 @@ export default function Profile() {
               )
             })()}
 
-            <div className="absolute -bottom-1 -right-1 bg-amber-500 border-2 border-white text-white text-xs font-extrabold px-2.5 py-0.5 rounded-full shadow-sm">
+            <div className="absolute -bottom-1 -right-1 bg-amber-500 border-2 border-white text-white text-xs font-extrabold px-2.5 py-0.5 rounded-full">
               Cấp {level}
             </div>
           </div>
 
           {/* User Info */}
           <div className="flex-1 space-y-2">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h1 className="text-2xl font-extrabold text-slate-900 leading-tight">
                   {user?.display_name || user?.username}
@@ -161,16 +179,28 @@ export default function Profile() {
                 <p className="text-xs sm:text-sm font-semibold text-slate-400">@{user?.username}</p>
               </div>
 
+              {/* Sibling Action Buttons — Unified under TactileButton 2.5D system */}
               <div className="flex items-center gap-2 justify-center sm:justify-end">
-                <TactileButton variant="secondary" size="sm" onClick={() => setShowEditProfile(true)}>
+                <TactileButton
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setDisplayName(user?.display_name || user?.username || '')
+                    setShowEditProfile(true)
+                  }}
+                >
                   Chỉnh sửa
                 </TactileButton>
-                <button
+
+                <TactileButton
+                  variant="secondary"
+                  size="icon-sm"
                   onClick={() => setShowSettings(true)}
-                  className="p-2 rounded-xl border-2 border-slate-200 hover:bg-slate-50 text-slate-500 hover:text-slate-800 transition-colors"
+                  aria-label="Cài đặt tài khoản"
+                  title="Cài đặt tài khoản"
                 >
-                  <Settings className="w-4 h-4" />
-                </button>
+                  <Settings className="w-4 h-4 text-slate-600" />
+                </TactileButton>
               </div>
             </div>
 
@@ -180,7 +210,7 @@ export default function Profile() {
                 <span className="text-slate-600">Tiến độ Cấp {level + 1}</span>
                 <span className="text-indigo-600 tabular-nums">{xpProgress} / 100 XP</span>
               </div>
-              <div className="h-2.5 rounded-full bg-slate-100 p-0.5 border border-slate-200 overflow-hidden">
+              <div className="h-2 rounded-full bg-slate-100 overflow-hidden border border-slate-200/60">
                 <div
                   className="h-full bg-indigo-600 rounded-full transition-all duration-300"
                   style={{ width: `${xpProgress}%` }}
@@ -193,32 +223,13 @@ export default function Profile() {
 
       </div>
 
-      {/* ─── Tabs Segmented Switcher ───────────────────────────────────── */}
-      <div className="grid grid-cols-2 p-1.5 bg-slate-200/70 rounded-2xl gap-1.5 border border-slate-200">
-        <button
-          onClick={() => switchTab('overview')}
-          className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer select-none ${
-            activeTab === 'overview'
-              ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/80'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <Star className={`w-4 h-4 ${activeTab === 'overview' ? 'text-amber-500 fill-amber-500' : 'text-slate-400'}`} />
-          <span>Tổng quan thống kê</span>
-        </button>
-
-        <button
-          onClick={() => switchTab('achievements')}
-          className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer select-none ${
-            activeTab === 'achievements'
-              ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/80'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <Medal className={`w-4 h-4 ${activeTab === 'achievements' ? 'text-indigo-600' : 'text-slate-400'}`} />
-          <span>Thành tựu ({statsData ? `${statsData.stats.achievements_earned}/${statsData.stats.total_achievements}` : '17'})</span>
-        </button>
-      </div>
+      {/* ─── Tabs Segmented Switcher (State Switcher Primitive) ─────────── */}
+      <SegmentedControl
+        options={mainTabOptions}
+        value={activeTab}
+        onChange={switchTab}
+        size="md"
+      />
 
       {/* ─── Animated Tab Content ──────────────────────────────────────── */}
       <div>
@@ -226,17 +237,17 @@ export default function Profile() {
           {activeTab === 'overview' && (
             <motion.div
               key="overview"
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.16, ease: 'easeOut' }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
               className="space-y-6"
             >
               {/* Stat Cards 3-Column */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 
-                <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 shadow-[0_4px_0_0_#E2E8F0] flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-amber-600">
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
                     <Zap className="w-6 h-6 fill-amber-500" />
                   </div>
                   <div>
@@ -245,8 +256,8 @@ export default function Profile() {
                   </div>
                 </div>
 
-                <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 shadow-[0_4px_0_0_#E2E8F0] flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-amber-600">
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
                     <Flame className="w-6 h-6 fill-amber-500" />
                   </div>
                   <div>
@@ -255,8 +266,8 @@ export default function Profile() {
                   </div>
                 </div>
 
-                <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 shadow-[0_4px_0_0_#E2E8F0] flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 border-2 border-indigo-200 flex items-center justify-center text-indigo-600">
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600">
                     <Trophy className="w-6 h-6" />
                   </div>
                   <div>
@@ -269,57 +280,43 @@ export default function Profile() {
 
               </div>
 
-              {/* Account Quick Actions */}
-              <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-[0_4px_0_0_#E2E8F0] divide-y divide-slate-100">
-                <button
+              {/* Standardized Drill-Down Action List */}
+              <ActionList>
+                <ActionRow
+                  icon={KeyRound}
+                  title="Đổi mật khẩu"
+                  subtitle="Cập nhật mật khẩu bảo mật cho tài khoản của bạn"
                   onClick={() => setShowChangePassword(true)}
-                  className="w-full py-4 flex items-center justify-between text-left hover:text-indigo-600 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <KeyRound className="w-5 h-5 text-slate-400" />
-                    <span className="text-sm font-bold text-slate-800">Đổi mật khẩu</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
-                </button>
-
-                <button
+                />
+                <ActionRow
+                  icon={LogOut}
+                  title="Đăng xuất tài khoản"
+                  subtitle="Thoát phiên đăng nhập trên thiết bị này"
+                  variant="danger"
                   onClick={handleLogout}
-                  className="w-full py-4 flex items-center justify-between text-left text-rose-600 hover:text-rose-700 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <LogOut className="w-5 h-5 text-rose-500" />
-                    <span className="text-sm font-bold">Đăng xuất tài khoản</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-rose-400" />
-                </button>
-              </div>
+                />
+              </ActionList>
             </motion.div>
           )}
 
           {activeTab === 'achievements' && (
             <motion.div
               key="achievements"
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.16, ease: 'easeOut' }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
               className="space-y-4"
             >
-              {/* Filter Pills */}
-              <div className="flex gap-2">
-                {['all', 'earned', 'locked'].map(filter => (
-                  <button
-                    key={filter}
-                    onClick={() => setAchFilter(filter)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold capitalize border transition-all ${
-                      achFilter === filter
-                        ? 'bg-indigo-600 text-white border-indigo-800'
-                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    {filter === 'all' ? 'Tất cả' : filter === 'earned' ? 'Đã đạt' : 'Chưa mở'}
-                  </button>
-                ))}
+              {/* Filter Switcher — Standard SegmentedControl */}
+              <div className="flex justify-start">
+                <SegmentedControl
+                  options={achFilterOptions}
+                  value={achFilter}
+                  onChange={setAchFilter}
+                  size="sm"
+                  fullWidth={false}
+                />
               </div>
 
               {/* Achievements Grid */}
@@ -331,9 +328,9 @@ export default function Profile() {
                 }).map(ach => (
                   <div
                     key={ach.id}
-                    className={`bg-white border-2 rounded-2xl p-4 flex items-center gap-4 transition-all ${
+                    className={`bg-white border rounded-2xl p-4 flex items-center gap-4 transition-all ${
                       ach.earned
-                        ? 'border-amber-300 shadow-[0_4px_0_0_#FDE68A]'
+                        ? 'border-amber-200 bg-amber-50/30'
                         : 'border-slate-200 opacity-60'
                     }`}
                   >
@@ -363,13 +360,17 @@ export default function Profile() {
         </AnimatePresence>
       </div>
 
-      {/* ─── Modals: Edit Profile, Change Password ────────────────────── */}
+      {/* ─── Modals: Edit Profile, Settings, Change Password ──────────── */}
       {showEditProfile && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-2xl max-w-md w-full space-y-5 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-5 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-extrabold text-slate-900">Chỉnh sửa hồ sơ</h3>
-              <button onClick={() => setShowEditProfile(false)} className="p-1 text-slate-400 hover:text-slate-600">
+              <button
+                type="button"
+                onClick={() => setShowEditProfile(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -380,15 +381,16 @@ export default function Profile() {
                 type="text"
                 value={displayName}
                 onChange={e => setDisplayName(e.target.value)}
-                className="w-full py-3 px-4 border-2 border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600"
+                className="w-full py-3 px-4 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-indigo-600"
+                placeholder="Nhập họ và tên..."
               />
             </div>
 
-            <div className="flex gap-2 pt-2">
-              <TactileButton variant="secondary" onClick={() => setShowEditProfile(false)} className="flex-1">
+            <div className="flex gap-2.5 pt-2">
+              <TactileButton variant="secondary" size="md" onClick={() => setShowEditProfile(false)} className="flex-1">
                 Hủy
               </TactileButton>
-              <TactileButton variant="primary" onClick={handleSaveProfile} disabled={saving} className="flex-1">
+              <TactileButton variant="primary" size="md" onClick={handleSaveProfile} disabled={saving} className="flex-1">
                 {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
               </TactileButton>
             </div>
@@ -396,18 +398,69 @@ export default function Profile() {
         </div>
       )}
 
+      {showSettings && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-5 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <Settings className="w-5 h-5 text-indigo-600" />
+                <h3 className="text-lg font-extrabold text-slate-900">Cài đặt tài khoản</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowSettings(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <ActionList>
+              <ActionRow
+                icon={KeyRound}
+                title="Đổi mật khẩu"
+                subtitle="Cập nhật mật khẩu bảo mật"
+                onClick={() => {
+                  setShowSettings(false)
+                  setShowChangePassword(true)
+                }}
+              />
+              <ActionRow
+                icon={LogOut}
+                title="Đăng xuất"
+                variant="danger"
+                onClick={() => {
+                  setShowSettings(false)
+                  handleLogout()
+                }}
+              />
+            </ActionList>
+
+            <TactileButton variant="secondary" size="md" onClick={() => setShowSettings(false)} className="w-full">
+              Đóng
+            </TactileButton>
+          </div>
+        </div>
+      )}
+
       {showChangePassword && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-2xl max-w-md w-full space-y-4 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-extrabold text-slate-900">Đổi mật khẩu</h3>
-              <button onClick={() => setShowChangePassword(false)} className="p-1 text-slate-400 hover:text-slate-600">
+              <button
+                type="button"
+                onClick={() => setShowChangePassword(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {passwordError && (
-              <p className="text-xs font-bold text-rose-600 bg-rose-50 p-2.5 rounded-xl border border-rose-200">{passwordError}</p>
+              <p className="text-xs font-bold text-rose-600 bg-rose-50 p-2.5 rounded-xl border border-rose-200">
+                {passwordError}
+              </p>
             )}
 
             <div className="space-y-3">
@@ -416,30 +469,30 @@ export default function Profile() {
                 placeholder="Mật khẩu hiện tại"
                 value={passwordData.old_password}
                 onChange={e => setPasswordData(d => ({ ...d, old_password: e.target.value }))}
-                className="w-full py-3 px-4 border-2 border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600"
+                className="w-full py-3 px-4 border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600 font-medium"
               />
               <input
                 type="password"
                 placeholder="Mật khẩu mới"
                 value={passwordData.new_password}
                 onChange={e => setPasswordData(d => ({ ...d, new_password: e.target.value }))}
-                className="w-full py-3 px-4 border-2 border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600"
+                className="w-full py-3 px-4 border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600 font-medium"
               />
               <input
                 type="password"
                 placeholder="Xác nhận mật khẩu mới"
                 value={passwordData.confirm_password}
                 onChange={e => setPasswordData(d => ({ ...d, confirm_password: e.target.value }))}
-                className="w-full py-3 px-4 border-2 border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600"
+                className="w-full py-3 px-4 border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-600 font-medium"
               />
             </div>
 
-            <div className="flex gap-2 pt-2">
-              <TactileButton variant="secondary" onClick={() => setShowChangePassword(false)} className="flex-1">
+            <div className="flex gap-2.5 pt-2">
+              <TactileButton variant="secondary" size="md" onClick={() => setShowChangePassword(false)} className="flex-1">
                 Hủy
               </TactileButton>
-              <TactileButton variant="primary" onClick={handleChangePassword} disabled={saving} className="flex-1">
-                {saving ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}
+              <TactileButton variant="primary" size="md" onClick={handleChangePassword} disabled={saving} className="flex-1">
+                {saving ? 'Đang cập nhật...' : 'Cập nhật'}
               </TactileButton>
             </div>
           </div>

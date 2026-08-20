@@ -1,133 +1,64 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
-  CheckCircle2,
-  Clock,
-  Sparkles,
-  Flame,
-  Zap,
-  Trophy,
   ScrollText,
   ShoppingBag,
   Package,
+  Sparkles,
+  CheckCircle2,
   Heart,
   Snowflake,
-  Shield,
-  Layers,
-  Award,
-  ArrowRight,
-  Loader2
+  Zap,
+  Loader2,
+  Clock,
+  ArrowRight
 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore, useQuestStore, useShopStore, useUIStore } from '../lib/store'
-import { t } from '../lib/locale'
 import { TactileButton } from '../components/ui/tactile-button'
-import { GamifyBadge } from '../components/ui/gamify-badge'
+import { SegmentedControl } from '../components/ui/segmented-control'
 import { QuestIcon } from '../components/ui/semantic-icon'
 
 export default function QuestShop() {
-  const location = useLocation()
-  const initialTab = location.pathname.includes('/shop') ? 'shop' : 'quests'
-  const [activeTab, setActiveTab] = useState(initialTab) // 'quests' | 'shop' | 'inventory'
+  const [activeTab, setActiveTab] = useState('quests') // 'quests' | 'shop' | 'inventory'
 
-  useEffect(() => {
-    if (location.pathname.includes('/shop')) setActiveTab('shop')
-    else if (location.pathname.includes('/quests')) setActiveTab('quests')
-  }, [location.pathname])
+  const tabOptions = [
+    { value: 'quests', label: 'Nhiệm vụ', icon: ScrollText },
+    { value: 'shop', label: 'Cửa hàng', icon: ShoppingBag },
+    { value: 'inventory', label: 'Túi đồ', icon: Package }
+  ]
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-8 font-sans">
       
       {/* ─── Top Header Banner ────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-[0_4px_0_0_#E2E8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 rounded-3xl p-6 sm:p-7">
         <div className="space-y-1">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-extrabold mb-1">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <span>Trung tâm thưởng & Đổi quà</span>
+          </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Nhiệm Vụ & Cửa Hàng
           </h1>
           <p className="text-xs sm:text-sm font-medium text-slate-500">
-            Hoàn thành thử thách mỗi ngày, nhận Xu và trang bị vật phẩm hỗ trợ.
+            Hoàn thành thử thách mỗi ngày, nhận Xu và trang bị vật phẩm hỗ trợ học tập.
           </p>
         </div>
       </div>
 
-      {/* ─── Segmented Navigation Switcher ────────────────────────────── */}
-      <div className="grid grid-cols-3 p-1.5 bg-slate-200/70 rounded-2xl gap-1.5 border border-slate-200">
-        <button
-          onClick={() => setActiveTab('quests')}
-          className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer select-none ${
-            activeTab === 'quests'
-              ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/80'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <ScrollText className="w-4 h-4" />
-          <span>Nhiệm vụ</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('shop')}
-          className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer select-none ${
-            activeTab === 'shop'
-              ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/80'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <ShoppingBag className="w-4 h-4" />
-          <span>Cửa hàng</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('inventory')}
-          className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer select-none ${
-            activeTab === 'inventory'
-              ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/80'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <Package className="w-4 h-4" />
-          <span>Túi đồ</span>
-        </button>
-      </div>
+      {/* ─── Segmented Navigation Switcher (State Switcher Primitive) ─── */}
+      <SegmentedControl
+        options={tabOptions}
+        value={activeTab}
+        onChange={setActiveTab}
+        size="md"
+      />
 
       {/* ─── Tab Content Panels ────────────────────────────────────────── */}
       <div>
-        <AnimatePresence mode="wait">
-          {activeTab === 'quests' && (
-            <motion.div
-              key="quests"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.16, ease: 'easeOut' }}
-            >
-              <QuestsPanel />
-            </motion.div>
-          )}
-
-          {activeTab === 'shop' && (
-            <motion.div
-              key="shop"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.16, ease: 'easeOut' }}
-            >
-              <ShopPanel />
-            </motion.div>
-          )}
-
-          {activeTab === 'inventory' && (
-            <motion.div
-              key="inventory"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.16, ease: 'easeOut' }}
-            >
-              <InventoryPanel />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {activeTab === 'quests' && <QuestsPanel />}
+        {activeTab === 'shop' && <ShopPanel />}
+        {activeTab === 'inventory' && <InventoryPanel />}
       </div>
 
     </div>
@@ -140,13 +71,37 @@ export default function QuestShop() {
 
 function QuestsPanel() {
   const { user, fetchUser } = useAuthStore()
-  const { quests, isLoading, fetchQuests, claimQuest } = useQuestStore()
+  const { quests, isLoading, fetchQuests, claimCoins } = useQuestStore()
   const { showToast } = useUIStore()
+
   const [claimingId, setClaimingId] = useState(null)
   const [claimingAll, setClaimingAll] = useState(false)
+  const [timeLeft, setTimeLeft] = useState('')
 
   useEffect(() => {
     fetchQuests()
+  }, [])
+
+  // Midnight countdown timer
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = new Date()
+      const midnight = new Date()
+      midnight.setHours(24, 0, 0, 0)
+      const diff = midnight - now
+      if (diff <= 0) {
+        setTimeLeft('00:00:00')
+        return
+      }
+      const h = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0')
+      const m = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0')
+      const s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0')
+      setTimeLeft(`${h}:${m}:${s}`)
+    }
+
+    updateCountdown()
+    const timer = setInterval(updateCountdown, 1000)
+    return () => clearInterval(timer)
   }, [])
 
   const claimable = quests.filter(q => q.is_complete && !q.coins_claimed)
@@ -155,36 +110,37 @@ function QuestsPanel() {
     if (claimingId) return
     setClaimingId(uq.id)
     try {
-      const res = await claimQuest(uq.id)
+      await claimCoins(uq.id)
       await fetchUser()
-      showToast(`+${res?.coins_awarded || uq.quest?.coin_reward || 10} Xu đã nhận!`, 'success')
+      showToast(`+${uq.quest?.coin_reward || 10} Xu đã được cộng vào tài khoản!`, 'success')
     } catch (e) {
-      showToast(e.message || 'Không thể nhận thưởng', 'error')
+      showToast(e.message || 'Lỗi nhận thưởng', 'error')
     } finally {
       setClaimingId(null)
     }
   }
 
   const handleClaimAll = async () => {
-    if (claimingAll || claimable.length === 0) return
+    if (claimable.length === 0 || claimingAll) return
     setClaimingAll(true)
-    let total = 0
-    for (const uq of claimable) {
-      try {
-        const res = await claimQuest(uq.id)
-        total += res.coins_awarded || uq.quest?.coin_reward || 10
-      } catch (_) {}
+    try {
+      for (const q of claimable) {
+        await claimCoins(q.id)
+      }
+      await fetchUser()
+      showToast(`Đã nhận toàn bộ phần thưởng nhiệm vụ!`, 'success')
+    } catch (e) {
+      showToast(e.message || 'Lỗi nhận tất cả thưởng', 'error')
+    } finally {
+      setClaimingAll(false)
     }
-    await fetchUser()
-    setClaimingAll(false)
-    showToast(`+${total} Xu đã nhận thành công!`, 'success')
   }
 
   if (isLoading) {
     return (
       <div className="p-12 text-center text-slate-400 font-bold text-sm">
         <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-600 mb-2" />
-        Đang tải danh sách nhiệm vụ...
+        Đang tải nhiệm vụ hàng ngày...
       </div>
     )
   }
@@ -192,11 +148,16 @@ function QuestsPanel() {
   return (
     <div className="space-y-6">
       
-      {/* Action Strip */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-extrabold text-slate-900">
-          Nhiệm vụ hoạt động ({quests.length})
-        </h2>
+      {/* Subheader Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+        <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+          <Clock className="w-4 h-4 text-slate-400" />
+          <span>Làm mới sau:</span>
+          <span className="font-mono font-extrabold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md tabular-nums">
+            {timeLeft || '--:--:--'}
+          </span>
+        </div>
+
         {claimable.length > 0 && (
           <TactileButton
             variant="amber"
@@ -221,10 +182,10 @@ function QuestsPanel() {
           return (
             <div
               key={uq.id}
-              className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 shadow-[0_4px_0_0_#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-amber-600 shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0">
                   <QuestIcon quest={quest} className="w-6 h-6" />
                 </div>
                 <div className="space-y-1.5 flex-1 min-w-0">
@@ -232,7 +193,7 @@ function QuestsPanel() {
                     {quest.title}
                   </h3>
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 max-w-xs h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                    <div className="flex-1 max-w-xs h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200/60">
                       <div
                         className={`h-full rounded-full transition-all duration-300 ${
                           isComplete ? 'bg-emerald-500' : 'bg-amber-500'
@@ -328,16 +289,16 @@ function ShopPanel() {
           return (
             <div
               key={item.id}
-              className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-[0_4px_0_0_#E2E8F0] flex flex-col justify-between space-y-4"
+              className="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col justify-between space-y-4"
             >
               <div className="space-y-3">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-50 border-2 border-indigo-200 flex items-center justify-center text-indigo-600">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
                   {item.item_type === 'heart' ? (
-                    <Heart className="w-7 h-7 fill-rose-500 text-rose-500" />
+                    <Heart className="w-6 h-6 sm:w-7 sm:h-7 fill-rose-500 text-rose-500" />
                   ) : item.item_type === 'streak_freeze' ? (
-                    <Snowflake className="w-7 h-7 text-sky-500" />
+                    <Snowflake className="w-6 h-6 sm:w-7 sm:h-7 text-sky-500" />
                   ) : (
-                    <Zap className="w-7 h-7 fill-amber-500 text-amber-500" />
+                    <Zap className="w-6 h-6 sm:w-7 sm:h-7 fill-amber-500 text-amber-500" />
                   )}
                 </div>
 
@@ -419,7 +380,7 @@ function InventoryPanel() {
 
   if (!inventory || inventory.length === 0) {
     return (
-      <div className="bg-white border-2 border-slate-200 rounded-3xl p-12 text-center space-y-3">
+      <div className="bg-white border border-slate-200 rounded-3xl p-12 text-center space-y-3">
         <Package className="w-12 h-12 text-slate-300 mx-auto" />
         <h3 className="font-extrabold text-base text-slate-800">Túi đồ đang trống</h3>
         <p className="text-xs text-slate-400 max-w-xs mx-auto">
@@ -439,11 +400,11 @@ function InventoryPanel() {
         return (
           <div
             key={inv.id}
-            className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-[0_4px_0_0_#E2E8F0] flex flex-col justify-between space-y-4"
+            className="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col justify-between space-y-4"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 border-2 border-indigo-200 flex items-center justify-center text-indigo-600">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
                   <Package className="w-6 h-6" />
                 </div>
                 <span className="text-xs font-extrabold px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 tabular-nums">

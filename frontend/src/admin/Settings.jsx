@@ -5,7 +5,7 @@ export default function AdminSettings() {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">Settings</h2>
 
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6">
         <h3 className="font-semibold mb-4">General Settings</h3>
         
         <div className="space-y-4 max-w-lg">
@@ -44,7 +44,7 @@ export default function AdminSettings() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6">
         <h3 className="font-semibold mb-4">Database Settings</h3>
         
         <div className="space-y-4 max-w-lg">
@@ -84,7 +84,7 @@ export default function AdminSettings() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6">
         <h3 className="font-semibold mb-4">API Settings</h3>
         
         <div className="space-y-4 max-w-lg">

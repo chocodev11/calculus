@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore, useUIStore } from '../lib/store'
-import { Eye, EyeOff, Loader2, Check, X, Mail, Lock, User, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react'
+import { Eye, EyeOff, Loader2, Check, X, Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react'
 import { TactileButton } from '../components/ui/tactile-button'
 
 /* ─── Reusable Input Field ─────────────────────────────────────────── */
@@ -17,7 +17,7 @@ function InputField({ icon: Icon, label, hint, right, ...props }) {
         )}
         <input
           {...props}
-          className={`w-full py-3.5 border-2 rounded-2xl bg-slate-50 focus:bg-white outline-none transition-all
+          className={`w-full py-3.5 border rounded-2xl bg-slate-50 focus:bg-white outline-none transition-all
             focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 border-slate-200 text-sm font-medium text-slate-800
             placeholder:text-slate-400 ${Icon ? 'pl-10' : 'pl-4'} ${right ? 'pr-12' : 'pr-4'}`}
         />
@@ -163,37 +163,35 @@ function RegisterForm({ onSwitch }) {
     e.preventDefault()
     clearError()
 
-    if (!displayName.trim() || !email.trim() || !password.trim()) {
-      showToast('Vui lòng nhập đầy đủ thông tin', 'error')
+    if (!displayName.trim() || !email.trim() || !password) {
+      showToast('Vui lòng điền đầy đủ các trường', 'error')
       return
     }
-
     if (!passwordChecks.length) {
       showToast('Mật khẩu phải có ít nhất 6 ký tự', 'error')
       return
     }
-
-    if (password !== confirmPassword) {
+    if (!passwordChecks.match) {
       showToast('Mật khẩu xác nhận không khớp', 'error')
       return
     }
 
     try {
       const result = await register({
-        username: email.split('@')[0] + Math.floor(Math.random() * 1000),
         email,
+        username: email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_').slice(0, 20),
         password,
         display_name: displayName,
       })
 
-      showToast('Đăng ký tài khoản thành công!', 'success')
-      if (result?.needs_verification) {
-        navigate('/verify-email')
+      if (result?.requires_verification) {
+        showToast('Đăng ký thành công! Vui lòng kiểm tra email để xác thực.', 'info')
       } else {
-        navigate('/')
+        showToast('Đăng ký thành công! Chào mừng bạn.', 'success')
       }
+      navigate('/')
     } catch (err) {
-      showToast(err.message || 'Đăng ký thất bại', 'error')
+      showToast(err.message || 'Đăng ký thất bại. Vui lòng thử lại.', 'error')
     }
   }
 
@@ -244,9 +242,8 @@ function RegisterForm({ onSwitch }) {
         type={showPassword ? 'text' : 'password'}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="••••••••"
+        placeholder="Tối thiểu 6 ký tự"
         required
-        minLength={6}
         autoComplete="new-password"
         right={toggleBtn}
       />
@@ -257,33 +254,30 @@ function RegisterForm({ onSwitch }) {
         type={showPassword ? 'text' : 'password'}
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
-        placeholder="••••••••"
+        placeholder="Nhập lại mật khẩu"
         required
         autoComplete="new-password"
       />
 
-      {password.length > 0 && (
-        <div className="flex flex-wrap gap-2 px-1 text-xs font-bold">
-          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border ${
-            passwordChecks.length ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'
-          }`}>
-            {passwordChecks.length ? <Check className="w-3.5 h-3.5" /> : <X className="w-3.5 h-3.5" />}
-            Ít nhất 6 ký tự
-          </span>
-          {confirmPassword.length > 0 && (
-            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border ${
-              passwordChecks.match ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'
-            }`}>
-              {passwordChecks.match ? <Check className="w-3.5 h-3.5" /> : <X className="w-3.5 h-3.5" />}
-              Mật khẩu khớp
-            </span>
+      {/* Password criteria checklist */}
+      {password && (
+        <div className="p-3 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-1.5 text-xs font-medium">
+          <div className={`flex items-center gap-2 ${passwordChecks.length ? 'text-emerald-700 font-bold' : 'text-slate-500'}`}>
+            {passwordChecks.length ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <span className="w-3.5 h-3.5 rounded-full border border-slate-300 inline-block" />}
+            <span>Tối thiểu 6 ký tự</span>
+          </div>
+          {confirmPassword && (
+            <div className={`flex items-center gap-2 ${passwordChecks.match ? 'text-emerald-700 font-bold' : 'text-slate-500'}`}>
+              {passwordChecks.match ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <span className="w-3.5 h-3.5 rounded-full border border-slate-300 inline-block" />}
+              <span>Mật khẩu xác nhận khớp</span>
+            </div>
           )}
         </div>
       )}
 
       <TactileButton
         type="submit"
-        disabled={isLoading || !passwordChecks.length || (confirmPassword.length > 0 && !passwordChecks.match)}
+        disabled={isLoading}
         variant="primary"
         size="lg"
         className="w-full text-base mt-2"
@@ -295,7 +289,7 @@ function RegisterForm({ onSwitch }) {
           </>
         ) : (
           <>
-            <span>Tạo tài khoản miễn phí</span>
+            <span>Đăng ký tài khoản</span>
             <ArrowRight className="w-5 h-5 ml-1.5" />
           </>
         )}
@@ -367,7 +361,7 @@ export default function Login() {
         {/* Brand Header */}
         <div className="text-center mb-6 space-y-2">
           <Link to="/" className="inline-flex items-center gap-2 group mb-1">
-            <div className="w-11 h-11 rounded-2xl bg-indigo-600 border-b-2 border-indigo-800 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-2xl bg-indigo-600 border-b-2 border-indigo-800 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
               <span className="font-serif italic font-extrabold text-2xl leading-none">∫</span>
             </div>
             <span className="font-extrabold text-2xl tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
@@ -382,25 +376,27 @@ export default function Login() {
         </div>
 
         {/* 2.5D Tactile Card Container */}
-        <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-[0_8px_0_0_#E2E8F0] overflow-hidden">
+        <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden">
           
           {/* Tab Switcher */}
-          <div className="grid grid-cols-2 p-1.5 bg-slate-100/70 border-b border-slate-200 gap-1.5">
+          <div className="grid grid-cols-2 p-1.5 bg-slate-100/70 border-b border-slate-200/80 gap-1.5">
             <button
+              type="button"
               onClick={() => switchTab('login')}
               className={`py-3 text-xs sm:text-sm font-extrabold rounded-2xl transition-all cursor-pointer select-none ${
                 tab === 'login'
-                  ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/80'
+                  ? 'bg-white text-indigo-600 border border-slate-200/80'
                   : 'text-slate-500 hover:text-slate-800'
               }`}
             >
               Đăng nhập
             </button>
             <button
+              type="button"
               onClick={() => switchTab('register')}
               className={`py-3 text-xs sm:text-sm font-extrabold rounded-2xl transition-all cursor-pointer select-none ${
                 tab === 'register'
-                  ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/80'
+                  ? 'bg-white text-indigo-600 border border-slate-200/80'
                   : 'text-slate-500 hover:text-slate-800'
               }`}
             >

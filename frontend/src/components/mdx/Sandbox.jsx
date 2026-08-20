@@ -31,8 +31,8 @@ export function Sandbox({
   }
 
   return (
-    <div className="my-6 w-full rounded-3xl overflow-hidden border-2 border-slate-200 dark:border-slate-800 shadow-[0_4px_0_0_#E2E8F0] dark:shadow-[0_4px_0_0_#1E293B] bg-slate-50 dark:bg-slate-900/50">
-      <div className="min-h-[420px] p-2 md:p-4">
+    <div className="my-6 w-full rounded-3xl overflow-hidden border-2 border-slate-200 bg-white">
+      <div className="min-h-[420px]">
         <InteractionSlide
           content={blockContent}
           onComplete={onComplete}

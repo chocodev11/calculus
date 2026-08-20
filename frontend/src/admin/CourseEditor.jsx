@@ -1,7 +1,7 @@
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { ChevronDown, ChevronRight, Plus, Save, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { Save, Plus, Trash2, ChevronDown, ChevronRight } from 'lucide-react'
 import { CourseIcon } from '../components/ui/semantic-icon'
 
 const API_URL = '/api/v1'
@@ -9,11 +9,11 @@ const API_URL = '/api/v1'
 export default function AdminCourseEditor() {
   const { slug } = useParams()
   const [expandedChapters, setExpandedChapters] = useState({})
-  
+
   const { data: course, isLoading } = useQuery({
     queryKey: ['admin-course', slug],
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/stories/${slug}`)
+      const res = await fetch(`${API_URL}/courses/${slug}`)
       return res.json()
     }
   })
@@ -38,7 +38,7 @@ export default function AdminCourseEditor() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <span className="w-14 h-14 rounded-2xl bg-indigo-50 border-2 border-indigo-200 text-indigo-600 flex items-center justify-center shadow-[0_3px_0_0_#C7D2FE]">
+          <span className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center">
             <CourseIcon course={course} className="w-7 h-7" />
           </span>
           <div>
@@ -46,8 +46,8 @@ export default function AdminCourseEditor() {
             <p className="text-gray-500">{course.slug}</p>
           </div>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-          <Save size={20} />
+        <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-bold text-sm transition-colors">
+          <Save size={18} />
           Save Changes
         </button>
       </div>
@@ -55,33 +55,33 @@ export default function AdminCourseEditor() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Course Info */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h3 className="font-semibold mb-4">Course Details</h3>
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+            <h3 className="font-bold text-slate-900 mb-4">Course Details</h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Title</label>
                 <input
                   type="text"
                   defaultValue={course.title}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label>
                 <textarea
                   defaultValue={course.description}
                   rows={3}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Difficulty</label>
                 <select 
                   defaultValue={course.difficulty}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                 >
                   <option value="beginner">Beginner</option>
                   <option value="intermediate">Intermediate</option>
@@ -89,24 +89,14 @@ export default function AdminCourseEditor() {
                 </select>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 pt-1">
                 <input
                   type="checkbox"
                   id="published"
                   defaultChecked={course.is_published}
-                  className="w-4 h-4"
+                  className="w-4 h-4 rounded text-indigo-600"
                 />
-                <label htmlFor="published" className="text-sm">Published</label>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  defaultChecked={course.is_featured}
-                  className="w-4 h-4"
-                />
-                <label htmlFor="featured" className="text-sm">Featured</label>
+                <label htmlFor="published" className="text-sm font-bold text-slate-700">Published</label>
               </div>
             </div>
           </div>
@@ -114,35 +104,35 @@ export default function AdminCourseEditor() {
 
         {/* Right: Chapters & Steps */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">Chapters & Steps</h3>
-              <button className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100">
-                <Plus size={16} />
+              <h3 className="font-bold text-slate-900">Chapters & Steps</h3>
+              <button className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 transition-colors">
+                <Plus size={15} />
                 Add Chapter
               </button>
             </div>
 
             <div className="space-y-3">
               {course.chapters?.map((chapter, chIdx) => (
-                <div key={chapter.id} className="border rounded-lg">
+                <div key={chapter.id} className="border border-slate-200 rounded-xl overflow-hidden">
                   <div 
-                    className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50"
+                    className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50/70 transition-colors"
                     onClick={() => toggleChapter(chapter.id)}
                   >
                     <div className="flex items-center gap-3">
                       {expandedChapters[chapter.id] ? (
-                        <ChevronDown size={20} className="text-gray-400" />
+                        <ChevronDown size={18} className="text-slate-400" />
                       ) : (
-                        <ChevronRight size={20} className="text-gray-400" />
+                        <ChevronRight size={18} className="text-slate-400" />
                       )}
-                      <span className="font-medium">Ch {chIdx + 1}: {chapter.title}</span>
-                      <span className="text-sm text-gray-500">
+                      <span className="font-bold text-sm text-slate-800">Ch {chIdx + 1}: {chapter.title}</span>
+                      <span className="text-xs text-slate-400 font-medium">
                         ({chapter.steps?.length || 0} steps)
                       </span>
                     </div>
                     <button 
-                      className="p-1 text-red-500 hover:bg-red-50 rounded"
+                      className="p-1 text-rose-500 hover:bg-rose-50 rounded-lg cursor-pointer transition-colors"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Trash2 size={16} />
@@ -150,34 +140,13 @@ export default function AdminCourseEditor() {
                   </div>
 
                   {expandedChapters[chapter.id] && (
-                    <div className="border-t bg-gray-50 p-4">
-                      <div className="space-y-2">
-                        {chapter.steps?.map((step, stIdx) => (
-                          <div 
-                            key={step.id}
-                            className="flex items-center justify-between p-3 bg-white rounded-lg border"
-                          >
-                            <div className="flex items-center gap-3">
-                              <span className="w-6 h-6 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
-                                {stIdx + 1}
-                              </span>
-                              <span>{step.title}</span>
-                              <span className="text-sm text-gray-400">+{step.xp_reward} XP</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <button className="text-blue-600 text-sm hover:underline">
-                                Edit
-                              </button>
-                              <button className="text-red-500 text-sm hover:underline">
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                        <button className="w-full p-2 border-2 border-dashed rounded-lg text-gray-400 hover:text-gray-600 hover:border-gray-400">
-                          + Add Step
-                        </button>
-                      </div>
+                    <div className="border-t border-slate-100 bg-slate-50/50 p-4 space-y-2">
+                      {chapter.steps?.map((step, sIdx) => (
+                        <div key={step.id} className="flex items-center justify-between p-2.5 bg-white border border-slate-200 rounded-lg text-xs font-medium">
+                          <span>{sIdx + 1}. {step.title}</span>
+                          <span className="text-slate-400 font-mono">{step.id}</span>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

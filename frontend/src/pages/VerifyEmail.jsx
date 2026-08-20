@@ -46,7 +46,7 @@ export default function VerifyEmail() {
   return (
     <div className="min-h-screen math-grid-bg flex items-center justify-center p-4 font-sans">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-[0_8px_0_0_#E2E8F0] p-8 text-center space-y-6">
+        <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-6">
           
           {status === 'verifying' && (
             <div className="space-y-4">

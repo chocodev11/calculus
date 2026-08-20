@@ -1,32 +1,33 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import { t, fmt } from '../lib/locale'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   ArrowLeft,
-  Lock,
   Check,
   Play,
-  BookOpen,
-  Clock,
-  Layers,
+  Lock,
   Sparkles,
-  ArrowRight,
+  BookOpen,
+  GraduationCap,
+  Layers,
   ChevronRight,
-  X,
-  GraduationCap
+  X
 } from 'lucide-react'
+import { useAuthStore, useUIStore } from '../lib/store'
 import api from '../lib/api'
-import { useAuthStore } from '../lib/store'
-import { encodeStepId, cn } from '../lib/utils'
+import { t } from '../lib/locale'
 import { TactileButton } from '../components/ui/tactile-button'
+import { encodeStepId } from '../lib/utils'
 
 export default function Story() {
   const { slug } = useParams()
   const navigate = useNavigate()
+  const { user, isAuthenticated, fetchUser } = useAuthStore()
+  const { showToast } = useUIStore()
+
   const [story, setStory] = useState(null)
   const [loading, setLoading] = useState(true)
   const [enrolling, setEnrolling] = useState(false)
-  const { user } = useAuthStore()
+  const [currentLesson, setCurrentLesson] = useState(null)
 
   useEffect(() => {
     loadStory()
@@ -34,51 +35,54 @@ export default function Story() {
 
   const loadStory = async () => {
     try {
-      const data = await api.get(`/stories/${slug}`)
+      const data = await api.get(`/courses/${slug}`)
       setStory(data)
+
+      // Find current active lesson
+      if (data && data.chapters) {
+        let found = null
+        for (const ch of data.chapters) {
+          for (const st of ch.steps || []) {
+            if (st.is_current) {
+              found = { chapter: ch, step: st }
+              break
+            }
+          }
+          if (found) break
+        }
+        if (!found && data.chapters.length > 0) {
+          const firstCh = data.chapters[0]
+          if (firstCh.steps && firstCh.steps.length > 0) {
+            found = { chapter: firstCh, step: firstCh.steps[0] }
+          }
+        }
+        setCurrentLesson(found)
+      }
     } catch (e) {
-      console.error('[Story] loadStory error', e)
+      console.error(e)
     } finally {
       setLoading(false)
     }
   }
 
   const handleEnroll = async () => {
-    if (!user) {
+    if (!isAuthenticated()) {
       navigate('/login')
       return
     }
 
     setEnrolling(true)
     try {
-      await api.post(`/stories/${slug}/enroll`)
+      await api.post(`/courses/${slug}/enroll`)
+      showToast('Đã đăng ký khoá học thành công!', 'success')
       await loadStory()
+      await fetchUser()
     } catch (e) {
-      console.error(e)
+      showToast(e.message || 'Không thể đăng ký khoá học', 'error')
     } finally {
       setEnrolling(false)
     }
   }
-
-  // Calculate stats
-  const totalLessons = story?.chapters?.reduce((acc, ch) => acc + (ch.steps?.length || 0), 0) || 0
-  const completedLessons = story?.chapters?.reduce((acc, ch) =>
-    acc + (ch.steps?.filter(s => s.is_completed).length || 0), 0) || 0
-
-  // Find current lesson
-  const findCurrentLesson = () => {
-    if (!story?.chapters) return null
-    for (const chapter of story.chapters) {
-      for (const step of chapter.steps || []) {
-        if (step.is_current || (!step.is_completed && story.is_enrolled)) {
-          return { step, chapter }
-        }
-      }
-    }
-    return null
-  }
-
-  const currentLesson = findCurrentLesson()
 
   if (loading) {
     return (
@@ -96,7 +100,7 @@ export default function Story() {
   if (!story) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="text-center bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm space-y-4 max-w-sm">
+        <div className="text-center bg-white border border-slate-200 rounded-3xl p-8 space-y-4 max-w-sm">
           <p className="text-slate-600 font-bold">{t.story?.courseNotFound || 'Không tìm thấy khoá học'}</p>
           <TactileButton variant="secondary" onClick={() => navigate('/explore')} className="w-full">
             {t.story?.backToExplore || 'Quay lại Khám phá'}
@@ -112,7 +116,7 @@ export default function Story() {
     <div className="w-full font-sans">
       
       {/* Top Breadcrumb Navigation */}
-      <div className="bg-white border-b border-slate-200 sticky top-16 z-30 shadow-sm">
+      <div className="bg-white border-b border-slate-200 sticky top-16 z-30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link
@@ -126,7 +130,7 @@ export default function Story() {
             </h1>
           </div>
           {story.is_enrolled && (
-            <span className="shrink-0 text-xs font-extrabold px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 tabular-nums">
+            <span className="shrink-0 text-xs font-extrabold px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 tabular-nums">
               {Math.round(story.progress || 0)}% Hoàn thành
             </span>
           )}
@@ -142,8 +146,8 @@ export default function Story() {
             <div className="lg:sticky lg:top-[144px]">
               <CourseOverviewCard
                 story={story}
-                totalLessons={totalLessons}
-                completedLessons={completedLessons}
+                totalLessons={story.total_steps || story.steps_count || 0}
+                completedLessons={story.completed_steps || 0}
                 needsEnrollment={needsEnrollment}
                 onEnroll={handleEnroll}
                 enrolling={enrolling}
@@ -152,16 +156,16 @@ export default function Story() {
             </div>
           </div>
 
-          {/* Right Column: Interactive Lesson Path */}
+          {/* Right Column: Chapters & Lessons Path */}
           <div className="space-y-6">
-            {story.chapters?.map((chapter, cIndex) => (
+            {story.chapters?.map((chapter, index) => (
               <ChapterSection
                 key={chapter.id}
                 chapter={chapter}
-                index={cIndex}
+                index={index}
                 isEnrolled={story.is_enrolled}
                 currentLesson={currentLesson}
-                storySlug={slug}
+                storySlug={story.slug}
               />
             ))}
           </div>
@@ -178,10 +182,10 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
   const illustrationUrl = story.illustration || story.thumbnail_url
 
   return (
-    <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-[0_6px_0_0_#E2E8F0] space-y-6">
+    <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6">
       
       {/* Icon / Illustration */}
-      <div className="w-24 h-24 rounded-3xl bg-indigo-50 border-2 border-indigo-100 flex items-center justify-center p-3 shadow-sm">
+      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-indigo-50 border border-indigo-100 flex items-center justify-center p-3">
         {illustrationUrl ? (
           <img
             src={illustrationUrl}
@@ -190,7 +194,7 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
             onError={e => { e.target.style.display = 'none' }}
           />
         ) : (
-          <GraduationCap className="w-12 h-12 text-indigo-600" />
+          <GraduationCap className="w-10 h-10 sm:w-12 sm:h-12 text-indigo-600" />
         )}
       </div>
 
@@ -201,7 +205,7 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
             {story.difficulty || t.story?.beginner || 'Cơ bản'}
           </span>
         </div>
-        <h2 className="text-2xl font-extrabold text-slate-900 leading-tight">
+        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight">
           {story.title}
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
@@ -232,7 +236,7 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
             <span className="text-slate-600">Tiến độ của bạn</span>
             <span className="text-emerald-600 tabular-nums">{progressPercent}%</span>
           </div>
-          <div className="h-3 rounded-full bg-slate-100 p-0.5 border border-slate-200 overflow-hidden">
+          <div className="h-2 rounded-full bg-slate-100 overflow-hidden border border-slate-200/60">
             <div
               className="h-full bg-emerald-500 rounded-full transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
@@ -254,10 +258,10 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
       >
         {needsEnrollment
           ? enrolling
-            ? 'Đang đăng ký...'
-            : user
-            ? 'Bắt đầu học ngay'
-            : 'Đăng nhập để học'
+          ? 'Đang đăng ký...'
+          : user
+          ? 'Bắt đầu học ngay'
+          : 'Đăng nhập để học'
           : '✓ Đã tham gia khoá học'}
       </TactileButton>
 
@@ -271,7 +275,7 @@ function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }
   const completedCount = steps.filter(s => s.is_completed).length
 
   return (
-    <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-[0_4px_0_0_#E2E8F0] space-y-6">
+    <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6">
       
       {/* Chapter Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -292,7 +296,7 @@ function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }
       </div>
 
       {/* Lessons Path Grid */}
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {steps.map((step, stepIndex) => {
           const isCurrentStep = currentLesson?.step?.id === step.id
           const isCompleted = step.is_completed
@@ -302,6 +306,7 @@ function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }
             <LessonNode
               key={step.id}
               step={step}
+              index={stepIndex}
               isCompleted={isCompleted}
               isCurrent={isCurrentStep}
               isLocked={isLocked}
@@ -324,36 +329,34 @@ function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }
   )
 }
 
-function LessonNode({ step, isCompleted, isCurrent, isLocked, isEnrolled, storySlug, onSelect }) {
-  const navigate = useNavigate()
-
+function LessonNode({ step, index, isCompleted, isCurrent, isLocked, isEnrolled, storySlug, onSelect }) {
   return (
     <div
       onClick={onSelect}
-      className={`group flex items-center justify-between p-4 rounded-2xl border-2 transition-all cursor-pointer select-none ${
+      className={`group flex items-center justify-between p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer select-none ${
         isCurrent
-          ? 'bg-indigo-50/70 border-indigo-300 shadow-[0_3px_0_0_#C7D2FE]'
+          ? 'bg-indigo-50/80 border-indigo-200 text-indigo-950 font-bold'
           : isCompleted
-          ? 'bg-white border-slate-200 hover:border-slate-300'
+          ? 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
           : isLocked
-          ? 'bg-slate-50/60 border-slate-200/60 opacity-70'
+          ? 'bg-slate-50/50 border-slate-100 text-slate-400 opacity-60'
           : 'bg-white border-slate-200 hover:border-indigo-300'
       }`}
     >
       <div className="flex items-center gap-3.5 min-w-0">
         
         {/* Status Node Icon */}
-        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border-b-2 transition-transform group-hover:scale-105 ${
+        <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shrink-0 border-b-2 transition-transform group-hover:scale-105 ${
           isCompleted
-            ? 'bg-emerald-500 border-emerald-700 text-white shadow-sm'
+            ? 'bg-emerald-500 border-emerald-700 text-white'
             : isCurrent
-            ? 'bg-indigo-600 border-indigo-800 text-white shadow-sm'
-            : 'bg-slate-200 border-slate-300 text-slate-400'
+            ? 'bg-indigo-600 border-indigo-800 text-white'
+            : 'bg-slate-100 border-slate-200 text-slate-400'
         }`}>
           {isCompleted ? (
             <Check className="w-5 h-5 stroke-[3]" />
           ) : isCurrent ? (
-            <Play className="w-5 h-5 fill-white ml-0.5" />
+            <Play className="w-4 h-4 fill-white ml-0.5" />
           ) : (
             <Lock className="w-4 h-4" />
           )}
@@ -361,24 +364,27 @@ function LessonNode({ step, isCompleted, isCurrent, isLocked, isEnrolled, storyS
 
         {/* Info */}
         <div className="space-y-0.5 min-w-0">
-          <p className={`text-sm sm:text-base font-bold truncate ${
-            isCurrent ? 'text-indigo-900' : isCompleted ? 'text-slate-700' : 'text-slate-800'
+          <p className={`text-xs sm:text-sm font-bold truncate ${
+            isCurrent ? 'text-indigo-950 font-extrabold' : isCompleted ? 'text-slate-700' : 'text-slate-800'
           }`}>
+            <span className="tabular-nums font-bold mr-1.5 opacity-60">
+              {String(index + 1).padStart(2, '0')}.
+            </span>
             {step.title}
           </p>
-          <p className="text-xs text-slate-400 font-medium">
+          <p className="text-[11px] text-slate-400 font-medium">
             {step.duration || '3 - 5 phút'}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0 ml-2">
         {isCurrent && (
-          <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-lg bg-indigo-600 text-white shadow-sm">
-            Tiếp theo
+          <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
+            Đang học
           </span>
         )}
-        <ChevronRight className={`w-5 h-5 ${isCurrent ? 'text-indigo-600' : 'text-slate-300'}`} />
+        <ChevronRight className={`w-4 h-4 ${isCurrent ? 'text-indigo-600' : 'text-slate-300'}`} />
       </div>
     </div>
   )
@@ -394,14 +400,14 @@ function LessonModal({ lesson, isLocked, onClose, storySlug }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
-      <div className="bg-white border-2 border-slate-200 rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/40 flex items-center justify-center p-4">
+      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-150">
         
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
             {lesson.duration || '3 - 5 phút'}
           </span>
-          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600">
+          <button type="button" onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-slate-600 cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>

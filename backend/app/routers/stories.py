@@ -12,6 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/stories", tags=["stories"])
+courses_router = APIRouter(prefix="/courses", tags=["courses"])
 
 
 def _count_quiz_blocks_in_story(story) -> int:
@@ -40,6 +41,9 @@ async def get_stories(
     db: AsyncSession = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user_optional)
 ):
+    if not isinstance(current_user, User):
+        current_user = None
+
     query = select(Story).options(
         joinedload(Story.category),
         selectinload(Story.chapters).selectinload(Chapter.steps).selectinload(Step.slides)
@@ -115,6 +119,39 @@ async def get_stories(
         ))
     
     return response
+
+@router.get("/learning-paths")
+async def get_learning_paths(
+    db: AsyncSession = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional)
+):
+    user = current_user if isinstance(current_user, User) else None
+    stories_data = await get_stories(limit=100, db=db, current_user=user) or []
+    
+    paths_dict = {}
+    for story in stories_data:
+        cat_name = story.category_name or "Khóa học đại cương"
+        if cat_name not in paths_dict:
+            cat_slug = cat_name.lower().replace(" ", "-")
+            paths_dict[cat_name] = {
+                "id": cat_slug,
+                "title": cat_name,
+                "description": f"Lộ trình học tập chuyên đề {cat_name}.",
+                "courses": []
+            }
+        paths_dict[cat_name]["courses"].append(story)
+    
+    if not paths_dict:
+        return [
+            {
+                "id": "calculus-core",
+                "title": "Hành trình Giải tích & Toán học",
+                "description": "Khám phá thế giới toán học từ nền tảng trực quan đến nâng cao.",
+                "courses": []
+            }
+        ]
+        
+    return list(paths_dict.values())
 
 @router.get("/{slug}", response_model=StoryDetailResponse)
 async def get_story(
@@ -278,3 +315,11 @@ async def calculate_story_progress(db: AsyncSession, user_id: int, story_id: int
     completed_steps = completed_result.scalar() or 0
     
     return int((completed_steps / total_steps) * 100)
+
+
+# Register identical routes on /courses alias
+courses_router.add_api_route("", get_stories, methods=["GET"], response_model=list[StoryListResponse])
+courses_router.add_api_route("/learning-paths", get_learning_paths, methods=["GET"])
+courses_router.add_api_route("/{slug}", get_story, methods=["GET"], response_model=StoryDetailResponse)
+courses_router.add_api_route("/{slug}/enroll", enroll_story, methods=["POST"])
+
