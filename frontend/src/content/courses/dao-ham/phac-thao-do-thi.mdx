@@ -1,0 +1,165 @@
+---
+id: 'phac-thao-do-thi'
+title: 'Tổng hợp phác thảo đồ thị'
+description: 'Phác thảo đồ thị là đọc toàn bộ cấu trúc hàm từ đạo hàm — đơn điệu, tính lõm, tiệm cận — như một hệ thống ràng buộc thống nhất.'
+courseSlug: 'dao-ham'
+chapterSlug: 'ung-dung-dao-ham'
+order: 0
+xp: 20
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Tham số hình dạng $p$"
+      },
+      "parameter": {
+        "min": 0.5,
+        "max": 4,
+        "initial": 1
+      },
+      "system": {
+        "resolution": 400,
+        "view": {
+          "xMin": -5,
+          "xMax": 5,
+          "yMin": -0.2,
+          "yMax": 1.2
+        },
+        "curves": [
+          {
+            "expr": "x*x / (x*x + p)",
+            "color": "#3498db",
+            "label": "f(x) = x²/(x²+p)",
+            "style": "solid",
+            "width": 2
+          },
+          {
+            "expr": "2*p*x / pow(x*x + p, 2)",
+            "color": "#e74c3c",
+            "label": "f′(x)",
+            "style": "dashed",
+            "width": 2
+          }
+        ]
+      },
+      "reflections": [
+        {
+          "id": "p-small",
+          "trigger": "state.currentValue < 0.7",
+          "text": "$p$ nhỏ: đường cong tăng dốc, điểm uốn gần $x = 0$, $f'$ có đỉnh nhọn."
+        },
+        {
+          "id": "p-med",
+          "trigger": "state.currentValue > 1.8 && state.currentValue < 2.3",
+          "text": "$p \\approx 2$: điểm uốn dịch ra ngoài khoảng $x \\approx \\pm 1.4$. Hàm vẫn tiệm cận $y = 1$."
+        },
+        {
+          "id": "p-large",
+          "trigger": "state.currentValue > 3.5",
+          "text": "$p$ lớn: đường cong tăng chậm và phẳng hơn nhiều. Tiệm cận ngang $y = 1$ không đổi."
+        }
+      ],
+      "prompt": "Kéo $p$ từ nhỏ đến lớn. Điều gì thay đổi: hình dạng tổng thể, điểm cực trị, điểm uốn? Điều gì KHÔNG thay đổi? Có thể phác thảo đồ thị chỉ từ thông tin về $f'$ và các tiệm cận không?"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Giao thức phác thảo đồ thị: sáu bước
+  
+  (1) **Miền xác định** — có tiệm cận đứng không? (2) **Cắt trục và giá trị đặc biệt** — $f(0)$, nghiệm của $f$. (3) **Đơn điệu** — giải $f'(x) = 0$; bảng dấu $f'$; khoảng tăng/giảm. (4) **Phân loại điểm tới hạn** — kiểm tra đạo hàm bậc nhất hoặc bậc hai.
+  
+  (5) **Tính lõm** — giải $f''(x) = 0$; bảng dấu $f''$; khoảng lõm lên/xuống và điểm uốn. (6) **Tiệm cận và hành vi cuối** — $\lim_{x\to\pm\infty} f(x)$; tiệm cận đứng khi mẫu số bằng $0$.
+</Slide>
+
+<Slide title="Slide 3">
+  ### Các ràng buộc tự kiểm tra nhau
+  
+  Với $f(x) = x^2/(x^2+p)$: hàm chẵn ($f(-x) = f(x)$) — chỉ cần phân tích $x \geq 0$. $f(0) = 0$, $\lim_{x\to\pm\infty} f(x) = 1$ — hàm tăng từ $0$ đến $1$ trên $[0,\infty)$.
+  
+  Sáu đặc trưng không độc lập: chúng tạo thành hệ ràng buộc. Nếu tìm thấy mâu thuẫn (ví dụ: tuyên bố cực đại nơi $f' > 0$), có lỗi tính toán — các ràng buộc là công cụ tự kiểm tra.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-m3l12-q1" question="Trong tương tác, khi $p$ tăng, đường cong phẳng hơn nhưng tiệm cận ngang vẫn là $y = 1$. Điều gì đảm bảo tiệm cận luôn là $1$ bất kể $p$?" explanation="Với hàm hữu tỉ có cùng bậc trong tử và mẫu, tiệm cận ngang bằng tỉ số hệ số bậc cao: $1/1 = 1$ — độc lập với $p$.">
+    <Option value="a">Hằng số ở tử số.</Option>
+    <Option value="b">Tỉ số hệ số bậc cao: $\lim_{x\to\infty} x^2/(x^2+p) = 1$ với mọi $p$ cố định.</Option>
+    <Option value="c">Sự kiện $f$ luôn nhỏ hơn $1$.</Option>
+    <Option value="d">Điểm tới hạn tại $x = 0$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-m3l12-q2" question="Tìm điểm uốn của $f(x) = x^2/(x^2+1)$." explanation="$f''(x) = 2(1-3x^2)/(x^2+1)^3 = 0 \Rightarrow x^2 = 1/3 \Rightarrow x = \pm 1/\sqrt{3}$. $f''$ đổi dấu tại mỗi điểm — xác nhận điểm uốn.">
+    <Option value="a">$x = 0$</Option>
+    <Option value="b">$x = \pm 1/\sqrt{3}$</Option>
+    <Option value="c">$x = \pm 1$</Option>
+    <Option value="d">Không có điểm uốn.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-m3l12-q3" question="Tại sao $f(x) = x^2/(x^2+p)$ có cực tiểu cục bộ tại $x = 0$ chứ không phải cực đại?" explanation="$f'(x) = 2px/(x^2+p)^2$ âm với $x < 0$ và dương với $x > 0$ — đổi dấu từ $-$ sang $+$ tại $x = 0$, xác nhận cực tiểu. Đáp án D cũng đúng nhưng B là cơ sở đầy đủ hơn.">
+    <Option value="a">Vì $f(0) = 0$ là giá trị nhỏ nhất có thể của $f$.</Option>
+    <Option value="b">Vì $f'$ đổi từ âm sang dương tại $x = 0$ (kiểm tra đạo hàm bậc nhất) — hàm giảm rồi tăng.</Option>
+    <Option value="c">Vì $f$ là hàm chẵn.</Option>
+    <Option value="d">Vì đạo hàm bậc hai tại $x = 0$ dương.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-m3l12-q4" question="Lập bảng dấu của $f'(x) = 2x/(x^2+1)^2$. $f(x) = x^2/(x^2+1)$ tăng trên khoảng nào?" explanation="$f'(x) = 2x/(x^2+1)^2$; tử số $2x$ âm với $x < 0$ và dương với $x > 0$; mẫu luôn dương. Vậy $f' < 0$ trên $(-\infty,0)$ và $f' > 0$ trên $(0,\infty)$.">
+    <Option value="a">Tăng trên $(-\infty, 0)$, giảm trên $(0,\infty)$.</Option>
+    <Option value="b">Giảm trên $(-\infty, 0)$, tăng trên $(0,\infty)$.</Option>
+    <Option value="c">Tăng trên toàn bộ $\mathbb{R}$.</Option>
+    <Option value="d">Giảm trên toàn bộ $\mathbb{R}$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-m3l12-q5" question="Khi $p$ tăng từ $0.5$ đến $4$, điểm uốn của $f(x) = x^2/(x^2+p)$ thay đổi thế nào?" explanation="Điểm uốn tại $x = \pm\sqrt{p/3}$ (từ $f''=0$). Khi $p$ tăng, $\sqrt{p/3}$ tăng — các điểm uốn di chuyển ra ngoài.">
+    <Option value="a">Chúng tiến về $x = 0$.</Option>
+    <Option value="b">Chúng di chuyển ra xa $x = 0$ (về phía ngoài).</Option>
+    <Option value="c">Chúng cố định bất kể $p$.</Option>
+    <Option value="d">Chúng biến mất với $p$ lớn.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-m3l12-q6" question="Tại sao $f(x) = x^2/(x^2+p)$ không có tiệm cận đứng với $p > 0$?" explanation="Tiệm cận đứng xuất hiện tại nghiệm của mẫu số. Vì $x^2 + p \geq p > 0$ luôn luôn, không có nghiệm nào — không có tiệm cận đứng.">
+    <Option value="a">Vì tử số và mẫu số bằng nhau.</Option>
+    <Option value="b">Vì $x^2 + p > 0$ với mọi $x$ khi $p > 0$ — mẫu số không bao giờ bằng $0$.</Option>
+    <Option value="c">Vì $f$ bị chặn trên bởi $1$.</Option>
+    <Option value="d">Vì $f$ là hàm chẵn.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-m3l12-q7" question="Với $f(x) = x^3 - 3x + 1$, không vẽ đồ thị, xác định có bao nhiêu cực trị cục bộ." explanation="$f'(x) = 3x^2 - 3 = 3(x^2-1) = 0$ tại $x = \pm 1$. $f''(x) = 6x$. $f''(-1) = -6 < 0$: cực đại. $f''(1) = 6 > 0$: cực tiểu.">
+    <Option value="a">Không có.</Option>
+    <Option value="b">Một cực tiểu.</Option>
+    <Option value="c">Một cực đại và một cực tiểu.</Option>
+    <Option value="d">Hai cực đại và một cực tiểu.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-m3l12-q8" question="Nồng độ thuốc $C(t) = t^2/(t^2 + 4)$. Phân loại hành vi: có cực đại hữu hạn không, và khi nào đường cong đổi tính lõm?" explanation="$C(t) \to 1$ khi $t \to \infty$ (tiệm cận ngang, không có cực đại hữu hạn). Điểm uốn: $p = 4$, tại $t = \sqrt{4/3} = 2/\sqrt{3}$ — cùng công thức với tương tác.">
+    <Option value="a">Không có cực đại; tính lõm đổi tại $t = 2$.</Option>
+    <Option value="b">Cực đại khi $t \to \infty$; tính lõm đổi tại $t = 2/\sqrt{3}$.</Option>
+    <Option value="c">Cực đại cục bộ tại $t = 0$; không có điểm uốn.</Option>
+    <Option value="d">Hàm luôn tăng — không có cực đại.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-m3l12-q9" question="Phác thảo đồ thị dùng sáu thông tin. Nếu học sinh tính đúng cả sáu nhưng tìm ra mâu thuẫn (ví dụ: $f'(a) > 0$ nhưng tuyên bố $a$ là cực đại), điều đó cho thấy gì?" explanation="Sáu đặc trưng không phải danh sách độc lập — chúng tạo thành hệ ràng buộc tương hỗ. Mâu thuẫn báo hiệu lỗi tính toán, không phải ngoại lệ lý thuyết.">
+    <Option value="a">Cực đại có thể xảy ra nơi $f' > 0$ — không mâu thuẫn.</Option>
+    <Option value="b">Có lỗi tính toán — các ràng buộc tự kiểm tra nhau; mâu thuẫn xác nhận có sai sót.</Option>
+    <Option value="c">Hàm phải gián đoạn tại $a$.</Option>
+    <Option value="d">Giao thức phác thảo có ngoại lệ cho loại hàm này.</Option>
+  </Quiz>
+</Slide>

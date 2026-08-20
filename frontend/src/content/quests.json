@@ -1,0 +1,85 @@
+{
+  "quests": [
+    {
+      "title": "Hoàn thành 1 bài học",
+      "description": "Hoàn thành 1 bài học hôm nay · nhận 25 xu",
+      "quest_type": "daily",
+      "requirement_type": "lessons",
+      "requirement_value": 1,
+      "coin_reward": 25,
+      "icon": "📖"
+    },
+    {
+      "title": "Trả lời đúng 5 quiz",
+      "description": "Trả lời đúng 5 câu quiz · nhận 15 xu",
+      "quest_type": "daily",
+      "requirement_type": "quizzes",
+      "requirement_value": 5,
+      "coin_reward": 15,
+      "icon": "✅"
+    },
+    {
+      "title": "Học 7 phút",
+      "description": "Học trong 7 phút hôm nay · nhận 15 xu",
+      "quest_type": "daily",
+      "requirement_type": "study_time",
+      "requirement_value": 7,
+      "coin_reward": 15,
+      "icon": "⏱️"
+    },
+    {
+      "title": "Đạt điểm quiz tuyệt đối",
+      "description": "Đạt điểm tuyệt đối trong 1 quiz · nhận 20 xu",
+      "quest_type": "daily",
+      "requirement_type": "perfect_quiz",
+      "requirement_value": 1,
+      "coin_reward": 20,
+      "icon": "💯"
+    },
+    {
+      "title": "Hoàn thành 2 bài học",
+      "description": "Hoàn thành 2 bài học hôm nay · nhận 35 xu",
+      "quest_type": "daily",
+      "requirement_type": "lessons",
+      "requirement_value": 2,
+      "coin_reward": 35,
+      "icon": "📚"
+    },
+    {
+      "title": "Hoàn thành 3 bài học",
+      "description": "Hoàn thành 3 bài học hôm nay · nhận 50 xu",
+      "quest_type": "daily",
+      "requirement_type": "lessons",
+      "requirement_value": 3,
+      "coin_reward": 50,
+      "icon": "📄"
+    },
+    {
+      "title": "Hoàn thành 15 bài học tuần này",
+      "description": "Hoàn thành 15 bài học trong tuần này · nhận 100 xu",
+      "quest_type": "weekly",
+      "requirement_type": "lessons",
+      "requirement_value": 15,
+      "coin_reward": 200,
+      "icon": "🎯"
+    },
+    {
+      "title": "Học 5 ngày trong tuần",
+      "description": "Tuần này duy trì streak học 5 ngày · nhận 120 xu",
+      "quest_type": "weekly",
+      "requirement_type": "streak",
+      "requirement_value": 5,
+      "coin_reward": 130,
+      "icon": "🔥"
+    },
+    {
+      "title": "Trả lời đúng 36 quiz",
+      "description": "Trả lời đúng 36 quiz trong tuần này · nhận 80 xu",
+      "quest_type": "weekly",
+      "requirement_type": "quizzes",
+      "requirement_value": 36,
+      "coin_reward": 80,
+      "icon": "🧠"
+    }
+  ]
+}

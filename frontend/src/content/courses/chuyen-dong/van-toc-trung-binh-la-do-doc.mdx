@@ -1,0 +1,192 @@
+---
+id: 'van-toc-trung-binh-la-do-doc'
+title: 'Vận Tốc Trung Bình Là Độ Dốc'
+description: 'Vận tốc trung bình = Δf/Δt = độ dốc cát tuyến trên đồ thị vị trí–thời gian.'
+courseSlug: 'chuyen-dong'
+chapterSlug: 'van-toc-trung-binh'
+order: 0
+xp: 15
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Thời điểm cuối b (giây)"
+      },
+      "parameter": {
+        "min": 1,
+        "max": 9,
+        "initial": 3
+      },
+      "system": {
+        "resolution": 200,
+        "view": {
+          "xMin": 0,
+          "xMax": 10,
+          "yMin": -3,
+          "yMax": 5
+        },
+        "curves": [
+          {
+            "expr": "-0.25*x*x + 2*x",
+            "label": "Vị trí vật theo thời gian",
+            "color": "#3b82f6",
+            "style": "solid",
+            "width": 2
+          },
+          {
+            "expr": "(-0.25*p + 2)*x",
+            "label": "Đường thẳng nối điểm đầu và điểm cuối",
+            "color": "#ef4444",
+            "style": "dashed",
+            "width": 2
+          }
+        ],
+        "approachPoint": {
+          "x": "p",
+          "label": "b"
+        },
+        "annotations": [
+          {
+            "type": "limitValue",
+            "expr": "-0.25*p + 2",
+            "at": "p",
+            "label": "Vận tốc trung bình = {value} m/s",
+            "color": "#ef4444"
+          }
+        ],
+        "prompt": "Vật được ném lên: đi về phía trước rồi quay lại. Đường đỏ nối vị trí ban đầu với vị trí tại thời điểm b. Độ dốc của đường đỏ = vận tốc trung bình. Kéo b để quan sát: khi nào đường đỏ nằm ngang? Khi nào dốc xuống?"
+      },
+      "reflections": [
+        {
+          "id": "going-forward",
+          "trigger": "state.currentValue < 4",
+          "text": "Vật đang đi về phía trước. Đường đỏ dốc lên: vận tốc TB = {expr:Math.round((-0.25*p+2)*10)/10} m/s (dương)."
+        },
+        {
+          "id": "returning",
+          "trigger": "state.currentValue >= 4 && state.currentValue < 7.5",
+          "text": "Vật đã đạt đỉnh và đang quay lại. Dù vật đổi chiều, vận tốc TB = {expr:Math.round((-0.25*p+2)*10)/10} m/s vẫn dương — vì xét ròng, vật vẫn ở phía trước so với điểm xuất phát."
+        },
+        {
+          "id": "near-zero",
+          "trigger": "state.currentValue >= 7.5 && state.currentValue <= 8.5",
+          "text": "Đường đỏ gần nằm ngang! VTB ≈ {expr:Math.round((-0.25*p+2)*10)/10} m/s, tiến về 0. Tại b = 8, vật về đúng nơi xuất phát: dịch chuyển ròng = 0 → vận tốc TB = 0."
+        },
+        {
+          "id": "negative",
+          "trigger": "state.currentValue > 8.5",
+          "text": "Đường đỏ dốc xuống! VTB = {expr:Math.round((-0.25*p+2)*10)/10} m/s < 0. Vật đã vượt qua điểm xuất phát về phía ngược lại — dịch chuyển ròng âm."
+        }
+      ]
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Đường nối hai điểm = hình học của vận tốc trung bình
+  
+  Với $f(t) = -0.25t^2 + 2t$, vận tốc trung bình trên $[0, b]$ = $\frac{f(b) - f(0)}{b - 0} = \frac{f(b)}{b} = -0.25b + 2$. Đường đỏ trong tương tác vừa rồi là đường thẳng có độ dốc đó — gọi là <b>cát tuyến</b> (secant).
+  
+  Nói chung: vận tốc trung bình trên $[a, b]$ = $\frac{f(b) - f(a)}{b - a}$ = độ dốc đường thẳng nối hai điểm $(a, f(a))$ và $(b, f(b))$. <b>Có dấu</b>: dương nếu vật tiến về phía trước, âm nếu vật lùi về sau.
+  ```json
+  {
+    "id": "math-vtb",
+    "type": "math",
+    "content": {
+      "latex": "\\bar{v} = \\frac{\\Delta f}{\\Delta t} = \\frac{f(b) - f(a)}{b - a} = \\text{độ dốc đường nối (cát tuyến)}"
+    }
+  }
+  ```
+</Slide>
+
+<Slide title="Slide 3">
+  ### Vận tốc trung bình ≠ tốc độ trung bình
+  
+  Trong tương tác vừa rồi, khi b = 8 thì vận tốc trung bình = 0 (vật về đúng nơi xuất phát). Nhưng tốc độ trung bình > 0 vì vật đã đi xa rồi quay về — tổng quãng đường không hề bằng 0.
+  
+  Vận tốc trung bình dùng <b>dịch chuyển ròng</b> $\Delta f$ (có dấu), còn tốc độ trung bình dùng <b>tổng quãng đường</b> (luôn ≥ 0). Một cái cho biết hướng, một cái không.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-l6-1" question="$f(1) = 4$, $f(4) = 10$. Vận tốc trung bình trên $[1, 4]$?" explanation="$\frac{10 - 4}{4 - 1} = \frac{6}{3} = 2$ m/s.">
+    <Option value="a">$14/5$</Option>
+    <Option value="b">2</Option>
+    <Option value="c">6</Option>
+    <Option value="d">$-2$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-l6-2" question="$f(2) = 8$, $f(6) = 4$. Vận tốc trung bình trên $[2, 6]$?" explanation="$\frac{4 - 8}{6 - 2} = \frac{-4}{4} = -1$ m/s.">
+    <Option value="a">3</Option>
+    <Option value="b">$-1$</Option>
+    <Option value="c">1</Option>
+    <Option value="d">12</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-l6-3" question="Đối tượng hình học nào biểu diễn vận tốc trung bình trên đồ thị vị trí–thời gian?" explanation="Vận tốc trung bình = độ dốc cát tuyến qua $(a, f(a))$ và $(b, f(b))$.">
+    <Option value="a">Tiếp tuyến tại một điểm.</Option>
+    <Option value="b">Diện tích dưới đường cong.</Option>
+    <Option value="c">Cát tuyến nối hai điểm trên đồ thị.</Option>
+    <Option value="d">Giá trị trục tung tại điểm giữa.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-l6-4" question="Vận tốc trung bình trên $[0, 5]$ là $-2$ m/s. Dấu cho biết gì?" explanation="Dấu âm = $\Delta f < 0$ = vị trí cuối thấp hơn vị trí đầu = ròng theo chiều âm.">
+    <Option value="a">Tốc độ vật là 2 m/s.</Option>
+    <Option value="b">Vật đứng yên.</Option>
+    <Option value="c">Vật di chuyển ròng theo chiều âm trên $[0, 5]$.</Option>
+    <Option value="d">Vật đổi chiều đúng một lần.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-l6-5" question="Vật đi 6 m về phía trước rồi 2 m về phía sau trong 4 giây. Vận tốc trung bình = ? Tốc độ trung bình = ?" explanation="Vận tốc: $\Delta f = 4$ m, $4/4 = 1$ m/s. Tốc độ: quãng đường = 8 m, $8/4 = 2$ m/s.">
+    <Option value="a">Cả hai = 1 m/s.</Option>
+    <Option value="b">Vận tốc TB = 2 m/s, tốc độ TB = 1 m/s.</Option>
+    <Option value="c">Vận tốc TB = 1 m/s, tốc độ TB = 2 m/s.</Option>
+    <Option value="d">Cả hai = 2 m/s.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-l6-6" question="$\frac{\Delta f}{\Delta t}$ với $\Delta f = f(b) - f(a)$, $\Delta t = b - a$ tính:" explanation="$\Delta f / \Delta t$ là độ dốc cát tuyến = vận tốc trung bình.">
+    <Option value="a">Vận tốc tức thời tại $t = a$.</Option>
+    <Option value="b">Tổng quãng đường / tổng thời gian.</Option>
+    <Option value="c">Vận tốc trung bình trên $[a, b]$.</Option>
+    <Option value="d">Diện tích dưới $f$ từ a đến b.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-l6-7" question="$f(2) = 5$, $f(7) = 5$. Vận tốc trung bình trên $[2, 7]$? Điều này cho biết gì?" explanation="$\frac{5-5}{7-2} = 0$. Vật kết thúc tại cùng vị trí nhưng có thể đã đi-về.">
+    <Option value="a">VTB = 5; vật nhanh.</Option>
+    <Option value="b">VTB = 0; vật về đúng vị trí ban đầu nhưng có thể đã di chuyển.</Option>
+    <Option value="c">VTB = 0; vật đứng yên suốt.</Option>
+    <Option value="d">VTB = 1; vật đi đều.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-l6-8" question="Cát tuyến dốc xuống từ trái sang phải trên đồ thị vị trí–thời gian. Điều này nghĩa là:" explanation="Dốc xuống = độ dốc âm = vận tốc trung bình âm.">
+    <Option value="a">Vật đi đều.</Option>
+    <Option value="b">Vận tốc trung bình trên khoảng đó là âm.</Option>
+    <Option value="c">Vật đứng yên.</Option>
+    <Option value="d">Đồ thị bị lỗi.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-l6-9" question="Sinh viên tính $\Delta f / \Delta t = 0$ cho một khoảng. Vật có thể đã di chuyển không?" explanation="$\Delta f = 0$ chỉ nói vị trí ròng không đổi. Vật có thể đã đi xa rồi quay về.">
+    <Option value="a">Không — VTB = 0 nghĩa là vật đứng yên.</Option>
+    <Option value="b">Có — vật có thể đã đi rồi quay về cùng vị trí, cho dịch chuyển ròng = 0.</Option>
+    <Option value="c">Không — nếu tốc độ = 0 thì quãng đường = 0.</Option>
+    <Option value="d">Có, nhưng chỉ khi khoảng rất dài.</Option>
+  </Quiz>
+</Slide>

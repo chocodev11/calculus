@@ -9,33 +9,26 @@ Generate curriculum content as repository-native JSON through the agent workflow
 
 ## Mission and source of truth
 
-- Treat `data/raw_courses` as the editable source of truth.
-- Treat `data/courses` as generated artifacts only.
-- Inspect the existing course, neighboring lessons, `data/raw_courses/toan10_sandbox_catalog.json`, `validate_all.py`, and the relevant frontend plugin before authoring.
+- **Primary Source of Truth**: Treat `frontend/src/content/courses/` (`.mdx` + `meta.json`) as the primary Content-as-Code format with instantaneous Vite HMR (<50ms).
+- **Authoring Studio**: Use `/studio` or `/studio/:courseSlug/:stepId` in the browser for live, isolated authoring preview with full math typesetting, quizzes, and canvas sandboxes.
+- **Legacy Compatibility**: `data/raw_courses` can still be migrated to MDX at any time via `python tools/migrate_json_to_mdx.py`.
 - Keep all authored text in Vietnamese and all files UTF-8 without BOM.
 
 ## Workflow
 
 1. Translate the request into course, chapter, step IDs, learning outcomes, prerequisites, level, misconceptions, representation, and expected evidence.
-2. Choose the representation:
-   - Use `math.sandbox` for new Toán 10 content in logic, set, or trigonometry.
-   - Use a legacy interaction only when extending an existing legacy course or when the user explicitly requests it. Do not introduce another interaction engine.
-3. Author or update `course.json`, `chapter.json`, and one `steps/*.json` file per lesson. Use `apply_patch` for edits.
-4. Run the validation gate before calling the lesson complete:
-
+2. Author or update the `.mdx` lesson file in `frontend/src/content/courses/<course-slug>/<step-id>.mdx`.
+3. Use clean MDX components:
+   - `<Slide title="...">`: Wraps slide content.
+   - `<Callout variant="theorem|definition|tip|warning|example" title="...">`: Highlights key concepts.
+   - `<Quiz question="..." explanation="..."> <Option value="..." correct>...</Option> </Quiz>`: Interactive quizzes.
+   - `<Sandbox archetype="..." ... />`: Live interactive math sandboxes.
+   - Standard $\LaTeX$ with `$ ... $` and `$$ ... $$` directly without double-escaping.
+4. Preview immediately in browser via Vite HMR at `http://localhost:3000/studio`.
+5. Run the frontend build test:
    ```bash
-   python3 validate_all.py
+   npm --prefix frontend run build
    ```
-
-5. Rebuild the encrypted course artifact when source files changed:
-
-   ```bash
-   python3 tools/build_course_from_chapters.py data/raw_courses/<course-slug>
-   ```
-
-   Never hand-edit the resulting `data/courses/*.json` file.
-6. If runtime or Sandbox code changed, run the focused frontend tests, TypeScript check, and production build. Report warnings separately from failures.
-7. Report source files, generated artifact, validation evidence, and any pre-existing warning or unverified runtime boundary.
 
 ## Lesson authoring rules
 

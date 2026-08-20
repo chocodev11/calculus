@@ -26,10 +26,8 @@ DATA_DIR = Path(__file__).parent.parent.parent / "data"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Fast Startup
     await init_db()
-    await ensure_course_jsons()
-    await seed_from_json()
     await seed_achievements()
     await seed_shop_items()
     await seed_quests()

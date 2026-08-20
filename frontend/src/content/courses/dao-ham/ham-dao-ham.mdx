@@ -1,0 +1,174 @@
+---
+id: 'ham-dao-ham'
+title: 'Hàm đạo hàm f′'
+description: 'Tính đạo hàm tại mọi điểm trong miền xác định tạo ra một hàm mới — hàm đạo hàm f′(x).'
+courseSlug: 'dao-ham'
+chapterSlug: 'dinh-nghia-dao-ham'
+order: 0
+xp: 10
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Điểm neo $a$"
+      },
+      "parameter": {
+        "min": -2.5,
+        "max": 2.5,
+        "initial": 0
+      },
+      "system": {
+        "resolution": 300,
+        "view": {
+          "xMin": -3,
+          "xMax": 3,
+          "yMin": -6,
+          "yMax": 9
+        },
+        "curves": [
+          {
+            "expr": "x*x*x - 3*x",
+            "color": "#3498db",
+            "label": "f(x) = x³ − 3x",
+            "style": "solid",
+            "width": 2
+          },
+          {
+            "expr": "3*p*p - 3",
+            "color": "#e74c3c",
+            "label": "f′(a) tại điểm neo",
+            "style": "dashed",
+            "width": 2
+          }
+        ]
+      },
+      "reflections": [
+        {
+          "id": "zero-a",
+          "trigger": "state.currentValue > -0.15 && state.currentValue < 0.15",
+          "text": "Tại $a = 0$: $f'(0) = -3 < 0$ — đường ngang đỏ nằm dưới trục $x$. Hàm đang giảm tại đây."
+        },
+        {
+          "id": "crit",
+          "trigger": "(state.currentValue > 0.9 && state.currentValue < 1.1) || (state.currentValue > -1.1 && state.currentValue < -0.9)",
+          "text": "Tại $a = \\pm 1$: $f'(a) = 0$ — đường đỏ chạm trục $x$. Đây là điểm cực trị của $f$."
+        },
+        {
+          "id": "large",
+          "trigger": "state.currentValue > 1.8 || state.currentValue < -1.8",
+          "text": "Tại $|a| > 1$: $f'(a) > 0$ — đường ngang đỏ dương. Hàm đang tăng. Đừng nhầm giá trị hàm với đạo hàm."
+        }
+      ],
+      "prompt": "Kéo điểm neo $a$. Đường ngang đỏ hiển thị giá trị $f'(a)$. Nếu bạn ghi lại giá trị đỏ này tại mỗi điểm $a$, đường gì sẽ xuất hiện?"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Từ số đến hàm: f′ là một hàm số
+  
+  Khi tính đạo hàm tại một điểm $a$, ta được một số: $f'(a)$. Nếu thực hiện điều này tại mọi điểm trong miền của $f$, ta nhận được **một quy luật mới**: $x \mapsto f'(x)$.
+  
+  **Hàm đạo hàm** $f'$ gán cho mỗi $x$ giá trị bằng tốc độ thay đổi tức thời của $f$ tại đó — đây là một hàm số hoàn chỉnh với miền, giá trị và dạng giải tích riêng.
+  ```json
+  {
+    "id": "math-m3l3-def",
+    "type": "math",
+    "content": {
+      "latex": "f'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h} \\quad \\Rightarrow \\quad f(x) = x^3 - 3x \\Rightarrow f'(x) = 3x^2 - 3"
+    }
+  }
+  ```
+</Slide>
+
+<Slide title="Slide 3">
+  ### Đọc f′ từ đồ thị f
+  
+  Từ đồ thị $f$, ta suy ra hình dạng của $f'$: nơi $f$ tăng thì $f' > 0$; nơi $f$ giảm thì $f' < 0$; nơi $f$ đổi chiều thì $f' = 0$.
+  
+  Không cần biết công thức — chỉ cần đọc hành vi từ đồ thị là đủ để xác định dấu và điểm không của $f'$.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-m3l3-q1" question="Khi kéo điểm neo từ $a = -2.5$ đến $a = 2.5$ trên $f(x) = x^3 - 3x$, đường ngang đỏ vẽ nên hình dạng gì?" explanation="$f'(x) = 3x^2 - 3$ là hàm bậc hai — đồ thị của nó là parabol. Kéo điểm neo qua toàn miền đã vẽ ra parabol này một cách ngầm định.">
+    <Option value="a">Một đường thẳng (độ dốc không đổi).</Option>
+    <Option value="b">Một parabol hình chữ U (bậc hai).</Option>
+    <Option value="c">Một đường cong chữ S (bậc ba).</Option>
+    <Option value="d">Một đường ngang phẳng.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-m3l3-q2" question="Nếu $f(x) = x^3 - 3x$, tính $f'(2)$." explanation="$f'(x) = 3x^2 - 3$. Tại $x = 2$: $f'(2) = 12 - 3 = 9$.">
+    <Option value="a">$6$</Option>
+    <Option value="b">$9$</Option>
+    <Option value="c">$12$</Option>
+    <Option value="d">$3$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-m3l3-q3" question="Tại sao $f'$ được gọi là một &quot;hàm số&quot; chứ không phải &quot;tập hợp các độ dốc&quot;?" explanation="$f'$ là hàm số vì nó ánh xạ mỗi $x$ đến đúng một giá trị $f'(x)$ theo một quy tắc cố định — đây là định nghĩa của hàm số.">
+    <Option value="a">Vì nó chỉ áp dụng cho đa thức.</Option>
+    <Option value="b">Vì nó gán một giá trị duy nhất cho mỗi đầu vào theo một quy tắc nhất quán.</Option>
+    <Option value="c">Vì nó luôn có cùng miền xác định với $f$.</Option>
+    <Option value="d">Vì nó có thể vẽ trong không gian 3D.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-m3l3-q4" question="Với $f(x) = x^2$, phát biểu nào mô tả đúng $f'$?" explanation="$f'(x) = \lim_{h \to 0}(2x + h) = 2x$. Đạo hàm của hàm bậc hai là hàm bậc nhất — một hàm số với bậc khác.">
+    <Option value="a">$f'(x) = x^2$ — giống hệt $f$.</Option>
+    <Option value="b">$f'(x) = 2x$ — hàm mới, bậc một.</Option>
+    <Option value="c">$f'(x) = 2$ — hằng số.</Option>
+    <Option value="d">$f'(x) = x$ — phiên bản đơn giản hơn của $f$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-m3l3-q5" question="$f(x) = x^3 - 3x$ có $f'(x) = 3x^2 - 3$. Khi $a$ thay đổi từ $-1$ đến $1$, $f'(a)$ mang giá trị như thế nào?" explanation="$f'(x) = 3(x^2 - 1) < 0$ khi $|x| < 1$. Hàm đang giảm trên $(-1, 1)$ — đúng với những gì tương tác cho thấy.">
+    <Option value="a">Luôn dương.</Option>
+    <Option value="b">Luôn âm.</Option>
+    <Option value="c">Âm với $a \in (-1, 1)$, bằng $0$ tại các đầu mút.</Option>
+    <Option value="d">Dương với $a \in (-1, 1)$, bằng $0$ tại các đầu mút.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-m3l3-q6" question="Miền xác định của $f'$ liên quan đến miền của $f$ như thế nào?" explanation="$f'(x)$ chỉ tồn tại khi giới hạn tồn tại. Có những điểm thuộc miền $f$ nhưng $f'$ không xác định tại đó — chủ đề của bài học tiếp theo.">
+    <Option value="a">Luôn đồng nhất với miền của $f$.</Option>
+    <Option value="b">Tập hợp các điểm trong miền $f$ mà giới hạn định nghĩa $f'$ tồn tại.</Option>
+    <Option value="c">Luôn là tập con thực sự của miền $f$.</Option>
+    <Option value="d">Luôn là toàn bộ $\mathbb{R}$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-m3l3-q7" question="Nếu $f(x) = 5$ (hằng số), hàm $f'$ là gì?" explanation="$\lim_{h \to 0} \frac{5-5}{h} = 0$ tại mọi $x$. Đạo hàm của hàm hằng là hàm không — tốc độ thay đổi của đại lượng không thay đổi luôn bằng $0$.">
+    <Option value="a">$f'(x) = 5$.</Option>
+    <Option value="b">$f'(x) = 1$.</Option>
+    <Option value="c">$f'(x) = 0$.</Option>
+    <Option value="d">$f'$ không tồn tại.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-m3l3-q8" question="Nhiệt độ $T(t)$ tăng, rồi giảm, rồi tăng lại. Hàm $T'(t)$ trông như thế nào?" explanation="$T' > 0$ khi $T$ tăng, $T' < 0$ khi $T$ giảm. Mô hình dấu của $T'$ phản chiếu đúng mô hình đơn điệu của $T$.">
+    <Option value="a">Tăng suốt.</Option>
+    <Option value="b">Dương, rồi âm, rồi dương.</Option>
+    <Option value="c">Giảm suốt.</Option>
+    <Option value="d">Luôn bằng $0$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-m3l3-q9" question="Nếu $f'(x) = 0$ tại mọi $x$ trong một khoảng, kết luận gì về $f$ trên khoảng đó?" explanation="Nếu tốc độ thay đổi bằng $0$ khắp nơi trong một khoảng, hàm số không thay đổi — nó phải là hằng số trên khoảng đó.">
+    <Option value="a">$f$ bằng $0$ trên khoảng đó.</Option>
+    <Option value="b">$f$ là hằng số trên khoảng đó.</Option>
+    <Option value="c">$f$ là hàm tăng trên khoảng đó.</Option>
+    <Option value="d">$f$ đạt cực tiểu toàn cục trên khoảng đó.</Option>
+  </Quiz>
+</Slide>

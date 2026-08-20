@@ -1,4 +1,4 @@
-import viVn from '../../../data/vi-vn.json'
+import viVn from '@content/vi-vn.json'
 
 const locales = { 'vi-vn': viVn }
 const LOCALE = 'vi-vn'

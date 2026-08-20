@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import categoriesData from '../../../data/categories.json'
+import categoriesData from '@content/categories.json'
 import { t } from '../lib/locale'
 import { Compass, BookOpen, Sparkles, ArrowRight, Layers, GraduationCap } from 'lucide-react'
 import { TactileButton } from '../components/ui/tactile-button'

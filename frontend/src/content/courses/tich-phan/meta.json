@@ -1,0 +1,52 @@
+{
+  "id": "tich-phan",
+  "slug": "tich-phan",
+  "title": "Tích phân",
+  "description": "Tích phân bất định, xác định và ứng dụng tính diện tích, thể tích.",
+  "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Visual_Algebra_1-wiJeeI.png?width=204",
+  "icon": "∫",
+  "color": "from-purple-500 to-purple-700",
+  "category_slug": "giai-tich",
+  "difficulty": "intermediate",
+  "is_published": true,
+  "is_featured": false,
+  "order_index": 3,
+  "chapters": [
+    {
+      "id": "dinh-ly-co-ban-giai-tich",
+      "title": "Định lý cơ bản giải tích",
+      "description": "Tính chất tích phân, hàm tích lũy và định lý cơ bản nối nguyên hàm với tích phân xác định",
+      "order_index": 1,
+      "step_ids": [
+        "dinh-ly-co-ban-1",
+        "dinh-ly-co-ban-2",
+        "ham-tich-luy",
+        "tinh-chat-tich-phan"
+      ]
+    },
+    {
+      "id": "nguyen-ham-va-ung-dung",
+      "title": "Nguyên hàm và ứng dụng",
+      "description": "Nguyên hàm, phép đổi biến, thay đổi ròng và ứng dụng tích lũy trong thực tế",
+      "order_index": 2,
+      "step_ids": [
+        "nguyen-ham",
+        "phep-doi-bien",
+        "thay-doi-rong",
+        "ung-dung-tich-luy"
+      ]
+    },
+    {
+      "id": "tich-phan-xac-dinh",
+      "title": "Tích phân xác định",
+      "description": "Từ bài toán diện tích đến định nghĩa tích phân xác định qua tổng Riemann",
+      "order_index": 0,
+      "step_ids": [
+        "bai-toan-do-dien-tich",
+        "chia-nho-phan-hoach",
+        "tich-phan-xac-dinh",
+        "tong-riemann"
+      ]
+    }
+  ]
+}

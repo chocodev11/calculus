@@ -1,0 +1,164 @@
+---
+id: 'van-toc-tuc-thoi'
+title: 'Vận tốc tức thời qua giới hạn'
+description: 'Khi khoảng thời gian co lại về 0, vận tốc trung bình hội tụ về một giá trị duy nhất — vận tốc tức thời.'
+courseSlug: 'dao-ham'
+chapterSlug: 'dinh-nghia-dao-ham'
+order: 0
+xp: 10
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="A" manifest={
+    {
+      "interactionType": "A",
+      "parameterSpec": {
+        "resolutionLevels": [
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ]
+      },
+      "systemSpec": {
+        "function": "x*x",
+        "derivative": "2*x",
+        "domain": [
+          -3,
+          3
+        ],
+        "range": [
+          -1,
+          9
+        ],
+        "anchor": 1
+      },
+      "reflectionSpec": {
+        "triggers": [
+          {
+            "condition": "state.resolution <= 4",
+            "message": "Khoảng $\\Delta x$ còn lớn — đường cát tuyến khác tiếp tuyến rõ rệt. Tiếp tục kéo để thu nhỏ khoảng."
+          },
+          {
+            "condition": "state.resolution >= 32",
+            "message": "Đường cát tuyến chập dần vào tiếp tuyến. $\\Delta f / \\Delta x$ đang ổn định về một giá trị cụ thể."
+          },
+          {
+            "condition": "state.resolution >= 50",
+            "message": "Gần như trùng khít. $\\Delta f / \\Delta x$ xấp xỉ $f'(1) = 2$ — đây chính là vận tốc tức thời tại $x = 1$."
+          }
+        ]
+      },
+      "prompt": "Kéo thanh độ phân giải. Khoảng $\\Delta x$ đang thay đổi thế nào? $\\Delta f / \\Delta x$ thay đổi thế nào? Bạn có thể đoán được nó đang tiến về đâu không?",
+      "sliderLabel": "Độ phân giải"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Vận tốc tức thời — định nghĩa qua giới hạn
+  
+  Vận tốc trung bình trên $[t, t+h]$ là $\frac{f(t+h) - f(t)}{h}$. Khi $h \to 0$, nếu giới hạn tồn tại, giá trị đó chính là **vận tốc tức thời** tại $t$.
+  
+  Đây không phải phép chia cho $0$ — đây là giá trị mà tỉ số tiến đến khi $h$ co dần. Giá trị đó, nếu tồn tại, là duy nhất và chính xác.
+  ```json
+  {
+    "id": "math-m3l1-def",
+    "type": "math",
+    "content": {
+      "latex": "f'(t) = \\lim_{h \\to 0} \\frac{f(t+h) - f(t)}{h}"
+    }
+  }
+  ```
+</Slide>
+
+<Slide title="Slide 3">
+  ### Hai cách nhìn về cùng một đối tượng
+  
+  Về mặt hình học: vận tốc tức thời là độ dốc của **tiếp tuyến** — giới hạn của các đường cát tuyến khi điểm thứ hai tiến về điểm neo.
+  
+  Về mặt giải tích: đó là giới hạn của dãy tỉ số hiệu. Cả hai mô tả cùng một đối tượng từ hai góc nhìn khác nhau.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-m3l1-q1" question="Khi bạn tăng độ phân giải trong tương tác, điều gì xảy ra với khoảng cách giữa $\Delta f / \Delta x$ và $f'(1)$?" explanation="Thanh trượt độ phân giải làm giảm $h$. Khi $h \to 0$, tỉ số hiệu hội tụ về $f'(1) = 2$ — đúng như bảng đọc số hiển thị.">
+    <Option value="a">Nó tăng — xấp xỉ trở nên kém hơn.</Option>
+    <Option value="b">Nó không đổi — không có hội tụ.</Option>
+    <Option value="c">Nó giảm — độ dốc cát tuyến tiến về đạo hàm chính xác.</Option>
+    <Option value="d">Nó dao động không theo quy luật.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-m3l1-q2" question="Với $f(t) = t^2$, rút gọn tỉ số hiệu $\frac{f(1+h) - f(1)}{h}$." explanation="$\frac{(1+h)^2 - 1}{h} = \frac{2h + h^2}{h} = 2 + h$. Khi $h \to 0$, kết quả là $f'(1) = 2$.">
+    <Option value="a">$2h$</Option>
+    <Option value="b">$h + 2$</Option>
+    <Option value="c">$2 + h$</Option>
+    <Option value="d">$2$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-m3l1-q3" question="Tại sao $\lim_{h \to 0} \frac{f(t+h)-f(t)}{h}$ không phải là phép chia cho $0$?" explanation="Giới hạn đánh giá xu hướng của một đại lượng, không phải giá trị tại điểm bị loại trừ. Tỉ số hiệu hoàn toàn xác định với mọi $h \neq 0$.">
+    <Option value="a">Vì tử số cũng bằng $0$ nên chúng triệt tiêu nhau.</Option>
+    <Option value="b">Vì $h$ có thể là bất kỳ số dương nào, không bao giờ đúng bằng $0$.</Option>
+    <Option value="c">Vì giới hạn hỏi tỉ số tiến về đâu khi $h \to 0$, không phải giá trị tại $h = 0$.</Option>
+    <Option value="d">Vì trong giải tích ta quy ước $0/0 = 1$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-m3l1-q4" question="$f(t) = t^2$. Tính $f'(3)$." explanation="$f'(t) = 2t$, tại $t = 3$: $f'(3) = 6$. Điều này suy ra từ $\lim_{h \to 0} \frac{(3+h)^2 - 9}{h} = \lim_{h \to 0}(6 + h) = 6$.">
+    <Option value="a">$3$</Option>
+    <Option value="b">$6$</Option>
+    <Option value="c">$9$</Option>
+    <Option value="d">$12$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-m3l1-q5" question="Nếu điểm neo được đặt tại $x = 2$ thay vì $x = 1$, các giá trị $\Delta f / \Delta x$ sẽ hội tụ về bao nhiêu khi tăng độ phân giải?" explanation="$f'(x) = 2x$, tại $x = 2$: $f'(2) = 4$. Hành vi hội tụ giống hệt — chỉ có giá trị giới hạn thay đổi.">
+    <Option value="a">$2$</Option>
+    <Option value="b">$4$</Option>
+    <Option value="c">$8$</Option>
+    <Option value="d">$1$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-m3l1-q6" question="Bạn bè nói: &quot;Vận tốc tức thời chỉ là vận tốc trung bình trên một khoảng rất ngắn.&quot; Bạn sửa chính xác như thế nào?" explanation="Giới hạn là một đối tượng toán học riêng biệt. Không có khoảng hữu hạn nào cho vận tốc tức thời — đó là giá trị các trung bình hội tụ về, tồn tại chỉ khi giới hạn tồn tại.">
+    <Option value="a">Đúng — vận tốc trung bình ngắn và vận tốc tức thời là như nhau.</Option>
+    <Option value="b">Vận tốc tức thời không phải là một trung bình — nó là giới hạn của các trung bình, một đại lượng không đạt được qua bất kỳ khoảng hữu hạn nào.</Option>
+    <Option value="c">Vận tốc tức thời chỉ xác định với chuyển động đều.</Option>
+    <Option value="d">Khoảng ngắn kém chính xác hơn; chỉ khoảng dài mới cho vận tốc đúng.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-m3l1-q7" question="$f(t) = 3t^2$. Tính $f'(t)$ bằng định nghĩa giới hạn." explanation="$\frac{3(t+h)^2 - 3t^2}{h} = \frac{6th + 3h^2}{h} = 6t + 3h \to 6t$ khi $h \to 0$.">
+    <Option value="a">$3t$</Option>
+    <Option value="b">$6t$</Option>
+    <Option value="c">$6$</Option>
+    <Option value="d">$3$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-m3l1-q8" question="Hàm $P(t)$ đếm số vi khuẩn (triệu con) tại thời điểm $t$ giờ. Biểu thức $\lim_{h \to 0} \frac{P(t+h) - P(t)}{h}$ biểu diễn điều gì?" explanation="Cấu trúc đạo hàm áp dụng đồng nhất cho mọi hàm số — giới hạn của tỉ số hiệu cho tốc độ thay đổi tức thời, bất kể hàm đo lường gì.">
+    <Option value="a">Tổng số vi khuẩn tại thời điểm $t$.</Option>
+    <Option value="b">Tốc độ tăng trưởng trung bình trên toàn thí nghiệm.</Option>
+    <Option value="c">Tốc độ tăng trưởng tức thời tại thời điểm $t$ (triệu con/giờ).</Option>
+    <Option value="d">Thời điểm quần thể tăng nhanh nhất.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-m3l1-q9" question="Ý nghĩa hình học của việc đường cát tuyến hội tụ về tiếp tuyến khi $h \to 0$ là gì?" explanation="Tiếp tuyến được định nghĩa bởi sự hội tụ này — nó không chỉ là &quot;đường thẳng chạm đồ thị một lần&quot; mà là hiện thân hình học của độ dốc giới hạn.">
+    <Option value="a">Tiếp tuyến là đường cát tuyến có khoảng cách dài nhất.</Option>
+    <Option value="b">Tiếp tuyến là đường thẳng duy nhất qua $(a, f(a))$ có độ dốc bằng giới hạn của mọi độ dốc cát tuyến qua điểm đó.</Option>
+    <Option value="c">Tiếp tuyến luôn nằm ngang tại điểm giới hạn.</Option>
+    <Option value="d">Cát tuyến và tiếp tuyến là cùng một đối tượng ở các tỉ lệ khác nhau.</Option>
+  </Quiz>
+</Slide>

@@ -1,0 +1,31 @@
+{
+  "id": "menh-de",
+  "slug": "menh-de",
+  "title": "Mệnh đề và Logic Toán 10",
+  "description": "Nhận diện mệnh đề, làm việc với mệnh đề chứa biến và lượng từ, kiểm tra kéo theo, điều kiện cần - đủ và phản ví dụ.",
+  "illustration": "https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204",
+  "icon": "P⇒Q",
+  "color": "from-indigo-500 to-violet-700",
+  "category_slug": "dai-so",
+  "difficulty": "beginner",
+  "is_published": true,
+  "is_featured": true,
+  "order_index": 1,
+  "chapters": [
+    {
+      "id": "menh-de",
+      "title": "Mệnh đề và Logic Toán 10",
+      "description": "Toàn bộ 6 chủ đề lý thuyết và 3 dạng bài tập từ tài liệu nguồn: từ nhận diện mệnh đề, mệnh đề chứa biến đến phủ định, kéo theo, điều kiện cần - đủ, lượng từ đa biến và bài toán tham số vận dụng cao.",
+      "order_index": 0,
+      "step_ids": [
+        "01-menh-de-va-tinh-dung-sai",
+        "02-menh-de-chua-bien",
+        "03-phu-dinh-menh-de",
+        "04-menh-de-keo-theo",
+        "05-dao-tuong-duong-dieu-kien-can-du",
+        "06-voi-moi-ton-tai-va-nhieu-bien",
+        "07-tong-hop-tham-so-phan-vi-du-vdc"
+      ]
+    }
+  ]
+}

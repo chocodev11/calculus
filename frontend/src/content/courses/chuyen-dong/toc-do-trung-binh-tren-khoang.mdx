@@ -1,0 +1,178 @@
+---
+id: 'toc-do-trung-binh-tren-khoang'
+title: 'Tốc Độ Trung Bình Trên Một Khoảng'
+description: 'Tốc độ trung bình = tổng quãng đường / thời gian — một số duy nhất tóm tắt hành trình.'
+courseSlug: 'chuyen-dong'
+chapterSlug: 'van-toc-trung-binh'
+order: 0
+xp: 10
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Thời điểm kết thúc (giây)"
+      },
+      "parameter": {
+        "min": 0.5,
+        "max": 6,
+        "initial": 3
+      },
+      "system": {
+        "resolution": 200,
+        "view": {
+          "xMin": 0,
+          "xMax": 7,
+          "yMin": -0.5,
+          "yMax": 12
+        },
+        "curves": [
+          {
+            "expr": "4*sqrt(x)",
+            "label": "Quãng đường thực tế",
+            "color": "#3b82f6",
+            "style": "solid",
+            "width": 2
+          },
+          {
+            "expr": "4/sqrt(p)*x",
+            "label": "Nếu đi đều (tốc độ trung bình)",
+            "color": "#ef4444",
+            "style": "dashed",
+            "width": 2
+          }
+        ],
+        "approachPoint": {
+          "x": "p",
+          "label": "b"
+        },
+        "annotations": [
+          {
+            "type": "limitValue",
+            "expr": "4/sqrt(p)",
+            "at": "p",
+            "label": "Tốc độ trung bình = {value} m/s",
+            "color": "#ef4444"
+          }
+        ],
+        "prompt": "Đường xanh = quãng đường thực tế (vật đi nhanh lúc đầu, chậm dần). Đường đỏ nét đứt = nếu vật đi đều suốt từ đầu đến cuối — hai đường gặp nhau tại điểm cuối. Kéo thanh trượt để thay đổi thời điểm. Tốc độ trung bình thay đổi thế nào?"
+      },
+      "reflections": [
+        {
+          "id": "short",
+          "trigger": "state.currentValue < 1.5",
+          "text": "Trong {expr:Math.round(p*10)/10} giây đầu, vật đi rất nhanh. Tốc độ trung bình = {expr:Math.round(4/Math.sqrt(p)*10)/10} m/s — cao vì vật mới xuất phát, chưa chậm lại nhiều."
+        },
+        {
+          "id": "medium",
+          "trigger": "state.currentValue >= 1.5 && state.currentValue <= 4",
+          "text": "Sau {expr:Math.round(p*10)/10} giây, tốc độ trung bình = {expr:Math.round(4/Math.sqrt(p)*10)/10} m/s. Vật đi chậm dần nên trung bình bị kéo xuống so với lúc đầu. Đường đỏ thoải hơn."
+        },
+        {
+          "id": "long",
+          "trigger": "state.currentValue > 4",
+          "text": "Khoảng dài {expr:Math.round(p*10)/10} giây — tốc độ trung bình chỉ còn {expr:Math.round(4/Math.sqrt(p)*10)/10} m/s. Con số này gộp cả lúc nhanh (đầu) và lúc chậm (cuối) thành một giá trị duy nhất — nó che giấu mọi biến thiên bên trong."
+        }
+      ]
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Tốc độ trung bình: một con số, một đường thẳng
+  
+  Quãng đường thực tế $f(t) = 4\sqrt{t}$ là đường cong — vật đi nhanh lúc đầu rồi chậm dần. Tốc độ trung bình trên $[0, b]$ = $\frac{f(b)}{b} = \frac{4\sqrt{b}}{b} = \frac{4}{\sqrt{b}}$.
+  
+  Đường đỏ nét đứt trong tương tác vừa rồi là đường thẳng biểu diễn: <i>nếu vật đi đều suốt với tốc độ trung bình thì sẽ đến cùng vị trí</i>. Hai đường gặp nhau tại thời điểm $b$ — nhưng ở giữa chúng rất khác nhau.
+</Slide>
+
+<Slide title="Slide 3">
+  ### Tốc độ trung bình che giấu điều gì?
+  
+  Khi b = 1: tốc độ TB = 4 m/s. Khi b = 4: tốc độ TB = 2 m/s. Cùng một chuyến đi nhưng xét khoảng khác nhau thì được con số khác nhau. Tốc độ trung bình phụ thuộc vào khoảng bạn chọn.
+  
+  Tốc độ trung bình trả lời: "trung bình mỗi giây đi được bao xa?" — nó gộp cả lúc nhanh lẫn lúc chậm. Nó <b>không</b> cho biết vật đang làm gì tại một thời điểm cụ thể. Hai câu hỏi khác nhau sẽ cần công cụ khác nhau.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-l4-1" question="Vật đi 12 m trong 4 giây không đổi chiều. Tốc độ trung bình?" explanation="$12 \div 4 = 3$ m/s.">
+    <Option value="a">48 m/s</Option>
+    <Option value="b">8 m/s</Option>
+    <Option value="c">3 m/s</Option>
+    <Option value="d">0.33 m/s</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-l4-2" question="Vật đi 7 m về phía trước rồi 3 m về phía sau trong 5 giây. Tốc độ trung bình?" explanation="Tổng quãng đường = 10 m; tốc độ trung bình = $10 \div 5 = 2$ m/s.">
+    <Option value="a">0.8 m/s</Option>
+    <Option value="b">2 m/s</Option>
+    <Option value="c">4 m/s</Option>
+    <Option value="d">1.4 m/s</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-l4-3" question="Trên $[0, 6]$, tốc độ TB = 1.5 m/s. Trên $[0, 3]$, tốc độ TB cũng = 1.5 m/s. Kết luận gì?" explanation="Cùng giá trị trung bình không đảm bảo cùng hành trình — trung bình che giấu biến thiên.">
+    <Option value="a">Vật đi đều suốt $[0, 6]$.</Option>
+    <Option value="b">Hai nửa $[0, 3]$ và $[3, 6]$ là hành trình giống hệt nhau.</Option>
+    <Option value="c">Tốc độ trung bình bằng nhau trên các khoảng khác nhau không suy ra chuyển động giống nhau.</Option>
+    <Option value="d">Vật đứng yên trong $[3, 6]$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-l4-4" question="$f(0)=0$, $f(2)=6$, $f(4)=6$, $f(6)=0$. Tốc độ trung bình trên $[0, 6]$?" explanation="Quãng đường: $0→6 = 6$ m, $6→6 = 0$ m, $6→0 = 6$ m. Tổng = 12 m. $12 \div 6 = 2$ m/s.">
+    <Option value="a">0 m/s</Option>
+    <Option value="b">1 m/s</Option>
+    <Option value="c">2 m/s</Option>
+    <Option value="d">3 m/s</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-l4-5" question="Công thức nào tính tốc độ trung bình trên $[a, b]$?" explanation="Tốc độ trung bình dùng tổng quãng đường (không dấu), không phải độ dịch chuyển.">
+    <Option value="a">$f(b) - f(a)$</Option>
+    <Option value="b">$\frac{f(b) + f(a)}{2}$</Option>
+    <Option value="c">Tổng quãng đường trên $[a, b]$ chia cho $(b - a)$</Option>
+    <Option value="d">$\frac{f(b)}{b}$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-l4-6" question="Khi nào tốc độ trung bình trên $[a, b]$ bằng 0?" explanation="$f(a) = f(b)$ chỉ nghĩa là dịch chuyển = 0, không phải quãng đường = 0. Vật có thể đã đi-về.">
+    <Option value="a">Khi vật đổi chiều đúng một lần.</Option>
+    <Option value="b">Khi $f(a) = f(b)$.</Option>
+    <Option value="c">Khi vật hoàn toàn không di chuyển — tổng quãng đường = 0.</Option>
+    <Option value="d">Khi $b - a = 0$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-l4-7" question="Vật X đi 20 m trong 5 s. Vật Y đi 30 m trong 9 s. Vật nào có tốc độ trung bình lớn hơn?" explanation="$X: 20 \div 5 = 4$ m/s. $Y: 30 \div 9 \approx 3.33$ m/s.">
+    <Option value="a">Y: 3.33 m/s > X: 4 m/s.</Option>
+    <Option value="b">Bằng nhau.</Option>
+    <Option value="c">X: 4 m/s > Y: 3.33 m/s.</Option>
+    <Option value="d">Không xác định được nếu không biết hướng.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-l4-8" question="Xe tiêu thụ 8 lít/100 km trên chuyến đi 200 km. Đây là ví dụ về:" explanation="Tốc độ trung bình và tốc độ tiêu thụ trung bình là cùng cấu trúc: tổng lượng / khoảng.">
+    <Option value="a">Tốc độ tiêu thụ tức thời.</Option>
+    <Option value="b">Tốc độ tiêu thụ trung bình trên khoảng hành trình.</Option>
+    <Option value="c">Mức tiêu thụ tối đa tại mỗi thời điểm.</Option>
+    <Option value="d">Tổng nhiên liệu đã dùng.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-l4-9" question="Tại sao tốc độ trung bình là phép đo &quot;thô&quot;?" explanation="Trung bình = nén thông tin. Các hành trình rất khác nhau có thể cho cùng giá trị trung bình.">
+    <Option value="a">Chỉ tính được cho chuyển động tốc độ không đổi.</Option>
+    <Option value="b">Dùng quãng đường, luôn dương.</Option>
+    <Option value="c">Nó nén toàn bộ hành trình thành một con số, che giấu mọi biến thiên tốc độ bên trong khoảng.</Option>
+    <Option value="d">Cần biết $f(t)$ tại mọi điểm.</Option>
+  </Quiz>
+</Slide>

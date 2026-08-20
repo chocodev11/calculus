@@ -1,0 +1,271 @@
+[
+  {
+    "id": "chuyen-dong",
+    "slug": "chuyen-dong",
+    "title": "Chuyển động, Tốc độ, Vận tốc, Thay đổi",
+    "description": "Xây dựng trực giác về thay đổi: vị trí, tốc độ, vận tốc, và tốc độ thay đổi — nền tảng cho giới hạn và đạo hàm.",
+    "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Proportional_Reasoning-5aofQr.png?width=204",
+    "icon": "Δ",
+    "color": "from-blue-500 to-indigo-700",
+    "category_slug": "giai-tich",
+    "difficulty": "beginner",
+    "is_published": true,
+    "is_featured": true,
+    "order_index": 0,
+    "chapters": [
+      {
+        "id": "tien-den-gioi-han",
+        "title": "Tiến đến giới hạn",
+        "description": "Thu nhỏ khoảng, hội tụ độ dốc, tổng quát hoá tốc độ thay đổi",
+        "order_index": 2,
+        "step_ids": [
+          "thu-nho-khoang-cach",
+          "toc-do-thay-doi-ngoai-chuyen-dong"
+        ]
+      },
+      {
+        "id": "van-toc-trung-binh",
+        "title": "Vận tốc trung bình",
+        "description": "Tốc độ trung bình, vận tốc có dấu, vận tốc trung bình là độ dốc cát tuyến",
+        "order_index": 1,
+        "step_ids": [
+          "toc-do-trung-binh-tren-khoang",
+          "van-toc-co-dau",
+          "van-toc-trung-binh-la-do-doc"
+        ]
+      },
+      {
+        "id": "vi-tri-va-toc-do",
+        "title": "Vị trí và tốc độ",
+        "description": "Hàm vị trí, đồ thị, tốc độ không đổi và thay đổi, quãng đường và độ dịch chuyển",
+        "order_index": 0,
+        "step_ids": [
+          "quang-duong-va-do-dich-chuyen",
+          "toc-do-khong-doi-va-thay-doi",
+          "vi-tri-theo-thoi-gian"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dai-so",
+    "slug": "dai-so",
+    "title": "Đại số & Hàm số",
+    "description": "Biểu thức đại số, phương trình bậc nhất & bậc hai, khái niệm hàm số — nền tảng cho mọi nhánh toán.",
+    "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Linear_Equations_1-KOclY7.png?width=204",
+    "icon": "x²",
+    "color": "from-emerald-500 to-teal-700",
+    "category_slug": "dai-so",
+    "difficulty": "beginner",
+    "is_published": true,
+    "is_featured": true,
+    "order_index": 10,
+    "chapters": [
+      {
+        "id": "bieu-thuc-va-phuong-trinh",
+        "title": "Biểu thức & Phương trình",
+        "description": "Cách đọc, rút gọn biểu thức và giải phương trình bậc nhất, bậc hai.",
+        "order_index": 0,
+        "step_ids": [
+          "phuong-trinh-bac-nhat",
+          "rut-gon-bieu-thuc"
+        ]
+      },
+      {
+        "id": "ham-so-co-ban",
+        "title": "Hàm số cơ bản",
+        "description": "Hàm bậc nhất, bậc hai, đồ thị và ý nghĩa hình học.",
+        "order_index": 1,
+        "step_ids": [
+          "ham-bac-hai",
+          "ham-bac-nhat"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dao-ham",
+    "slug": "dao-ham",
+    "title": "Đạo hàm",
+    "description": "Tìm hiểu đạo hàm và ứng dụng: tốc độ thay đổi, cực trị, khảo sát hàm số.",
+    "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Coordinate_Plane-TjmV5y.png?width=204",
+    "icon": "d/dx",
+    "color": "from-green-500 to-green-700",
+    "category": "giai-tich",
+    "difficulty": "beginner",
+    "is_published": true,
+    "is_featured": true,
+    "order_index": 2,
+    "chapters": [
+      {
+        "id": "dinh-nghia-dao-ham",
+        "title": "Định nghĩa đạo hàm",
+        "description": "Đạo hàm và tốc độ thay đổi",
+        "order_index": 0,
+        "step_ids": [
+          "duong-tiep-tuyen",
+          "ham-dao-ham",
+          "tinh-khong-kha-vi",
+          "van-toc-tuc-thoi"
+        ]
+      },
+      {
+        "id": "quy-tac-tinh-dao-ham",
+        "title": "Quy tắc tính đạo hàm",
+        "description": "Các quy tắc lũy thừa, tích, thương, và dây chuyền",
+        "order_index": 1,
+        "step_ids": [
+          "quy-tac-day-chuyen",
+          "quy-tac-luy-thua",
+          "quy-tac-thuong",
+          "quy-tac-tich"
+        ]
+      },
+      {
+        "id": "ung-dung-dao-ham",
+        "title": "Ứng dụng đạo hàm",
+        "description": "Đạo hàm lượng giác, hàm tăng giảm, tính lồi, và phác thảo đồ thị",
+        "order_index": 2,
+        "step_ids": [
+          "dao-ham-luong-giac",
+          "ham-tang-giam",
+          "phac-thao-do-thi",
+          "tinh-lom-dao-ham-bac-hai"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gioi-han",
+    "slug": "gioi-han",
+    "title": "Giới Hạn",
+    "description": "Chính xác hóa khái niệm 'tiến đến một giá trị' — nền tảng cho đạo hàm và tích phân.",
+    "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Arithmetic_Thinking-KaQBTB.png?width=204",
+    "icon": "ε",
+    "color": "from-emerald-500 to-teal-700",
+    "category_slug": "giai-tich",
+    "difficulty": "beginner",
+    "is_published": true,
+    "is_featured": true,
+    "order_index": 1,
+    "chapters": [
+      {
+        "id": "gioi-han-nang-cao",
+        "title": "Giới hạn nâng cao",
+        "description": "Định lý Kẹp, tính liên tục, giới hạn tại vô cực, và định nghĩa ε–δ",
+        "order_index": 2,
+        "step_ids": [
+          "dinh-ly-kep",
+          "dinh-nghia-epsilon-delta",
+          "gioi-han-tai-vo-cuc",
+          "tinh-lien-tuc"
+        ]
+      },
+      {
+        "id": "gioi-han-va-dai-so",
+        "title": "Giới hạn và đại số",
+        "description": "Đọc giới hạn trên đồ thị, đơn giản hóa đại số, và các quy tắc giới hạn",
+        "order_index": 1,
+        "step_ids": [
+          "cac-quy-tac-gioi-han",
+          "don-gian-hoa-dai-so",
+          "gioi-han-tren-do-thi"
+        ]
+      },
+      {
+        "id": "kham-pha-gioi-han",
+        "title": "Khám phá giới hạn",
+        "description": "Giới hạn bằng số, giới hạn một phía, và khi giới hạn không tồn tại",
+        "order_index": 0,
+        "step_ids": [
+          "gioi-han-mot-phia",
+          "kham-pha-gioi-han-bang-so",
+          "khi-gioi-han-khong-ton-tai"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "menh-de",
+    "slug": "menh-de",
+    "title": "Mệnh đề và Logic Toán 10",
+    "description": "Nhận diện mệnh đề, làm việc với mệnh đề chứa biến và lượng từ, kiểm tra kéo theo, điều kiện cần - đủ và phản ví dụ.",
+    "illustration": "https://ds055uzetaobb.cloudfront.net/category-images/Foundations_of_Algebra-6MUKk8.png?width=204",
+    "icon": "P⇒Q",
+    "color": "from-indigo-500 to-violet-700",
+    "category_slug": "dai-so",
+    "difficulty": "beginner",
+    "is_published": true,
+    "is_featured": true,
+    "order_index": 1,
+    "chapters": [
+      {
+        "id": "menh-de",
+        "title": "Mệnh đề và Logic Toán 10",
+        "description": "Toàn bộ 6 chủ đề lý thuyết và 3 dạng bài tập từ tài liệu nguồn: từ nhận diện mệnh đề, mệnh đề chứa biến đến phủ định, kéo theo, điều kiện cần - đủ, lượng từ đa biến và bài toán tham số vận dụng cao.",
+        "order_index": 0,
+        "step_ids": [
+          "01-menh-de-va-tinh-dung-sai",
+          "02-menh-de-chua-bien",
+          "03-phu-dinh-menh-de",
+          "04-menh-de-keo-theo",
+          "05-dao-tuong-duong-dieu-kien-can-du",
+          "06-voi-moi-ton-tai-va-nhieu-bien",
+          "07-tong-hop-tham-so-phan-vi-du-vdc"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tich-phan",
+    "slug": "tich-phan",
+    "title": "Tích phân",
+    "description": "Tích phân bất định, xác định và ứng dụng tính diện tích, thể tích.",
+    "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Visual_Algebra_1-wiJeeI.png?width=204",
+    "icon": "∫",
+    "color": "from-purple-500 to-purple-700",
+    "category_slug": "giai-tich",
+    "difficulty": "intermediate",
+    "is_published": true,
+    "is_featured": false,
+    "order_index": 3,
+    "chapters": [
+      {
+        "id": "dinh-ly-co-ban-giai-tich",
+        "title": "Định lý cơ bản giải tích",
+        "description": "Tính chất tích phân, hàm tích lũy và định lý cơ bản nối nguyên hàm với tích phân xác định",
+        "order_index": 1,
+        "step_ids": [
+          "dinh-ly-co-ban-1",
+          "dinh-ly-co-ban-2",
+          "ham-tich-luy",
+          "tinh-chat-tich-phan"
+        ]
+      },
+      {
+        "id": "nguyen-ham-va-ung-dung",
+        "title": "Nguyên hàm và ứng dụng",
+        "description": "Nguyên hàm, phép đổi biến, thay đổi ròng và ứng dụng tích lũy trong thực tế",
+        "order_index": 2,
+        "step_ids": [
+          "nguyen-ham",
+          "phep-doi-bien",
+          "thay-doi-rong",
+          "ung-dung-tich-luy"
+        ]
+      },
+      {
+        "id": "tich-phan-xac-dinh",
+        "title": "Tích phân xác định",
+        "description": "Từ bài toán diện tích đến định nghĩa tích phân xác định qua tổng Riemann",
+        "order_index": 0,
+        "step_ids": [
+          "bai-toan-do-dien-tich",
+          "chia-nho-phan-hoach",
+          "tich-phan-xac-dinh",
+          "tong-riemann"
+        ]
+      }
+    ]
+  }
+]

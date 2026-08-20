@@ -9,6 +9,7 @@ import Profile from './pages/Profile'
 import VerifyEmail from './pages/VerifyEmail'
 import QuestShop from './pages/QuestShop'
 import NotFound from './pages/NotFound'
+import StudioPreview from './pages/StudioPreview'
 import VerificationBlocker from './components/VerificationBlocker'
 import DevTerminal from './components/DevTerminal'
 
@@ -39,6 +40,8 @@ export default function App() {
         <Route path="shop" element={<QuestShop />} />
       </Route>
       <Route path="/course/:slug/step/:encodedId" element={<Step />} />
+      <Route path="/studio" element={<StudioPreview />} />
+      <Route path="/studio/:courseSlug/:stepId" element={<StudioPreview />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Navigate to="/login?tab=register" replace />} />
       <Route path="/verify-email" element={<VerifyEmail />} />

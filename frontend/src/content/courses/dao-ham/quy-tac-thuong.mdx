@@ -1,0 +1,174 @@
+---
+id: 'quy-tac-thuong'
+title: 'Quy tắc thương'
+description: 'Đạo hàm của thương $f/g$ bằng $(f''g - fg'')/g^2$ — dấu trừ ở tử số là hậu quả của đạo hàm đảo nghịch.'
+courseSlug: 'dao-ham'
+chapterSlug: 'quy-tac-tinh-dao-ham'
+order: 0
+xp: 15
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Độ dốc mẫu số $p$"
+      },
+      "parameter": {
+        "min": 0.5,
+        "max": 2,
+        "initial": 1
+      },
+      "system": {
+        "resolution": 300,
+        "view": {
+          "xMin": -2,
+          "xMax": 3,
+          "yMin": -2,
+          "yMax": 8
+        },
+        "curves": [
+          {
+            "expr": "x*x / (p*x + 1)",
+            "color": "#3498db",
+            "label": "h(x) = x²/(px+1)",
+            "style": "solid",
+            "width": 2
+          },
+          {
+            "expr": "(2*x*(p*x + 1) - x*x*p) / pow(p*x + 1, 2)",
+            "color": "#e74c3c",
+            "label": "h′(x)",
+            "style": "dashed",
+            "width": 2
+          }
+        ]
+      },
+      "reflections": [
+        {
+          "id": "p-low",
+          "trigger": "state.currentValue < 0.6",
+          "text": "Tiệm cận đứng ở xa bên trái — hàm thương gần như là $x^2$ trên $[0,3]$."
+        },
+        {
+          "id": "p-mid",
+          "trigger": "state.currentValue > 0.9 && state.currentValue < 1.1",
+          "text": "Tiệm cận đứng tại $x = -1$. Chú ý: $h'$ có dấu trừ ở tử số, không phải dấu cộng như quy tắc tích."
+        },
+        {
+          "id": "p-high",
+          "trigger": "state.currentValue > 1.8",
+          "text": "Tiệm cận đứng gần $x = 0$. Khi $p$ tăng, điểm bất định dịch về trung tâm miền."
+        }
+      ],
+      "prompt": "Di chuyển độ dốc $p$. Điểm nào trên trục $x$ làm hàm số không xác định? $h'$ thay đổi gần điểm đó thế nào? Dấu của số hạng $f'g - fg'$ có nhất quán không?"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Quy tắc thương — dẫn xuất từ quy tắc tích
+  
+  Viết $h = f/g = f \cdot (1/g)$. Quy tắc tích cho $h' = f'(1/g) + f(1/g)'$. Cần tính $(1/g)'$ bằng định nghĩa giới hạn.
+  
+  Kết quả: $(1/g)' = -g'/g^2$ — dấu trừ xuất hiện ở đây. Thế vào: **Quy tắc thương:** $(f/g)' = \dfrac{f'g - fg'}{g^2}$ tại mọi điểm $g \neq 0$.
+  ```json
+  {
+    "id": "math-m3l7-rule",
+    "type": "math",
+    "content": {
+      "latex": "\\left(\\frac{f}{g}\\right)' = \\frac{f'g - fg'}{g^2}"
+    }
+  }
+  ```
+</Slide>
+
+<Slide title="Slide 3">
+  ### Áp dụng và cách nhớ công thức
+  
+  Ví dụ: $h(x) = \dfrac{x^2}{x+1}$. $h'(x) = \dfrac{2x(x+1) - x^2 \cdot 1}{(x+1)^2} = \dfrac{x^2 + 2x}{(x+1)^2}$.
+  
+  Cách nhớ: "Mẫu nhân đạo hàm tử, trừ tử nhân đạo hàm mẫu, chia mẫu bình phương." **Dấu trừ là chi tiết duy nhất không được nhầm với quy tắc tích.**
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-m3l7-q1" question="Khi bạn tăng $p$ trong tương tác, tiệm cận đứng của $h(x) = x^2/(px+1)$ dịch về đâu?" explanation="Tiệm cận đứng ở $px + 1 = 0$, tức $x = -1/p$. Khi $p$ tăng, $-1/p$ tiến về $0$ từ bên trái — tiệm cận dịch sang trái.">
+    <Option value="a">Dịch sang phải.</Option>
+    <Option value="b">Dịch sang trái (về phía $x = 0$).</Option>
+    <Option value="c">Biến mất.</Option>
+    <Option value="d">Dịch lên trên.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-m3l7-q2" question="Tính đạo hàm $h(x) = \dfrac{x^3}{x^2 + 1}$." explanation="$h'(x) = \frac{3x^2(x^2+1) - x^3 \cdot 2x}{(x^2+1)^2} = \frac{3x^4 + 3x^2 - 2x^4}{(x^2+1)^2} = \frac{x^4 + 3x^2}{(x^2+1)^2}$.">
+    <Option value="a">$\dfrac{3x^2(x^2+1) - x^3 \cdot 2x}{(x^2+1)^2} = \dfrac{x^4 + 3x^2}{(x^2+1)^2}$</Option>
+    <Option value="b">$\dfrac{3x^2}{2x} = \dfrac{3x}{2}$</Option>
+    <Option value="c">$\dfrac{x^4 - 3x^2}{(x^2+1)^2}$</Option>
+    <Option value="d">$3x^2 \cdot (x^2+1)^{-1}$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-m3l7-q3" question="Tại sao quy tắc thương có $f'g - fg'$ (trừ) thay vì $f'g + fg'$ (cộng)?" explanation="Dẫn xuất từ quy tắc tích cho $(1/g)' = -g'/g^2$ — dấu trừ xuất hiện từ phép tính đại số, không phải quy ước.">
+    <Option value="a">Theo quy ước để phân biệt với quy tắc tích.</Option>
+    <Option value="b">Vì đạo hàm của $1/g$ là $-g'/g^2$, đưa vào dấu trừ khi áp dụng quy tắc tích cho $f \cdot (1/g)$.</Option>
+    <Option value="c">Vì phép chia là nghịch đảo của phép nhân.</Option>
+    <Option value="d">Vì hàm thương luôn giảm.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-m3l7-q4" question="Biết $f(1) = 2$, $f'(1) = 3$, $g(1) = 4$, $g'(1) = 1$. Tính $(f/g)'(1)$." explanation="$(f/g)'(1) = \frac{3 \cdot 4 - 2 \cdot 1}{4^2} = \frac{12 - 2}{16} = \frac{10}{16} = \frac{5}{8}$.">
+    <Option value="a">$3/4$</Option>
+    <Option value="b">$5/16$</Option>
+    <Option value="c">$5/8$</Option>
+    <Option value="d">$1/2$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-m3l7-q5" question="Nếu $g(x) = c$ (hằng số), quy tắc thương cho $(f/g)' = ?$" explanation="$g' = 0$, nên $(f/g)' = (f'c - f \cdot 0)/c^2 = f'/c$ — quy tắc hằng số nhân được phục hồi.">
+    <Option value="a">$f'/c$.</Option>
+    <Option value="b">$(f'c - f \cdot 0)/c^2 = f'/c$.</Option>
+    <Option value="c">$f'/g'$.</Option>
+    <Option value="d">$-fg'/g^2$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-m3l7-q6" question="Tính đạo hàm $h(x) = \dfrac{1}{x^2}$ bằng quy tắc thương." explanation="$f = 1$, $g = x^2$. $h'(x) = \frac{0 \cdot x^2 - 1 \cdot 2x}{x^4} = \frac{-2x}{x^4} = \frac{-2}{x^3}$.">
+    <Option value="a">$-2/x^3$</Option>
+    <Option value="b">$2/x^3$</Option>
+    <Option value="c">$-1/x$</Option>
+    <Option value="d">$1/x^2$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-m3l7-q7" question="Hàm $h(x) = f(x)/g(x)$. Nếu $g(a) = 0$ nhưng $f(a) \neq 0$, $h'(a)$ bằng bao nhiêu?" explanation="Nếu $g(a) = 0$ và $f(a) \neq 0$, thì $h(a)$ không xác định — không có giá trị hàm để lấy đạo hàm.">
+    <Option value="a">$h'(a) = 0$.</Option>
+    <Option value="b">$h'(a)$ không tồn tại — $h$ bản thân không xác định tại $a$.</Option>
+    <Option value="c">$h'(a) = f'(a)/g'(a)$.</Option>
+    <Option value="d">$h'(a) = +\infty$ chính xác.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-m3l7-q8" question="Trong hóa học, tốc độ phản ứng $r = k \cdot \dfrac{[A]}{[B]+c}$. Để tính $dr/d[A]$ với $[B], c, k$ cố định:" explanation="Khi $[B]$ và $c$ cố định, mẫu số là hằng số theo $[A]$. Quy tắc thương rút gọn thành quy tắc hằng số nhân: $dr/d[A] = k/([B]+c)$.">
+    <Option value="a">$dr/d[A] = k$ — quy tắc thương rút gọn thành hằng số nhân.</Option>
+    <Option value="b">$dr/d[A] = k/([B]+c)$ — mẫu số là hằng số theo $[A]$, rút gọn thành hằng số nhân.</Option>
+    <Option value="c">$dr/d[A] = k[B] / ([B]+c)^2$.</Option>
+    <Option value="d">$dr/d[A] = k([B]+c - [A]) / ([B]+c)^2$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-m3l7-q9" question="Học sinh viết $(f/g)' = f'/g'$. Hãy chỉ ra lỗi bằng một ví dụ ngược." explanation="Ví dụ ngược chứng minh rõ ràng: $(f/g)' \neq f'/g'$ về nguyên tắc. Công thức đúng đòi hỏi cả $g$ trong tử số và $g^2$ trong mẫu số.">
+    <Option value="a">Không có lỗi — đúng khi $f$ và $g$ là đa thức.</Option>
+    <Option value="b">Sai: thử $f = x^2$, $g = x$. Thì $f/g = x$, $(f/g)' = 1$. Nhưng $f'/g' = 2x/1 = 2x \neq 1$.</Option>
+    <Option value="c">Sai: công thức đúng phải là $f'g'$ (tích), không phải $f'/g'$ (thương).</Option>
+    <Option value="d">Sai: công thức đúng bỏ $g^2$ ở mẫu.</Option>
+  </Quiz>
+</Slide>

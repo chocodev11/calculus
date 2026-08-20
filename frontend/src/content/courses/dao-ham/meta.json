@@ -1,0 +1,52 @@
+{
+  "id": "dao-ham",
+  "slug": "dao-ham",
+  "title": "Đạo hàm",
+  "description": "Tìm hiểu đạo hàm và ứng dụng: tốc độ thay đổi, cực trị, khảo sát hàm số.",
+  "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Coordinate_Plane-TjmV5y.png?width=204",
+  "icon": "d/dx",
+  "color": "from-green-500 to-green-700",
+  "category": "giai-tich",
+  "difficulty": "beginner",
+  "is_published": true,
+  "is_featured": true,
+  "order_index": 2,
+  "chapters": [
+    {
+      "id": "dinh-nghia-dao-ham",
+      "title": "Định nghĩa đạo hàm",
+      "description": "Đạo hàm và tốc độ thay đổi",
+      "order_index": 0,
+      "step_ids": [
+        "duong-tiep-tuyen",
+        "ham-dao-ham",
+        "tinh-khong-kha-vi",
+        "van-toc-tuc-thoi"
+      ]
+    },
+    {
+      "id": "quy-tac-tinh-dao-ham",
+      "title": "Quy tắc tính đạo hàm",
+      "description": "Các quy tắc lũy thừa, tích, thương, và dây chuyền",
+      "order_index": 1,
+      "step_ids": [
+        "quy-tac-day-chuyen",
+        "quy-tac-luy-thua",
+        "quy-tac-thuong",
+        "quy-tac-tich"
+      ]
+    },
+    {
+      "id": "ung-dung-dao-ham",
+      "title": "Ứng dụng đạo hàm",
+      "description": "Đạo hàm lượng giác, hàm tăng giảm, tính lồi, và phác thảo đồ thị",
+      "order_index": 2,
+      "step_ids": [
+        "dao-ham-luong-giac",
+        "ham-tang-giam",
+        "phac-thao-do-thi",
+        "tinh-lom-dao-ham-bac-hai"
+      ]
+    }
+  ]
+}

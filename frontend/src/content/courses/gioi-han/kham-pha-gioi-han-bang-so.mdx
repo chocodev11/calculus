@@ -1,0 +1,183 @@
+---
+id: 'kham-pha-gioi-han-bang-so'
+title: 'Khám Phá Giới Hạn Bằng Số'
+description: 'Giới hạn là giá trị mà f(x) ổn định về — bất kể f(a) có tồn tại hay không.'
+courseSlug: 'gioi-han'
+chapterSlug: 'kham-pha-gioi-han'
+order: 0
+xp: 10
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Khoảng cách hai đường đỏ đến y = 2"
+      },
+      "parameter": {
+        "min": 0.05,
+        "max": 2,
+        "initial": 2
+      },
+      "system": {
+        "resolution": 300,
+        "view": {
+          "xMin": -1,
+          "xMax": 3,
+          "yMin": -0.5,
+          "yMax": 4.5
+        },
+        "curves": [
+          {
+            "expr": "x + 1",
+            "color": "#3b82f6",
+            "label": "f(x) = (x²−1)/(x−1)",
+            "width": 3
+          },
+          {
+            "expr": "2 + p",
+            "color": "#ef4444",
+            "label": "",
+            "style": "dashed",
+            "width": 1
+          },
+          {
+            "expr": "2 - p",
+            "color": "#ef4444",
+            "label": "",
+            "style": "dashed",
+            "width": 1
+          },
+          {
+            "expr": "2",
+            "color": "#10b981",
+            "label": "L = ?",
+            "style": "dashed",
+            "width": 1
+          }
+        ],
+        "hole": {
+          "x": 1
+        }
+      },
+      "reflections": [
+        {
+          "id": "wide",
+          "trigger": "state.currentValue > 1.5",
+          "text": "Hai đường đỏ còn cách xa nhau — đường cong xanh nằm bên trong dễ dàng. Hãy kéo thanh trượt sang trái để thu hẹp khoảng cách, xem đường cong có thoát ra ngoài không!"
+        },
+        {
+          "id": "medium",
+          "trigger": "state.currentValue > 0.3 && state.currentValue < 0.8",
+          "text": "Khoảng cách hẹp hơn rồi! Nhìn gần chỗ lỗ trống ○ (x = 1): đường cong xanh vẫn nằm giữa hai đường đỏ. Nghĩa là giá trị f(x) đang tiến ổn định về 2."
+        },
+        {
+          "id": "tight",
+          "trigger": "state.currentValue < 0.15",
+          "text": "Hai đường đỏ gần sát nhau, nhưng đường cong xanh vẫn nằm bên trong! Dù tại x = 1 hàm số không có giá trị (lỗ trống ○), các giá trị xung quanh đều hướng về 2. Đó chính là giới hạn!"
+        }
+      ],
+      "prompt": "Đồ thị xanh là hàm f(x) = (x²−1)/(x−1). Tại x = 1, hàm không xác định (lỗ trống ○).\n\n🔴 Hai đường đỏ nét đứt nằm phía trên và phía dưới đường y = 2 (đường xanh lá).\n🎯 Nhiệm vụ: Kéo thanh trượt sang trái để thu hẹp khoảng cách giữa hai đường đỏ. Đường cong xanh gần x = 1 có luôn nằm giữa hai đường đỏ không?\n\nNếu có → giá trị hàm luôn tiến về 2 → đó là giới hạn!"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Hàm không xác định, nhưng giá trị tiến đến đâu?
+  
+  Hàm $f(x) = \frac{x^2 - 1}{x - 1}$ không xác định tại $x = 1$ (chia cho 0). Nhưng hãy thử thế các giá trị <b>gần</b> 1: $f(0.9) = 1.9$, $f(0.99) = 1.99$, $f(1.01) = 2.01$, $f(1.1) = 2.1$ — tất cả đều tiến về 2.
+  
+  Hiện tượng 'giá trị ổn định khi đầu vào tiến về một điểm' gọi là <b>giới hạn</b>. Ta viết $\lim_{x \to 1} f(x) = 2$. Trong tương tác, bạn vừa thấy: dù thu hẹp hành lang bao nhiêu, đường cong vẫn nằm bên trong gần $x = 1$.
+</Slide>
+
+<Slide title="Slide 3">
+  ### Giới hạn ≠ giá trị hàm
+  
+  Giới hạn xét hành vi <b>gần</b> một điểm, không phải <b>tại</b> điểm. $\lim_{x \to a} f(x) = L$ nghĩa là: khi $x$ tiến đến $a$ (từ cả hai phía), $f(x)$ tiến gần $L$ tùy ý.
+  
+  Ví dụ: $f(x) = (x^2 - 1)/(x - 1)$. Rút gọn: $(x-1)(x+1)/(x-1) = x + 1$ khi $x \neq 1$. Đồ thị là đường $y = x + 1$ với <b>một lỗ trống tại (1, 2)</b>. Giới hạn = 2, dù $f(1)$ không tồn tại.
+  
+  Hành lang đỏ trong tương tác chính là ý tưởng cốt lõi: bạn có thể ép $f(x)$ nằm gần $L$ bao nhiêu tùy thích, miễn $x$ đủ gần $a$.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-l1-1" question="Trong tương tác, khi thu hẹp hành lang quanh $y = 2$, đường cong $f(x) = (x^2-1)/(x-1)$ gần $x = 1$:" explanation="Dù hành lang thu hẹp bao nhiêu, đường cong vẫn nằm bên trong gần x = 1. Giá trị ổn định = giới hạn = 2.">
+    <Option value="a">Thoát ra ngoài hành lang</Option>
+    <Option value="b">Luôn nằm bên trong — giới hạn = 2</Option>
+    <Option value="c">Dao động không ổn định</Option>
+    <Option value="d">Tiến về 0</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-l1-2" question="Rút gọn $(x^2 - 1)/(x - 1)$ với $x \neq 1$:" explanation="$x^2 - 1 = (x-1)(x+1)$, chia cho $(x-1)$ còn $x + 1$.">
+    <Option value="a">$x - 1$</Option>
+    <Option value="b">$x$</Option>
+    <Option value="c">$x + 1$</Option>
+    <Option value="d">$x^2 + 1$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-l1-3" question="Tại sao không thể thế $x = 1$ vào $(x^2 - 1)/(x - 1)$?" explanation="Tử và mẫu đều bằng 0 tại $x = 1$, cho dạng $0/0$ — không xác định.">
+    <Option value="a">Hàm số âm tại đó</Option>
+    <Option value="b">Chia cho 0 — biểu thức là $0/0$</Option>
+    <Option value="c">$x = 1$ nằm ngoài miền xác định</Option>
+    <Option value="d">Kết quả quá lớn</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-l1-4" question="Nếu $g(x) = (x^2 - 4)/(x - 2)$, thì $\lim_{x \to 2} g(x) = $?" explanation="$(x^2-4)/(x-2) = x+2$. Tại $x \to 2$: $2 + 2 = 4$.">
+    <Option value="a">0</Option>
+    <Option value="b">2</Option>
+    <Option value="c">4</Option>
+    <Option value="d">Không xác định</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-l1-5" question="$\lim_{x \to a} f(x) = L$ nghĩa là:" explanation="Giới hạn = $f(x)$ tiến tùy ý gần $L$ khi $x$ tiến đến $a$. Không yêu cầu $f(a) = L$.">
+    <Option value="a">$f(a) = L$</Option>
+    <Option value="b">$f(x) = L$ cho mọi $x$ gần $a$</Option>
+    <Option value="c">$f(x)$ có thể làm gần $L$ tùy ý bằng cách cho $x$ đủ gần $a$</Option>
+    <Option value="d">$f$ liên tục tại $a$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-l1-6" question="Bảng cho $f(2.9) = 5.8$, $f(2.99) = 5.98$, $f(2.999) = 5.998$. Giới hạn khi $x \to 3$?" explanation="Các giá trị 5.8, 5.98, 5.998 đang tiến về 6.">
+    <Option value="a">3</Option>
+    <Option value="b">5</Option>
+    <Option value="c">6</Option>
+    <Option value="d">5.9</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-l1-7" question="$h(x) = x^2$: $\lim_{x \to 3} h(x) = 9$ và $h(3) = 9$. Điều này cho biết gì?" explanation="Trùng nhau ở đây vì $x^2$ là đa thức liên tục. Với hàm khác, giới hạn có thể khác $f(a)$.">
+    <Option value="a">Giới hạn luôn bằng giá trị hàm</Option>
+    <Option value="b">Ở đây chúng trùng nhau, nhưng đây không phải quy tắc tổng quát</Option>
+    <Option value="c">$h(3)$ không xác định</Option>
+    <Option value="d">Không xác định được</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-l1-8" question="$\lim_{x \to a} f(x)$ có thể tồn tại khi $f(a)$ được xác định nhưng khác giới hạn không?" explanation="Giới hạn xét hành vi gần $a$, không quan tâm giá trị tại $a$.">
+    <Option value="a">Không — giới hạn phải bằng $f(a)$</Option>
+    <Option value="b">Có — giới hạn phụ thuộc vào giá trị lân cận, không phải $f(a)$</Option>
+    <Option value="c">Chỉ với đa thức</Option>
+    <Option value="d">Chỉ khi $f(a) = 0$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-l1-9" question="Cảm biến đọc 0°C lúc 12:00 nhưng đọc 20.1, 20.05, 20.01 lúc 11:59, 11:59:30, 11:59:59. Giới hạn nhiệt độ khi $t \to$ 12:00?" explanation="Giá trị tiến về 20°C. Số đọc tại 12:00 (0°C) là lỗi cảm biến — giới hạn xét lân cận, không phải tại điểm.">
+    <Option value="a">0°C</Option>
+    <Option value="b">20°C</Option>
+    <Option value="c">20.01°C</Option>
+    <Option value="d">Không xác định</Option>
+  </Quiz>
+</Slide>

@@ -1,0 +1,181 @@
+---
+id: 'ham-tich-luy'
+title: 'Hàm Tích Lũy'
+description: 'Hàm tích lũy F(x) = ∫ₐˣ f(t) dt biến cận trên thành biến số, tạo hàm mới từ diện tích.'
+courseSlug: 'tich-phan'
+chapterSlug: 'dinh-ly-co-ban-giai-tich'
+order: 0
+xp: 10
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Cận trên x"
+      },
+      "parameter": {
+        "min": 0,
+        "max": 4,
+        "initial": 0
+      },
+      "system": {
+        "resolution": 200,
+        "view": {
+          "xMin": -0.5,
+          "xMax": 4.5,
+          "yMin": -1,
+          "yMax": 9
+        },
+        "curves": [
+          {
+            "expr": "2*x",
+            "color": "#3498db",
+            "label": "f(t) = 2t",
+            "style": "solid",
+            "width": 2
+          },
+          {
+            "expr": "x*x",
+            "color": "#e67e22",
+            "label": "F(x) = x²",
+            "style": "solid",
+            "width": 2
+          }
+        ],
+        "shading": {
+          "curveIndex": 0,
+          "from": 0,
+          "to": "p",
+          "color": "#3498db",
+          "opacity": 0.25
+        }
+      },
+      "reflections": [
+        {
+          "id": "start",
+          "trigger": "state.currentValue < 0.5",
+          "text": "Cận trên gần $0$: chưa tích lũy diện tích. $F(0) = 0$."
+        },
+        {
+          "id": "mid",
+          "trigger": "state.currentValue > 1.8 && state.currentValue < 2.2",
+          "text": "Diện tích tô màu bằng đúng giá trị $F(x)$ trên đường cong cam. Vùng tô và điểm trên $F$ luôn khớp."
+        },
+        {
+          "id": "large",
+          "trigger": "state.currentValue > 3.5",
+          "text": "Diện tích tăng nhanh vì $f(t) = 2t$ ngày càng lớn. $F$ là hàm bậc hai — tốc độ tích lũy tăng dần."
+        }
+      ],
+      "prompt": "Kéo $x$ từ trái sang phải. Diện tích tô màu thay đổi thế nào? Đường cam cho bạn biết điều gì?"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Hàm tích lũy
+  
+  Bạn vừa kéo cận trên $x$ và thấy diện tích tô màu tăng dần. Tại mỗi vị trí $x$, diện tích đó chính xác bằng giá trị $F(x)$ trên đường cong cam. Điều này không phải trùng hợp — $F(x)$ **được định nghĩa** là diện tích tích lũy.
+  
+  Cho $f$ liên tục trên $[a, b]$. **Hàm tích lũy** $F(x) = \int_a^x f(t)\,dt$ gán cho mỗi $x \in [a, b]$ giá trị bằng tích phân xác định từ $a$ đến $x$. Biến tích phân $t$ là biến câm; $x$ là biến thực sự.
+  ```json
+  {
+    "id": "math-accumulation",
+    "type": "math",
+    "content": {
+      "latex": "F(x) = \\int_a^x f(t)\\,dt"
+    }
+  }
+  ```
+</Slide>
+
+<Slide title="Slide 3">
+  ### Tính chất của hàm tích lũy
+  
+  $F(a) = \int_a^a f(t)\,dt = 0$ — luôn đúng bất kể $f$. Khi $f(t) > 0$, diện tích tăng nên $F$ đồng biến. Khi $f(t) < 0$, diện tích "bù trừ" nên $F$ nghịch biến.
+  
+  Hàm tích lũy biến một hàm cho trước $f$ thành một hàm mới $F$ — mỗi giá trị đầu ra là kết quả tích phân. Mối liên hệ giữa $F$ và $f$ sẽ là trọng tâm của bài tiếp theo.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-l6-q1" question="Trong tương tác, khi bạn kéo $x$ từ $0$ đến $4$, diện tích tô màu dưới $f(t) = 2t$ và giá trị $F(x)$ trên đường cam có mối quan hệ gì?" explanation="$F(x) = \int_0^x 2t\,dt$, nên theo định nghĩa, $F(x)$ chính là diện tích tích lũy từ $0$ đến $x$. Sự trùng khớp xảy ra tại mọi $x$, không chỉ một điểm — vì $F$ được xây dựng từ phép tích phân.">
+    <Option value="a">Diện tích luôn lớn gấp đôi $F(x)$</Option>
+    <Option value="b">Diện tích tô màu luôn bằng đúng $F(x)$ tại mỗi vị trí $x$</Option>
+    <Option value="c">Diện tích và $F(x)$ bằng nhau chỉ tại $x = 2$</Option>
+    <Option value="d">Không có mối quan hệ rõ ràng</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-l6-q2" question="Cho $F(x) = \int_0^x f(t)\,dt$. Giá trị $F(0)$ bằng bao nhiêu?" explanation="$F(0) = \int_0^0 f(t)\,dt = 0$. Khoảng tích phân có chiều rộng bằng $0$, nên tích phân bằng $0$ bất kể $f$ là hàm gì. Đây là tính chất $\int_a^a = 0$ đã học ở bài trước.">
+    <Option value="a">$f(0)$</Option>
+    <Option value="b">$1$</Option>
+    <Option value="c">$0$</Option>
+    <Option value="d">Không xác định</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-l6-q3" question="Với $f(t) = 2t$ và $F(x) = \int_0^x 2t\,dt$, tính $F(3)$." explanation="Diện tích dưới $f(t) = 2t$ từ $0$ đến $3$ là tam giác có đáy $3$ và chiều cao $2 \times 3 = 6$. Diện tích = $\frac{1}{2} \times 3 \times 6 = 9$. Hoặc: $F(x) = x^2$, nên $F(3) = 9$.">
+    <Option value="a">$6$</Option>
+    <Option value="b">$9$</Option>
+    <Option value="c">$3$</Option>
+    <Option value="d">$18$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-l6-q4" question="Nếu $f(t) > 0$ trên toàn khoảng $[a, b]$, hàm tích lũy $F(x) = \int_a^x f(t)\,dt$ có tính chất gì trên $[a, b]$?" explanation="Khi $f(t) > 0$, mỗi khi $x$ tăng, ta thêm diện tích dương vào tổng tích lũy. Do đó $F(x_2) > F(x_1)$ nếu $x_2 > x_1$ — tức $F$ đồng biến. Dấu của $f$ quyết định xu hướng tăng/giảm của $F$.">
+    <Option value="a">$F$ nghịch biến</Option>
+    <Option value="b">$F$ đồng biến</Option>
+    <Option value="c">$F$ là hằng số</Option>
+    <Option value="d">$F$ có thể tăng hoặc giảm</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-l6-q5" question="Nếu đổi cận dưới từ $0$ sang $1$, tức $G(x) = \int_1^x 2t\,dt$, giá trị $G(1)$ bằng bao nhiêu?" explanation="$G(1) = \int_1^1 2t\,dt = 0$. Bất kể cận dưới là bao nhiêu, khi cận trên trùng cận dưới thì khoảng tích phân rộng $0$. Hàm tích lũy luôn bắt đầu từ $0$ tại điểm xuất phát.">
+    <Option value="a">$2$</Option>
+    <Option value="b">$1$</Option>
+    <Option value="c">$0$</Option>
+    <Option value="d">$-1$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-l6-q6" question="Trong tương tác, tốc độ tăng của diện tích tô màu thay đổi khi $x$ tăng. Tại sao diện tích tăng nhanh hơn khi $x$ lớn?" explanation="Khi tăng $x$ thêm $\Delta x$ nhỏ, diện tích thêm vào xấp xỉ $f(x) \cdot \Delta x$. Vì $f(t) = 2t$ đồng biến, $f(x)$ lớn hơn khi $x$ lớn, nên mỗi &quot;lát&quot; mới đóng góp diện tích lớn hơn. Tốc độ tích lũy phụ thuộc giá trị của $f$ tại cận trên.">
+    <Option value="a">Vì $f(t) = 2t$ tăng — ở $x$ lớn hơn, "lát" diện tích mới cao hơn nên đóng góp nhiều hơn</Option>
+    <Option value="b">Vì khoảng $[0, x]$ rộng hơn</Option>
+    <Option value="c">Vì $F$ là hàm bậc ba</Option>
+    <Option value="d">Diện tích tăng đều, không nhanh hơn</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-l6-q7" question="Lượng nước trong bể tính từ lúc mở van ($t = 0$) là $W(t) = \int_0^t r(s)\,ds$ với $r(s)$ là lưu lượng (lít/phút). $W(10) = 50$ nghĩa là gì?" explanation="$W(t) = \int_0^t r(s)\,ds$ là hàm tích lũy — nó cho tổng lượng nước tích lũy từ $0$ đến $t$. $W(10) = 50$ nghĩa là tổng cộng $50$ lít đã chảy vào bể trong $10$ phút đầu, không phải lưu lượng tại thời điểm đó.">
+    <Option value="a">Lưu lượng tại phút $10$ là $50$ lít/phút</Option>
+    <Option value="b">Sau $10$ phút, bể đã nhận tổng cộng $50$ lít nước</Option>
+    <Option value="c">Bể chứa tối đa $50$ lít</Option>
+    <Option value="d">Lưu lượng trung bình là $50$ lít/phút</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-l6-q8" question="Cho $F(x) = \int_0^x f(t)\,dt$ và $G(x) = \int_0^x g(t)\,dt$. Nếu $f(t) > g(t) > 0$ trên $[0, 5]$, so sánh $F(5)$ và $G(5)$." explanation="Vì $f(t) > g(t) > 0$ trên $[0, 5]$, tại mỗi $t$ hàm $f$ đóng góp diện tích lớn hơn $g$. Tích lũy trên cùng khoảng, $F(5) = \int_0^5 f > \int_0^5 g = G(5)$. Tích phân bảo toàn bất đẳng thức giữa các hàm.">
+    <Option value="a">$F(5) > G(5)$</Option>
+    <Option value="b">$F(5) < G(5)$</Option>
+    <Option value="c">$F(5) = G(5)$</Option>
+    <Option value="d">Không so sánh được</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-l6-q9" question="Biểu thức $\int_a^x f(t)\,dt$ tạo ra đối tượng toán học loại nào?" explanation="Khi cận trên là biến $x$, kết quả phụ thuộc vào $x$ — mỗi giá trị $x$ cho một tích phân khác. Do đó $F(x) = \int_a^x f(t)\,dt$ là hàm theo $x$. Biến $t$ là biến câm đã bị tích phân &quot;tiêu thụ&quot;; $x$ là biến tự do duy nhất.">
+    <Option value="a">Một số (giống $\int_a^b f(x)\,dx$)</Option>
+    <Option value="b">Một hàm số theo biến $x$</Option>
+    <Option value="c">Một hàm số theo biến $t$</Option>
+    <Option value="d">Một đạo hàm</Option>
+  </Quiz>
+</Slide>

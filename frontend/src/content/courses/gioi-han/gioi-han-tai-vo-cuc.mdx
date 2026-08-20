@@ -1,0 +1,173 @@
+---
+id: 'gioi-han-tai-vo-cuc'
+title: 'Giới Hạn Tại Vô Cực'
+description: 'Hàm có thể ổn định ngay cả khi đầu vào tăng không giới hạn — tiệm cận ngang.'
+courseSlug: 'gioi-han'
+chapterSlug: 'gioi-han-nang-cao'
+order: 0
+xp: 15
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Zoom ra xa (tăng tầm nhìn)"
+      },
+      "parameter": {
+        "min": 1,
+        "max": 100,
+        "initial": 1
+      },
+      "system": {
+        "resolution": 300,
+        "view": {
+          "xMin": -0.5,
+          "xMax": 10,
+          "yMin": -0.5,
+          "yMax": 4
+        },
+        "curves": [
+          {
+            "expr": "(2 * p * x + 1) / (p * x + 3)",
+            "color": "#3b82f6",
+            "label": "f(x) = (2x+1)/(x+3)",
+            "width": 3
+          },
+          {
+            "expr": "2",
+            "color": "#10b981",
+            "label": "y = 2 (tiệm cận ngang)",
+            "style": "dashed",
+            "width": 2
+          }
+        ]
+      },
+      "reflections": [
+        {
+          "id": "changing",
+          "trigger": "state.currentValue < 5",
+          "text": "Tầm nhìn còn gần — đường cong xanh đang cong và chưa ổn định. Kéo thanh trượt sang phải để 'zoom ra xa', xem hàm tiến về đâu khi x rất lớn!"
+        },
+        {
+          "id": "flattening",
+          "trigger": "state.currentValue > 15 && state.currentValue < 50",
+          "text": "Đường cong xanh bắt đầu phẳng ra, tiến gần đường xanh lá y = 2. Khi x lớn, phần +1 và +3 trong phân số ngày càng nhỏ so với 2x và x."
+        },
+        {
+          "id": "flat",
+          "trigger": "state.currentValue > 70",
+          "text": "Gần như phẳng tại y = 2! Khi x rất lớn: (2x+1)/(x+3) ≈ 2x/x = 2. Đường y = 2 gọi là tiệm cận ngang — đường mà đồ thị tiến về khi x chạy ra vô cực."
+        }
+      ],
+      "prompt": "Đồ thị xanh là hàm f(x) = (2x+1)/(x+3). Đường xanh lá nét đứt là y = 2.\n\n🎯 Kéo thanh trượt sang phải để 'zoom ra xa' — như bạn lùi camera ra để thấy x lớn hơn.\n\nKhi x càng lớn, đường cong xanh có tiến về đường xanh lá không?\nNếu có → đó là giới hạn tại vô cực!"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Khi x chạy ra vô cực
+  
+  $\lim_{x \to \infty} f(x) = L$ nghĩa là: khi $x$ tăng không giới hạn, $f(x)$ ổn định gần $L$. Đường $y = L$ gọi là <b>tiệm cận ngang</b> — đường cong không chạm nhưng tiến về từ xa.
+  
+  Trực giác: khi $x$ rất lớn, những số hạng bậc thấp (như +1, +3) trở nên vô nghĩa so với số hạng bậc cao. Chỉ hệ số chủ đạo quyết định hành vi dài hạn.
+</Slide>
+
+<Slide title="Slide 3">
+  ### Kỹ thuật: chia cho lũy thừa cao nhất
+  
+  Với $\frac{2x+1}{x+3}$: chia cả tử và mẫu cho $x$ (số hạng bậc cao nhất): $\frac{2 + 1/x}{1 + 3/x}$. Khi $x \to \infty$: $1/x \to 0$ và $3/x \to 0$, nên tỉ lệ → $2/1 = 2$.
+  
+  Quy tắc nhanh: <b>cùng bậc</b> → tỉ lệ hệ số chủ đạo. <b>Tử bậc cao hơn</b> → $\infty$. <b>Mẫu bậc cao hơn</b> → 0.
+  ```json
+  {
+    "id": "math-vo-cuc",
+    "type": "math",
+    "content": {
+      "latex": "\\lim_{x \\to \\infty} \\frac{2x + 1}{x + 3} = \\frac{2}{1} = 2"
+    }
+  }
+  ```
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-l9-1" question="Khi phóng to, $f(x)$ tiến về giá trị nào?" explanation="Đồ thị phẳng dần tại $y = 2$.">
+    <Option value="a">0</Option>
+    <Option value="b">1</Option>
+    <Option value="c">2</Option>
+    <Option value="d">$\infty$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-l9-2" question="$\lim_{x \to \infty} 1/x = $?" explanation="$1/x$ giảm dần về 0 khi $x$ tăng.">
+    <Option value="a">1</Option>
+    <Option value="b">0</Option>
+    <Option value="c">$\infty$</Option>
+    <Option value="d">Không tồn tại</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-l9-3" question="$\lim_{x \to \infty} \frac{3x^2 + 1}{x^2 - 2} = $?" explanation="Cùng bậc 2. Tỉ lệ hệ số chủ đạo: $3/1 = 3$.">
+    <Option value="a">1</Option>
+    <Option value="b">3</Option>
+    <Option value="c">$-1$</Option>
+    <Option value="d">0</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-l9-4" question="$\lim_{x \to \infty} \frac{x + 1}{x^2 + 1} = $?" explanation="Bậc tử (1) < bậc mẫu (2) → tỉ lệ → 0.">
+    <Option value="a">1</Option>
+    <Option value="b">$\infty$</Option>
+    <Option value="c">0</Option>
+    <Option value="d">Không tồn tại</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-l9-5" question="$\lim_{x \to \infty} \frac{x^2 + 3}{2x + 1} = $?" explanation="Bậc tử (2) > bậc mẫu (1) → tử thắng → $\infty$.">
+    <Option value="a">0</Option>
+    <Option value="b">$1/2$</Option>
+    <Option value="c">$\infty$ (tử tăng nhanh hơn)</Option>
+    <Option value="d">3</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-l9-6" question="Khi bậc tử = bậc mẫu, giới hạn tại $\infty$ là:" explanation="Chia cho $x^n$ → còn lại tỉ lệ hệ số bậc cao nhất.">
+    <Option value="a">Luôn 1</Option>
+    <Option value="b">Tỉ lệ hệ số chủ đạo</Option>
+    <Option value="c">0</Option>
+    <Option value="d">Không tồn tại</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-l9-7" question="Tiệm cận ngang $y = L$ nghĩa là:" explanation="Tiệm cận ngang = hành vi dài hạn, không phải tính chất cục bộ.">
+    <Option value="a">$f$ không bao giờ đạt $L$</Option>
+    <Option value="b">$f(x) \to L$ khi $x \to \infty$ hoặc $x \to -\infty$</Option>
+    <Option value="c">$f(L) = 0$</Option>
+    <Option value="d">Đồ thị nằm ngang khắp nơi</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-l9-8" question="$\lim_{x \to -\infty} \frac{2x + 1}{x + 3} = $?" explanation="Chia cho $x$: $(2 + 1/x)/(1 + 3/x) \to 2/1 = 2$. Giống $+\infty$.">
+    <Option value="a">$-2$</Option>
+    <Option value="b">2</Option>
+    <Option value="c">0</Option>
+    <Option value="d">Không tồn tại</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-l9-9" question="Chi phí trung bình mỗi đơn vị = $(1000 + 2x)/x$. Khi $x \to \infty$, chi phí → ?" explanation="$(1000 + 2x)/x = 1000/x + 2 \to 0 + 2 = 2$.">
+    <Option value="a">$1000</Option>
+    <Option value="b">$2</Option>
+    <Option value="c">$0</Option>
+    <Option value="d">$\infty$</Option>
+  </Quiz>
+</Slide>

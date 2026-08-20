@@ -1,0 +1,157 @@
+---
+id: 'thu-nho-khoang-cach'
+title: 'Thu Nhỏ Khoảng — Cái Nhìn Đầu Tiên'
+description: 'Khi Δt → 0, độ dốc cát tuyến hội tụ — trực giác tiền giới hạn.'
+courseSlug: 'chuyen-dong'
+chapterSlug: 'tien-den-gioi-han'
+order: 0
+xp: 15
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="A" manifest={
+    {
+      "interactionType": "A",
+      "parameterSpec": {
+        "resolutionLevels": [
+          1,
+          2,
+          5,
+          10,
+          20,
+          50,
+          100
+        ]
+      },
+      "systemSpec": {
+        "function": "x*x",
+        "derivative": "2*x",
+        "domain": [
+          0,
+          3
+        ],
+        "range": [
+          -0.5,
+          9.5
+        ],
+        "anchor": 1
+      },
+      "reflectionSpec": {
+        "triggers": [
+          {
+            "condition": "state.resolution <= 1",
+            "message": "Δt = 1 — khoảng rộng: cát tuyến từ t=1 đến t=2. Độ dốc = (4−1)/1 = 3. Rất xa giá trị đích."
+          },
+          {
+            "condition": "state.resolution == 2",
+            "message": "Δt = 0.5 — cát tuyến từ t=1 đến t=1.5. Độ dốc = (2.25−1)/0.5 = 2.5. Đang tiến về 2."
+          },
+          {
+            "condition": "state.resolution >= 5 && state.resolution < 10",
+            "message": "Δt ≈ 0.2 — độ dốc ≈ 2.2. Hội tụ rõ ràng: mỗi lần kéo thêm một bậc, giá trị gần hơn."
+          },
+          {
+            "condition": "state.resolution >= 10 && state.resolution < 50",
+            "message": "Δt ≈ 0.1 — độ dốc ≈ 2.1. Dãy: 3, 2.5, 2.2, 2.1… xu hướng tiến về 2 là không thể phủ nhận."
+          },
+          {
+            "condition": "state.resolution >= 50 && state.resolution < 100",
+            "message": "Δt ≈ 0.02 — độ dốc ≈ 2.02. Gần ổn định: cát tuyến gần như trùng tiếp tuyến tại t = 1."
+          },
+          {
+            "condition": "state.resolution >= 100",
+            "message": "Δt = 0.01 — độ dốc ≈ 2.01. Sai số gần bằng 0. Giá trị hội tụ về 2 — đây là tốc độ tức thời tại t = 1."
+          }
+        ]
+      }
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Dãy số hội tụ về 2
+  
+  Với $f(t) = t^2$ tại $a = 1$, lưới Đầu tiên của Δt và độ dốc cát tuyến: $\Delta t = 1 \to 3$; $0.5 \to 2.5$; $0.2 \to 2.2$; $0.1 \to 2.1$; $0.02 \to 2.02$; $0.01 \to 2.01$.
+  
+  Công thức chính xác: khi $\Delta t \to 0$, độ dốc = $\frac{(1+\Delta t)^2 - 1}{\Delta t} = 2 + \Delta t \to 2$. Các giá trị tiến đến 2 — nhưng không bao giờ bằng 2 khi $\Delta t > 0$. Hiện tượng này có tên gọi chính xác: <b>giới hạn</b>.
+</Slide>
+
+<Slide title="Slide 3">
+  ### Ý nghĩa cho chuyển động
+  
+  Độ dốc hội tụ biểu thị cát tuyến đang tiến đến <b>tiếp tuyến</b> tại $t = 1$ — đường thẳng duy nhất chạm đường cong tại điểm đó mà không cắt qua.
+  
+  Điều này gợi ý rằng ngay tại một thời điểm duy nhất, chuyển động vẫn có "vận tốc" xác định. Module 2 sẽ trang bị cho ta công cụ để chính xác hoá giá trị này.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-l7-1" question="$\Delta t = 0.5$ cho độ dốc ≈ 2.5, $\Delta t = 0.1$ cho ≈ 2.1. Quy luật gì?" explanation="Các giá trị: 3, 2.5, 2.1, 2.01, 2.001... — rõ ràng hội tụ về 2.">
+    <Option value="a">Độ dốc tăng không giới hạn.</Option>
+    <Option value="b">Độ dốc dao động.</Option>
+    <Option value="c">Độ dốc giảm dần về giá trị ổn định gần 2.</Option>
+    <Option value="d">Độ dốc trở nên không xác định.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-l7-2" question="Khi $\Delta t \to 0$, cát tuyến tiến đến:" explanation="Cát tuyến xoay quanh điểm neo và tiến tới tiếp tuyến khi $\Delta t \to 0$.">
+    <Option value="a">Trục hoành.</Option>
+    <Option value="b">Trục tung.</Option>
+    <Option value="c">Trung bình của mọi độ dốc cát tuyến.</Option>
+    <Option value="d">Tiếp tuyến tại điểm neo.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-l7-3" question="Dãy độ dốc: 3, 2.5, 2.1, 2.01, 2.001. Giá trị nào chúng tiến tới?" explanation="Mỗi số đều gần 2 hơn số trước — hội tụ rõ ràng về 2.">
+    <Option value="a">0</Option>
+    <Option value="b">3</Option>
+    <Option value="c">2.5</Option>
+    <Option value="d">2</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-l7-4" question="Tại sao không thể tính $\Delta f / \Delta t$ khi $\Delta t = 0$?" explanation="$\Delta t = 0 \Rightarrow$ chia cho 0, biểu thức không xác định.">
+    <Option value="a">Vì $\Delta f$ sẽ trở nên âm.</Option>
+    <Option value="b">Vì công thức yêu cầu $b > a$.</Option>
+    <Option value="c">Vì chia cho 0 không xác định — khoảng có chiều dài 0 không chứa chuyển động.</Option>
+    <Option value="d">Vì không đọc được đồ thị tại một điểm.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-l7-5" question="Khi điểm cuối cát tuyến tiến gần đến $a = 1$, cát tuyến:" explanation="Điểm phải trượt dần về điểm neo; cát tuyến xoay về vị trí tiếp tuyến.">
+    <Option value="a">Trở nên dài hơn.</Option>
+    <Option value="b">Trở nên nằm ngang.</Option>
+    <Option value="c">Xoay về vị trí giới hạn — tiếp tuyến.</Option>
+    <Option value="d">Biến mất khỏi đồ thị.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-l7-6" question="Độ dốc ổn định tại 2 khi $\Delta t \to 0$. Điều này gợi ý gì về vật lý?" explanation="Sự ổn định = dấu hiệu rằng &quot;vận tốc tại một thời điểm&quot; là khái niệm có nghĩa.">
+    <Option value="a">Vật đứng yên tại $t = 1$.</Option>
+    <Option value="b">Tốc độ trung bình trên khoảng lớn là 2 m/s.</Option>
+    <Option value="c">Vật có vận tốc tức thời xác định tại $t = 1$ — xấp xỉ 2 m/s.</Option>
+    <Option value="d">Hàm vị trí bằng 2 tại $t = 1$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-l7-7" question="Nếu mọi điểm neo trên đường cong trơn đều có độ dốc hội tụ, điều gì có thể suy ra?" explanation="Đây là trực giác cho khái niệm đạo hàm — hàm cho biết tốc độ thay đổi tại mỗi điểm.">
+    <Option value="a">Mọi đường cong trơn có độ dốc hằng số.</Option>
+    <Option value="b">Mọi đường cong trơn có độ dốc tiếp tuyến xác định tại mỗi điểm — một hàm mô tả tốc độ thay đổi tức thời.</Option>
+    <Option value="c">Độ dốc luôn là 2 cho mọi hàm.</Option>
+    <Option value="d">Khái niệm này chỉ áp dụng cho parabol.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-l7-8" question="Hiện tượng &quot;đại lượng tiến đến giá trị ổn định khi khoảng thu nhỏ&quot; sẽ được gọi là:" explanation="Bài học này xây dựng trực giác. Module 2 sẽ đặt tên và chính xác hoá hiện tượng này.">
+    <Option value="a">Vận tốc trung bình.</Option>
+    <Option value="b">Độ dịch chuyển.</Option>
+    <Option value="c">Diện tích dưới đường cong.</Option>
+    <Option value="d">Giới hạn — được giới thiệu chính thức ở Module 2.</Option>
+  </Quiz>
+</Slide>

@@ -1,0 +1,189 @@
+---
+id: 'dinh-nghia-epsilon-delta'
+title: 'Định Nghĩa ε–δ'
+description: 'ε–δ không tính giới hạn — nó chứng nhận giới hạn: với mọi dung sai đầu ra, tồn tại dung sai đầu vào tương ứng.'
+courseSlug: 'gioi-han'
+chapterSlug: 'gioi-han-nang-cao'
+order: 0
+xp: 20
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Thu hẹp khoảng cách hai đường đỏ"
+      },
+      "parameter": {
+        "min": 0.02,
+        "max": 2,
+        "initial": 2
+      },
+      "system": {
+        "resolution": 200,
+        "view": {
+          "xMin": -0.5,
+          "xMax": 2.5,
+          "yMin": 0,
+          "yMax": 6
+        },
+        "curves": [
+          {
+            "expr": "2 * x + 1",
+            "color": "#3b82f6",
+            "label": "f(x) = 2x + 1",
+            "width": 3
+          },
+          {
+            "expr": "3 + p",
+            "color": "#ef4444",
+            "label": "Biên trên",
+            "style": "dashed",
+            "width": 1
+          },
+          {
+            "expr": "3 - p",
+            "color": "#ef4444",
+            "label": "Biên dưới",
+            "style": "dashed",
+            "width": 1
+          },
+          {
+            "expr": "3",
+            "color": "#10b981",
+            "label": "Giới hạn L = 3",
+            "style": "dashed",
+            "width": 2
+          }
+        ]
+      },
+      "reflections": [
+        {
+          "id": "big-eps",
+          "trigger": "state.currentValue > 1",
+          "text": "Khoảng cách rộng ({p}). Đường cong xanh nằm thoải mái giữa hai đường đỏ. Hãy thu hẹp xem đường cong có thoát ra không!"
+        },
+        {
+          "id": "med-eps",
+          "trigger": "state.currentValue > 0.1 && state.currentValue < 0.5",
+          "text": "Khoảng cách hẹp rồi ({p})! Gần x = 1, đường cong xanh vẫn nằm giữa hai đường đỏ. Bạn luôn có thể giữ f(x) gần L = 3!"
+        },
+        {
+          "id": "small-eps",
+          "trigger": "state.currentValue < 0.08",
+          "text": "Cực kỳ hẹp ({p})! Nhưng đường cong vẫn nằm bên trong. Dù bạn thu hẹp bao nhiêu, luôn giữ được f(x) gần 3. Đó là ý nghĩa của giới hạn!"
+        }
+      ],
+      "prompt": "Hãy tưởng tượng một thử thách: ai đó yêu cầu 'giữ f(x) nằm gần giá trị L = 3' — tức là giữa hai đường đỏ.\n\n🔴 Hai đường đỏ = biên trên và biên dưới quanh L = 3.\n🔵 Đường xanh = đồ thị hàm f(x) = 2x + 1.\n\n🎯 Kéo thanh trượt để thu hẹp hai đường đỏ. Dù hẹp đến mấy, đường cong xanh gần x = 1 có luôn nằm bên trong không?\nNếu có → giới hạn tồn tại và bằng 3!"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Định nghĩa chính thức — trò chơi ε–δ
+  
+  Tưởng tượng một trò chơi: đối thủ thách bạn '$f(x)$ có thể nằm gần $L$ trong phạm vi $\varepsilon$?' Bạn phải tìm vùng $\delta$ quanh $a$ sao cho mọi $x$ trong vùng đó đều thỏa mãn.
+  
+  $\lim_{x \to a} f(x) = L$ nghĩa là: <b>với mọi</b> $\varepsilon > 0$ (dù nhỏ đến đâu), <b>tồn tại</b> $\delta > 0$ sao cho $0 < |x - a| < \delta \Rightarrow |f(x) - L| < \varepsilon$.
+  
+  Trong tương tác: $f(x) = 2x + 1$, $a = 1$, $L = 3$. Với mỗi $\varepsilon$, chọn $\delta = \varepsilon/2$ luôn hoạt động vì $|f(x) - 3| = |2x - 2| = 2|x - 1| < 2\delta = \varepsilon$.
+  ```json
+  {
+    "id": "math-ed",
+    "type": "math",
+    "content": {
+      "latex": "\\forall \\varepsilon > 0,\\ \\exists \\delta > 0:\\ 0 < |x - a| < \\delta \\Rightarrow |f(x) - L| < \\varepsilon"
+    }
+  }
+  ```
+</Slide>
+
+<Slide title="Slide 3">
+  ### Chứng nhận, không phải tính toán
+  
+  ε–δ không phải công cụ <b>tìm</b> giới hạn — nó <b>chứng nhận</b> giới hạn. Bạn dùng đại số (rút gọn, quy tắc) để đoán $L$, rồi dùng ε–δ để chứng minh đoán đúng.
+  
+  Điều kiện $0 < |x - a|$ rất quan trọng: nó loại trừ $x = a$ khỏi xem xét, nhắc lại rằng giới hạn xét hành vi <b>gần</b> điểm, không phải tại điểm.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-l10-1" question="Khi thu nhỏ δ, δ phù hợp có luôn tồn tại không?" explanation="Với $f(x) = 2x+1$: $|f(x) - 3| = 2|x-1|$. Chọn $\delta = \varepsilon/2$ luôn đủ.">
+    <Option value="a">Không — dưới $\varepsilon = 0.1$ thì thất bại</Option>
+    <Option value="b">Có — $\delta = \varepsilon/2$ luôn hoạt động</Option>
+    <Option value="c">Chỉ với ε nguyên</Option>
+    <Option value="d">δ cố định tại 1</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-l10-2" question="Trong ε–δ, ai chọn ε?" explanation="ε là thử thách: 'Tôi muốn $f(x)$ nằm trong ε quanh $L$.' Ta phải đáp lại bằng δ.">
+    <Option value="a">Hàm số</Option>
+    <Option value="b">Đối thủ / thử thách — ε được cho trước</Option>
+    <Option value="c">Nhà toán học chọn cả hai</Option>
+    <Option value="d">ε luôn = 0.01</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-l10-3" question="Ai đáp lại bằng δ?" explanation="δ là phản hồi: 'Nếu $x$ nằm trong δ quanh $a$, thì $f(x)$ nằm trong ε quanh $L$.'">
+    <Option value="a">Đối thủ</Option>
+    <Option value="b">Chứng minh — δ là phản hồi cho thấy giới hạn đúng</Option>
+    <Option value="c">δ ngẫu nhiên</Option>
+    <Option value="d">δ = ε luôn</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-l10-4" question="$f(x) = 2x+1$, $a = 1$, $L = 3$. Nếu $\varepsilon = 0.1$, tìm $\delta$:" explanation="$|2x+1-3| = 2|x-1| < 0.1 \Rightarrow |x-1| < 0.05$.">
+    <Option value="a">$\delta = 0.1$</Option>
+    <Option value="b">$\delta = 0.05$</Option>
+    <Option value="c">$\delta = 0.2$</Option>
+    <Option value="d">$\delta = 1$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-l10-5" question="Cùng hàm. $\varepsilon = 0.5 \Rightarrow \delta = $?" explanation="$2|x-1| < 0.5 \Rightarrow |x-1| < 0.25$.">
+    <Option value="a">0.5</Option>
+    <Option value="b">1</Option>
+    <Option value="c">0.25</Option>
+    <Option value="d">0.1</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-l10-6" question="Điều kiện $0 < |x - a|$ (không chỉ $|x-a| < \delta$) có mặt vì:" explanation="Giới hạn xét hành vi gần $a$, không phải tại $a$. Bỏ $x = a$ ra khỏi xem xét.">
+    <Option value="a">$x = a$ sẽ khiến $\delta = 0$</Option>
+    <Option value="b">Giới hạn loại trừ $x = a$ — chỉ xét lân cận</Option>
+    <Option value="c">Chia cho 0</Option>
+    <Option value="d">$x = a$ nằm ngoài miền</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-l10-7" question="Nếu không tìm được $\delta$ cho một $\varepsilon > 0$ nào đó:" explanation="Chỉ CẦN MỘT ε thất bại để phủ nhận. ε–δ yêu cầu MỌI ε.">
+    <Option value="a">Giới hạn bằng giá trị khác</Option>
+    <Option value="b">Giới hạn không bằng $L$ — chứng nhận ε–δ thất bại</Option>
+    <Option value="c">ε quá nhỏ</Option>
+    <Option value="d">Cần hàm tốt hơn</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-l10-8" question="$f(x) = 3x$, $a = 2$, $L = 6$, $\varepsilon = 0.3$. $\delta = $?" explanation="$|3x - 6| = 3|x-2| < 0.3 \Rightarrow |x-2| < 0.1$.">
+    <Option value="a">0.3</Option>
+    <Option value="b">0.1</Option>
+    <Option value="c">0.9</Option>
+    <Option value="d">0.01</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-l10-9" question="Thợ máy cần bu-lông sai số $\varepsilon = 0.01$ mm. ε–δ nói:" explanation="Điều chỉnh đầu vào (δ) đủ nhỏ → đầu ra nằm trong dung sai (ε). Chính xác như ε–δ.">
+    <Option value="a">Không thể</Option>
+    <Option value="b">Nếu máy đủ chính xác (δ nhỏ), dung sai ε luôn đạt được</Option>
+    <Option value="c">Bu-lông lớn dễ hơn</Option>
+    <Option value="d">Chỉ máy hoàn hảo</Option>
+  </Quiz>
+</Slide>

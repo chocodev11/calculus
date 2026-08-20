@@ -1,0 +1,182 @@
+---
+id: 'thay-doi-rong'
+title: 'Thay Đổi Ròng'
+description: 'Tích phân hàm có dấu thay đổi: vùng dương và âm triệt tiêu nhau cho thay đổi ròng.'
+courseSlug: 'tich-phan'
+chapterSlug: 'nguyen-ham-va-ung-dung'
+order: 0
+xp: 10
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="E" manifest={
+    {
+      "interactionType": "E",
+      "parameterSpec": {
+        "structure": {
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "initial": 0.3,
+          "label": "Phân vùng dấu"
+        }
+      },
+      "systemSpec": {
+        "baseValues": {},
+        "conservedObject": {
+          "type": "expression",
+          "expression": "0",
+          "variables": []
+        }
+      },
+      "representationSpec": {
+        "mode": "geometricSplit",
+        "geometryBase": {
+          "type": "regionBetweenCurves",
+          "f": "sin(x)",
+          "g": "0",
+          "domain": [
+            0,
+            6.2832
+          ]
+        },
+        "splitSpec": {
+          "type": "signPartition"
+        },
+        "viewBox": {
+          "xMin": -0.5,
+          "xMax": 7,
+          "yMin": -1.5,
+          "yMax": 1.5
+        }
+      },
+      "reflectionSpec": {
+        "triggers": [
+          {
+            "type": "structureBelow",
+            "value": 0.3,
+            "message": "Vùng dương $(0, \\pi)$: $\\int_0^{\\pi} \\sin(x)\\,dx = 2$. Khi hàm dương, tích phân đo diện tích phía trên trục $x$."
+          },
+          {
+            "type": "structureNear",
+            "value": 0.5,
+            "tolerance": 0.05,
+            "message": "Ranh giới $x = \\pi$: $\\sin(x)$ đổi dấu. Từ đây, mỗi phần diện tích mang dấu âm — tích phân bắt đầu giảm."
+          },
+          {
+            "type": "structureAbove",
+            "value": 0.85,
+            "message": "Vùng âm trên $(\\pi, 2\\pi)$ có giá trị $-2$. Tổng đại số: $2 + (-2) = 0$. Thay đổi ròng bằng không — hai vùng triệt tiêu!"
+          }
+        ]
+      },
+      "prompt": "Kéo đường chia qua lại. Quan sát A₁ và A₂ — tổng của chúng có gì bất ngờ?"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Định lý thay đổi ròng
+  
+  Bạn vừa thấy: $\int_0^{2\pi} \sin(x)\,dx = 0$, dù hàm không bằng $0$ bất kỳ đâu trên $(0, 2\pi)$. Tích phân xác định là **tổng đại số có dấu**: phần dương cộng, phần âm trừ. Kết quả là **thay đổi ròng** (net change), không phải tổng diện tích.
+  
+  Nếu $f(x) = F'(x)$, thì $\int_a^b F'(x)\,dx = F(b) - F(a)$. Đây là **Định lý Thay đổi Ròng**: tích phân tốc độ biến thiên cho ra thay đổi tổng thể. Ví dụ: tích phân vận tốc cho độ dịch chuyển, không phải quãng đường.
+  ```json
+  {
+    "id": "math-net-change",
+    "type": "math",
+    "content": {
+      "latex": "\\int_a^b F'(x)\\,dx = F(b) - F(a) \\quad \\text{(thay đổi ròng)}"
+    }
+  }
+  ```
+</Slide>
+
+<Slide title="Slide 3">
+  ### Diện tích vs. Tích phân
+  
+  Phân biệt hai khái niệm: **tích phân** $\int_a^b f(x)\,dx$ có dấu (dương khi $f > 0$, âm khi $f < 0$). **Diện tích** giữa đồ thị và trục $x$ luôn không âm: $A = \int_a^b |f(x)|\,dx$.
+  
+  Với $\sin(x)$ trên $[0, 2\pi]$: tích phân ròng $= 0$, nhưng tổng diện tích $= 4$. Hai đại lượng này trả lời hai câu hỏi khác nhau: "thay đổi bao nhiêu?" vs. "di chuyển bao xa?".
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-l11-q1" question="Trong tương tác, tại sao $\int_0^{2\pi} \sin(x)\,dx = 0$ dù $\sin(x)$ không bằng hằng số $0$?" explanation="Tích phân là tổng đại số có dấu. Phần dương ($+2$) và phần âm ($-2$) cộng lại cho $0$. Đây không phải vì hàm tuần hoàn (tích phân trên nửa chu kỳ $\neq 0$), mà vì hai vùng đối xứng về diện tích.">
+    <Option value="a">Vì $\sin(x)$ tuần hoàn nên tích phân luôn bằng $0$</Option>
+    <Option value="b">Vì vùng dương trên $(0,\pi)$ có diện tích $2$ và vùng âm trên $(\pi, 2\pi)$ có diện tích $-2$, triệt tiêu nhau</Option>
+    <Option value="c">Vì $\sin(0) = \sin(2\pi) = 0$</Option>
+    <Option value="d">Vì hàm $\sin$ đối xứng qua gốc tọa độ</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-l11-q2" question="Ô tô có vận tốc $v(t)$ thay đổi dấu (đi tới rồi lùi). $\int_0^T v(t)\,dt$ cho biết điều gì?" explanation="Tích phân vận tốc cho **độ dịch chuyển**: $\int_0^T v(t)\,dt = s(T) - s(0)$. Khi $v < 0$ (đi lùi), phần đó bị trừ. Muốn quãng đường tổng cộng, cần $\int_0^T |v(t)|\,dt$.">
+    <Option value="a">Tổng quãng đường đã đi</Option>
+    <Option value="b">Độ dịch chuyển ròng — vị trí cuối trừ vị trí đầu</Option>
+    <Option value="c">Tốc độ trung bình</Option>
+    <Option value="d">Gia tốc tại thời điểm $T$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-l11-q3" question="Tính $\int_0^{2\pi} |\sin(x)|\,dx$." explanation="$|\sin(x)|$ lật phần âm lên dương. Diện tích mỗi nửa chu kỳ $= 2$, tổng $= 2 + 2 = 4$. So sánh: $\int_0^{2\pi} \sin(x)\,dx = 0$ (thay đổi ròng) vs. $\int_0^{2\pi} |\sin(x)|\,dx = 4$ (tổng diện tích).">
+    <Option value="a">$0$</Option>
+    <Option value="b">$2$</Option>
+    <Option value="c">$4$</Option>
+    <Option value="d">$2\pi$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-l11-q4" question="Nếu $\int_0^5 f(x)\,dx = 3$, ta biết chắc điều gì?" explanation="Tích phân $= 3$ nghĩa là tổng đại số dương. Có thể $f$ dương mọi nơi (diện tích đúng bằng $3$), hoặc $f$ đổi dấu nhưng phần dương hơn phần âm $3$ đơn vị. Không đủ thông tin kết luận $f > 0$.">
+    <Option value="a">$f(x) > 0$ trên toàn bộ $[0,5]$</Option>
+    <Option value="b">Diện tích dưới đồ thị bằng $3$</Option>
+    <Option value="c">Thay đổi ròng bằng $3$ — phần dương vượt phần âm đúng $3$ đơn vị</Option>
+    <Option value="d">Giá trị trung bình của $f$ bằng $3$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-l11-q5" question="Dân số thành phố thay đổi với tốc độ $r(t) = 100\sin(t)$ (người/năm). Sau $2\pi$ năm, dân số thay đổi bao nhiêu?" explanation="$\int_0^{2\pi} 100\sin(t)\,dt = 100 \cdot \int_0^{2\pi} \sin(t)\,dt = 100 \cdot 0 = 0$. Giai đoạn tăng trưởng $(0, \pi)$ bị triệt tiêu bởi giai đoạn suy giảm $(\pi, 2\pi)$. Dân số dao động nhưng trở về ban đầu.">
+    <Option value="a">Tăng $200$ người</Option>
+    <Option value="b">Giảm $200$ người</Option>
+    <Option value="c">Không đổi — thay đổi ròng bằng $0$</Option>
+    <Option value="d">Tăng $100$ người</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-l11-q6" question="Tính $\int_0^3 (2x - 4)\,dx$. Hàm $f(x) = 2x - 4$ đổi dấu tại $x = 2$." explanation="Nguyên hàm: $F(x) = x^2 - 4x$. $F(3) - F(0) = (9-12) - 0 = -3$. Vùng âm $[0,2]$ đóng góp $-4$, vùng dương $[2,3]$ đóng góp $+1$. Tổng ròng: $-4 + 1 = -3$.">
+    <Option value="a">$-3$</Option>
+    <Option value="b">$3$</Option>
+    <Option value="c">$-5$</Option>
+    <Option value="d">$5$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-l11-q7" question="Để tính **tổng diện tích** (không phải thay đổi ròng) giữa $f(x)$ và trục $x$ trên $[a,b]$, ta cần tính biểu thức nào?" explanation="$\int |f(x)|\,dx$ lật phần âm lên dương trước khi tích phân — mọi vùng đều đóng góp dương. Đáp án C sai: trị tuyệt đối của tổng $\neq$ tổng trị tuyệt đối (ví dụ: $|2 + (-2)| = 0 \neq |2| + |-2| = 4$).">
+    <Option value="a">$\int_a^b f(x)\,dx$</Option>
+    <Option value="b">$\int_a^b |f(x)|\,dx$</Option>
+    <Option value="c">$\left|\int_a^b f(x)\,dx\right|$</Option>
+    <Option value="d">$\int_a^b f(x)^2\,dx$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-l11-q8" question="Nhiệt độ phòng thay đổi với tốc độ $r(t) = t - 3$ (°C/giờ). Từ $t=0$ đến $t=6$, nhiệt độ phòng thay đổi bao nhiêu?" explanation="$\int_0^6 (t-3)\,dt = [t^2/2 - 3t]_0^6 = (18-18) - 0 = 0$. Ba giờ đầu nhiệt giảm (tốc độ âm), ba giờ sau nhiệt tăng (tốc độ dương). Hai giai đoạn triệt tiêu — thay đổi ròng bằng $0$.">
+    <Option value="a">Tăng $3$°C</Option>
+    <Option value="b">Giảm $3$°C</Option>
+    <Option value="c">Không đổi</Option>
+    <Option value="d">Tăng $9$°C</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-l11-q9" question="Nếu $F'(x) = f(x)$ và $f$ đổi dấu trên $[a,b]$, phát biểu nào đúng?" explanation="FTC không yêu cầu $f \geq 0$. Dù $f$ đổi dấu, $\int_a^b f(x)\,dx = F(b) - F(a)$ vẫn đúng. Kết quả phụ thuộc vào cân bằng giữa vùng dương và âm — có thể là bất kỳ số thực nào.">
+    <Option value="a">$\int_a^b f(x)\,dx$ luôn bằng $0$</Option>
+    <Option value="b">$\int_a^b f(x)\,dx = F(b) - F(a)$, có thể dương, âm hoặc $0$ tùy tỷ lệ vùng</Option>
+    <Option value="c">Không áp dụng được FTC khi $f$ đổi dấu</Option>
+    <Option value="d">$\int_a^b f(x)\,dx$ luôn dương</Option>
+  </Quiz>
+</Slide>

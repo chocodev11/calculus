@@ -1,0 +1,156 @@
+---
+id: 'gioi-han-tren-do-thi'
+title: 'Giới Hạn Trên Đồ Thị'
+description: 'Đọc giới hạn từ đồ thị — giới hạn là nơi đường cong tiến đến, không phải nơi điểm nằm.'
+courseSlug: 'gioi-han'
+chapterSlug: 'gioi-han-va-dai-so'
+order: 0
+xp: 10
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Kéo điểm đỏ ● lên xuống"
+      },
+      "parameter": {
+        "min": 0,
+        "max": 7,
+        "initial": 5
+      },
+      "system": {
+        "resolution": 200,
+        "view": {
+          "xMin": -0.5,
+          "xMax": 5,
+          "yMin": -0.5,
+          "yMax": 8
+        },
+        "model": "x + 1",
+        "point": {
+          "x": 2
+        },
+        "hole": {
+          "x": 2
+        }
+      },
+      "reflections": [
+        {
+          "id": "mismatch",
+          "trigger": "state.currentValue > 4 && state.currentValue < 6",
+          "text": "Bạn đặt điểm đỏ ● ở y = {p} — nhưng đường cong xanh tiến về y = 3 tại x = 2. Giới hạn = 3 (theo đường cong), không phải {p} (theo điểm đỏ)."
+        },
+        {
+          "id": "match",
+          "trigger": "state.currentValue > 2.8 && state.currentValue < 3.2",
+          "text": "Điểm đỏ ● nằm ngay trên đường cong! Khi f(2) = giới hạn = 3, ta nói hàm liên tục tại x = 2. Không có 'lỗ hổng' nào."
+        },
+        {
+          "id": "far",
+          "trigger": "state.currentValue > 6",
+          "text": "Điểm đỏ ● rất xa đường cong, nhưng giới hạn vẫn là 3! Giới hạn chỉ phụ thuộc vào đường cong tiến về đâu, không quan tâm điểm đỏ nằm ở đâu."
+        }
+      ],
+      "prompt": "Trên đồ thị có đường cong xanh y = x + 1 với một lỗ trống ○ tại x = 2.\n\n🔴 Điểm đỏ ● biểu thị giá trị f(2) — bạn có thể kéo nó lên xuống.\n🎯 Hỏi: Dù bạn kéo điểm đỏ đi đâu, giới hạn của hàm tại x = 2 có thay đổi không?\n\nGợi ý: Giới hạn = nơi đường cong hướng tới, không phải nơi điểm đỏ nằm!"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Đọc giới hạn = theo dõi đường cong
+  
+  Để tìm $\lim_{x \to a} f(x)$ từ đồ thị: <b>bỏ qua điểm</b> (●) tại $x = a$ và <b>đi theo đường cong</b> từ cả hai phía. Giá trị $y$ mà đường cong tiến đến chính là giới hạn.
+  
+  Trong tương tác: đường cong $y = x+1$ luôn tiến về $y = 3$ tại $x = 2$, bất kể bạn kéo điểm ● lên đâu. Điểm đó biểu diễn $f(2)$ — có thể khác giới hạn.
+</Slide>
+
+<Slide title="Slide 3">
+  ### Vòng tròn rỗng ○ và đặc ●
+  
+  Trên đồ thị: ○ tại $(a, L)$ nghĩa là đường cong tiến về $L$ nhưng $f(a) \neq L$ (hoặc không xác định). ● tại $(a, M)$ nghĩa là $f(a) = M$.
+  
+  Giới hạn phụ thuộc vào ○ (nơi đường cong hướng tới), không phải ● (nơi điểm nằm). Đây là lý do bạn có thể kéo ● tùy ý mà giới hạn không đổi.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-l4-1" question="Trong tương tác, $\lim_{x \to 2} f(x) = $?" explanation="Đường cong $y = x + 1$ tiến về $2 + 1 = 3$ tại $x = 2$.">
+    <Option value="a">5</Option>
+    <Option value="b">3</Option>
+    <Option value="c">2</Option>
+    <Option value="d">Không tồn tại</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-l4-2" question="Với thanh trượt ở vị trí mặc định, $f(2) = $?" explanation="Giá trị mặc định của thanh trượt là 5, nên $f(2) = 5$.">
+    <Option value="a">5</Option>
+    <Option value="b">3</Option>
+    <Option value="c">Không xác định</Option>
+    <Option value="d">0</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-l4-3" question="Giới hạn ≠ $f(2)$. Điều này nghĩa là:" explanation="Giới hạn tồn tại (= 3) nhưng $f(2) \neq 3$ → bất liên tục tháo được.">
+    <Option value="a">Đồ thị sai</Option>
+    <Option value="b">Hàm có bất liên tục tháo được tại $x = 2$</Option>
+    <Option value="c">Giới hạn không tồn tại</Option>
+    <Option value="d">$f$ không phải hàm hợp lệ</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-l4-4" question="Đồ thị: đường cong tiến về $y = 7$ từ hai phía tại $x = 4$ và $f(4) = 7$. $\lim_{x \to 4} f(x) = $?" explanation="Đường cong tiến về 7 và $f(4) = 7$ → giới hạn = 7.">
+    <Option value="a">7</Option>
+    <Option value="b">4</Option>
+    <Option value="c">Không tồn tại</Option>
+    <Option value="d">0</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-l4-5" question="Đường cong tiến về $y = 1$ từ trái, $y = 3$ từ phải tại $x = 5$. $\lim_{x \to 5} f(x) = $?" explanation="Giới hạn một phía: trái = 1 ≠ 3 = phải → giới hạn không tồn tại.">
+    <Option value="a">1</Option>
+    <Option value="b">3</Option>
+    <Option value="c">2</Option>
+    <Option value="d">Không tồn tại</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-l4-6" question="Vòng tròn rỗng ○ tại $(a, L)$ trên đồ thị nghĩa là:" explanation="○ = lỗ trên đường cong. Đường cong tiến đến đó nhưng hàm không nhận giá trị đó.">
+    <Option value="a">$f(a) = L$</Option>
+    <Option value="b">Đường cong tiến về $L$ nhưng $f(a) \neq L$ hoặc không xác định</Option>
+    <Option value="c">Giới hạn không tồn tại</Option>
+    <Option value="d">$f$ âm tại $a$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-l4-7" question="Đường cong trơn đi qua $(3, 6)$ không gián đoạn. $\lim_{x \to 3} f(x) = $?" explanation="Đường cong trơn → giới hạn = giá trị hàm = 6.">
+    <Option value="a">6</Option>
+    <Option value="b">3</Option>
+    <Option value="c">Không tồn tại</Option>
+    <Option value="d">Không đọc được</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-l4-8" question="Kim đồng hồ tốc độ tiến về 60 km/h nhưng màn hình lỗi hiện 45. 'Giới hạn' tốc độ là:" explanation="Giới hạn = nơi đại lượng tiến đến (60), không phải số đọc lỗi (45).">
+    <Option value="a">45</Option>
+    <Option value="b">60</Option>
+    <Option value="c">Trung bình</Option>
+    <Option value="d">Không xác định</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-l4-9" question="Để tìm $\lim_{x \to a} f(x)$ từ đồ thị:" explanation="Giới hạn = nơi đường cong tiến đến, đọc bằng cách theo dõi từ hai phía.">
+    <Option value="a">Đọc $f(a)$ từ điểm</Option>
+    <Option value="b">Đi theo đường cong từ hai phía và đọc nơi nó hội tụ</Option>
+    <Option value="c">Tính trung bình $f(a-1)$ và $f(a+1)$</Option>
+    <Option value="d">Tìm giao điểm với trục hoành</Option>
+  </Quiz>
+</Slide>

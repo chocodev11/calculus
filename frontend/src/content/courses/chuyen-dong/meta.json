@@ -1,0 +1,48 @@
+{
+  "id": "chuyen-dong",
+  "slug": "chuyen-dong",
+  "title": "Chuyển động, Tốc độ, Vận tốc, Thay đổi",
+  "description": "Xây dựng trực giác về thay đổi: vị trí, tốc độ, vận tốc, và tốc độ thay đổi — nền tảng cho giới hạn và đạo hàm.",
+  "illustration": "https://ds055uzetaobb.cloudfront.net/brioche/chapter/Proportional_Reasoning-5aofQr.png?width=204",
+  "icon": "Δ",
+  "color": "from-blue-500 to-indigo-700",
+  "category_slug": "giai-tich",
+  "difficulty": "beginner",
+  "is_published": true,
+  "is_featured": true,
+  "order_index": 0,
+  "chapters": [
+    {
+      "id": "tien-den-gioi-han",
+      "title": "Tiến đến giới hạn",
+      "description": "Thu nhỏ khoảng, hội tụ độ dốc, tổng quát hoá tốc độ thay đổi",
+      "order_index": 2,
+      "step_ids": [
+        "thu-nho-khoang-cach",
+        "toc-do-thay-doi-ngoai-chuyen-dong"
+      ]
+    },
+    {
+      "id": "van-toc-trung-binh",
+      "title": "Vận tốc trung bình",
+      "description": "Tốc độ trung bình, vận tốc có dấu, vận tốc trung bình là độ dốc cát tuyến",
+      "order_index": 1,
+      "step_ids": [
+        "toc-do-trung-binh-tren-khoang",
+        "van-toc-co-dau",
+        "van-toc-trung-binh-la-do-doc"
+      ]
+    },
+    {
+      "id": "vi-tri-va-toc-do",
+      "title": "Vị trí và tốc độ",
+      "description": "Hàm vị trí, đồ thị, tốc độ không đổi và thay đổi, quãng đường và độ dịch chuyển",
+      "order_index": 0,
+      "step_ids": [
+        "quang-duong-va-do-dich-chuyen",
+        "toc-do-khong-doi-va-thay-doi",
+        "vi-tri-theo-thoi-gian"
+      ]
+    }
+  ]
+}

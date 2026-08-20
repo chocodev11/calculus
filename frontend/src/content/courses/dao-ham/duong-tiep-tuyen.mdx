@@ -1,0 +1,174 @@
+---
+id: 'duong-tiep-tuyen'
+title: 'Đường tiếp tuyến và ý nghĩa hình học'
+description: 'Tiếp tuyến là đường thẳng duy nhất qua một điểm trên đồ thị có độ dốc bằng đạo hàm tại điểm đó.'
+courseSlug: 'dao-ham'
+chapterSlug: 'dinh-nghia-dao-ham'
+order: 0
+xp: 10
+---
+
+<Slide title="Slide 1">
+  <Sandbox type="B" manifest={
+    {
+      "interactionType": "B",
+      "meta": {
+        "parameterLabel": "Điểm neo $a$"
+      },
+      "parameter": {
+        "min": -2,
+        "max": 2,
+        "initial": 1
+      },
+      "system": {
+        "resolution": 300,
+        "view": {
+          "xMin": -3,
+          "xMax": 3,
+          "yMin": -1,
+          "yMax": 9
+        },
+        "curves": [
+          {
+            "expr": "x*x",
+            "color": "#3498db",
+            "label": "f(x) = x²",
+            "style": "solid",
+            "width": 2
+          },
+          {
+            "expr": "2*p*(x - p) + p*p",
+            "color": "#e74c3c",
+            "label": "Tiếp tuyến tại a",
+            "style": "solid",
+            "width": 2
+          }
+        ]
+      },
+      "reflections": [
+        {
+          "id": "neg",
+          "trigger": "state.currentValue < -1",
+          "text": "Tại $a < 0$, tiếp tuyến dốc xuống — $f'(a) < 0$. Đạo hàm âm nghĩa là hàm đang giảm."
+        },
+        {
+          "id": "zero",
+          "trigger": "state.currentValue > -0.15 && state.currentValue < 0.15",
+          "text": "Tại $a = 0$, tiếp tuyến nằm ngang — $f'(0) = 0$. Đây là điểm cực tiểu của parabol."
+        },
+        {
+          "id": "pos",
+          "trigger": "state.currentValue > 1.5",
+          "text": "Tại $a > 0$, tiếp tuyến dốc lên — $f'(a) > 0$. Dấu đạo hàm mã hóa hướng đi của đồ thị."
+        }
+      ],
+      "prompt": "Di chuyển điểm neo $a$ dọc đồ thị. Tiếp tuyến (đỏ) thay đổi thế nào? Khi nào nó nằm ngang? Khi nào nó dốc nhất?"
+    }
+  } />
+</Slide>
+
+<Slide title="Slide 2">
+  ### Phương trình tiếp tuyến
+  
+  Tiếp tuyến với $f$ tại điểm $(a, f(a))$ là đường thẳng đi qua điểm đó với độ dốc đúng bằng $f'(a)$.
+  
+  **Phương trình tiếp tuyến:** $y = f(a) + f'(a)(x - a)$. Đây là dạng điểm-dốc — độ dốc là $f'(a)$, điểm là $(a, f(a))$.
+  ```json
+  {
+    "id": "math-m3l2-ex",
+    "type": "math",
+    "content": {
+      "latex": "f(x) = x^2,\\; a = 1 \\Rightarrow f'(1) = 2 \\Rightarrow y = 1 + 2(x-1) = 2x - 1"
+    }
+  }
+  ```
+</Slide>
+
+<Slide title="Slide 3">
+  ### Dấu của $f'$ cho biết điều gì?
+  
+  Khi $f'(a) > 0$: đồ thị đang **tăng** tại $a$. Khi $f'(a) < 0$: đồ thị đang **giảm**. Khi $f'(a) = 0$: tiếp tuyến nằm ngang — điểm cực trị tiềm năng.
+  
+  Đây là cầu nối đầu tiên từ đạo hàm sang phân tích hành vi đồ thị — một công cụ sẽ được khai thác đầy đủ ở các bài sau.
+</Slide>
+
+<Slide title="Slide 4">
+  <Quiz id="quiz-m3l2-q1" question="Khi bạn di chuyển điểm neo qua $a = 0$ trên đồ thị $f(x) = x^2$, điều gì xảy ra với tiếp tuyến màu đỏ?" explanation="$f'(0) = 2 \cdot 0 = 0$. Tại $a = 0$, độ dốc tiếp tuyến bằng $0$ — đường thẳng nằm ngang, phản ánh điểm cực tiểu của parabol.">
+    <Option value="a">Nó trở thành đường thẳng đứng.</Option>
+    <Option value="b">Nó trở thành nằm ngang — độ dốc đi qua $0$.</Option>
+    <Option value="c">Nó biến mất khỏi màn hình.</Option>
+    <Option value="d">Nó trùng khít với đường parabol xanh.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 5">
+  <Quiz id="quiz-m3l2-q2" question="Viết phương trình tiếp tuyến với $f(x) = x^2$ tại $a = 2$." explanation="$f(2) = 4$, $f'(2) = 4$. Tiếp tuyến: $y = 4 + 4(x-2) = 4x - 4$.">
+    <Option value="a">$y = 4x - 4$</Option>
+    <Option value="b">$y = 2x$</Option>
+    <Option value="c">$y = 4x$</Option>
+    <Option value="d">$y = 4x + 4$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 6">
+  <Quiz id="quiz-m3l2-q3" question="Tính chất nào phân biệt tiếp tuyến tại một điểm với mọi đường thẳng khác qua điểm đó?" explanation="Tiếp tuyến được định nghĩa bởi sự bằng nhau về độ dốc với $f'(a)$, không phải bởi tính duy nhất của giao điểm.">
+    <Option value="a">Nó không bao giờ cắt đồ thị tại điểm nào khác.</Option>
+    <Option value="b">Nó có đúng độ dốc bằng tốc độ thay đổi tức thời của hàm tại điểm đó.</Option>
+    <Option value="c">Nó luôn nằm ngang.</Option>
+    <Option value="d">Nó đi qua giao điểm với trục $y$ của $f$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 7">
+  <Quiz id="quiz-m3l2-q4" question="Với $f(x) = x^2$, khi $a$ tăng từ $0$ đến $3$, điều gì xảy ra với độ dốc tiếp tuyến?" explanation="$f'(x) = 2x$ là hàm tăng với $x > 0$. Tại $a = 0$: độ dốc $= 0$; tại $a = 3$: độ dốc $= 6$.">
+    <Option value="a">Nó giảm từ $0$ xuống $-6$.</Option>
+    <Option value="b">Nó không đổi, bằng $2$.</Option>
+    <Option value="c">Nó tăng từ $0$ đến $6$.</Option>
+    <Option value="d">Nó tăng rồi giảm.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 8">
+  <Quiz id="quiz-m3l2-q5" question="Tại giá trị nào của $a$, tiếp tuyến với $f(x) = x^2$ song song với đường thẳng $y = 6x - 1$?" explanation="Song song nghĩa là cùng độ dốc: $f'(a) = 2a = 6 \Rightarrow a = 3$.">
+    <Option value="a">$a = 6$</Option>
+    <Option value="b">$a = 3$</Option>
+    <Option value="c">$a = 2$</Option>
+    <Option value="d">$a = 1$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 9">
+  <Quiz id="quiz-m3l2-q6" question="Nếu $f'(a) = 0$, phát biểu nào sau đây nhất định đúng?" explanation="$f'(a) = 0$ nghĩa là độ dốc $= 0$ — tiếp tuyến nằm ngang. Để xác định đó là cực đại, cực tiểu hay điểm uốn, cần phân tích thêm.">
+    <Option value="a">$f(a)$ là giá trị lớn nhất toàn cục của $f$.</Option>
+    <Option value="b">Tiếp tuyến tại $a$ nằm ngang.</Option>
+    <Option value="c">$f$ không khả vi tại $a$.</Option>
+    <Option value="d">$f$ có điểm uốn tại $a$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 10">
+  <Quiz id="quiz-m3l2-q7" question="Tìm phương trình tiếp tuyến với $f(x) = x^2 - 4x + 3$ tại $x = 1$." explanation="$f(1) = 0$, $f'(x) = 2x - 4$, $f'(1) = -2$. Tiếp tuyến: $y = 0 + (-2)(x - 1) = -2x + 2$.">
+    <Option value="a">$y = -2x + 2$</Option>
+    <Option value="b">$y = -2x$</Option>
+    <Option value="c">$y = -2x + 1$</Option>
+    <Option value="d">$y = 0$</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 11">
+  <Quiz id="quiz-m3l2-q8" question="Hai hàm $f$ và $g$ thỏa $f(1) = g(1) = 4$ nhưng có tiếp tuyến khác nhau tại $x = 1$. Điều gì nhất định đúng?" explanation="Tiếp tuyến khác nhau tại cùng một điểm nghĩa là độ dốc khác nhau, tức là $f'(1) \neq g'(1)$. Giá trị hàm có thể bằng nhau trong khi đạo hàm khác.">
+    <Option value="a">$f$ và $g$ là cùng một hàm số.</Option>
+    <Option value="b">$f'(1) \neq g'(1)$.</Option>
+    <Option value="c">Cả hai hàm không khả vi tại $x = 1$.</Option>
+    <Option value="d">$f$ và $g$ không thể giao nhau với $x \neq 1$.</Option>
+  </Quiz>
+</Slide>
+
+<Slide title="Slide 12">
+  <Quiz id="quiz-m3l2-q9" question="Hàm doanh thu $R(q)$ cho tổng doanh thu khi bán $q$ đơn vị. Độ dốc tiếp tuyến với $R$ tại $q = 50$ biểu diễn điều gì?" explanation="$R'(50)$ là tốc độ thay đổi tức thời của doanh thu theo số lượng — khái niệm doanh thu biên trong kinh tế. Cấu trúc tiếp tuyến áp dụng trong mọi ngữ cảnh khả vi.">
+    <Option value="a">Tổng doanh thu từ $50$ đơn vị đầu tiên.</Option>
+    <Option value="b">Doanh thu trung bình trên $[0, 50]$.</Option>
+    <Option value="c">Doanh thu biên — mỗi đơn vị bổ sung thêm bao nhiêu — tại $q = 50$.</Option>
+    <Option value="d">Doanh thu tối đa có thể đạt được.</Option>
+  </Quiz>
+</Slide>
