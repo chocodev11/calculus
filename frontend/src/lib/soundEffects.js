@@ -6,6 +6,14 @@ const STORAGE_KEYS = Object.freeze({
 
 const DEFAULT_SFX_VOLUME = 0.7
 
+const CALCULUS_PITCH = Object.freeze({
+  d4: 293.66,
+  g4: 392.00,
+  d5: 587.33,
+  g5: 783.99,
+  d6: 1174.66,
+})
+
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
 
 function readStoredValue(key) {
@@ -215,6 +223,10 @@ class DuolingoSoundEngine {
     noiseSource.stop(startTime + duration + 0.005)
   }
 
+  playChalkTick(ctx, startTime, centerFreq = 2600, duration = 0.008, gainPeak = 0.12) {
+    this.playMalletStrike(ctx, startTime, centerFreq, duration, gainPeak)
+  }
+
   /**
    * Synthesizes a celesta / glockenspiel bell tone with modal inharmonic partials.
    */
@@ -285,6 +297,22 @@ class DuolingoSoundEngine {
     })
   }
 
+  playConvergenceMotif(
+    ctx,
+    startTime,
+    notes,
+    { duration = 0.16, spacing = 0.075, gainPeak = 0.16, tone = 'wood' } = {},
+  ) {
+    notes.forEach((freq, index) => {
+      const noteStart = startTime + index * spacing
+      if (tone === 'celesta') {
+        this.playCelestaTone(ctx, freq, noteStart, duration, gainPeak)
+      } else {
+        this.playMarimbaTone(ctx, freq, noteStart, duration, gainPeak)
+      }
+    })
+  }
+
   success() {
     this.comboCount += 1
     this.triggerHaptic([20, 25, 35])
@@ -294,15 +322,14 @@ class DuolingoSoundEngine {
     if (!ctx) return
 
     const now = ctx.currentTime
-    const streakOffset = Math.min(4, Math.floor(this.comboCount / 2)) * 0.03
-    const fSharp5 = 739.99 * (1 + streakOffset)
-    const aSharp5 = 932.33 * (1 + streakOffset)
+    this.playConvergenceMotif(ctx, now, [CALCULUS_PITCH.d4, CALCULUS_PITCH.g4], {
+      duration: 0.16,
+      spacing: 0.075,
+      gainPeak: 0.16,
+    })
 
-    this.playCelestaTone(ctx, fSharp5, now, 0.18, 0.22)
-    this.playCelestaTone(ctx, aSharp5, now + 0.078, 0.42, 0.28)
-
-    if (this.comboCount === 5) this.combo5(now + 0.15)
-    if (this.comboCount === 10) this.combo10(now + 0.15)
+    if (this.comboCount === 5) this.combo5(now + 0.17)
+    if (this.comboCount === 10) this.combo10(now + 0.17)
   }
 
   error() {
@@ -315,45 +342,30 @@ class DuolingoSoundEngine {
 
     const now = ctx.currentTime
 
-    const subOsc = ctx.createOscillator()
-    const subFilter = ctx.createBiquadFilter()
-    const subGain = ctx.createGain()
+    this.playChalkTick(ctx, now, 950, 0.014, 0.05)
 
-    subOsc.type = 'sine'
-    subOsc.frequency.setValueAtTime(160, now)
-    subOsc.frequency.exponentialRampToValueAtTime(48, now + 0.18)
+    const osc = ctx.createOscillator()
+    const filter = ctx.createBiquadFilter()
+    const gain = ctx.createGain()
 
-    subFilter.type = 'lowpass'
-    subFilter.frequency.setValueAtTime(280, now)
-    subFilter.frequency.exponentialRampToValueAtTime(80, now + 0.18)
+    osc.type = 'triangle'
+    osc.frequency.setValueAtTime(CALCULUS_PITCH.g4, now)
+    osc.frequency.exponentialRampToValueAtTime(CALCULUS_PITCH.d4, now + 0.11)
 
-    subGain.gain.setValueAtTime(0.001, now)
-    subGain.gain.linearRampToValueAtTime(0.32, now + 0.012)
-    subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22)
+    filter.type = 'lowpass'
+    filter.frequency.setValueAtTime(1800, now)
+    filter.frequency.exponentialRampToValueAtTime(700, now + 0.13)
 
-    subOsc.connect(subFilter)
-    subFilter.connect(subGain)
-    subGain.connect(this.outputNode(ctx))
+    gain.gain.setValueAtTime(0.001, now)
+    gain.gain.linearRampToValueAtTime(0.12, now + 0.008)
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15)
 
-    subOsc.start(now)
-    subOsc.stop(now + 0.24)
+    osc.connect(filter)
+    filter.connect(gain)
+    gain.connect(this.outputNode(ctx))
 
-    const triOsc = ctx.createOscillator()
-    const triGain = ctx.createGain()
-
-    triOsc.type = 'triangle'
-    triOsc.frequency.setValueAtTime(369.99, now)
-    triOsc.frequency.exponentialRampToValueAtTime(261.63, now + 0.16)
-
-    triGain.gain.setValueAtTime(0.001, now)
-    triGain.gain.linearRampToValueAtTime(0.20, now + 0.015)
-    triGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.20)
-
-    triOsc.connect(triGain)
-    triGain.connect(this.outputNode(ctx))
-
-    triOsc.start(now)
-    triOsc.stop(now + 0.22)
+    osc.start(now)
+    osc.stop(now + 0.17)
   }
 
   pop() {
@@ -362,7 +374,7 @@ class DuolingoSoundEngine {
 
     const ctx = this.initContext()
     if (!ctx) return
-    this.playMarimbaTone(ctx, 880, ctx.currentTime, 0.14, 0.24)
+    this.playMarimbaTone(ctx, CALCULUS_PITCH.d4, ctx.currentTime, 0.10, 0.16)
   }
 
   click() {
@@ -373,20 +385,7 @@ class DuolingoSoundEngine {
     if (!ctx) return
     const now = ctx.currentTime
 
-    this.playMalletStrike(ctx, now, 2800, 0.008, 0.18)
-
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    osc.type = 'triangle'
-    osc.frequency.setValueAtTime(540, now)
-    osc.frequency.exponentialRampToValueAtTime(210, now + 0.028)
-    gain.gain.setValueAtTime(0.14, now)
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.028)
-
-    osc.connect(gain)
-    gain.connect(this.outputNode(ctx))
-    osc.start(now)
-    osc.stop(now + 0.032)
+    this.playChalkTick(ctx, now, 2800, 0.008, 0.12)
   }
 
   heartLoss() {
@@ -397,8 +396,8 @@ class DuolingoSoundEngine {
     if (!ctx) return
     const now = ctx.currentTime
 
-    this.playMalletStrike(ctx, now, 450, 0.03, 0.35)
-    this.playMalletStrike(ctx, now + 0.005, 5200, 0.04, 0.22)
+    this.playMalletStrike(ctx, now, 620, 0.018, 0.16)
+    this.playChalkTick(ctx, now + 0.008, 3000, 0.02, 0.10)
   }
 
   playCombo(notes, startTime, gainPeak = 0.12) {
@@ -408,23 +407,26 @@ class DuolingoSoundEngine {
     if (!ctx) return
     const now = startTime ?? ctx.currentTime
 
-    notes.forEach((freq, index) => {
-      this.playCelestaTone(ctx, freq, now + index * 0.035, 0.18, gainPeak)
+    this.playConvergenceMotif(ctx, now, notes, {
+      duration: 0.18,
+      spacing: 0.035,
+      gainPeak,
+      tone: 'celesta',
     })
   }
 
   streakZap(startTime) {
-    this.playCombo([1046.50, 1318.51, 1567.98, 2093.00], startTime)
+    this.playCombo([CALCULUS_PITCH.d5, CALCULUS_PITCH.g5, CALCULUS_PITCH.d6], startTime)
   }
 
   combo5(startTime) {
     this.triggerHaptic([25, 30, 45])
-    this.playCombo([1046.50, 1318.51, 1567.98, 2093.00], startTime, 0.11)
+    this.playCombo([CALCULUS_PITCH.g5, CALCULUS_PITCH.d5], startTime, 0.10)
   }
 
   combo10(startTime) {
     this.triggerHaptic([30, 35, 50, 65])
-    this.playCombo([783.99, 987.77, 1174.66, 1567.98, 2093.00], startTime, 0.13)
+    this.playCombo([CALCULUS_PITCH.d5, CALCULUS_PITCH.g5, CALCULUS_PITCH.d6], startTime, 0.12)
   }
 
   perfect() {
@@ -434,8 +436,13 @@ class DuolingoSoundEngine {
     const ctx = this.initContext()
     if (!ctx) return
     const now = ctx.currentTime
-    this.playCelestaTone(ctx, 739.99, now, 0.2, 0.24)
-    this.playCombo([932.33, 1108.73, 1479.98, 1864.66], now + 0.12, 0.14)
+    this.playConvergenceMotif(ctx, now, [CALCULUS_PITCH.d4, CALCULUS_PITCH.g4, CALCULUS_PITCH.d5], {
+      duration: 0.20,
+      spacing: 0.085,
+      gainPeak: 0.17,
+      tone: 'celesta',
+    })
+    this.playCelestaTone(ctx, CALCULUS_PITCH.d6, now + 0.29, 0.45, 0.13)
   }
 
   mathSnap() {
@@ -444,7 +451,7 @@ class DuolingoSoundEngine {
 
     const ctx = this.initContext()
     if (!ctx) return
-    this.playMalletStrike(ctx, ctx.currentTime, 1800, 0.006, 0.08)
+    this.playChalkTick(ctx, ctx.currentTime, 1800, 0.006, 0.08)
   }
 
   complete() {
@@ -456,20 +463,15 @@ class DuolingoSoundEngine {
     if (!ctx) return
 
     const now = ctx.currentTime
-    const melody = [
-      { freq: 369.99, time: 0.00, dur: 0.16, gain: 0.22 },
-      { freq: 466.16, time: 0.08, dur: 0.16, gain: 0.24 },
-      { freq: 554.37, time: 0.16, dur: 0.18, gain: 0.24 },
-      { freq: 739.99, time: 0.24, dur: 0.22, gain: 0.26 },
-      { freq: 932.33, time: 0.34, dur: 0.65, gain: 0.32 },
-    ]
-
-    melody.forEach(({ freq, time, dur, gain }) => {
-      this.playCelestaTone(ctx, freq, now + time, dur, gain)
+    this.playConvergenceMotif(ctx, now, [CALCULUS_PITCH.d4, CALCULUS_PITCH.g4, CALCULUS_PITCH.d5], {
+      duration: 0.18,
+      spacing: 0.09,
+      gainPeak: 0.18,
+      tone: 'celesta',
     })
-
-    // Schedule the sparkle on the audio timeline so mute/volume changes remain immediate.
-    this.playCombo([1046.50, 1318.51, 1567.98, 2093.00], now + 0.45, 0.11)
+    this.playCelestaTone(ctx, CALCULUS_PITCH.g5, now + 0.30, 0.25, 0.15)
+    this.playCelestaTone(ctx, CALCULUS_PITCH.d5, now + 0.42, 0.55, 0.24)
+    this.playCelestaTone(ctx, CALCULUS_PITCH.d6, now + 0.44, 0.42, 0.08)
   }
 }
 
