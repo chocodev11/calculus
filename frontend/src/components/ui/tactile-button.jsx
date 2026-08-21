@@ -41,7 +41,7 @@ export const TactileButton = React.forwardRef(({
   const handleClick = (e) => {
     if (disabled) return
     if (sound) {
-      soundFX.click()
+      soundFX.play('tap')
     }
     if (onClick) {
       onClick(e)

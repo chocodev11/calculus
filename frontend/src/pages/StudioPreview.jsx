@@ -103,7 +103,9 @@ export default function StudioPreview() {
   const [error, setError] = useState(null)
   const [currentDevice, setCurrentDevice] = useState(DEVICE_PRESETS[0])
   const [isLandscape, setIsLandscape] = useState(false)
-  const [soundEnabled, setSoundEnabled] = useState(soundFX.isSoundEnabled())
+  const [sfxEnabled, setSfxEnabled] = useState(soundFX.isSfxEnabled())
+  const [hapticsEnabled, setHapticsEnabled] = useState(soundFX.isHapticsEnabled())
+  const [sfxVolume, setSfxVolume] = useState(soundFX.getSfxVolume())
 
   const availableSteps = courseData?.chapters?.flatMap(chapter => chapter.steps || []) || []
   const selectedStep = availableSteps.find(step => stepMatches(step, selectedStepId))
@@ -187,11 +189,18 @@ export default function StudioPreview() {
     navigate(`/studio/${selectedCourse}/${stepId}`, { replace: true })
   }
 
-  const toggleSound = () => {
-    const next = !soundEnabled
-    setSoundEnabled(next)
-    soundFX.setSoundEnabled(next)
+  const toggleSfx = () => {
+    const next = soundFX.toggleSfx()
+    setSfxEnabled(next)
     if (next) soundFX.play('tap')
+  }
+
+  const toggleHaptics = () => {
+    setHapticsEnabled(soundFX.toggleHaptics())
+  }
+
+  const handleVolumeChange = (event) => {
+    setSfxVolume(soundFX.setSfxVolume(event.target.value))
   }
 
   const isDeviceFramed = currentDevice.type !== 'desktop'
@@ -240,9 +249,42 @@ export default function StudioPreview() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <button type="button" onClick={toggleSound} className="rounded-xl border border-slate-200 bg-slate-50 p-1.5 text-slate-500" title="Âm thanh">
-            {soundEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
-          </button>
+          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-1.5 py-1">
+            <button
+              type="button"
+              onClick={toggleSfx}
+              aria-label={sfxEnabled ? 'Tắt hiệu ứng âm thanh' : 'Bật hiệu ứng âm thanh'}
+              aria-pressed={sfxEnabled}
+              className="flex min-h-10 min-w-10 items-center justify-center rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-white hover:text-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-300"
+            >
+              {sfxEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+            </button>
+            <label className="flex items-center gap-1 text-[11px] font-bold text-slate-500">
+              <span className="hidden md:inline">Âm lượng</span>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={sfxVolume}
+                onChange={handleVolumeChange}
+                aria-label="Âm lượng hiệu ứng âm thanh"
+                className="h-1.5 w-14 accent-indigo-600 sm:w-16"
+              />
+              <span className="hidden w-7 text-right tabular-nums sm:inline">{Math.round(sfxVolume * 100)}%</span>
+            </label>
+            <button
+              type="button"
+              onClick={toggleHaptics}
+              aria-label={hapticsEnabled ? 'Tắt rung phản hồi' : 'Bật rung phản hồi'}
+              aria-pressed={hapticsEnabled}
+              className={`min-h-10 rounded-lg px-2 text-[11px] font-bold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-300 ${
+                hapticsEnabled ? 'bg-white text-indigo-700' : 'text-slate-400 hover:bg-white hover:text-slate-600'
+              }`}
+            >
+              Rung
+            </button>
+          </div>
           <select value={selectedCourse} onChange={event => handleCourseChange(event.target.value)} className="rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold">
             {courses.map(course => <option key={course.slug} value={course.slug}>{course.title}</option>)}
           </select>

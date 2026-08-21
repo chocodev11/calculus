@@ -95,7 +95,7 @@ export default function Explore() {
               key={grade.id}
               type="button"
               onClick={() => {
-                soundFX.pop()
+                soundFX.play('select')
                 setSelectedGrade(grade.id)
               }}
               className={isActive ? 'pill-tactile-active' : 'pill-tactile-inactive'}
@@ -187,7 +187,7 @@ function CourseCard({ course }) {
   return (
     <Link 
       to={`/course/${course.slug}`} 
-      onClick={() => soundFX.click()}
+      onClick={() => soundFX.play('tap')}
       className="card-flat-interactive flex flex-col group no-underline relative"
     >
       {/* Badges Bar */}
@@ -265,5 +265,4 @@ function CourseCard({ course }) {
     </Link>
   )
 }
-
 

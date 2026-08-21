@@ -245,7 +245,7 @@ export default function Step() {
   const allQuizzesCorrect = currentQuizBlocks.every(b => quizResults[b.id]?.correct)
 
   const handleQuizAnswer = (blockId, answer) => {
-    soundFX.pop()
+    soundFX.play('select')
     setQuizAnswers(prev => ({ ...prev, [blockId]: answer }))
     if (quizSubmitted[blockId]) {
       setQuizSubmitted(prev => ({ ...prev, [blockId]: false }))
@@ -263,10 +263,10 @@ export default function Step() {
     setQuizResults(prev => ({ ...prev, [blockId]: { correct: isCorrect, xp, explanation } }))
     
     if (isCorrect) {
-      soundFX.success()
+      soundFX.play('correct')
       fireConfetti({ particleCount: 35, origin: { x: 0.5, y: 0.7 } })
     } else {
-      soundFX.error()
+      soundFX.play('incorrect')
       setLocalHearts(h => Math.max(0, h - 1))
     }
   }
@@ -288,7 +288,7 @@ export default function Step() {
     const correctCount = Object.values(quizResults).filter(r => r.correct).length
     const baseXp = (step?.xp_reward || 0) + correctCount * 15
     setTotalXpEarned(hasXpBoost ? baseXp * 2 : baseXp)
-    soundFX.complete()
+    soundFX.play('lesson-complete')
     fireLessonCompleteConfetti()
     setShowCompleteScreen(true)
   }

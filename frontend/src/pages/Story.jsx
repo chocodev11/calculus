@@ -368,7 +368,7 @@ function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }
  */
 function LessonRow({ step, index, isCompleted, isCurrent, isLocked, onSelect }) {
   const handleClick = () => {
-    soundFX.click()
+    soundFX.play('tap')
     onSelect()
   }
 
