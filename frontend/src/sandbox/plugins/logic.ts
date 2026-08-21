@@ -157,17 +157,18 @@ function recomputeClassifier(manifest: SandboxManifest, state: PrimitiveState): 
         misconceptionId: item.misconceptionId,
       })
     }
-    return {
+    const row: JsonObject = {
       id: item.id,
       statement: item.label,
       selected: selected ?? '',
       correct,
-      explanation: item.explanation,
-      expectedType: item.expectedType,
     }
+    if (item.explanation !== undefined) row.explanation = item.explanation
+    if (item.expectedType !== undefined) row.expectedType = item.expectedType
+    return row
   })
   const complete = items.length > 0 && rows.every(row => row.correct)
-  const render = renderModel(rows, 'proposition_classifier', { items })
+  const render = renderModel(rows, 'proposition_classifier')
   return {
     state: structuredClone(state),
     derivedState: { rows, complete },
@@ -215,7 +216,7 @@ function recomputeQuantifier(manifest: SandboxManifest, state: PrimitiveState): 
     derivedState: { rows, complete },
     goals: goalResults(manifest, complete, rows),
     feedback: activityFeedback(complete, incorrect),
-    renderModel: renderModel(rows, 'quantifier_negation', { items }),
+    renderModel: renderModel(rows, 'quantifier_negation'),
   }
 }
 
@@ -284,7 +285,7 @@ function recomputeImplication(manifest: SandboxManifest, state: PrimitiveState):
       expectedQToP,
       pToQCounterexamples,
       qToPCounterexamples,
-      domain: activity.domainValues,
+      ...(activity.domainValues ? { domain: activity.domainValues } : {}),
       pToQCorrect,
       qToPCorrect,
     }),

@@ -1,47 +1,97 @@
-# BÁO CÁO TỔNG KẾT TRIỂN KHAI (IMPLEMENTATION SUMMARY)
-## Course: Mệnh đề và Logic Toán 10 — Spec V2
-### Source of Truth: `chuyen-de-menh-de-va-tap-hop-toan-10.pdf` (Bài 1. Mệnh đề, C1–C70)
+# Implementation Summary
 
----
+## Current architecture
 
-## 1. Danh sách các File Đã Triển khai / Sửa đổi
+Calculus now treats `frontend/src/content/courses` as the canonical course
+source. The MDX compiler produces deterministic JSON artifacts in
+`data/courses`; `backend/sync_data.py` consumes only those artifacts. Course
+content is no longer built or seeded from the FastAPI lifespan.
 
-### 1.1. Tài liệu Bàn giao Bắt buộc (Delivery Artifacts)
-- **`docs/source-coverage.md`**: Bảng ma trận đối soát 70 dòng chi tiết cho toàn bộ 70 câu hỏi (C1–C70), phân bổ vào 20 Archetypes (A01–A20), 18 Skills (S1–S18), 7 bài học và gắn nhãn Mastery Pool.
-- **`docs/course-map.md`**: Bản đồ sư phạm chi tiết 7 bài học (Concept $\to$ Math Sandbox Interaction $\to$ Misconceptions $\to$ Independent Check $\to$ Transfer Task).
-- **`docs/implementation-summary.md`**: Báo cáo tổng kết kỹ thuật, kết quả kiểm thử và cổng xác minh.
-- **`docs/deferred.md`**: Ghi nhận các nội dung enrichment (Bảng chân trị hình thức, Đại số Boole, Logic Gates) nằm ngoài core syllabus của PDF nguồn.
+The runtime database contract is:
 
-### 1.2. Dữ liệu Khóa học Thô (`data/raw_courses/menh-de`)
-- **`data/raw_courses/menh-de/course.json`**: Cập nhật mô tả khóa học đồng bộ với chuẩn GDPT 2018.
-- **`data/raw_courses/menh-de/chapters/menh-de/chapter.json`**: Cập nhật mô tả chương bao quát 6 chủ đề lý thuyết và 3 dạng bài tập nguồn.
-- **Tạo mới 7 bài học V2 trong `data/raw_courses/menh-de/chapters/menh-de/steps/`:**
-  1. `01-menh-de-va-tinh-dung-sai.json` (Order 0, A01, A02; S1, S2; 4 slides, 2 quizzes, Math Sandbox `logic.proposition`)
-  2. `02-menh-de-chua-bien.json` (Order 1, A03, A04, A05, A19; S3, S4, S16; 4 slides, 2 quizzes, Math Sandbox `logic.proposition`)
-  3. `03-phu-dinh-menh-de.json` (Order 2, A08, A09, A10, A11; S6, S7, S8; 4 slides, 2 quizzes, Math Sandbox `logic.quantifier`)
-  4. `04-menh-de-keo-theo.json` (Order 3, A12, A13; S9, S10; 4 slides, 2 quizzes, Math Sandbox `logic.implication`)
-  5. `05-dao-tuong-duong-dieu-kien-can-du.json` (Order 4, A14, A15, A16; S11, S12, S13; 4 slides, 2 quizzes, Math Sandbox `logic.necessary_sufficient`)
-  6. `06-voi-moi-ton-tai-va-nhieu-bien.json` (Order 5, A06, A07, A17; S4, S5, S14; 4 slides, 2 quizzes, Math Sandbox `logic.quantifier`)
-  7. `07-tong-hop-tham-so-phan-vi-du-vdc.json` (Order 6, A18, A19, A20; S15, S16, S17, S18; 4 slides, 2 quizzes, Math Sandbox `logic.parameter_truth`)
-- **Đã xóa 6 file cũ:** `01-nhan-dien-menh-de.json`, `02-phu-dinh-luong-tu.json`, `03-keo-theo-dieu-kien.json`, `04-tham-so-phan-vi-du.json`, `05-bang-chan-tri-menh-de-ghep.json`, `06-dao-phan-dao-dieu-kien.json`.
+| Environment | Configuration | Database |
+| --- | --- | --- |
+| Local | `APP_ENV=local` | `backend/calculus.db` |
+| Production | `APP_ENV=production`, `DEBUG=false`, PostgreSQL `DATABASE_URL` | PostgreSQL |
 
----
+`backend/alembic` owns schema changes. The first baseline creates the complete
+SQLAlchemy model schema, adds `content_key`/`is_active`, and adds unique keys
+for enrollment, step progress, and slide progress. The `/ready` endpoint
+executes `SELECT 1` and returns `503 database_unavailable` when the configured
+database is not ready.
 
-## 2. Kết quả Xác minh và Kiểm thử Tự động (Verification Results)
+## Content pipeline
 
-| Cổng kiểm tra (Validation Gate) | Lệnh thực thi | Kết quả | Ghi chú |
-| :--- | :--- | :---: | :--- |
-| **Comprehensive Raw Course Validator** | `python validate_all.py` | **0 errors, 1 warning** (dai-so) | Toàn bộ 7 lesson mới đều `[OK]` |
-| **Catalog Validator** | `python tools/validate_sandbox_catalog.py` | **PASS** | 28 archetypes hợp lệ |
-| **Course Build Tool** | `python tools/build_course_from_chapters.py data/raw_courses/menh-de` | **SUCCESS** | Đã sinh artifact mã hóa `data/courses/a70c1e312c70f0a5.json` |
-| **Frontend Test Suite** | `npm --prefix frontend test` | **7/7 files, 24/24 tests PASS** | Evaluator, Renderer, Plugins, Manifest, Logic tests đều xanh |
+The seven `menh-de` MDX steps compile with slide counts:
 
----
+`BT`text
+9 / 10 / 12 / 11 / 11 / 12 / 15
+`BT`
 
-## 3. Đáp ứng các Tiêu chí Chấp nhận (Acceptance Criteria)
+Each slide has a stable ID (`s01`, `s02`, ...), and each generated slide has a
+stable `content_key`. Rebuilding the same source preserves the keys. Sync
+updates existing rows by key, deactivates removed slides, and preserves
+progress rows instead of deleting/reinserting slides.
 
-- [x] **Source Fidelity:** 100% 6 mục lý thuyết, 3 dạng bài và 70 câu hỏi (C1–C70) được map đầy đủ.
-- [x] **Pedagogical Structure:** Phân tách rõ ràng Concept Builder (có tương tác, giải thích, phân tích quan niệm sai) và Mastery Check (độc lập, không lộ chiến lược).
-- [x] **No Fake Interactivity:** Mỗi khối Math Sandbox thay đổi trực tiếp trạng thái suy luận và mô hình toán học (Sơ đồ điều kiện, Bảng phân loại, Trục số tham số, Biểu đồ Venn).
-- [x] **Mobile & Accessibility:** Tương thích màn hình 360–430px, hỗ trợ điều khiển bàn phím (`keyboardControls: true`), độ tương phản cao và mô tả thay thế (`textAlternative`).
-- [x] **Deterministic Grading:** Chấm điểm dựa trên quy tắc logic vị từ và nghiệm giải tích, không phụ thuộc vào LLM runtime.
+The compiler is AST-only. It allowlists `Slide`, `Callout`, `Sandbox`,
+`Quiz`, and declarative JSON blocks. JavaScript imports, expressions, dynamic
+attributes, and executable lesson payloads fail validation with a source
+location. `npm run validate:course` checks MDX compilation, sandbox manifests,
+assessment pool/reference integrity, and source/generated parity.
+
+## Progress and frontend runtime hardening
+
+`Step.jsx` now distinguishes loading, not-enrolled, not-found, unauthorized,
+API, and content-validation states. Requests use `AbortController` and request
+identity checks so an old route response cannot overwrite a newer Step.
+
+Slide progress is marked complete only after the POST succeeds. In-flight
+requests are deduplicated, failed awards can be retried, and navigation waits
+for completion. Step completion remains on the completion screen when the POST
+fails and can be retried. Quit navigation is immediate and logs a failed quit
+request without breaking the page.
+
+Math, MDX/interaction blocks, Studio previews, and the application root have
+error boundaries. Broken images show a placeholder, clipboard failures stay
+handled, and legacy blocks render a readable preview-only fallback. The API
+client accepts the current bare-array slide response and the legacy envelope
+during migration, while preserving HTTP status and endpoint details for error
+UI.
+
+`InteractionSlide` accepts both direct props and legacy `content` payloads.
+`claimQuest` is the single quest reward contract used by Home and QuestShop.
+
+## Migration and rollout
+
+The authoritative local source is `backend/calculus.db`. The root-level
+`calculus.db` is not merged because it contains no valid user/progress dataset.
+`tools/migrate_sqlite_to_postgres.py` is dry-run by default, refuses a non-empty
+target, preserves IDs, resets PostgreSQL sequences, and archives unmatched
+legacy slide progress in `slide_progress_quarantine`. The current source
+preflight reports 50 valid slide-progress rows and 17 quarantine rows.
+
+Recommended rollout:
+
+1. Back up `backend/calculus.db`.
+2. Run `alembic upgrade head` on staging PostgreSQL.
+3. Run the migration tool without `--apply` and compare row counts.
+4. Apply the migration, then run course sync and browser smoke tests.
+5. Set production `APP_ENV`, `DEBUG`, and `DATABASE_URL`.
+6. Retain the SQLite backup for rollback.
+
+## Verification
+
+The current frontend verification gates are:
+
+- `npm run test:run`: 9 files, 32 tests passed.
+- `npx tsc --noEmit`: passed.
+- `npm run build`: passed on Linux after adding platform-specific Rollup
+  optional dependencies.
+- `npm run validate:course`: passed with zero errors and zero warnings.
+- backend `unittest`: 8 tests passed.
+- SQLite Alembic upgrade preserved users, enrollment, step progress, and valid
+  slide progress counts.
+
+Warnings that remain non-blocking are the existing Browserslist freshness
+notice, KaTeX font-character warnings, and the large frontend bundle. They do
+not prevent rendering or deployment.

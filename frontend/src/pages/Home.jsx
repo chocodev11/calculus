@@ -21,7 +21,7 @@ import MiniLeaderboardCard from '../components/home/MiniLeaderboardCard'
 
 export default function Home() {
   const { user, isAuthenticated, fetchUser } = useAuthStore()
-  const { quests, fetchQuests, claimCoins } = useQuestStore()
+  const { quests, fetchQuests, claimQuest } = useQuestStore()
   const navigate = useNavigate()
 
   const [dashboardData, setDashboardData] = useState(null)
@@ -178,7 +178,7 @@ export default function Home() {
 
   const handleClaimQuest = async (questId) => {
     try {
-      await claimCoins(questId)
+      await claimQuest(questId)
       fetchUser()
     } catch (e) {
       console.error('Failed to claim quest:', e)

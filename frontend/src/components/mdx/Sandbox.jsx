@@ -33,6 +33,8 @@ export function Sandbox({
   return (
     <div className="my-3 w-full rounded-2xl border border-slate-200 bg-white overflow-hidden">
       <InteractionSlide
+        interactionType={blockContent.interactionType}
+        lesson={blockContent.lesson}
         content={blockContent}
         onComplete={onComplete}
       />

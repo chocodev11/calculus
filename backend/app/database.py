@@ -1,11 +1,12 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 from app.config import settings
 
 database_url = settings.database_url
 
 engine_kwargs = {
-    "echo": settings.debug,
+    "echo": False,
     "pool_pre_ping": True,
 }
 
@@ -29,23 +30,19 @@ async def get_db():
         finally:
             await session.close()
 
-async def init_db():
-    # Import all models so they are registered with Base.metadata before create_all
+async def check_database_connection() -> None:
+    """Fail fast when the configured database cannot accept a query."""
+    async with engine.connect() as connection:
+        await connection.execute(text("SELECT 1"))
+
+
+async def init_db() -> None:
+    """Load model metadata and verify connectivity.
+
+    Schema creation belongs to Alembic. Keeping DDL out of application startup
+    prevents a partially upgraded process from silently changing production data.
+    """
     from app import models  # noqa: F401
     from app import sandbox_models  # noqa: F401
-    from sqlalchemy import text
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    # Run each migration in its own transaction so a failure (e.g. column already
-    # exists) cannot roll back the create_all above.
-    _migrations = [
-        "ALTER TABLE users ADD COLUMN hearts INTEGER DEFAULT 5",
-        "ALTER TABLE users ADD COLUMN last_heart_restore_at TIMESTAMP",
-        "ALTER TABLE streak_weeks ADD COLUMN frozen_days JSON",
-    ]
-    for sql in _migrations:
-        try:
-            async with engine.begin() as conn:
-                await conn.execute(text(sql))
-        except Exception:
-            pass  # column already exists
+
+    await check_database_connection()

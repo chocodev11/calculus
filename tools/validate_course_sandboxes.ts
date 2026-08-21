@@ -9,6 +9,7 @@ import {
   validateManifest,
 } from '../frontend/src/sandbox'
 import type { SandboxManifest } from '../frontend/src/sandbox/types'
+import { compileAllCourses, compileCourse } from './mdx_course_compiler'
 
 type JsonRecord = Record<string, unknown>
 
@@ -33,12 +34,8 @@ function isRecord(value: unknown): value is JsonRecord {
 import { existsSync } from 'node:fs'
 
 function parseArgs(argv: string[]): { source: string; generated: string; strict: boolean } {
-  const defaultSource = existsSync(resolve(repoRoot, 'data/raw_courses'))
-    ? resolve(repoRoot, 'data/raw_courses')
-    : resolve(repoRoot, 'data/archive_legacy_json/raw_courses')
-  const defaultGenerated = existsSync(resolve(repoRoot, 'data/courses'))
-    ? resolve(repoRoot, 'data/courses')
-    : resolve(repoRoot, 'data/archive_legacy_json/courses')
+  const defaultSource = resolve(repoRoot, 'frontend/src/content/courses')
+  const defaultGenerated = resolve(repoRoot, 'data/courses')
 
   const values = {
     source: defaultSource,
@@ -61,6 +58,124 @@ function parseArgs(argv: string[]): { source: string; generated: string; strict:
   }
 
   return values
+}
+
+async function compileSourceCourses(source: string): Promise<JsonRecord[]> {
+  return compileAllCourses({ sourceDir: source, outputDir: resolve(repoRoot, 'data/courses'), write: false })
+}
+
+function compiledStepReferences(course: JsonRecord): Array<{ file: string; step: JsonRecord }> {
+  const references: Array<{ file: string; step: JsonRecord }> = []
+  for (const chapter of course.chapters || []) {
+    for (const step of chapter.steps || []) {
+      references.push({
+        file: resolve(repoRoot, 'frontend/src/content/courses', course.slug, `${step.id}.mdx`),
+        step,
+      })
+    }
+  }
+  return references
+}
+
+function validateCompiledAssessmentStep(reference: { file: string; step: JsonRecord }, findings: Finding[]): void {
+  const source = relative(repoRoot, reference.file)
+  const pools = new Map<string, { quizType: string; items: Set<string> }>()
+  const refs: Array<{ id: string; content: JsonRecord; slide: number }> = []
+  for (const [slideIndex, slide] of (reference.step.slides || []).entries()) {
+    if (!isRecord(slide) || !Array.isArray(slide.blocks)) {
+      findings.push({ severity: 'error', source, message: `slide ${slideIndex} has no blocks array` })
+      continue
+    }
+    const refsOnSlide = slide.blocks.filter((block: unknown) => isRecord(block) && blockType(block) === 'assessment_ref')
+    if (refsOnSlide.length > 1) {
+      findings.push({ severity: 'error', source, message: `slide ${slideIndex} has more than one assessment_ref` })
+    }
+    for (const block of slide.blocks) {
+      if (!isRecord(block)) continue
+      const type = blockType(block)
+      const content = blockContent(block)
+      const id = typeof block.id === 'string' ? block.id : '<missing-id>'
+      if (type === 'assessment_pool') {
+        const poolId = content.poolId
+        if (typeof poolId !== 'string' || !poolId) {
+          findings.push({ severity: 'error', source, message: `assessment_pool ${id} has no poolId` })
+          continue
+        }
+        if (pools.has(poolId)) {
+          findings.push({ severity: 'error', source, message: `duplicate assessment_pool ${poolId}` })
+          continue
+        }
+        const items = Array.isArray(content.items) ? content.items : []
+        const itemIds = new Set<string>()
+        for (const item of items) {
+          if (!isRecord(item) || typeof item.id !== 'string' || !item.id) {
+            findings.push({ severity: 'error', source, message: `assessment_pool ${poolId} has an item without id` })
+            continue
+          }
+          if (itemIds.has(item.id)) {
+            findings.push({ severity: 'error', source, message: `assessment_pool ${poolId} duplicates item ${item.id}` })
+          }
+          itemIds.add(item.id)
+        }
+        pools.set(poolId, { quizType: String(content.quiz_type || ''), items: itemIds })
+      }
+      if (type === 'assessment_ref') refs.push({ id, content, slide: slideIndex })
+    }
+  }
+  if (pools.size === 0 || refs.length === 0) {
+    findings.push({ severity: 'error', source, message: 'step must contain assessment pools and delivery references' })
+  }
+  const seenRefs = new Set<string>()
+  for (const ref of refs) {
+    const poolId = ref.content.poolId
+    const itemId = ref.content.itemId
+    const phase = ref.content.phase
+    const pool = pools.get(poolId)
+    if (!pool) {
+      findings.push({ severity: 'error', source, message: `assessment_ref ${ref.id} points to unknown pool ${poolId}` })
+      continue
+    }
+    if (!pool.items.has(itemId)) {
+      findings.push({ severity: 'error', source, message: `assessment_ref ${ref.id} points to unknown item ${itemId}` })
+    }
+    if (typeof phase !== 'string' || !phase) {
+      findings.push({ severity: 'error', source, message: `assessment_ref ${ref.id} has no delivery phase` })
+    }
+    const key = `${phase}:${poolId}:${itemId}`
+    if (seenRefs.has(key)) findings.push({ severity: 'error', source, message: `duplicate assessment_ref ${key}` })
+    seenRefs.add(key)
+  }
+}
+
+async function compareCompiledParity(sourceCourses: JsonRecord[], generated: string, findings: Finding[]): Promise<void> {
+  for (const sourceCourse of sourceCourses) {
+    const normalizedSourceCourse = JSON.parse(JSON.stringify(sourceCourse))
+    const generatedCoursePath = resolve(generated, String(sourceCourse.slug), 'course.json')
+    let generatedCourse: JsonRecord
+    try {
+      generatedCourse = JSON.parse(await readFile(generatedCoursePath, 'utf8'))
+    } catch {
+      findings.push({ severity: 'error', source: relative(repoRoot, generatedCoursePath), message: 'generated course.json is missing or invalid' })
+      continue
+    }
+    if (stableStringify(normalizedSourceCourse) !== stableStringify(generatedCourse)) {
+      findings.push({ severity: 'error', source: relative(repoRoot, generatedCoursePath), message: 'generated course differs from MDX compilation' })
+    }
+    for (const chapter of sourceCourse.chapters || []) {
+      for (const step of chapter.steps || []) {
+        const stepPath = resolve(generated, String(sourceCourse.slug), 'chapters', String(chapter.id || chapter.slug), 'steps', `${step.id}.json`)
+        try {
+          const generatedStep = JSON.parse(await readFile(stepPath, 'utf8'))
+          const normalizedStep = JSON.parse(JSON.stringify(step))
+          if (stableStringify(normalizedStep) !== stableStringify(generatedStep)) {
+            findings.push({ severity: 'error', source: relative(repoRoot, stepPath), message: 'generated step differs from MDX compilation' })
+          }
+        } catch {
+          findings.push({ severity: 'error', source: relative(repoRoot, stepPath), message: 'generated step artifact is missing or invalid' })
+        }
+      }
+    }
+  }
 }
 
 async function collectJsonFiles(root: string): Promise<string[]> {
@@ -496,7 +611,11 @@ function compareGenerated(
   for (const reference of generated) {
     const id = reference.manifest.id
     if (generatedById.has(id)) {
-      findings.push({ severity: 'error', source: sourceLabel(reference), message: 'duplicate generated manifest id ' + id })
+      const previous = generatedById.get(id)!
+      if (stableStringify(previous.manifest) !== stableStringify(reference.manifest)) {
+        findings.push({ severity: 'error', source: sourceLabel(reference), message: 'generated manifest id ' + id + ' has conflicting copies' })
+      }
+      continue
     }
     generatedById.set(id, reference)
   }
@@ -523,15 +642,22 @@ function compareGenerated(
 
 async function main(): Promise<void> {
   const { source, generated, strict } = parseArgs(process.argv.slice(2))
-  const [rawReferences, generatedReferences] = await Promise.all([
-    loadReferences(source),
-    loadReferences(generated),
-  ])
+  const sourceCourses = await compileSourceCourses(source)
+  const rawReferences = sourceCourses.flatMap(course =>
+    collectManifests(course, resolve(source, String(course.slug) + '.compiled.json')),
+  )
+  const generatedReferences = await loadReferences(generated)
   const findings: Finding[] = []
 
+  for (const course of sourceCourses) {
+    for (const reference of compiledStepReferences(course)) {
+      validateCompiledAssessmentStep(reference, findings)
+    }
+  }
   rawReferences.forEach(reference => validateReference(reference, findings))
   generatedReferences.forEach(reference => validateReference(reference, findings))
   compareGenerated(rawReferences, generatedReferences, findings)
+  await compareCompiledParity(sourceCourses, generated, findings)
   await validateLessonSchemes(source, findings)
   await validateLessonSchemes(generated, findings)
 

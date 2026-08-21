@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:course": "vite-node --root .. ../tools/build_course_from_mdx.ts",
     "preview": "vite preview",
     "validate:course": "vite-node --root .. ../tools/validate_course_sandboxes.ts",
     "test:run": "vitest run",
@@ -34,14 +35,17 @@
     "rehype-katex": "^7.0.1",
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.1",
+    "remark-mdx": "^3.1.1",
     "remark-math": "^6.0.0",
     "remark-mdx-frontmatter": "^5.2.0",
+    "remark-parse": "^11.0.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
+    "unified": "^11.0.5",
+    "yaml": "^2.9.0",
     "zustand": "^4.4.7"
   },
   "devDependencies": {
-    "@rollup/rollup-win32-x64-msvc": "^4.62.4",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@vitejs/plugin-react": "^4.2.0",
@@ -51,5 +55,9 @@
     "typescript": "^5.7.3",
     "vite": "^7.3.1",
     "vitest": "^3.2.4"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.62.4",
+    "@rollup/rollup-win32-x64-msvc": "^4.62.4"
   }
 }

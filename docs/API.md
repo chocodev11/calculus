@@ -1,9 +1,73 @@
 # Calculus Interactive Learning Platform - API Documentation
 
+> Runtime contract updated 2026-08-21: examples later in this document may be
+> legacy envelopes. New learner code uses the response shapes in this section.
+
 ## Base URL
 ```
-http://localhost:8080/api/v1
+http://localhost:8000/api/v1
 ```
+
+## Current runtime contract
+
+### GET /ready
+
+This endpoint is outside the `/api/v1` prefix and is suitable for deployment
+readiness probes. It executes a database query before returning success.
+
+```json
+{ "status": "ready", "database": "connected" }
+```
+
+When the database is unavailable it returns HTTP `503` with:
+
+```json
+{ "detail": "database_unavailable" }
+```
+
+### Errors
+
+FastAPI validation errors and route errors use HTTP status plus a structured
+`detail`. The frontend preserves both the endpoint and status so Step can
+separate unauthorized, not-found, API, and content-validation failures.
+
+### GET /steps/{id}
+
+The current response is a bare step object:
+
+```json
+{
+  "id": 1,
+  "content_key": "menh-de/menh-de/01-menh-de-va-tinh-dung-sai",
+  "title": "Mệnh đề và tính đúng sai",
+  "description": "...",
+  "chapter_title": "Chuyên đề Mệnh đề & Logic",
+  "story_slug": "menh-de",
+  "xp_reward": 120
+}
+```
+
+### GET /steps/{id}/slides
+
+The current response is a bare array. The legacy `success/data/slides`
+envelope remains accepted by the frontend during migration but is not emitted
+by the current route.
+
+```json
+[
+  {
+    "id": 1,
+    "content_key": "menh-de/menh-de/01-menh-de-va-tinh-dung-sai/s01",
+    "order_index": 0,
+    "blocks": [
+      { "id": "s01-text-1", "block_type": "text", "content": {} }
+    ]
+  }
+]
+```
+
+`content_key` is stable across course rebuilds. The sync process updates a row
+by this key, so slide progress remains attached to the same content identity.
 
 ## Authentication
 All authenticated endpoints require the `Authorization` header:

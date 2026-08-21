@@ -1,0 +1,15 @@
+{
+  "id": "menh-de",
+  "title": "Chuyên đề Mệnh đề & Logic",
+  "description": "Toàn bộ 6 chủ đề lý thuyết và 3 dạng bài tập từ tài liệu nguồn: từ nhận diện mệnh đề, mệnh đề chứa biến đến phủ định, kéo theo, điều kiện cần - đủ, lượng từ đa biến và bài toán tham số vận dụng cao.",
+  "order_index": 0,
+  "step_ids": [
+    "01-menh-de-va-tinh-dung-sai",
+    "02-menh-de-chua-bien",
+    "03-phu-dinh-menh-de",
+    "04-menh-de-keo-theo",
+    "05-dao-tuong-duong-dieu-kien-can-du",
+    "06-voi-moi-ton-tai-va-nhieu-bien",
+    "07-tong-hop-tham-so-phan-vi-du-vdc"
+  ]
+}

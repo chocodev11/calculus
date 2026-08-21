@@ -194,6 +194,9 @@ export interface RenderModel {
   space: string
   elements: unknown[]
   labels: unknown[]
+  expectedPToQ?: boolean
+  expectedQToP?: boolean
+  parameter?: number | string
 }
 
 export interface RecomputeResult {

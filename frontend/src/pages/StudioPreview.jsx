@@ -8,6 +8,7 @@ import { getAllCourses, getStep } from '../lib/courseRegistry'
 import mdxComponents from '../components/mdx'
 import soundFX from '../lib/soundEffects'
 import { cn } from '../lib/utils'
+import ErrorBoundary from '../components/ErrorBoundary'
 
 // Device Viewport Presets for Mobile/Tablet Testing
 const DEVICE_PRESETS = [
@@ -254,7 +255,9 @@ export default function StudioPreview() {
               {/* Rendered MDX Content */}
               <div className="pt-2">
                 {StepComponent && (
-                  <StepComponent components={mdxComponents} />
+                  <ErrorBoundary>
+                    <StepComponent components={mdxComponents} />
+                  </ErrorBoundary>
                 )}
               </div>
             </div>

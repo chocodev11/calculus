@@ -1,6 +1,17 @@
-# 📚 Calculus Data Store
+# Calculus Data Store
 
-Vùng lưu trữ dữ liệu độc lập, không phụ thuộc vào backend/Python.
+`data/courses` chứa generated artifacts, không phải nguồn authoring. Nguồn chính
+là MDX tại `frontend/src/content/courses`.
+
+Build và validate:
+
+```bash
+npm --prefix frontend run build:course
+npm --prefix frontend run validate:course
+```
+
+Sau đó chạy Alembic và `backend/sync_data.py` để đưa artifact vào database.
+Backend chỉ đọc `data/courses`; nó không build nội dung lúc startup.
 
 ## 📁 Cấu trúc
 
@@ -8,10 +19,8 @@ Vùng lưu trữ dữ liệu độc lập, không phụ thuộc vào backend/Pyt
 data/
 ├── categories.json      # Danh mục khóa học
 ├── achievements.json    # Hệ thống thành tựu
-├── courses/             # Các khóa học (1 file = 1 khóa)
-│   ├── gioi-han.json
-│   ├── dao-ham.json
-│   └── tich-phan.json
+├── courses/             # Generated từ MDX
+│   └── <course>/chapters/<chapter>/steps/*.json
 └── README.md
 ```
 
@@ -163,14 +172,16 @@ Thêm module tương tác mới:
 ## 🔧 Sử dụng
 
 ### Thêm khóa học mới
-1. Tạo file `data/courses/ten-khoa-hoc.json`
-2. Điền theo schema ở trên
-3. Chạy lệnh sync từ admin hoặc backend
+1. Tạo thư mục `frontend/src/content/courses/ten-khoa-hoc/` với `meta.json` và các file `.mdx`.
+2. Dùng `<Slide id="...">` ổn định và chỉ dùng các block declarative trong contract.
+3. Chạy `npm --prefix frontend run build:course` và `npm --prefix frontend run validate:course`.
+4. Chạy Alembic rồi `python backend/sync_data.py`.
 
 ### Import vào database
 ```bash
 cd backend
-python scripts/db_manager.py sync-data
+python -m alembic -c alembic.ini upgrade head
+python sync_data.py
 ```
 
 ## 📝 Lưu ý

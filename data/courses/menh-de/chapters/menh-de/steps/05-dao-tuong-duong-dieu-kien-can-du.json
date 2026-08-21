@@ -1,0 +1,780 @@
+{
+  "id": "05-dao-tuong-duong-dieu-kien-can-du",
+  "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du",
+  "title": "Mệnh đề đảo · Tương đương · Điều kiện cần và đủ",
+  "description": "Thành thạo mệnh đề đảo, mệnh đề tương đương, chuẩn hóa thuật ngữ điều kiện cần, điều kiện đủ và điều kiện cần và đủ theo chuẩn GDPT 2018.",
+  "xp_reward": 120,
+  "order_index": 4,
+  "course_slug": "menh-de",
+  "chapter_slug": "menh-de",
+  "slides": [
+    {
+      "id": "s01",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s01",
+      "order_index": 0,
+      "title": "Mệnh đề Đảo & Mệnh đề Tương đương",
+      "blocks": [
+        {
+          "id": "s01-text-1",
+          "block_type": "text",
+          "content": {
+            "heading": "Mệnh đề đảo & Tương đương",
+            "paragraphs": [
+              "Cho mệnh đề kéo theo $P \\Rightarrow Q$. Mệnh đề $Q \\Rightarrow P$ được gọi là **mệnh đề đảo** của $P \\Rightarrow Q$.",
+              "Nếu cả hai mệnh đề $P \\Rightarrow Q$ và $Q \\Rightarrow P$ đều đúng, ta nói $P$ và $Q$ là **hai mệnh đề tương đương**, ký hiệu là $P \\Leftrightarrow Q$ (đọc là \"$P$ tương đương $Q$\" hoặc \"$P$ khi và chỉ khi $Q$\")."
+            ]
+          }
+        },
+        {
+          "id": "callout-2",
+          "block_type": "callout",
+          "content": {
+            "variant": "theorem",
+            "title": "Chuẩn hóa Thuật ngữ Cần & Đủ",
+            "body": "Khi định lý $P \\Rightarrow Q$ đúng:\n\n- $P$ là **điều kiện đủ** để có $Q$.\n- $Q$ là **điều kiện cần** để có $P$.\n\nKhi $P \\Leftrightarrow Q$ đúng: $P$ là **điều kiện cần và đủ** để có $Q$."
+          }
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s02",
+      "order_index": 1,
+      "title": "Phòng thí nghiệm Điều kiện Cần & Đủ",
+      "blocks": [
+        {
+          "id": "sandbox-menh_de_05_necessary_sufficient",
+          "block_type": "interaction",
+          "content": {
+            "interactionType": "sandbox",
+            "lesson": {
+              "schemaVersion": "1.0",
+              "kind": "math.sandbox",
+              "id": "menh_de_05_necessary_sufficient",
+              "version": "1",
+              "archetypeId": "logic.necessary_sufficient",
+              "domainId": "logic",
+              "level": "application",
+              "recipe": "logic.necessary_sufficient",
+              "outcomeIds": [
+                "M10-LOGIC-05"
+              ],
+              "prerequisites": [],
+              "misconceptions": [],
+              "scene": {
+                "objects": [],
+                "space": "condition_graph"
+              },
+              "config": {
+                "mode": "implication",
+                "activity": {
+                  "pExpression": "x == 0",
+                  "qExpression": "x == 0 || x == 1",
+                  "domainValues": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "expectedPToQ": true,
+                  "expectedQToP": false,
+                  "pToQControlId": "c_p_to_q",
+                  "qToPControlId": "c_q_to_p",
+                  "pExpressionLabel": "Tứ giác ABCD là hình vuông",
+                  "qExpressionLabel": "Tứ giác ABCD là hình chữ nhật"
+                }
+              },
+              "controls": [
+                {
+                  "id": "c_p_to_q",
+                  "type": "choice",
+                  "label": "P ⇒ Q (Hình vuông ⇒ Hình chữ nhật)",
+                  "initial": "Sai",
+                  "options": [
+                    "Đúng",
+                    "Sai"
+                  ],
+                  "optionLabels": {
+                    "Đúng": "Đúng (Đ)",
+                    "Sai": "Sai (S)"
+                  }
+                },
+                {
+                  "id": "c_q_to_p",
+                  "type": "choice",
+                  "label": "Đảo Q ⇒ P (Hình chữ nhật ⇒ Hình vuông)",
+                  "initial": "Đúng",
+                  "options": [
+                    "Đúng",
+                    "Sai"
+                  ],
+                  "optionLabels": {
+                    "Đúng": "Đúng (Đ)",
+                    "Sai": "Sai (S)"
+                  }
+                },
+                {
+                  "id": "c_counterexample",
+                  "type": "choice",
+                  "label": "Kết luận về điều kiện",
+                  "initial": "none",
+                  "options": [
+                    "sufficient_only",
+                    "necessary_only",
+                    "necessary_and_sufficient",
+                    "none"
+                  ],
+                  "optionLabels": {
+                    "sufficient_only": "P là ĐỦ, Q là CẦN",
+                    "necessary_only": "P là CẦN, Q là ĐỦ",
+                    "necessary_and_sufficient": "Cần và Đủ",
+                    "none": "Chưa xác định"
+                  }
+                }
+              ],
+              "goals": [
+                {
+                  "id": "condition_direction_goals",
+                  "evidence": "logic.implication_complete"
+                }
+              ],
+              "solutionGraph": {
+                "steps": [
+                  {
+                    "id": "check_forward_backward",
+                    "kind": "check",
+                    "hint": "Hình vuông luôn là hình chữ nhật. Nhưng hình chữ nhật chưa chắc là hình vuông."
+                  },
+                  {
+                    "id": "conclude_terms",
+                    "kind": "justify",
+                    "dependsOn": [
+                      "check_forward_backward"
+                    ],
+                    "hint": "Do đó P là điều kiện đủ của Q, và Q là điều kiện cần của P."
+                  }
+                ],
+                "terminalStepIds": [
+                  "conclude_terms"
+                ]
+              },
+              "assessment": [
+                {
+                  "id": "check-direction-and-conditions",
+                  "type": "structured_reasoning",
+                  "prompt": "Xác định chính xác tính đúng sai của hai chiều.",
+                  "outcomeIds": [
+                    "M10-LOGIC-05"
+                  ]
+                }
+              ],
+              "accessibility": {
+                "keyboardControls": true,
+                "textAlternative": "Hình vuông => Hình chữ nhật đúng; chiều đảo sai. P là điều kiện đủ, Q là điều kiện cần.",
+                "highContrast": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s03",
+      "order_index": 2,
+      "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+      "blocks": [
+        {
+          "id": "callout-1",
+          "block_type": "callout",
+          "content": {
+            "variant": "tip",
+            "title": "Mẹo vàng phân biệt CẦN và ĐỦ",
+            "body": "- **ĐỦ (Sufficient)**: Có $P$ là **đã đủ** để suy ra $Q$ ($P \\Rightarrow Q$).\n- **CẦN (Necessary)**: Bắt buộc **phải có** $Q$ thì mới mong có được $P$ ($P \\Rightarrow Q$, nếu không có $Q$ thì không thể có $P$).\n- Khi cả 2 chiều đều đúng ($P \\Leftrightarrow Q$): Ta dùng cụm từ **\"Khi và chỉ khi\"** hoặc **\"Điều kiện cần và đủ\"**."
+          }
+        },
+        {
+          "id": "b3_math_formula",
+          "block_type": "math",
+          "content": {
+            "label": "Mô hình quan hệ tương đương",
+            "latex": "(P \\iff Q) \\iff (P \\implies Q) \\land (Q \\implies P)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s04",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s04",
+      "order_index": 3,
+      "title": "Luyện tập có hướng dẫn · Câu 1",
+      "blocks": [
+        {
+          "id": "b4_assessment_pool_mc",
+          "block_type": "assessment_pool",
+          "content": {
+            "poolId": "05-dao-tuong-duong-dieu-kien-can-du.multiple_choice",
+            "quiz_type": "multiple_choice",
+            "items": [
+              {
+                "quiz_type": "multiple_choice",
+                "question": "Cho hai mệnh đề $P$: \"Tứ giác $ABCD$ là hình thoi\" và $Q$: \"Tứ giác $ABCD$ có hai đường chéo vuông góc\". Khẳng định nào sau đây là **đúng**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P$ là điều kiện cần để có $Q$."
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P$ là điều kiện đủ để có $Q$."
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P$ là điều kiện cần và đủ để có $Q$."
+                  },
+                  {
+                    "id": "D",
+                    "text": "$Q$ là điều kiện đủ để có $P$."
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Mệnh đề $P \\Rightarrow Q$ đúng (mọi hình thoi đều có 2 đường chéo vuông góc). Nhưng chiều ngược lại $Q \\Rightarrow P$ sai (tứ giác có 2 đường chéo vuông góc chưa chắc là hình thoi, ví dụ hình cánh diều). Do đó $P$ là điều kiện đủ để có $Q$.",
+                "id": "mc_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C1"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_02",
+                "quiz_type": "multiple_choice",
+                "question": "Với $P: a\\vdots6$ và $Q: (a\\vdots2\\text{ và }a\\vdots3)$ trên $\\mathbb{Z}$, khẳng định nào đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P\\Rightarrow Q$ chỉ"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P\\Leftrightarrow Q$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$Q\\Rightarrow P$ chỉ"
+                  },
+                  {
+                    "id": "D",
+                    "text": "Không có chiều nào đúng"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Một số chia hết cho 6 khi và chỉ khi chia hết cho cả 2 và 3.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C19"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A15"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_03",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề đảo của “Nếu tam giác đều thì tam giác cân” là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Nếu tam giác cân thì tam giác đều."
+                  },
+                  {
+                    "id": "B",
+                    "text": "Nếu tam giác không đều thì không cân."
+                  },
+                  {
+                    "id": "C",
+                    "text": "Nếu tam giác đều thì không cân."
+                  },
+                  {
+                    "id": "D",
+                    "text": "Nếu tam giác không cân thì đều."
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Đảo mệnh đề bằng cách đổi vị trí giả thiết và kết luận; mệnh đề đảo này không luôn đúng.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C39"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S11"
+                  ],
+                  "archetypeIds": [
+                    "A14"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_04",
+                "quiz_type": "multiple_choice",
+                "question": "Câu “$P$ là điều kiện cần của $Q$” tương đương với mệnh đề nào?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$Q\\Rightarrow P$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P\\Rightarrow Q$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P\\Leftrightarrow Q$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\neg P\\Rightarrow Q$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Điều kiện cần của Q phải được Q kéo theo.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C38"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S13"
+                  ],
+                  "archetypeIds": [
+                    "A16"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_05",
+                "quiz_type": "multiple_choice",
+                "question": "Cặp mệnh đề nào tương đương trên $\\mathbb{R}$?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$a=b$ và $a^2=b^2$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$x>0$ và $x^2>0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$x=2$ và $x^2=4$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$a=b$ và $a+c=b+c$"
+                  }
+                ],
+                "correct": "D",
+                "explanation": "Cộng cùng một số vào hai vế là phép biến đổi tương đương.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C12",
+                    "C19"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A15"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_06",
+                "quiz_type": "multiple_choice",
+                "question": "Khẳng định “$Q$ là điều kiện đủ để có $P$” được viết bằng ký hiệu là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P\\Rightarrow Q$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$Q\\Rightarrow P$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P\\Leftrightarrow Q$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\neg Q\\Rightarrow P$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Điều kiện đủ Q bảo đảm P, nên Q kéo theo P.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C38"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S13"
+                  ],
+                  "archetypeIds": [
+                    "A16"
+                  ],
+                  "contentTier": "core"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "b4_ref_mc_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "05-dao-tuong-duong-dieu-kien-can-du.multiple_choice",
+            "itemId": "mc_01",
+            "phase": "guided_practice"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s05",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s05",
+      "order_index": 4,
+      "title": "Luyện tập có hướng dẫn · Câu 2",
+      "blocks": [
+        {
+          "id": "b4_ref_mc_02",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "05-dao-tuong-duong-dieu-kien-can-du.multiple_choice",
+            "itemId": "mc_02",
+            "phase": "guided_practice"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s06",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s06",
+      "order_index": 5,
+      "title": "Kiểm tra độc lập · Câu 3",
+      "blocks": [
+        {
+          "id": "b4_ref_mc_03",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "05-dao-tuong-duong-dieu-kien-can-du.multiple_choice",
+            "itemId": "mc_03",
+            "phase": "guided_practice"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s07",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s07",
+      "order_index": 6,
+      "title": "Kiểm tra độc lập · Câu 4",
+      "blocks": [
+        {
+          "id": "b4_ref_mc_04",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "05-dao-tuong-duong-dieu-kien-can-du.multiple_choice",
+            "itemId": "mc_04",
+            "phase": "guided_practice"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s08",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s08",
+      "order_index": 7,
+      "title": "Kiểm tra độc lập · Đúng / Sai 4 ý",
+      "blocks": [
+        {
+          "id": "b5_assessment_pool_tf",
+          "block_type": "assessment_pool",
+          "content": {
+            "poolId": "05-dao-tuong-duong-dieu-kien-can-du.true_false_group",
+            "quiz_type": "true_false_group",
+            "items": [
+              {
+                "quiz_type": "true_false_group",
+                "question": "Xét tính đúng sai của các khẳng định về điều kiện cần và đủ sau:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "a) Tam giác ABC có 3 cạnh bằng nhau là điều kiện cần và đủ để tam giác ABC đều.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "b) Số tự nhiên a có chữ số tận cùng bằng 0 là điều kiện đủ để a chia hết cho 5.",
+                    "correct": true
+                  },
+                  {
+                    "id": "c",
+                    "label": "c) a = b là điều kiện cần và đủ để a² = b² (với a, b ∈ R).",
+                    "correct": false
+                  },
+                  {
+                    "id": "d",
+                    "label": "d) Tứ giác ABCD có 4 góc bằng nhau là điều kiện cần để ABCD là hình vuông.",
+                    "correct": true
+                  }
+                ],
+                "explanation": "Ý a đúng (định nghĩa tam giác đều). Ý b đúng (tận cùng bằng 0 chắc chắn chia hết cho 5). Ý c sai vì $a^2=b^2 \\Leftrightarrow a=\\pm b$. Ý d đúng vì hình vuông bắt buộc phải có 4 góc vuông (4 góc bằng nhau), nên đó là điều kiện cần.",
+                "id": "tf_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C52"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A02"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "tf_02",
+                "quiz_type": "true_false_group",
+                "question": "Xét các phát biểu về điều kiện cần và đủ:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "Muốn $P\\Leftrightarrow Q$ đúng thì cả $P\\Rightarrow Q$ và $Q\\Rightarrow P$ phải đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "$P$ là điều kiện đủ của $Q$ nghĩa là $Q\\Rightarrow P$.",
+                    "correct": false
+                  },
+                  {
+                    "id": "c",
+                    "label": "$Q$ là điều kiện cần của $P$ nghĩa là $P\\Rightarrow Q$.",
+                    "correct": true
+                  },
+                  {
+                    "id": "d",
+                    "label": "Chỉ cần một chiều đúng là đủ kết luận $P\\Leftrightarrow Q$.",
+                    "correct": false
+                  }
+                ],
+                "explanation": "Tương đương cần hai chiều; điều kiện đủ và cần được đọc theo chiều của mệnh đề kéo theo.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C38",
+                    "C39"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S11",
+                    "S13"
+                  ],
+                  "archetypeIds": [
+                    "A14",
+                    "A16"
+                  ],
+                  "contentTier": "core"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "b5_ref_tf_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "05-dao-tuong-duong-dieu-kien-can-du.true_false_group",
+            "itemId": "tf_01",
+            "phase": "independent_check"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s09",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s09",
+      "order_index": 8,
+      "title": "Transfer · Câu 5",
+      "blocks": [
+        {
+          "id": "b6_assessment_pool_short",
+          "block_type": "assessment_pool",
+          "content": {
+            "poolId": "05-dao-tuong-duong-dieu-kien-can-du.short_answer",
+            "quiz_type": "short_answer",
+            "items": [
+              {
+                "quiz_type": "short_answer",
+                "question": "Cho các cặp mệnh đề sau: (1) $P: x > 1$ và $Q: x^2 > 1$. (2) $P: a=b$ và $Q: a+c=b+c$. (3) $P: x=2$ và $Q: x^2=4$. (4) $P: a \\;\\vdots\\; 6$ và $Q: (a \\;\\vdots\\; 2 \\text{ và } a \\;\\vdots\\; 3)$. Hỏi có bao nhiêu cặp thỏa mãn **$P \\Leftrightarrow Q$ là mệnh đề đúng**?",
+                "correct": "2",
+                "correct_answers": [
+                  "2"
+                ],
+                "explanation": "Có đúng 2 cặp tương đương đúng là (2) (tính chất đại số) và (4) (dấu hiệu chia hết cho 6). Cặp (1) sai chiều ngược ($x=-2$). Cặp (3) sai chiều ngược ($x=-2$).",
+                "id": "short_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C3"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "short_02",
+                "quiz_type": "short_answer",
+                "question": "Nếu $P\\Rightarrow Q$ đúng nhưng $Q\\Rightarrow P$ sai, có bao nhiêu chiều của $P\\Leftrightarrow Q$ đúng?",
+                "correct": "1",
+                "correct_answers": [
+                  "1"
+                ],
+                "explanation": "Chỉ chiều $P\\Rightarrow Q$ đúng.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C12",
+                    "C39"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S11",
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A14",
+                    "A15"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "short_03",
+                "quiz_type": "short_answer",
+                "question": "Trên $\\mathbb{Z}$, mệnh đề “$a\\vdots6$ khi và chỉ khi $a$ chia hết cho 2 và 3” là Đúng hay Sai?",
+                "correct": "Đúng",
+                "correct_answers": [
+                  "1"
+                ],
+                "explanation": "Đây là tính chất chia hết: $6=2\\cdot3$ và 2, 3 nguyên tố cùng nhau.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C19"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A15"
+                  ],
+                  "contentTier": "core"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "b6_ref_short_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "05-dao-tuong-duong-dieu-kien-can-du.short_answer",
+            "itemId": "short_01",
+            "phase": "transfer"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s10",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s10",
+      "order_index": 9,
+      "title": "Transfer · Câu 6",
+      "blocks": [
+        {
+          "id": "b6_ref_short_02",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "05-dao-tuong-duong-dieu-kien-can-du.short_answer",
+            "itemId": "short_02",
+            "phase": "transfer"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s11",
+      "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s11",
+      "order_index": 10,
+      "title": "Tổng kết & Cầu nối Sư phạm",
+      "blocks": [
+        {
+          "id": "callout-1",
+          "block_type": "callout",
+          "content": {
+            "variant": "info",
+            "title": "Tổng kết Bài học 5",
+            "body": "Bạn đã làm chủ các thuật ngữ định lý: Đảo, Tương đương, Cần & Đủ. Ở bài tiếp theo, chúng ta sẽ khảo sát công cụ biểu diễn toán học mạnh nhất: **Lượng từ $\\forall, \\exists$ và Mệnh đề nhiều biến**."
+          }
+        }
+      ]
+    }
+  ]
+}

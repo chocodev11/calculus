@@ -1,81 +1,100 @@
 # Lesson Scheme Contract
 
-The lesson scheme separates authoring coverage from one learner delivery path.
-It is intentionally declarative: no lesson JSON may contain executable model
-instructions, and the runtime may only materialize allowlisted references.
+## Canonical source and delivery
 
-## Canonical shape
+Course authors edit MDX under `frontend/src/content/courses`. The runtime
+delivery path is:
 
-Each lesson that uses the scheme has a top-level `learning_scheme`:
+`BT`text
+MDX
+  -> tools/mdx_course_compiler.ts
+  -> data/courses/<course>/.../*.json
+  -> backend/sync_data.py
+  -> PostgreSQL (production) or backend/calculus.db (local)
+  -> /api/v1/steps/{id}/slides
+`BT`
 
-```json
-{
-  "version": "1.0",
-  "authoring_pool": {
-    "theory": {"min": 1, "max": 2},
-    "sandbox": {"min": 1, "max": 2},
-    "multiple_choice": 6,
-    "true_false_group": 2,
-    "short_answer": 3,
-    "media": {"min": 0, "max": 2}
-  },
-  "delivery": {
-    "guided_practice": {"multiple_choice": 2},
-    "independent_check": {"multiple_choice": 1, "true_false_group": 1},
-    "transfer": {"short_answer": 1}
-  },
-  "interaction_policy": {
-    "required_evidence": [
-      "state_change",
-      "derived_evidence",
-      "pass_condition",
-      "hint_transition"
-    ],
-    "drag_only": false
-  },
-  "delivery_layout": "one_assessment_ref_per_slide"
-}
-```
+Generated JSON is an artifact. It is never hand-edited and the backend never
+compiles MDX or seeds course content during application startup. Schema changes
+are applied by Alembic before `sync_data.py` is run.
 
-`assessment_pool` stores the complete authoring pool. It is never rendered.
-Each item must have its own `id`, `quiz_type`, question, answer data, source
-mapping and explanation. `assessment_ref` selects one item for a named delivery
-phase:
+## Allowed MDX
 
-```json
+The compiler uses `remark-mdx` and accepts only declarative content:
+
+- top-level `<Slide id="..." title="...">` elements;
+- `<Callout>` and `<Sandbox>` inside a slide;
+- `<Quiz id="b4_ref_mc_01" />` references;
+- JSON code fences with an allowlisted `block_type` such as
+  `assessment_pool`, `assessment_ref`, `math`, `text`, `callout`, `image`,
+  `reveal`, `fill_blank`, `ordering`, `interaction`, `video`, or `code`;
+- ordinary Markdown text, lists, blockquotes, fenced code, and math.
+
+Imports, JSX expressions, dynamic attributes, spread attributes, arbitrary JSX
+components, and executable lesson payloads are rejected with a source
+location. Sandbox manifests remain JSON data and are validated by the shared
+registry/manifest validator.
+
+Every slide requires a stable ID:
+
+`BT`mdx
+<Slide id="s04" title="Phản ví dụ">
+  Nội dung slide.
+</Slide>
+`BT`
+
+The generated step uses a stable `content_key`:
+
+`menh-de/menh-de/04-menh-de-keo-theo/s04`
+
+The sync process matches steps and slides by `content_key`, falls back to
+legacy order only for an existing row without a key, marks removed slides
+inactive, and does not delete/reinsert rows. This preserves progress IDs.
+
+## Assessment pools and delivery references
+
+`assessment_pool` is authoring-only data. It contains the complete pool and
+stable item IDs. `<Quiz>` compiles to an `assessment_ref` and only that
+referenced item is materialized into a learner-facing `quiz` block:
+
+`BT`json
 {
   "id": "b5_ref_tf_01",
   "block_type": "assessment_ref",
   "content": {
-    "poolId": "lesson.true_false_group",
+    "poolId": "menh-de.05.tf",
     "itemId": "tf_01",
     "phase": "independent_check"
   }
 }
-```
+`BT`
 
-The frontend materializes only refs into ordinary `quiz` blocks. This keeps the
-rendering path shared by multiple choice, four-statement true/false and short
-answer while leaving unselected pool items available for later review routing.
-At most one delivered ref is placed on a learner-facing slide. A true/false
-group remains one exercise because its four statements are the exercise's
-single reasoning unit; separate MC/short-answer items never share a slide.
+At most one assessment reference is delivered on a slide. References must
+point to an existing pool/item and use a declared phase. The frontend validates
+and materializes references at load time; invalid content produces a
+content-validation error with Retry instead of a blank page.
 
-## Validation and build order
+## Validation commands
 
-Both raw and generated artifacts must pass:
+Run these commands from the repository root:
 
-```text
-validate_all.py
+`BT`bash
+cd frontend
+npm run build:course
 npm run validate:course
-```
+npm run test:run
+npx tsc --noEmit
+npm run build
+`BT`
 
-The validators check pool counts, unique pool/item IDs, item shape, ref targets,
-delivery counts, interaction policy and raw/generated parity for sandbox
-manifests. Generated courses are rebuilt only through
-`tools/build_course_from_chapters.py`; they must not be hand-edited.
+`npm run validate:course` compiles MDX in memory, validates sandbox manifests,
+checks assessment pool/reference integrity, and compares source output with
+`data/courses`. `validate_all.py` remains a legacy JSON validator for unrelated
+data and should not be used as the MDX build step.
 
-The current menh-de baseline is a target, not a fixed screen count: 1–2 theory
-blocks, 1–2 sandboxes, 6 MC, 2 true/false groups of four statements, 3 short
-answers and up to 2 encouragement media blocks. Delivery can vary by lesson as
-long as the declared phases and source coverage remain valid.
+## Compatibility blocks
+
+`drag_drop`, `interactive_graph`, `fill_blank`, `ordering`, and other legacy
+blocks must render readable data through the safe preview-only fallback. They
+must not crash the learner page and are not treated as graded interactions until
+a new contract is explicitly added.

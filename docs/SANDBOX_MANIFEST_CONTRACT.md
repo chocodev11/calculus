@@ -51,12 +51,12 @@ coverage hoặc mastery đã hoàn tất.
 ## Source and generated flow
 
 ```
-data/raw_courses
-    -> validate
-    -> tools/build_course_from_chapters.py
+frontend/src/content/courses/*.mdx
+    -> tools/mdx_course_compiler.ts
     -> data/courses
     -> validate
-    -> frontend runtime
+    -> backend/sync_data.py
+    -> frontend/backend runtime
 ```
 
 Generated artifact không được chỉnh trực tiếp. Build phải dừng khi step JSON

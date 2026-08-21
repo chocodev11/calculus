@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['src/sandbox/**/*.test.ts'],
+    include: ['src/**/*.test.{js,jsx,ts,tsx}'],
     restoreMocks: true,
   },
 })

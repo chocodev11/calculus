@@ -1,0 +1,792 @@
+{
+  "id": "02-menh-de-chua-bien",
+  "content_key": "menh-de/menh-de/02-menh-de-chua-bien",
+  "title": "Mệnh đề chứa biến",
+  "description": "Hiểu cấu trúc vị từ P(x), thao tác thế biến P(a), tìm miền xác định và đếm số nghiệm thỏa mãn theo chuẩn GDPT 2018.",
+  "xp_reward": 120,
+  "order_index": 1,
+  "course_slug": "menh-de",
+  "chapter_slug": "menh-de",
+  "slides": [
+    {
+      "id": "s01",
+      "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s01",
+      "order_index": 0,
+      "title": "Khái niệm Mệnh đề chứa biến",
+      "blocks": [
+        {
+          "id": "s01-text-1",
+          "block_type": "text",
+          "content": {
+            "heading": "Mệnh đề chứa biến P(x) là gì?",
+            "paragraphs": [
+              "Một câu khẳng định chứa một hay nhiều biến số (ký hiệu $x, y, n, ...$) mà tính đúng sai của nó phụ thuộc vào giá trị cụ thể của các biến đó được gọi là **mệnh đề chứa biến** (hay vị từ).",
+              "Bản thân $P(x)$ **chưa phải là một mệnh đề**. Khi ta thay biến $x$ bằng một giá trị cụ thể $x = a$ thuộc tập xác định, ta nhận được một mệnh đề thông thường $P(a)$ có chân trị đúng hoặc sai."
+            ]
+          }
+        },
+        {
+          "id": "callout-2",
+          "block_type": "callout",
+          "content": {
+            "variant": "theorem",
+            "title": "Phép thế biến (Substitution)",
+            "body": "Cho vị từ $P(x)$ với $x \\in X$. Khi gán $x = a$ ($a \\in X$), câu khẳng định $P(a)$ trở thành một mệnh đề toán học."
+          }
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s02",
+      "order_index": 1,
+      "title": "Phòng thí nghiệm Khảo sát Biến số",
+      "blocks": [
+        {
+          "id": "sandbox-menh_de_02_variable",
+          "block_type": "interaction",
+          "content": {
+            "interactionType": "sandbox",
+            "lesson": {
+              "schemaVersion": "1.0",
+              "kind": "math.sandbox",
+              "id": "menh_de_02_variable",
+              "version": "1",
+              "archetypeId": "logic.proposition",
+              "domainId": "logic",
+              "level": "understanding",
+              "recipe": "logic.proposition",
+              "outcomeIds": [
+                "M10-LOGIC-02"
+              ],
+              "prerequisites": [],
+              "misconceptions": [],
+              "scene": {
+                "objects": [],
+                "space": "condition_graph"
+              },
+              "config": {
+                "mode": "proposition_classifier",
+                "activity": {
+                  "items": [
+                    {
+                      "id": "p1",
+                      "label": "P(x): x^2 - 4 = 0 khi x = 2",
+                      "controlId": "c_x1",
+                      "expectedType": "proposition"
+                    },
+                    {
+                      "id": "p2",
+                      "label": "P(x): x^2 - 4 = 0 khi x = 3",
+                      "controlId": "c_x2",
+                      "expectedType": "proposition"
+                    },
+                    {
+                      "id": "p3",
+                      "label": "Q(n): 2n + 1 chia hết cho 3",
+                      "controlId": "c_x3",
+                      "expectedType": "open_sentence"
+                    },
+                    {
+                      "id": "p4",
+                      "label": "Tìm x để x > 5",
+                      "controlId": "c_x4",
+                      "expectedType": "not_proposition"
+                    }
+                  ]
+                }
+              },
+              "controls": [
+                {
+                  "id": "c_x1",
+                  "type": "choice",
+                  "label": "P(2): 2^2 - 4 = 0",
+                  "initial": "open_sentence",
+                  "options": [
+                    "proposition",
+                    "open_sentence",
+                    "not_proposition"
+                  ],
+                  "optionLabels": {
+                    "proposition": "Mệnh đề đúng",
+                    "open_sentence": "Chứa biến",
+                    "not_proposition": "Không phải"
+                  }
+                },
+                {
+                  "id": "c_x2",
+                  "type": "choice",
+                  "label": "P(3): 3^2 - 4 = 0",
+                  "initial": "open_sentence",
+                  "options": [
+                    "proposition",
+                    "open_sentence",
+                    "not_proposition"
+                  ],
+                  "optionLabels": {
+                    "proposition": "Mệnh đề sai",
+                    "open_sentence": "Chứa biến",
+                    "not_proposition": "Không phải"
+                  }
+                },
+                {
+                  "id": "c_x3",
+                  "type": "choice",
+                  "label": "Q(n): 2n+1 chia hết cho 3",
+                  "initial": "proposition",
+                  "options": [
+                    "proposition",
+                    "open_sentence",
+                    "not_proposition"
+                  ],
+                  "optionLabels": {
+                    "proposition": "Mệnh đề",
+                    "open_sentence": "Mệnh đề chứa biến",
+                    "not_proposition": "Không phải"
+                  }
+                },
+                {
+                  "id": "c_x4",
+                  "type": "choice",
+                  "label": "Tìm x để x > 5",
+                  "initial": "open_sentence",
+                  "options": [
+                    "proposition",
+                    "open_sentence",
+                    "not_proposition"
+                  ],
+                  "optionLabels": {
+                    "proposition": "Mệnh đề",
+                    "open_sentence": "Chứa biến",
+                    "not_proposition": "Câu mệnh lệnh"
+                  }
+                }
+              ],
+              "goals": [
+                {
+                  "id": "classify_variables",
+                  "label": "Phân loại mệnh đề chứa biến và mệnh đề sau khi thế giá trị",
+                  "evidence": "logic.classifier_complete"
+                }
+              ],
+              "solutionGraph": {
+                "steps": [
+                  {
+                    "id": "check_substitution",
+                    "label": "Kiểm tra phép thế biến",
+                    "kind": "check",
+                    "hint": "Sau khi thế x=2 hoặc x=3, câu trở thành mệnh đề có chân trị xác định."
+                  },
+                  {
+                    "id": "distinguish_unbound_variable",
+                    "label": "Nhận diện biến tự do",
+                    "kind": "simplify",
+                    "dependsOn": [
+                      "check_substitution"
+                    ],
+                    "hint": "Biến n chưa được gán giá trị thì câu vẫn là mệnh đề chứa biến."
+                  }
+                ],
+                "terminalStepIds": [
+                  "distinguish_unbound_variable"
+                ]
+              },
+              "assessment": [
+                {
+                  "id": "check-variable-propositions",
+                  "type": "structured_reasoning",
+                  "prompt": "Phân biệt mệnh đề chứa biến và mệnh đề sau khi thế.",
+                  "outcomeIds": [
+                    "M10-LOGIC-02"
+                  ]
+                }
+              ],
+              "accessibility": {
+                "keyboardControls": true,
+                "textAlternative": "Khảo sát thế biến: P(2) đúng, P(3) sai, Q(n) chứa biến.",
+                "highContrast": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s03",
+      "order_index": 2,
+      "title": "Khoảng dừng Ghi nhớ Cốt lõi",
+      "blocks": [
+        {
+          "id": "callout-1",
+          "block_type": "callout",
+          "content": {
+            "variant": "tip",
+            "title": "Ghi nhớ nhanh · Tập chân lý (Truth Set)",
+            "body": "Tập hợp tất cả các phần tử $x \\in X$ làm cho $P(x)$ trở thành mệnh đề đúng được gọi là **tập chân lý** (hay tập nghiệm) của vị từ:\r\n$T_P = \\{x \\in X \\mid P(x) \\text{ đúng}\\}$"
+          }
+        },
+        {
+          "id": "b3_math_example",
+          "block_type": "math",
+          "content": {
+            "label": "Ví dụ tập chân lý",
+            "latex": "P(x): \"x^2 - 5x + 6 = 0\" \\implies T_P = \\{2, 3\\}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s04",
+      "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s04",
+      "order_index": 3,
+      "title": "Luyện tập có hướng dẫn · Câu 1",
+      "blocks": [
+        {
+          "id": "b4_assessment_pool_mc",
+          "block_type": "assessment_pool",
+          "content": {
+            "poolId": "02-menh-de-chua-bien.multiple_choice",
+            "quiz_type": "multiple_choice",
+            "items": [
+              {
+                "quiz_type": "multiple_choice",
+                "question": "Cho mệnh đề chứa biến $P(x): \"x^2 - 3x + 2 = 0\"$ với $x \\in \\mathbb{R}$. Trong các mệnh đề sau, mệnh đề nào là **mệnh đề đúng**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P(0)$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P(1)$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P(3)$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$P(-1)$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Thay $x = 1$ vào phương trình: $1^2 - 3(1) + 2 = 0$ (đúng), do đó $P(1)$ là mệnh đề đúng. Với $x=0, 3, -1$ thì biểu thức khác 0.",
+                "id": "mc_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C1"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_02",
+                "quiz_type": "multiple_choice",
+                "question": "Cho $P(x): x^2-4=0$ trên $\\mathbb{R}$. Giá trị nào làm $P(x)$ đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$x=-2$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$x=0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$x=1$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$x=3$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Thay $x=-2$ được $(-2)^2-4=0$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C14"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S3"
+                  ],
+                  "archetypeIds": [
+                    "A03"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_03",
+                "quiz_type": "multiple_choice",
+                "question": "Giá trị nào sau đây **không thuộc** miền xác định $\\mathbb{Z}$ của một vị từ?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$-1$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$1$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\frac12$"
+                  }
+                ],
+                "correct": "D",
+                "explanation": "$\\frac12$ không phải là số nguyên nên không thuộc $\\mathbb{Z}$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C43"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S4"
+                  ],
+                  "archetypeIds": [
+                    "A05"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_04",
+                "quiz_type": "multiple_choice",
+                "question": "Cho $P(x): 2x-1=0$. Giá trị nào làm $P(x)$ đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$x=0$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$x=\\frac12$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$x=1$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$x=2$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Từ $2x-1=0$ suy ra $x=\\frac12$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C14"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S3"
+                  ],
+                  "archetypeIds": [
+                    "A03"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_05",
+                "quiz_type": "multiple_choice",
+                "question": "Cho $P(x): x^2+1=0$ với $x\\in\\mathbb{R}$. Chân trị của $P(0)$ là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Đúng"
+                  },
+                  {
+                    "id": "B",
+                    "text": "Sai"
+                  },
+                  {
+                    "id": "C",
+                    "text": "Không xác định"
+                  },
+                  {
+                    "id": "D",
+                    "text": "Vừa đúng vừa sai"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "$P(0)$ tương đương $1=0$, nên sai.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C53"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S3"
+                  ],
+                  "archetypeIds": [
+                    "A03"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "mc_06",
+                "quiz_type": "multiple_choice",
+                "question": "Cho $P(x): x+3>0$ trên $\\mathbb{R}$. Giá trị nào là một nhân chứng để $P(x)$ đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$x=-2$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$x=-4$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$x=-3$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$x=-5$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Với $x=-2$, ta có $-2+3=1>0$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C14",
+                    "C58"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S3"
+                  ],
+                  "archetypeIds": [
+                    "A03"
+                  ],
+                  "contentTier": "core"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "b4_ref_mc_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "02-menh-de-chua-bien.multiple_choice",
+            "itemId": "mc_01",
+            "phase": "guided_practice"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s05",
+      "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s05",
+      "order_index": 4,
+      "title": "Luyện tập có hướng dẫn · Câu 2",
+      "blocks": [
+        {
+          "id": "b4_ref_mc_02",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "02-menh-de-chua-bien.multiple_choice",
+            "itemId": "mc_02",
+            "phase": "guided_practice"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s06",
+      "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s06",
+      "order_index": 5,
+      "title": "Kiểm tra độc lập · Câu 3",
+      "blocks": [
+        {
+          "id": "b4_ref_mc_03",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "02-menh-de-chua-bien.multiple_choice",
+            "itemId": "mc_03",
+            "phase": "guided_practice"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s07",
+      "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s07",
+      "order_index": 6,
+      "title": "Kiểm tra độc lập · Đúng / Sai 4 ý",
+      "blocks": [
+        {
+          "id": "b5_assessment_pool_tf",
+          "block_type": "assessment_pool",
+          "content": {
+            "poolId": "02-menh-de-chua-bien.true_false_group",
+            "quiz_type": "true_false_group",
+            "items": [
+              {
+                "quiz_type": "true_false_group",
+                "question": "Cho mệnh đề chứa biến $P(n): \"2n + 1 \\text{ là số nguyên tố}\"$ với $n \\in \\mathbb{N}^*$. Xét tính đúng sai của các mệnh đề sau:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "a) P(1) là mệnh đề đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "b) P(2) là mệnh đề đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "c",
+                    "label": "c) P(3) là mệnh đề đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "d",
+                    "label": "d) P(4) là mệnh đề đúng.",
+                    "correct": false
+                  }
+                ],
+                "explanation": "Với $n=1: 2(1)+1=3$ (nguyên tố, đúng). Với $n=2: 2(2)+1=5$ (nguyên tố, đúng). Với $n=3: 2(3)+1=7$ (nguyên tố, đúng). Với $n=4: 2(4)+1=9$ (hợp số vì chia hết cho 3, sai).",
+                "id": "tf_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C52"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A02"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "tf_02",
+                "quiz_type": "true_false_group",
+                "question": "Cho $P(x): x^2=4$ trên $\\mathbb{R}$. Xét các khẳng định sau:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "$P(2)$ là mệnh đề đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "$P(-2)$ là mệnh đề đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "c",
+                    "label": "$P(0)$ là mệnh đề đúng.",
+                    "correct": false
+                  },
+                  {
+                    "id": "d",
+                    "label": "$P(3)$ là mệnh đề đúng.",
+                    "correct": false
+                  }
+                ],
+                "explanation": "Thay từng giá trị vào vị từ: chỉ $x=2$ và $x=-2$ cho kết quả đúng.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C53",
+                    "C58"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S3"
+                  ],
+                  "archetypeIds": [
+                    "A03"
+                  ],
+                  "contentTier": "core"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "b5_ref_tf_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "02-menh-de-chua-bien.true_false_group",
+            "itemId": "tf_01",
+            "phase": "independent_check"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s08",
+      "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s08",
+      "order_index": 7,
+      "title": "Transfer · Câu 4",
+      "blocks": [
+        {
+          "id": "b6_assessment_pool_short",
+          "block_type": "assessment_pool",
+          "content": {
+            "poolId": "02-menh-de-chua-bien.short_answer",
+            "quiz_type": "short_answer",
+            "items": [
+              {
+                "quiz_type": "short_answer",
+                "question": "Cho mệnh đề chứa biến $P(x): \"3x - 11 > 0\"$ với $x \\in \\mathbb{Z}$. Tìm số nguyên dương $x$ **nhỏ nhất** để $P(x)$ là mệnh đề đúng.",
+                "correct": "4",
+                "correct_answers": [
+                  "4"
+                ],
+                "explanation": "Ta có bất phương trình $3x - 11 > 0 \\Leftrightarrow 3x > 11 \\Leftrightarrow x > \\frac{11}{3} \\approx 3.67$. Vì $x$ là số nguyên dương nhỏ nhất nên $x = 4$.",
+                "id": "short_01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C3"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "short_02",
+                "quiz_type": "short_answer",
+                "question": "Có bao nhiêu số tự nhiên $x\\in\\{0,1,2,3\\}$ làm $x^2-1=0$ đúng?",
+                "correct": "1",
+                "correct_answers": [
+                  "1"
+                ],
+                "explanation": "Chỉ $x=1$ thỏa mãn.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C65"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S16"
+                  ],
+                  "archetypeIds": [
+                    "A19"
+                  ],
+                  "contentTier": "core"
+                }
+              },
+              {
+                "id": "short_03",
+                "quiz_type": "short_answer",
+                "question": "Trong tập $\\{-2,-1,0,1,2\\}$ có bao nhiêu giá trị làm $x^2\\le1$ đúng?",
+                "correct": "3",
+                "correct_answers": [
+                  "3"
+                ],
+                "explanation": "Các giá trị là $-1,0,1$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C65"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S16"
+                  ],
+                  "archetypeIds": [
+                    "A19"
+                  ],
+                  "contentTier": "core"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "b6_ref_short_01",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "02-menh-de-chua-bien.short_answer",
+            "itemId": "short_01",
+            "phase": "transfer"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s09",
+      "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s09",
+      "order_index": 8,
+      "title": "Transfer · Câu 5",
+      "blocks": [
+        {
+          "id": "b6_ref_short_02",
+          "block_type": "assessment_ref",
+          "content": {
+            "poolId": "02-menh-de-chua-bien.short_answer",
+            "itemId": "short_02",
+            "phase": "transfer"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s10",
+      "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s10",
+      "order_index": 9,
+      "title": "Tổng kết & Cầu nối Sư phạm",
+      "blocks": [
+        {
+          "id": "callout-1",
+          "block_type": "callout",
+          "content": {
+            "variant": "info",
+            "title": "Tổng kết Bài học 2",
+            "body": "Mệnh đề chứa biến là nền móng để xây dựng các phương trình, bất phương trình và phát biểu toán học tổng quát. Ở bài tiếp theo, ta sẽ học cách **Phủ định một mệnh đề $\\overline{P}$** và quy tắc biến đổi lượng từ."
+          }
+        }
+      ]
+    }
+  ]
+}

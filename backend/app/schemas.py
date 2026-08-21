@@ -41,6 +41,7 @@ class TokenResponse(BaseModel):
 # Stories
 class StepResponse(BaseModel):
     id: int
+    content_key: Optional[str] = None
     title: str
     description: Optional[str]
     xp_reward: int
@@ -88,6 +89,7 @@ class StoryDetailResponse(StoryListResponse):
 # Steps
 class StepDetailResponse(BaseModel):
     id: int
+    content_key: Optional[str] = None
     title: str
     description: Optional[str]
     chapter_title: str
@@ -99,6 +101,7 @@ class StepDetailResponse(BaseModel):
 
 class SlideResponse(BaseModel):
     id: int
+    content_key: Optional[str] = None
     order_index: int
     blocks: list
     

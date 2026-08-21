@@ -6,7 +6,7 @@ import {
   Copy, CheckCheck, Play, GripVertical, Trophy, Heart, Zap, ArrowRight, Medal
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import api from '../lib/api'
+import api, { ApiError, normalizeListPayload } from '../lib/api'
 import { useAuthStore } from '../lib/store'
 import { decodeStepId, encodeStepId, cn } from '../lib/utils'
 import { materializeAssessmentPools } from '../lib/lessonScheme'
@@ -19,6 +19,7 @@ import InteractionSlide from '../components/interactions'
 import { MathText } from '../components/interactions/MathText'
 import soundFX from '../lib/soundEffects'
 import { fireConfetti, fireLessonCompleteConfetti } from '../lib/confetti'
+import ErrorBoundary from '../components/ErrorBoundary'
 
 const ReactKatex = ReactKatexModule.default || ReactKatexModule
 const { InlineMath, BlockMath } = ReactKatex
@@ -34,12 +35,18 @@ export default function Step() {
   const [step, setStep] = useState(null)
   const [slides, setSlides] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(null)
+  const [loadRetryToken, setLoadRetryToken] = useState(0)
   const [story, setStory] = useState(null)
   const [allSteps, setAllSteps] = useState([])
 
   // Slide navigation
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
   const [completedSlideIds, setCompletedSlideIds] = useState([])
+  const completedSlideIdsRef = useRef(new Set())
+  const slideAwardRequestsRef = useRef(new Map())
+  const [slideAwardError, setSlideAwardError] = useState(null)
+  const [isNavigating, setIsNavigating] = useState(false)
 
   // Quiz state
   const [quizAnswers, setQuizAnswers] = useState({})
@@ -48,6 +55,8 @@ export default function Step() {
   const [totalXpEarned, setTotalXpEarned] = useState(0)
 
   const [showCompleteScreen, setShowCompleteScreen] = useState(false)
+  const [completionError, setCompletionError] = useState(null)
+  const [isCompleting, setIsCompleting] = useState(false)
   const [showAchievementsScreen, setShowAchievementsScreen] = useState(false)
   const [newAchievements, setNewAchievements] = useState([])
   const [slideAchievements, setSlideAchievements] = useState([])
@@ -60,18 +69,35 @@ export default function Step() {
   const stepStartTimeRef = useRef(Date.now())
   const [localHearts, setLocalHearts] = useState(() => user?.hearts ?? 5)
   const [hasXpBoost, setHasXpBoost] = useState(false)
+  const loadRequestRef = useRef(null)
 
-  useEffect(() => { loadData() }, [id, slug])
+  useEffect(() => {
+    const controller = new AbortController()
+    const requestId = Symbol('step-load')
+    loadData(controller.signal, requestId)
+    return () => controller.abort()
+  }, [id, slug, loadRetryToken])
 
-  const loadData = async () => {
+  const loadData = async (signal, requestId) => {
     setLoading(true)
+    setLoadError(null)
+    setSlideAwardError(null)
+    const isCurrentRequest = () => !signal.aborted && requestId === loadRequestRef.current
+    loadRequestRef.current = requestId
     try {
-      const fullStory = await api.get(`/stories/${slug}`)
+      if (!id || !slug) {
+        setLoadError({ kind: 'not-found', message: 'Đường dẫn bài học không hợp lệ.' })
+        return
+      }
+      const fullStory = await api.get(`/stories/${slug}`, { signal, redirectOnUnauthorized: false })
+      if (!isCurrentRequest()) return
+      if (!fullStory || typeof fullStory !== 'object') {
+        throw new ApiError('API trả về thông tin khóa học không đúng định dạng', { status: 200, endpoint: `/stories/${slug}` })
+      }
       setStory(fullStory)
 
       if (!fullStory.is_enrolled) {
-        navigate(`/course/${slug}`)
-        setLoading(false)
+        setLoadError({ kind: 'not-enrolled', message: 'Bạn chưa đăng ký khóa học này.' })
         return
       }
 
@@ -82,27 +108,60 @@ export default function Step() {
       setAllSteps(steps)
 
       const [stepData, slidesData, invData] = await Promise.all([
-        api.get(`/steps/${id}`),
-        api.get(`/steps/${id}/slides`),
-        api.get('/shop/inventory').catch(() => []),
+        api.get(`/steps/${id}`, { signal, redirectOnUnauthorized: false }),
+        api.get(`/steps/${id}/slides`, { signal, redirectOnUnauthorized: false }),
+        api.get('/shop/inventory', { signal, redirectOnUnauthorized: false }).catch(error => {
+          if (error?.name === 'AbortError') throw error
+          return []
+        }),
       ])
+      if (!isCurrentRequest()) return
+
+      const normalizedSlides = normalizeListPayload(slidesData, 'slides')
+      if (!stepData || typeof stepData !== 'object' || !Array.isArray(normalizedSlides)) {
+        throw new ApiError('Nội dung bài học không đúng định dạng', { status: 200, endpoint: `/steps/${id}` })
+      }
+      let materializedSlides
+      try {
+        materializedSlides = materializeAssessmentPools(normalizedSlides)
+      } catch (error) {
+        throw new ApiError(`Nội dung bài học không hợp lệ: ${error?.message || String(error)}`, {
+          status: 422,
+          endpoint: `/steps/${id}/slides`,
+          payload: error,
+        })
+      }
 
       const boost = Array.isArray(invData) && invData.find(i => i.item?.item_type === 'xp_boost' && i.quantity > 0)
       setHasXpBoost(!!boost)
 
       setStep(stepData)
-      setSlides(materializeAssessmentPools(slidesData))
+      setSlides(materializedSlides)
       setCurrentSlideIndex(0)
+      completedSlideIdsRef.current = new Set()
+      slideAwardRequestsRef.current.clear()
+      setCompletedSlideIds([])
       setQuizAnswers({})
       setQuizSubmitted({})
       setQuizResults({})
       setTotalXpEarned(0)
       setShowCompleteScreen(false)
+      setCompletionError(null)
       stepStartTimeRef.current = Date.now()
     } catch (e) {
+      if (e?.name === 'AbortError' || !isCurrentRequest()) return
       console.error('Error loading step:', e)
+      const status = e instanceof ApiError ? e.status : 0
+      const kind = status === 401
+        ? 'api-unauthorized'
+        : status === 404
+        ? 'not-found'
+        : status === 422
+        ? 'content-validation'
+        : 'api-error'
+      setLoadError({ kind, message: e?.message || 'Không thể tải bài học.', status, endpoint: e?.endpoint })
     } finally {
-      setLoading(false)
+      if (isCurrentRequest()) setLoading(false)
     }
   }
 
@@ -111,25 +170,43 @@ export default function Step() {
   const isLastSlide = currentSlideIndex === slides.length - 1
 
   const awardSlideXp = useCallback(async (slideId) => {
-    if (!slideId) return
-    if (completedSlideIds.includes(slideId)) return
-    setCompletedSlideIds(prev => [...prev, slideId])
-    try {
-      const res = await api.post(`/steps/${id}/slides/${slideId}/complete`, {})
-      if (res?.newly_earned_achievements?.length > 0) {
-        setSlideAchievements(res.newly_earned_achievements)
-      }
-    } catch (e) {
-      console.warn('Error recording slide completion', e)
-    }
-  }, [id, completedSlideIds])
+    if (!slideId || completedSlideIdsRef.current.has(slideId)) return true
+    const existingRequest = slideAwardRequestsRef.current.get(slideId)
+    if (existingRequest) return existingRequest
 
-  const goNext = useCallback(() => {
-    if (currentSlideIndex < slides.length - 1) {
-      try { awardSlideXp(currentSlide?.id) } catch (e) {}
-      setCurrentSlideIndex(i => i + 1)
-    }
-  }, [currentSlideIndex, slides.length, awardSlideXp, currentSlide])
+    const request = (async () => {
+      setSlideAwardError(null)
+      try {
+        const res = await api.post(`/steps/${id}/slides/${slideId}/complete`, {}, { redirectOnUnauthorized: false })
+        completedSlideIdsRef.current.add(slideId)
+        setCompletedSlideIds(Array.from(completedSlideIdsRef.current))
+        if (res?.newly_earned_achievements?.length > 0) {
+          setSlideAchievements(res.newly_earned_achievements)
+        }
+        return true
+      } catch (error) {
+        if (error?.name !== 'AbortError') {
+          console.warn('Error recording slide completion', error)
+          setSlideAwardError({ slideId, message: error?.message || 'Chưa ghi nhận được tiến độ slide.' })
+        }
+        return false
+      } finally {
+        slideAwardRequestsRef.current.delete(slideId)
+      }
+    })()
+
+    slideAwardRequestsRef.current.set(slideId, request)
+    return request
+  }, [id])
+
+  const goNext = useCallback(async () => {
+    if (isNavigating || currentSlideIndex >= slides.length - 1) return false
+    setIsNavigating(true)
+    const awarded = await awardSlideXp(currentSlide?.id)
+    if (awarded) setCurrentSlideIndex(index => index + 1)
+    setIsNavigating(false)
+    return awarded
+  }, [awardSlideXp, currentSlide, currentSlideIndex, isNavigating, slides.length])
 
   const isInteractionSlide = useMemo(() => {
     const blocks = currentSlide?.blocks || []
@@ -207,6 +284,7 @@ export default function Step() {
   }
 
   const handleComplete = () => {
+    setCompletionError(null)
     const correctCount = Object.values(quizResults).filter(r => r.correct).length
     const baseXp = (step?.xp_reward || 0) + correctCount * 15
     setTotalXpEarned(hasXpBoost ? baseXp * 2 : baseXp)
@@ -216,6 +294,9 @@ export default function Step() {
   }
 
   const handleCompleteAndNavigate = async () => {
+    if (isCompleting) return
+    setIsCompleting(true)
+    setCompletionError(null)
     try {
       const timeSpent = Math.round((Date.now() - stepStartTimeRef.current) / 1000)
       const quizEntries = Object.values(quizResults)
@@ -241,8 +322,15 @@ export default function Step() {
       }
 
       doNavigateNext()
-    } catch {
-      navigate(`/course/${slug}`)
+    } catch (error) {
+      if (error?.name !== 'AbortError') {
+        setCompletionError({
+          message: error?.message || 'Không thể ghi nhận hoàn thành bài học.',
+          status: error?.status,
+        })
+      }
+    } finally {
+      setIsCompleting(false)
     }
   }
 
@@ -252,16 +340,18 @@ export default function Step() {
   }
 
   const handleQuit = () => {
-    api.post(`/steps/${id}/quit`, {}).then(result => {
+    api.post(`/steps/${id}/quit`, {}, { redirectOnUnauthorized: false }).then(result => {
       if (result?.hearts != null) {
         setLocalHearts(result.hearts)
         updateUserStats({ hearts: result.hearts })
       }
-    }).catch(() => {})
+    }).catch(error => {
+      if (error?.name !== 'AbortError') console.warn('Could not record lesson quit', error)
+    })
     navigate(`/course/${slug}`)
   }
 
-  const handleFooterAction = () => {
+  const handleFooterAction = async () => {
     if (hasQuiz && !allQuizzesAnswered) {
       currentQuizBlocks.forEach(b => {
         if (!quizSubmitted[b.id] && isQuizBlockSelected(b)) {
@@ -290,10 +380,9 @@ export default function Step() {
     }
     if (hasQuiz && allQuizzesAnswered && isTrueFalseOnlySlide) {
       if (isLastSlide) {
-        try { awardSlideXp(currentSlide?.id) } catch (e) {}
-        handleComplete()
+        if (await awardSlideXp(currentSlide?.id)) handleComplete()
       } else {
-        goNext()
+        await goNext()
       }
       return
     }
@@ -304,10 +393,9 @@ export default function Step() {
       return
     }
     if (isLastSlide) {
-      try { awardSlideXp(currentSlide?.id) } catch (e) {}
-      handleComplete()
+      if (await awardSlideXp(currentSlide?.id)) handleComplete()
     } else {
-      goNext()
+      await goNext()
     }
   }
 
@@ -322,11 +410,24 @@ export default function Step() {
     )
   }
 
+  if (loadError) {
+    return (
+      <StepLoadErrorScreen
+        error={loadError}
+        onRetry={() => setLoadRetryToken(token => token + 1)}
+        onCourse={() => navigate(`/course/${slug}`)}
+      />
+    )
+  }
+
   if (!step || slides.length === 0) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
         <div className="text-center bg-white border border-slate-200 rounded-3xl p-8 space-y-4 max-w-sm">
-          <p className="text-slate-600 font-bold">Không tìm thấy nội dung cho bài học này.</p>
+          <p className="text-slate-600 font-bold">Nội dung bài học đang trống hoặc chưa được xuất bản.</p>
+          <TactileButton variant="secondary" onClick={() => setLoadRetryToken(token => token + 1)} className="w-full">
+            Thử lại
+          </TactileButton>
           <TactileButton variant="secondary" onClick={() => navigate(`/course/${slug}`)} className="w-full">
             Quay lại khoá học
           </TactileButton>
@@ -362,6 +463,8 @@ export default function Step() {
         xpEarned={totalXpEarned || (step?.xp_reward || 10)}
         stepTitle={step?.title}
         onContinue={handleCompleteAndNavigate}
+        error={completionError}
+        isSubmitting={isCompleting}
       />
     )
   }
@@ -384,6 +487,18 @@ export default function Step() {
   return (
     <div className="h-[100dvh] flex flex-col overflow-hidden bg-white font-sans select-none">
       {achievementPopup}
+      {slideAwardError && (
+        <div className="absolute top-[10vh] left-0 right-0 z-40 flex items-center justify-center gap-3 bg-rose-50 border-b border-rose-200 px-4 py-2 text-xs font-bold text-rose-800">
+          <span>{slideAwardError.message}</span>
+          <button
+            type="button"
+            className="underline underline-offset-2"
+            onClick={() => awardSlideXp(slideAwardError.slideId)}
+          >
+            Thử lại
+          </button>
+        </div>
+      )}
       
       {/* ─── Top Header (10vh) ────────────────────────────────────────── */}
       <header className="h-[10vh] shrink-0 border-b border-slate-200 flex items-center justify-between px-4 sm:px-8 bg-white relative z-20">
@@ -442,10 +557,16 @@ export default function Step() {
                   const content = interactionBlock.content || interactionBlock.block_data || {}
                   return (
                     <div className="w-full max-w-4xl mx-auto my-auto p-3 sm:p-6">
-                      <InteractionSlide
-                        interactionType={content.interactionType}
-                        lesson={content.lesson}
-                      />
+                      <ErrorBoundary
+                        fallback={({ reset }) => (
+                          <BlockFailure onRetry={reset} />
+                        )}
+                      >
+                        <InteractionSlide
+                          interactionType={content.interactionType}
+                          lesson={content.lesson}
+                        />
+                      </ErrorBoundary>
                     </div>
                   )
                 }
@@ -467,16 +588,20 @@ export default function Step() {
                   className="space-y-6"
                 >
                   {currentSlide?.blocks?.map((block, blockIdx) => (
-                    <BlockRenderer
+                    <ErrorBoundary
                       key={block.id || `${currentSlideIndex}-${blockIdx}`}
-                      block={block}
-                      quizAnswer={quizAnswers[block.id]}
-                      quizSubmitted={quizSubmitted[block.id]}
-                      quizResult={quizResults[block.id]}
-                      onQuizAnswer={(ans) => handleQuizAnswer(block.id, ans)}
-                      onQuizSubmit={(correct, explanation) => handleQuizSubmit(block.id, correct, explanation)}
-                      onQuizRetry={() => handleQuizRetry(block.id)}
-                    />
+                      fallback={({ reset }) => <BlockFailure onRetry={reset} />}
+                    >
+                      <BlockRenderer
+                        block={block}
+                        quizAnswer={quizAnswers[block.id]}
+                        quizSubmitted={quizSubmitted[block.id]}
+                        quizResult={quizResults[block.id]}
+                        onQuizAnswer={(ans) => handleQuizAnswer(block.id, ans)}
+                        onQuizSubmit={(correct, explanation) => handleQuizSubmit(block.id, correct, explanation)}
+                        onQuizRetry={() => handleQuizRetry(block.id)}
+                      />
+                    </ErrorBoundary>
                   ))}
                 </motion.div>
               </AnimatePresence>
@@ -626,6 +751,76 @@ export default function Step() {
 }
 
 
+function StepLoadErrorScreen({ error, onRetry, onCourse }) {
+  const labels = {
+    'not-enrolled': {
+      title: 'Bạn chưa đăng ký bài học',
+      detail: 'Hãy quay lại khóa học và đăng ký trước khi bắt đầu.',
+    },
+    'not-found': {
+      title: 'Không tìm thấy bài học',
+      detail: 'Đường dẫn hoặc nội dung bài học có thể đã thay đổi.',
+    },
+    'api-unauthorized': {
+      title: 'Phiên đăng nhập không hợp lệ',
+      detail: 'Hãy đăng nhập lại rồi thử tải bài học.',
+    },
+    'content-validation': {
+      title: 'Nội dung bài học không hợp lệ',
+      detail: 'Bài học có dữ liệu assessment/slide chưa đúng contract.',
+    },
+    'api-error': {
+      title: 'Không thể tải bài học',
+      detail: 'Máy chủ hoặc kết nối đang gặp sự cố.',
+    },
+  }
+  const label = labels[error?.kind] || labels['api-error']
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-7 space-y-5">
+        <div className="flex items-start gap-3">
+          <div className="rounded-2xl bg-rose-50 p-3 text-rose-600 border border-rose-200">
+            <AlertTriangle className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-lg font-extrabold text-slate-900">{label.title}</h1>
+            <p className="mt-1 text-sm text-slate-600">{label.detail}</p>
+          </div>
+        </div>
+        <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-xs text-slate-600">
+          <p>{error?.message}</p>
+          {(error?.status || error?.endpoint) && (
+            <p className="mt-1 font-mono text-slate-500">
+              {error.status ? `HTTP ${error.status}` : ''}{error.status && error.endpoint ? ' · ' : ''}{error.endpoint || ''}
+            </p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <TactileButton variant="primary" onClick={onRetry} className="flex-1">
+            <RotateCcw className="mr-1.5 h-4 w-4" /> Thử lại
+          </TactileButton>
+          <TactileButton variant="secondary" onClick={onCourse} className="flex-1">
+            Quay lại khóa học
+          </TactileButton>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function BlockFailure({ onRetry }) {
+  return (
+    <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+      <p className="font-bold">Khối nội dung này không hiển thị được.</p>
+      <button type="button" onClick={onRetry} className="mt-2 font-bold underline underline-offset-2">
+        Thử render lại
+      </button>
+    </div>
+  )
+}
+
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // BLOCK RENDERERS
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -655,22 +850,23 @@ function BlockRenderer({ block, quizAnswer, quizSubmitted, quizResult, onQuizAns
     case 'fill_blank': return <FillBlankBlock block={block} />
     case 'ordering': return <OrderingBlock block={block} />
     case 'interaction': return <InteractionBlock block={block} />
-    default:
-      return <div className="text-slate-400 text-xs italic">Nội dung không hỗ trợ: {type}</div>
+    default: return <LegacyBlockFallback block={block} />
   }
 }
 
 function InteractionBlock({ block }) {
   const content = block.content || block.block_data || {}
-  const isCanvas = ['A', 'B', 'C', 'E'].includes(content.interactionType)
+  const interactionType = content.interactionType || block.interactionType
+  const lesson = content.lesson || block.lesson
+  const isCanvas = ['A', 'B', 'C', 'E'].includes(interactionType)
 
   return (
     <div className={`my-6 rounded-3xl overflow-hidden border border-slate-200 bg-white flex flex-col ${
       isCanvas ? 'h-[520px]' : 'min-h-[560px] h-auto'
     }`}>
       <InteractionSlide
-        interactionType={content.interactionType}
-        lesson={content.lesson}
+        interactionType={interactionType}
+        lesson={lesson}
       />
     </div>
   )
@@ -704,7 +900,7 @@ function TextBlock({ block }) {
 
 function MathBlock({ block }) {
   const content = block.content || block.block_data || {}
-  const latex = content.latex || ''
+  const latex = content.latex || content.math || ''
   const label = content.label
   const isInline = content.display_mode === 'inline'
 
@@ -742,24 +938,36 @@ function MathBlock({ block }) {
 function ImageBlock({ block }) {
   const content = block.content || block.block_data || {}
   const [loaded, setLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   return (
     <figure className="my-6">
       <div className="relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-slate-100">
-        {!loaded && (
+        {!loaded && !imageError && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-6 h-6 border-2 border-slate-300 border-t-indigo-600 rounded-full animate-spin" />
           </div>
         )}
-        <img
-          src={content.src}
-          alt={content.alt || ''}
-          onLoad={() => setLoaded(true)}
-          className={cn(
-            'w-full transition-opacity duration-300',
-            loaded ? 'opacity-100' : 'opacity-0'
-          )}
-        />
+        {imageError ? (
+          <div className="min-h-32 flex flex-col items-center justify-center gap-2 p-5 text-center text-xs font-semibold text-slate-500">
+            <Info className="w-5 h-5 text-slate-400" />
+            <span>Ảnh minh họa không tải được.</span>
+          </div>
+        ) : (
+          <img
+            src={content.src}
+            alt={content.alt || ''}
+            onLoad={() => setLoaded(true)}
+            onError={() => {
+              setImageError(true)
+              setLoaded(true)
+            }}
+            className={cn(
+              'w-full transition-opacity duration-300',
+              loaded ? 'opacity-100' : 'opacity-0'
+            )}
+          />
+        )}
       </div>
       {content.caption && (
         <figcaption className="mt-2 text-center text-xs text-slate-400 font-semibold italic">
@@ -773,11 +981,18 @@ function ImageBlock({ block }) {
 function CodeBlock({ block }) {
   const content = block.content || block.block_data || {}
   const [copied, setCopied] = useState(false)
+  const [copyError, setCopyError] = useState(false)
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(content.code || '')
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+  const handleCopy = async () => {
+    try {
+      if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) throw new Error('clipboard_unavailable')
+      await navigator.clipboard.writeText(content.code || '')
+      setCopyError(false)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      setCopyError(true)
+    }
   }
 
   return (
@@ -794,6 +1009,7 @@ function CodeBlock({ block }) {
       <pre className="p-4 overflow-x-auto text-sm font-mono leading-relaxed text-emerald-300">
         <code>{content.code}</code>
       </pre>
+      {copyError && <p className="px-4 pb-3 text-xs font-semibold text-amber-300">Không thể sao chép trên trình duyệt này.</p>}
     </div>
   )
 }
@@ -1109,7 +1325,8 @@ function CalloutBlock({ block }) {
 
 function RevealBlock({ block }) {
   const content = block.content || block.block_data || {}
-  const steps = content.steps || content.items || []
+  const rawSteps = content.steps || content.items || content.content || []
+  const steps = Array.isArray(rawSteps) ? rawSteps : rawSteps ? [rawSteps] : []
   const [revealedCount, setRevealedCount] = useState(0)
 
   return (
@@ -1181,6 +1398,7 @@ function FillBlankBlock({ block }) {
   const content = block.content || block.block_data || {}
   return (
     <div className="my-6 p-6 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-3">
+      <LegacyPreviewNotice />
       <div className="flex items-center gap-2 text-indigo-700 text-xs font-extrabold uppercase tracking-wider">
         <Sparkles className="w-3.5 h-3.5" />
         <span>{content.prompt || 'Điền vào chỗ trống:'}</span>
@@ -1197,6 +1415,7 @@ function OrderingBlock({ block }) {
   const items = content.items || []
   return (
     <div className="my-6 p-6 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-4">
+      <LegacyPreviewNotice />
       <div className="flex items-center gap-2 text-indigo-700 text-xs font-extrabold uppercase tracking-wider">
         <GripVertical className="w-4 h-4" />
         <span>{content.prompt || 'Sắp xếp theo thứ tự đúng:'}</span>
@@ -1218,11 +1437,40 @@ function OrderingBlock({ block }) {
   )
 }
 
+function LegacyPreviewNotice() {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-amber-800">
+      <span>Legacy interaction</span>
+      <span>preview-only · chưa chấm điểm</span>
+    </div>
+  )
+}
+
+function LegacyBlockFallback({ block }) {
+  const type = block?.type || block?.block_type || 'unknown'
+  const content = block?.content || block?.block_data || block
+  const readable = typeof content === 'string'
+    ? content
+    : JSON.stringify(content, null, 2)
+  return (
+    <div className="my-5 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-950">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-extrabold">Nội dung tương tác cũ: {type}</span>
+        <span className="rounded-lg border border-amber-300 bg-white/70 px-2 py-1 text-[10px] font-black uppercase tracking-wide">preview-only</span>
+      </div>
+      <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap rounded-xl border border-amber-200 bg-white/70 p-3 text-xs text-amber-900">
+        {readable}
+      </pre>
+      <p className="mt-3 text-xs font-semibold text-amber-800">Khối này chưa có chấm điểm trong phiên bản hiện tại.</p>
+    </div>
+  )
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // COMPLETE SCREEN & ACHIEVEMENTS POPUPS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function CompleteScreen({ xpEarned, stepTitle, onContinue }) {
+function CompleteScreen({ xpEarned, stepTitle, onContinue, error, isSubmitting }) {
   return (
     <main className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 sm:p-8 font-sans">
       <section
@@ -1258,12 +1506,19 @@ function CompleteScreen({ xpEarned, stepTitle, onContinue }) {
             </div>
             <p className="inline-flex items-center gap-2 text-sm font-extrabold text-emerald-700">
               <Check className="h-5 w-5" aria-hidden="true" />
-              Kết quả đã ghi nhận
+              {error ? 'Chưa ghi nhận kết quả' : 'Sẵn sàng ghi nhận'}
             </p>
           </div>
 
-          <TactileButton variant="primary" size="lg" onClick={onContinue} className="mt-7 w-full text-base sm:text-lg">
-            <span>Tiếp tục học</span>
+          {error && (
+            <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-800">
+              <p>{error.message}</p>
+              {error.status && <p className="mt-1 text-xs text-rose-600">HTTP {error.status} · kiểm tra kết nối rồi thử lại.</p>}
+            </div>
+          )}
+
+          <TactileButton variant="primary" size="lg" onClick={onContinue} disabled={isSubmitting} className="mt-7 w-full text-base sm:text-lg">
+            <span>{isSubmitting ? 'Đang ghi nhận…' : error ? 'Thử ghi nhận lại' : 'Tiếp tục học'}</span>
             <ArrowRight className="ml-1.5 h-5 w-5" />
           </TactileButton>
         </div>
@@ -1333,5 +1588,3 @@ function AchievementUnlockedPopup({ achievements = [], onClose }) {
     </div>
   )
 }
-
-

@@ -129,23 +129,28 @@ function StatementPopup({ text, isSandbox }) {
 /**
  * InteractionSlide — renders the correct engine for a given interactionType.
  */
-export default function InteractionSlide({ interactionType, lesson }) {
-  const Component = TYPE_MAP[interactionType]
+export default function InteractionSlide({ interactionType, lesson, content }) {
+  const resolvedType = interactionType || content?.interactionType || content?.interaction_type
+  const resolvedLesson = lesson || content?.lesson || content?.manifest
+  const normalizedType = String(resolvedType || '')
+  const Component = TYPE_MAP[resolvedType]
+    || TYPE_MAP[normalizedType.toUpperCase()]
+    || TYPE_MAP[normalizedType.toLowerCase()]
 
   if (!Component) {
     return (
       <div className="w-full h-full flex items-center justify-center p-8 text-rose-600 font-bold text-sm bg-rose-50 border-2 border-rose-200 rounded-3xl">
-        Không tìm thấy kiểu tương tác: <span className="ml-1.5 font-mono underline">{interactionType}</span>
+        Không tìm thấy kiểu tương tác: <span className="ml-1.5 font-mono underline">{resolvedType || 'trống'}</span>
       </div>
     )
   }
 
-  const isSandbox = interactionType === 'sandbox' || interactionType === 'SANDBOX'
-  const prompt = lesson?.prompt
+  const isSandbox = String(resolvedType || '').toLowerCase() === 'sandbox'
+  const prompt = resolvedLesson?.prompt
 
   return (
     <div className="w-full h-full relative flex flex-col flex-1">
-      <Component lesson={lesson} />
+      <Component lesson={resolvedLesson} />
       {prompt && !isSandbox && <StatementPopup text={prompt} isSandbox={isSandbox} />}
     </div>
   )

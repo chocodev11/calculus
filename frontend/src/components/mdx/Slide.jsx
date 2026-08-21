@@ -2,13 +2,14 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '../../lib/utils'
 
-export function Slide({ title, subtitle, children, className }) {
+export function Slide({ id, title, subtitle, children, className }) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
+      data-slide-id={id}
       className={cn('w-full max-w-3xl mx-auto space-y-6', className)}
     >
       {title && (

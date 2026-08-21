@@ -71,7 +71,7 @@ export default function QuestShop() {
 
 function QuestsPanel() {
   const { user, fetchUser } = useAuthStore()
-  const { quests, isLoading, fetchQuests, claimCoins } = useQuestStore()
+  const { quests, isLoading, fetchQuests, claimQuest } = useQuestStore()
   const { showToast } = useUIStore()
 
   const [claimingId, setClaimingId] = useState(null)
@@ -110,7 +110,7 @@ function QuestsPanel() {
     if (claimingId) return
     setClaimingId(uq.id)
     try {
-      await claimCoins(uq.id)
+      await claimQuest(uq.id)
       await fetchUser()
       showToast(`+${uq.quest?.coin_reward || 10} Xu đã được cộng vào tài khoản!`, 'success')
     } catch (e) {
@@ -125,7 +125,7 @@ function QuestsPanel() {
     setClaimingAll(true)
     try {
       for (const q of claimable) {
-        await claimCoins(q.id)
+      await claimQuest(q.id)
       }
       await fetchUser()
       showToast(`Đã nhận toàn bộ phần thưởng nhiệm vụ!`, 'success')

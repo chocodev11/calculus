@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload, joinedload
 from typing import Optional
 from app.database import get_db
-from app.models import Story, Chapter, Step, Enrollment, StepProgress, User, Category
+from app.models import Slide, Story, Chapter, Step, Enrollment, StepProgress, User, Category
 from app.schemas import StoryListResponse, StoryDetailResponse, ChapterResponse, StepResponse
 from app.auth import get_current_user_optional, get_current_user
 import logging
@@ -21,6 +22,8 @@ def _count_quiz_blocks_in_story(story) -> int:
     for ch in getattr(story, 'chapters', []) or []:
         for st in getattr(ch, 'steps', []) or []:
             for slide in getattr(st, 'slides', []) or []:
+                if getattr(slide, 'is_active', True) is False:
+                    continue
                 blocks = slide.blocks or []
                 if not isinstance(blocks, list):
                     continue
@@ -239,6 +242,7 @@ async def get_story(
             
             steps.append(StepResponse(
                 id=step.id,
+                content_key=step.content_key,
                 title=step.title,
                 description=step.description,
                 xp_reward=step.xp_reward,
@@ -310,8 +314,20 @@ async def enroll_story(
     
     enrollment = Enrollment(user_id=current_user.id, story_id=story.id)
     db.add(enrollment)
-    await db.commit()
-    
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        existing = await db.execute(
+            select(Enrollment).where(
+                Enrollment.user_id == current_user.id,
+                Enrollment.story_id == story.id,
+            )
+        )
+        if existing.scalar_one_or_none() is None:
+            raise
+        return {"success": True, "already_enrolled": True}
+
     return {"success": True}
 
 async def calculate_story_progress(db: AsyncSession, user_id: int, story_id: int) -> int:

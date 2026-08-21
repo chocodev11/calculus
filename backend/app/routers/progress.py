@@ -145,6 +145,7 @@ async def get_dashboard(
                 
                 steps.append(StepResponse(
                     id=step.id,
+                    content_key=step.content_key,
                     title=step.title,
                     description=step.description,
                     xp_reward=step.xp_reward,
@@ -166,6 +167,8 @@ async def get_dashboard(
         for ch in getattr(story, 'chapters', []) or []:
             for st in getattr(ch, 'steps', []) or []:
                 for slide in getattr(st, 'slides', []) or []:
+                    if getattr(slide, 'is_active', True) is False:
+                        continue
                     blocks = slide.blocks or []
                     if not isinstance(blocks, list):
                         continue

@@ -19,8 +19,22 @@ backend:
 frontend:
     cd frontend; npm run dev
 
-# Đồng bộ dữ liệu JSON vào Database SQLite
+# Biên dịch MDX thành generated JSON artifacts
+course-build:
+    cd frontend; npm run build:course
+
+# Validate MDX, sandbox manifests, assessments, và source/generated parity
+course-validate:
+    cd frontend; npm run validate:course
+
+# Upgrade schema bằng Alembic
+db-upgrade:
+    cd backend; python -m alembic -c alembic.ini upgrade head
+
+# Đồng bộ generated artifacts vào database local
 sync:
+    just course-build
+    just db-upgrade
     cd backend; python sync_data.py
 
 # Cài đặt toàn bộ dependencies cho backend và frontend
@@ -30,4 +44,4 @@ install:
 
 # Chạy kiểm tra toàn bộ dữ liệu khóa học
 validate:
-    python validate_all.py
+    just course-validate

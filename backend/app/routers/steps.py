@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 from datetime import datetime, date, timedelta
 from app.database import get_db
@@ -147,6 +148,7 @@ async def get_step(step_id: int, db: AsyncSession = Depends(get_db)):
     
     return StepDetailResponse(
         id=step.id,
+        content_key=step.content_key,
         title=step.title,
         description=step.description,
         chapter_title=step.chapter.title,
@@ -158,7 +160,7 @@ async def get_step(step_id: int, db: AsyncSession = Depends(get_db)):
 async def get_slides(step_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Slide)
-        .where(Slide.step_id == step_id)
+        .where(Slide.step_id == step_id, Slide.is_active.is_(True))
         .order_by(Slide.order_index)
     )
     slides = result.scalars().all()
@@ -323,7 +325,36 @@ async def complete_step(
 
     # Auto-check and award achievements (awards XP + coins for milestones)
     newly_earned = await check_and_award_user_achievements(db, current_user)
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        # Two retries can arrive before the first transaction is visible. The
+        # unique progress key makes the second request safe; return the
+        # already-persisted result instead of turning it into a white page.
+        await db.rollback()
+        existing_result = await db.execute(
+            select(StepProgress).where(
+                StepProgress.user_id == current_user.id,
+                StepProgress.step_id == step_id,
+            )
+        )
+        if existing_result.scalar_one_or_none() is None:
+            raise
+        await db.refresh(current_user)
+        return {
+            "success": True,
+            "xp_earned": 0,
+            "coins_earned": 0,
+            "total_xp": current_user.xp,
+            "total_coins": current_user.coins or 0,
+            "hearts": current_user.hearts if current_user.hearts is not None else 5,
+            "xp_boost_active": False,
+            "streak": {
+                "current_streak": current_user.current_streak,
+                "longest_streak": current_user.longest_streak,
+            },
+            "newly_earned_achievements": [],
+        }
 
     return {
         "success": True,
@@ -357,7 +388,13 @@ async def complete_slide(
     if not step:
         raise HTTPException(status_code=404, detail="Step not found")
 
-    slide_res = await db.execute(select(Slide).where(Slide.id == slide_id, Slide.step_id == step_id))
+    slide_res = await db.execute(
+        select(Slide).where(
+            Slide.id == slide_id,
+            Slide.step_id == step_id,
+            Slide.is_active.is_(True),
+        )
+    )
     slide = slide_res.scalar_one_or_none()
     if not slide:
         raise HTTPException(status_code=404, detail="Slide not found")
@@ -444,7 +481,28 @@ async def complete_slide(
 
         # slides quest is now tracked at lesson (step) completion level
 
-        await db.commit()
+        try:
+            await db.commit()
+        except IntegrityError:
+            # A duplicate retry may race the first insert. Re-read the row
+            # after rollback and report success without awarding anything a
+            # second time.
+            await db.rollback()
+            existing_result = await db.execute(
+                select(SlideProgress).where(
+                    SlideProgress.user_id == current_user.id,
+                    SlideProgress.slide_id == slide_id,
+                )
+            )
+            if existing_result.scalar_one_or_none() is None:
+                raise
+            await db.refresh(current_user)
+            return {
+                "success": True,
+                "xp_earned": 0,
+                "total_xp": current_user.xp,
+                "newly_earned_achievements": [],
+            }
     else:
         # already completed — idempotent
         xp_earned = 0

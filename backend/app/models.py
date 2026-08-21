@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text, JSON
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -97,9 +97,13 @@ class Chapter(Base):
 
 class Step(Base):
     __tablename__ = "steps"
+    __table_args__ = (
+        UniqueConstraint("content_key", name="uq_steps_content_key"),
+    )
     
     id = Column(Integer, primary_key=True, index=True)
     chapter_id = Column(Integer, ForeignKey("chapters.id"), nullable=False)
+    content_key = Column(String(255), nullable=True, index=True)
     title = Column(String(200), nullable=False)
     description = Column(Text)
     xp_reward = Column(Integer, default=10)
@@ -113,17 +117,25 @@ class Step(Base):
 
 class Slide(Base):
     __tablename__ = "slides"
+    __table_args__ = (
+        UniqueConstraint("content_key", name="uq_slides_content_key"),
+    )
     
     id = Column(Integer, primary_key=True, index=True)
     step_id = Column(Integer, ForeignKey("steps.id"), nullable=False)
+    content_key = Column(String(255), nullable=True, index=True)
     order_index = Column(Integer, default=0)
     blocks = Column(JSON, default=list)
+    is_active = Column(Boolean, nullable=False, default=True, server_default="1")
     
     step = relationship("Step", back_populates="slides")
 
 
 class Enrollment(Base):
     __tablename__ = "enrollments"
+    __table_args__ = (
+        UniqueConstraint("user_id", "story_id", name="uq_enrollments_user_story"),
+    )
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
@@ -136,6 +148,9 @@ class Enrollment(Base):
 
 class StepProgress(Base):
     __tablename__ = "step_progress"
+    __table_args__ = (
+        UniqueConstraint("user_id", "step_id", name="uq_step_progress_user_step"),
+    )
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
@@ -151,6 +166,9 @@ class StepProgress(Base):
 
 class SlideProgress(Base):
     __tablename__ = "slide_progress"
+    __table_args__ = (
+        UniqueConstraint("user_id", "slide_id", name="uq_slide_progress_user_slide"),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
@@ -159,6 +177,22 @@ class SlideProgress(Base):
     completed_at = Column(DateTime)
 
     # relationships kept minimal to avoid circular imports
+
+
+class SlideProgressQuarantine(Base):
+    """Rows from legacy imports that cannot be matched to a current slide."""
+
+    __tablename__ = "slide_progress_quarantine"
+
+    id = Column(Integer, primary_key=True, index=True)
+    source_id = Column(Integer, nullable=True)
+    user_id = Column(Integer, nullable=True)
+    slide_id = Column(Integer, nullable=True)
+    xp_earned = Column(Integer, nullable=True)
+    completed_at = Column(DateTime, nullable=True)
+    reason = Column(String(120), nullable=False)
+    payload = Column(JSON, nullable=False, default=dict)
+    archived_at = Column(DateTime, server_default=func.now())
 
 
 class Achievement(Base):
