@@ -28,6 +28,7 @@ class UserResponse(BaseModel):
     current_streak: int
     longest_streak: int
     is_active: bool = True  # Email verification status
+    is_admin: bool = False
     hearts: int = 5
     last_heart_restore_at: Optional[datetime] = None
     
@@ -90,6 +91,7 @@ class StoryDetailResponse(StoryListResponse):
 class StepDetailResponse(BaseModel):
     id: int
     content_key: Optional[str] = None
+    published_version_id: Optional[int] = None
     title: str
     description: Optional[str]
     chapter_title: str
@@ -105,6 +107,39 @@ class SlideResponse(BaseModel):
     order_index: int
     blocks: list
     
+    class Config:
+        from_attributes = True
+
+
+# Lesson authoring and publishing
+class LessonDraftRequest(BaseModel):
+    content: dict
+    expected_checksum: Optional[str] = None
+
+
+class LessonValidateRequest(BaseModel):
+    content: Optional[dict] = None
+
+
+class LessonPublishRequest(BaseModel):
+    expected_checksum: Optional[str] = None
+
+
+class LessonRollbackRequest(BaseModel):
+    version_id: int
+
+
+class LessonVersionResponse(BaseModel):
+    id: int
+    step_id: int
+    manifest_id: str
+    version: str
+    checksum: str
+    status: str
+    content: dict
+    created_at: Optional[datetime] = None
+    published_at: Optional[datetime] = None
+
     class Config:
         from_attributes = True
 

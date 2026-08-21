@@ -169,3 +169,21 @@ async def get_current_user_optional(
         return await get_current_user(credentials, request, db)
     except HTTPException:
         return None
+
+
+async def get_current_admin(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    """Protect authoring and operational endpoints with an editor role.
+
+    Local debug keeps the existing single-user developer flow usable.  Any
+    production editor must be explicitly marked as an administrator in the
+    database.
+    """
+
+    if current_user.is_admin or (settings.app_env == "local" and settings.debug):
+        return current_user
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Admin/editor permission required",
+    )

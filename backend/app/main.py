@@ -5,7 +5,7 @@ from pathlib import Path
 import json
 from app.config import settings
 from app.database import check_database_connection, init_db
-from app.routers import auth_router, stories_router, courses_router, steps_router, progress_router, categories_router, shop_router, quests_router, admin_router
+from app.routers import auth_router, stories_router, courses_router, steps_router, progress_router, categories_router, shop_router, quests_router, admin_router, lessons_router
 from app.routers.sandbox import router as sandbox_router
 
 # Reduce noisy Uvicorn logs and show only SQL logs
@@ -52,6 +52,7 @@ app.include_router(categories_router, prefix="/api/v1")
 app.include_router(shop_router, prefix="/api/v1")
 app.include_router(quests_router, prefix="/api/v1")
 app.include_router(admin_router, prefix="/api/v1")
+app.include_router(lessons_router, prefix="/api/v1")
 app.include_router(sandbox_router, prefix="/api/v1")
 
 @app.get("/")

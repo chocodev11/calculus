@@ -1,70 +1,47 @@
-# Sandbox Manifest Contract
+# Sandbox manifest contract
 
-## Mục tiêu
+Sandbox trong lesson là JSON declarative. Payload được lưu trong
+`LessonDocument.slides[].blocks[]` với `block_type: "interaction"`; backend
+không execute nội dung và frontend chỉ dispatch tới registry interaction đã
+allowlist.
 
-Raw course, generated course và frontend runtime phải sử dụng cùng một
-declarative sandbox manifest. Build không được tự đoán hoặc âm thầm sửa một
-manifest không hợp lệ.
+```text
+LLM/editor JSON
+  -> lesson contract validation
+  -> LessonVersion draft/published
+  -> Interaction block registry
+  -> renderer
+```
 
-## Canonical envelope
+Ví dụ:
 
-Manifest canonical sử dụng schema 1.0 trong
-frontend/src/sandbox/manifest.schema.json.
+```json
+{
+  "id": "logic-classifier",
+  "block_type": "interaction",
+  "content": {
+    "interactionType": "sandbox",
+    "lesson": {
+      "schemaVersion": "1.0",
+      "kind": "math.sandbox",
+      "archetypeId": "logic.proposition",
+      "recipe": "logic.proposition",
+      "config": {"mode": "proposition_classifier", "activity": {"items": []}}
+    }
+  }
+}
+```
 
-Các field bắt buộc gồm:
+`lesson_contract.py` kiểm tra block type và các assessment reference. Registry
+frontend kiểm tra manifest cụ thể trước khi render. Manifest không được chứa
+function, import, JSX expression hoặc code thực thi từ LLM.
 
-- schemaVersion: "1.0"
-- kind: "math.sandbox"
-- id, version, domainId, archetypeId, level, recipe
-- outcomeIds, prerequisites, misconceptions
-- scene.space
-- controls, goals, assessment
-- accessibility.keyboardControls, accessibility.textAlternative,
-  accessibility.highContrast
-- config
+Các block legacy `drag_drop`, `interactive_graph`, `fill_blank`, `ordering` có
+fallback preview-only để dữ liệu vẫn đọc được; chúng chưa phải grading contract.
 
-mode và activity phải nằm trong config. recipe là ID của plugin runtime, không
-phải alias chung như core.
-
-Goal evidence chuẩn của domain có thể dùng tên namespaced, ví dụ
-logic.classifier_complete. Structural schema chỉ kiểm tra namespace; plugin
-phải kiểm tra evidence có được hỗ trợ hay không.
-
-## Validation layers
-
-1. Structural validation dùng validateManifest().
-2. Plugin validation dùng assertPluginManifest() và registry runtime.
-3. Runtime smoke validation phải tạo được session và snapshot ban đầu.
-4. Course validation kiểm tra solution graph, control references và
-   raw/generated parity.
-
-CLI:
+Kiểm thử:
 
 ```bash
-npm run validate:course
+npm --prefix frontend run validate:lessons
+npm --prefix frontend run test:run
 ```
-
---strict biến các warning về content semantics thành lỗi. Warning hiện tại được
-giữ lại để Phase 1 bổ sung witness/counterexample controls, không được coi là
-coverage hoặc mastery đã hoàn tất.
-
-## Source and generated flow
-
-```
-frontend/src/content/courses/*.mdx
-    -> tools/mdx_course_compiler.ts
-    -> data/courses
-    -> validate
-    -> backend/sync_data.py
-    -> frontend/backend runtime
-```
-
-Generated artifact không được chỉnh trực tiếp. Build phải dừng khi step JSON
-không parse được; validator phải dừng khi manifest không pass schema hoặc plugin.
-
-Lesson assessment pool/delivery dùng contract riêng tại
-`docs/LESSON_SCHEME_CONTRACT.md`; validator course chạy contract đó trên cả raw
-và generated artifact.
-
-Migration legacy phải là command/script có chủ đích. Runtime chỉ nhận manifest
-canonical, không tự động chuyển đổi field cũ trong production.

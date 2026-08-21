@@ -6,15 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:course": "vite-node --root .. ../tools/build_course_from_mdx.ts",
+    "validate:lessons": "vite-node --root .. ../tools/validate_lesson_json.ts",
+    "validate:course": "npm run validate:lessons",
     "preview": "vite preview",
-    "validate:course": "vite-node --root .. ../tools/validate_course_sandboxes.ts",
     "test:run": "vitest run",
     "test": "vitest"
   },
   "dependencies": {
-    "@mdx-js/react": "^3.1.1",
-    "@mdx-js/rollup": "^3.1.1",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-navigation-menu": "^1.2.14",
@@ -32,17 +30,8 @@
     "react-dom": "^18.2.0",
     "react-katex": "^3.1.0",
     "react-router-dom": "^6.20.0",
-    "rehype-katex": "^7.0.1",
-    "remark-frontmatter": "^5.0.0",
-    "remark-gfm": "^4.0.1",
-    "remark-mdx": "^3.1.1",
-    "remark-math": "^6.0.0",
-    "remark-mdx-frontmatter": "^5.2.0",
-    "remark-parse": "^11.0.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "unified": "^11.0.5",
-    "yaml": "^2.9.0",
     "zustand": "^4.4.7"
   },
   "devDependencies": {

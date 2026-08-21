@@ -66,8 +66,29 @@ by the current route.
 ]
 ```
 
-`content_key` is stable across course rebuilds. The sync process updates a row
-by this key, so slide progress remains attached to the same content identity.
+`content_key` is stable across published versions. The publish operation updates
+the existing row by this key, so slide progress remains attached to the same
+content identity.
+
+### Lesson authoring API
+
+These endpoints require an admin/editor token. In local debug, the authenticated
+developer user may use them without setting `is_admin`; production requires the
+database flag.
+
+```text
+GET   /admin/lessons/{step_id}
+GET   /admin/lessons/{step_id}/preview?version_id={version_id}
+PATCH /admin/lessons/{step_id}/draft
+POST  /admin/lessons/{step_id}/validate
+POST  /admin/lessons/{step_id}/publish
+POST  /admin/lessons/{step_id}/rollback
+```
+
+`PATCH .../draft` accepts `{ "content": { ... }, "expected_checksum": "..." }`.
+The content is validated before it is stored. Publish creates a new immutable
+version; it does not mutate the learner's current version until the database
+transaction completes. A stale checksum returns HTTP 409.
 
 ## Authentication
 All authenticated endpoints require the `Authorization` header:

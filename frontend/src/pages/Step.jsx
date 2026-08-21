@@ -825,7 +825,7 @@ function BlockFailure({ onRetry }) {
 // BLOCK RENDERERS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function BlockRenderer({ block, quizAnswer, quizSubmitted, quizResult, onQuizAnswer, onQuizSubmit, onQuizRetry }) {
+export function BlockRenderer({ block, quizAnswer, quizSubmitted, quizResult, onQuizAnswer, onQuizSubmit, onQuizRetry }) {
   const type = block.type || block.block_type
 
   switch (type) {
@@ -867,6 +867,7 @@ function InteractionBlock({ block }) {
       <InteractionSlide
         interactionType={interactionType}
         lesson={lesson}
+        content={content}
       />
     </div>
   )
@@ -937,6 +938,7 @@ function MathBlock({ block }) {
 
 function ImageBlock({ block }) {
   const content = block.content || block.block_data || {}
+  const source = content.src || content.url
   const [loaded, setLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
@@ -948,14 +950,14 @@ function ImageBlock({ block }) {
             <div className="w-6 h-6 border-2 border-slate-300 border-t-indigo-600 rounded-full animate-spin" />
           </div>
         )}
-        {imageError ? (
+        {imageError || !source ? (
           <div className="min-h-32 flex flex-col items-center justify-center gap-2 p-5 text-center text-xs font-semibold text-slate-500">
             <Info className="w-5 h-5 text-slate-400" />
             <span>Ảnh minh họa không tải được.</span>
           </div>
         ) : (
           <img
-            src={content.src}
+            src={source}
             alt={content.alt || ''}
             onLoad={() => setLoaded(true)}
             onError={() => {

@@ -23,6 +23,7 @@ class User(Base):
     longest_streak = Column(Integer, default=0)
     last_activity_date = Column(DateTime)
     is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, nullable=False, default=False, server_default="0")
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     
@@ -104,6 +105,10 @@ class Step(Base):
     id = Column(Integer, primary_key=True, index=True)
     chapter_id = Column(Integer, ForeignKey("chapters.id"), nullable=False)
     content_key = Column(String(255), nullable=True, index=True)
+    # Points to the immutable published LessonVersion.  It intentionally has
+    # no database FK because LessonVersion already points back to Step; the
+    # content service validates that the pointer belongs to this step.
+    published_version_id = Column(Integer, nullable=True, index=True)
     title = Column(String(200), nullable=False)
     description = Column(Text)
     xp_reward = Column(Integer, default=10)

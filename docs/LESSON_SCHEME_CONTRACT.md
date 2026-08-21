@@ -1,100 +1,97 @@
-# Lesson Scheme Contract
+# Lesson JSON Contract
 
-## Canonical source and delivery
+## Boundary
 
-Course authors edit MDX under `frontend/src/content/courses`. The runtime
-delivery path is:
+`LessonDocument` là nguồn nội dung canonical trong runtime. LLM chỉ được sinh
+JSON data theo schema; backend validate bằng Pydantic và không execute code,
+import module hoặc JSX từ nội dung.
 
-`BT`text
-MDX
-  -> tools/mdx_course_compiler.ts
-  -> data/courses/<course>/.../*.json
-  -> backend/sync_data.py
-  -> PostgreSQL (production) or backend/calculus.db (local)
-  -> /api/v1/steps/{id}/slides
-`BT`
+```text
+LLM/editor JSON
+  -> POST/PATCH /api/v1/admin/lessons/{step_id}/draft
+  -> LessonVersion(status=draft)
+  -> Studio preview
+  -> POST .../publish
+  -> immutable LessonVersion(status=published)
+  -> steps.published_version_id
+  -> learner /steps/{id}/slides
+```
 
-Generated JSON is an artifact. It is never hand-edited and the backend never
-compiles MDX or seeds course content during application startup. Schema changes
-are applied by Alembic before `sync_data.py` is run.
+Một draft được cập nhật nhiều lần bằng `PATCH`; không có build hoặc sync trong
+vòng lặp gõ/review. Publish tạo version số mới và archive version cũ. Rollback
+chỉ đổi published pointer về một version đã tồn tại.
 
-## Allowed MDX
+## Document
 
-The compiler uses `remark-mdx` and accepts only declarative content:
+Bắt buộc có:
 
-- top-level `<Slide id="..." title="...">` elements;
-- `<Callout>` and `<Sandbox>` inside a slide;
-- `<Quiz id="b4_ref_mc_01" />` references;
-- JSON code fences with an allowlisted `block_type` such as
-  `assessment_pool`, `assessment_ref`, `math`, `text`, `callout`, `image`,
-  `reveal`, `fill_blank`, `ordering`, `interaction`, `video`, or `code`;
-- ordinary Markdown text, lists, blockquotes, fenced code, and math.
-
-Imports, JSX expressions, dynamic attributes, spread attributes, arbitrary JSX
-components, and executable lesson payloads are rejected with a source
-location. Sandbox manifests remain JSON data and are validated by the shared
-registry/manifest validator.
-
-Every slide requires a stable ID:
-
-`BT`mdx
-<Slide id="s04" title="Phản ví dụ">
-  Nội dung slide.
-</Slide>
-`BT`
-
-The generated step uses a stable `content_key`:
-
-`menh-de/menh-de/04-menh-de-keo-theo/s04`
-
-The sync process matches steps and slides by `content_key`, falls back to
-legacy order only for an existing row without a key, marks removed slides
-inactive, and does not delete/reinsert rows. This preserves progress IDs.
-
-## Assessment pools and delivery references
-
-`assessment_pool` is authoring-only data. It contains the complete pool and
-stable item IDs. `<Quiz>` compiles to an `assessment_ref` and only that
-referenced item is materialized into a learner-facing `quiz` block:
-
-`BT`json
+```json
 {
-  "id": "b5_ref_tf_01",
-  "block_type": "assessment_ref",
-  "content": {
-    "poolId": "menh-de.05.tf",
-    "itemId": "tf_01",
-    "phase": "independent_check"
-  }
+  "schema_version": "lesson-1",
+  "id": "step-id",
+  "content_key": "course/chapter/step-id",
+  "title": "Tên bài",
+  "description": "Mô tả",
+  "xp_reward": 10,
+  "coin_reward": 5,
+  "order_index": 0,
+  "course_slug": "course",
+  "chapter_slug": "chapter",
+  "slides": []
 }
-`BT`
+```
 
-At most one assessment reference is delivered on a slide. References must
-point to an existing pool/item and use a declared phase. The frontend validates
-and materializes references at load time; invalid content produces a
-content-validation error with Retry instead of a blank page.
+Mỗi slide có `id` ổn định, `order_index`, `title` và danh sách blocks. Slide
+được đồng nhất với row hiện có bằng `content_key` dạng
+`{step.content_key}/{slide.id}`; row cũ không bị xoá/reinsert khi publish.
+Block ID chỉ cần duy nhất trong cùng slide.
 
-## Validation commands
+## Block types
 
-Run these commands from the repository root:
+Contract hiện cho phép `text`, `math`, `callout`, `image`, `quiz`,
+`assessment_pool`, `assessment_ref`, `interaction`, `video`, `code`, `reveal`,
+`fill_blank`, `ordering`, `drag_drop` và `interactive_graph`.
 
-`BT`bash
+`assessment_pool` chỉ dành cho authoring. `assessment_ref` phải trỏ tới pool và
+item tồn tại, có `phase`; trước khi giao learner, backend projection bỏ pool và
+materialize ref thành quiz contract hiện tại. Answer key hiện vẫn nằm trong
+projection để giữ tương thích renderer cũ; khi server-side grading hoàn tất,
+projection sẽ loại answer key khỏi learner response.
+
+Block legacy chưa có grading contract vẫn phải render fallback đọc được và ghi
+rõ preview-only, không được làm crash trang.
+
+## API
+
+```text
+GET   /api/v1/admin/lessons/{step_id}
+GET   /api/v1/admin/lessons/{step_id}/preview?version_id=...
+PATCH /api/v1/admin/lessons/{step_id}/draft
+POST  /api/v1/admin/lessons/{step_id}/validate
+POST  /api/v1/admin/lessons/{step_id}/publish
+POST  /api/v1/admin/lessons/{step_id}/rollback
+```
+
+`expected_checksum` bảo vệ optimistic concurrency. Sai contract trả HTTP 422
+với `detail.code=lesson_validation_error`; draft conflict trả HTTP 409.
+
+Learner `/steps/{id}/slides` chỉ trả slide của step có published version.
+Response là bare array; frontend vẫn nhận envelope cũ trong thời gian chuyển
+tiếp nhưng báo lỗi rõ nếu payload không phải array hợp lệ.
+
+## Artifact migration
+
+`data/courses` là artifact kiểm tra/import một lần, không phải nguồn live thứ
+hai. `tools/import_course_artifacts.py` mặc định dry-run và khi `--apply` sẽ
+khớp step theo `content_key`, tạo published version đầu tiên và giữ slide IDs.
+Sau khi import xong, soạn bài mới trực tiếp trong draft API/Studio.
+
+## Validation
+
+```bash
 cd frontend
-npm run build:course
-npm run validate:course
+npm run validate:lessons
 npm run test:run
 npx tsc --noEmit
 npm run build
-`BT`
-
-`npm run validate:course` compiles MDX in memory, validates sandbox manifests,
-checks assessment pool/reference integrity, and compares source output with
-`data/courses`. `validate_all.py` remains a legacy JSON validator for unrelated
-data and should not be used as the MDX build step.
-
-## Compatibility blocks
-
-`drag_drop`, `interactive_graph`, `fill_blank`, `ordering`, and other legacy
-blocks must render readable data through the safe preview-only fallback. They
-must not crash the learner page and are not treated as graded interactions until
-a new contract is explicitly added.
+```

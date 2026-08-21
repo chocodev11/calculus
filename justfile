@@ -19,23 +19,21 @@ backend:
 frontend:
     cd frontend; npm run dev
 
-# Biên dịch MDX thành generated JSON artifacts
-course-build:
-    cd frontend; npm run build:course
+# Validate lesson JSON artifacts and the shared block/assessment contract
+lesson-validate:
+    cd frontend; npm run validate:lessons
 
-# Validate MDX, sandbox manifests, assessments, và source/generated parity
-course-validate:
-    cd frontend; npm run validate:course
+# Preview the one-time import of checked-in lesson artifacts into versions
+lesson-import:
+    python tools/import_course_artifacts.py
+
+# Apply the one-time import after reviewing the dry-run output
+lesson-import-apply:
+    python tools/import_course_artifacts.py --apply
 
 # Upgrade schema bằng Alembic
 db-upgrade:
     cd backend; python -m alembic -c alembic.ini upgrade head
-
-# Đồng bộ generated artifacts vào database local
-sync:
-    just course-build
-    just db-upgrade
-    cd backend; python sync_data.py
 
 # Cài đặt toàn bộ dependencies cho backend và frontend
 install:
@@ -44,4 +42,4 @@ install:
 
 # Chạy kiểm tra toàn bộ dữ liệu khóa học
 validate:
-    just course-validate
+    just lesson-validate

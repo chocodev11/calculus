@@ -10,6 +10,7 @@ from app.schemas import StepDetailResponse, SlideResponse, StepCompleteRequest, 
 from app.auth import get_current_user
 from app.routers.quests import tick_quest_progress
 from app.hearts import sync_hearts, deduct_heart, seconds_until_next_heart
+from app.content_service import get_published_version
 
 router = APIRouter(prefix="/steps", tags=["steps"])
 
@@ -149,6 +150,7 @@ async def get_step(step_id: int, db: AsyncSession = Depends(get_db)):
     return StepDetailResponse(
         id=step.id,
         content_key=step.content_key,
+        published_version_id=step.published_version_id,
         title=step.title,
         description=step.description,
         chapter_title=step.chapter.title,
@@ -158,6 +160,16 @@ async def get_step(step_id: int, db: AsyncSession = Depends(get_db)):
 
 @router.get("/{step_id}/slides", response_model=list[SlideResponse])
 async def get_slides(step_id: int, db: AsyncSession = Depends(get_db)):
+    step_result = await db.execute(select(Step).where(Step.id == step_id))
+    step = step_result.scalar_one_or_none()
+    if step is None:
+        raise HTTPException(status_code=404, detail="Step not found")
+    if await get_published_version(db, step_id) is None:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "lesson_not_published", "message": "Lesson content is not published"},
+        )
+
     result = await db.execute(
         select(Slide)
         .where(Slide.step_id == step_id, Slide.is_active.is_(True))

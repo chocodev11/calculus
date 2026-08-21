@@ -5718,6 +5718,6 @@
       ]
     }
   ],
-  "generated_from": "frontend/src/content/courses",
-  "compiler_version": "mdx-1"
+  "generated_from": "lesson-json-import",
+  "compiler_version": "lesson-json-1"
 }

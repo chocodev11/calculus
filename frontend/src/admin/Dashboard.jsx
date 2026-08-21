@@ -56,7 +56,7 @@ export default function AdminDashboard() {
             + New Course
           </Link>
           <Link to="/admin/data" className="p-4 bg-emerald-50 hover:bg-emerald-100 rounded-xl text-emerald-700 font-bold transition-colors text-center text-sm">
-            Sync Data
+            Content Workflow
           </Link>
           <button className="p-4 bg-amber-50 hover:bg-amber-100 rounded-xl text-amber-700 font-bold transition-colors text-sm cursor-pointer">
             Backup DB

@@ -1,148 +1,39 @@
-import { useState } from 'react'
-import { 
-  FolderOpen, 
-  FileJson, 
-  RefreshCw, 
-  Download, 
-  Upload, 
-  Database,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react'
+import { Database, FileJson, ShieldCheck, Upload } from 'lucide-react'
 
 export default function AdminDataManager() {
-  const [syncing, setSyncing] = useState(false)
-  const [syncResult, setSyncResult] = useState(null)
-
-  const handleSync = async () => {
-    setSyncing(true)
-    setSyncResult(null)
-    
-    try {
-      const res = await fetch('/api/v1/admin/sync-data', { method: 'POST' })
-      const data = await res.json()
-      setSyncResult({ success: true, message: data.message || 'Sync completed!' })
-    } catch (error) {
-      setSyncResult({ success: false, message: error.message })
-    } finally {
-      setSyncing(false)
-    }
-  }
-
-  const dataFiles = [
-    { name: 'categories.json', path: 'data/categories.json', type: 'Categories' },
-    { name: 'achievements.json', path: 'data/achievements.json', type: 'Achievements' },
-    { name: 'gioi-han.json', path: 'data/courses/gioi-han.json', type: 'Course' },
-    { name: 'dao-ham.json', path: 'data/courses/dao-ham.json', type: 'Course' },
-    { name: 'tich-phan.json', path: 'data/courses/tich-phan.json', type: 'Course' },
-  ]
-
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800">Data Manager</h2>
-
-      {/* Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <button 
-          onClick={handleSync}
-          disabled={syncing}
-          className="flex items-center justify-center gap-2 p-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-colors"
-        >
-          <RefreshCw size={20} className={syncing ? 'animate-spin' : ''} />
-          {syncing ? 'Syncing...' : 'Sync Data to Database'}
-        </button>
-        
-        <button className="flex items-center justify-center gap-2 p-4 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors">
-          <Download size={20} />
-          Export All Data
-        </button>
-        
-        <button className="flex items-center justify-center gap-2 p-4 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
-          <Upload size={20} />
-          Import Data
-        </button>
+      <div>
+        <h2 className="text-2xl font-extrabold text-slate-900">Content Operations</h2>
+        <p className="mt-1 text-sm text-slate-500">Lesson content không còn được chỉnh bằng full database sync.</p>
       </div>
 
-      {/* Sync Result */}
-      {syncResult && (
-        <div className={`p-4 rounded-xl flex items-center gap-3 ${
-          syncResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
-        }`}>
-          {syncResult.success ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
-          {syncResult.message}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-5">
+          <FileJson className="mb-3 h-6 w-6 text-indigo-600" />
+          <h3 className="font-extrabold text-indigo-900">LLM JSON draft</h3>
+          <p className="mt-1 text-xs leading-relaxed text-indigo-800">Dán hoặc gửi lesson JSON vào editor, validate rồi lưu thành draft.</p>
         </div>
-      )}
-
-      {/* Data Files */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <FolderOpen size={20} className="text-yellow-500" />
-          <h3 className="font-semibold">Data Files (calculus/data/)</h3>
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+          <ShieldCheck className="mb-3 h-6 w-6 text-emerald-600" />
+          <h3 className="font-extrabold text-emerald-900">Preview / publish</h3>
+          <p className="mt-1 text-xs leading-relaxed text-emerald-800">Studio đọc draft riêng; learner chỉ đọc version đã publish.</p>
         </div>
-
-        <div className="space-y-2">
-          {dataFiles.map(file => (
-            <div 
-              key={file.path}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <FileJson size={20} className="text-blue-500" />
-                <div>
-                  <p className="font-medium">{file.name}</p>
-                  <p className="text-sm text-gray-500">{file.path}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-1 bg-gray-200 rounded text-sm">
-                  {file.type}
-                </span>
-                <button className="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded">
-                  View
-                </button>
-                <button className="px-3 py-1 text-green-600 hover:bg-green-50 rounded">
-                  Edit
-                </button>
-              </div>
-            </div>
-          ))}
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+          <Upload className="mb-3 h-6 w-6 text-amber-600" />
+          <h3 className="font-extrabold text-amber-900">One-time import</h3>
+          <p className="mt-1 text-xs leading-relaxed text-amber-800">Import dữ liệu cũ là thao tác migration riêng, không nằm trong flow soạn bài.</p>
         </div>
       </div>
 
-      {/* Database Info */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Database size={20} className="text-purple-500" />
-          <h3 className="font-semibold">Database</h3>
+      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <div className="flex items-center gap-2">
+          <Database className="h-5 w-5 text-slate-500" />
+          <h3 className="font-extrabold text-slate-900">Database contract</h3>
         </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-4 bg-purple-50 rounded-lg">
-            <p className="text-sm text-purple-600">Type</p>
-            <p className="text-lg font-semibold">SQLite</p>
-          </div>
-          <div className="p-4 bg-purple-50 rounded-lg">
-            <p className="text-sm text-purple-600">Location</p>
-            <p className="text-lg font-semibold">calculus.db</p>
-          </div>
-          <div className="p-4 bg-purple-50 rounded-lg">
-            <p className="text-sm text-purple-600">Tables</p>
-            <p className="text-lg font-semibold">10</p>
-          </div>
-          <div className="p-4 bg-purple-50 rounded-lg">
-            <p className="text-sm text-purple-600">Size</p>
-            <p className="text-lg font-semibold">~100 KB</p>
-          </div>
-        </div>
-
-        <div className="mt-4 flex gap-2">
-          <button className="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200">
-            Backup Database
-          </button>
-          <button className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200">
-            Reset Database
-          </button>
-        </div>
+        <p className="mt-3 text-sm leading-relaxed text-slate-600">
+          Alembic migration chỉ thay đổi schema. Lesson publish tạo version bất biến và cập nhật published pointer atomically. Không có nút “Sync Data to Database” trong authoring flow.
+        </p>
       </div>
     </div>
   )

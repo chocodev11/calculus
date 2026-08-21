@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 from app.database import get_db
 from app.models import User, UserInventory, StreakWeek, ShopItem
-from app.auth import get_current_user
+from app.auth import get_current_admin
 from app.hearts import MAX_HEARTS, RESTORE_HOURS, sync_hearts, seconds_until_next_heart
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -38,22 +38,11 @@ class CommandResponse(BaseModel):
     ok: bool = True
 
 
-@router.post("/sync-data")
-async def admin_sync_data():
-    """Trigger non-destructive data sync from JSON files."""
-    try:
-        from sync_data import sync_data
-        await sync_data()
-        return {"success": True, "message": "Course and platform data synced successfully!"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to sync data: {str(e)}")
-
-
 @router.post("/command", response_model=CommandResponse)
 async def run_command(
     body: CommandRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_admin),
 ):
     raw = body.command.strip()
     parts = raw.split()

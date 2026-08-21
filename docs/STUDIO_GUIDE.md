@@ -1,111 +1,66 @@
-# 🎨 Calculus Content Studio & Preview Guide
+# Calculus Studio
 
-Tài liệu hướng dẫn sử dụng và phát triển nội dung toán học với **Calculus Studio** (Môi trường Content-as-Code & Xem trước Trực tiếp).
+Studio là nơi review nội dung JSON/DSL trước khi publish. Nó không compile
+lesson trong browser và chỉ đọc draft/published từ API.
 
----
+## Quy trình hằng ngày
 
-## 1. Giới thiệu Calculus Studio (`/studio`)
+1. Dùng LLM sinh một `LessonDocument` JSON theo
+   [`LESSON_SCHEME_CONTRACT.md`](LESSON_SCHEME_CONTRACT.md).
+2. Vào `/admin/courses/menh-de`, chọn step và dán JSON vào editor.
+3. Bấm `Validate`, sau đó `Lưu draft`. Draft có checksum và optimistic
+   concurrency; nếu người khác đã lưu trước, UI báo conflict thay vì ghi đè.
+4. Bấm `Mở Studio` hoặc vào `/studio/menh-de/{stepId}` để preview draft.
+5. Review từng slide, interaction và các viewport. Khi đạt yêu cầu, bấm
+   `Publish`.
 
-**Calculus Studio** là môi trường phát triển và kiểm thử nội dung thống nhất (hợp nhất từ hệ thống *Preview Lab* và *Content Studio* trước đây). Studio cho phép tác giả khóa học:
-1. **Xem trước thời gian thực (Live Vite HMR)**: Soạn thảo bài học MDX hoặc cấu hình Sandbox JSON và xem kết quả cập nhật ngay lập tức mà không cần tải lại trang hay đồng bộ database.
-2. **Kiểm thử đa thiết bị (Device Viewport Emulation)**:
-   - 🖥️ **Desktop Fluid (100%)**: Giao diện toàn màn hình tiêu chuẩn.
-   - 📱 **iPhone 15 (393 × 852)**: Kiểm thử trải nghiệm mobile hiện đại.
-   - 📱 **iPhone SE (375 × 667)**: Kiểm thử màn hình nhỏ và giới hạn chiều cao.
-   - 📟 **iPad Mini (768 × 1024)**: Kiểm thử tablet.
-   - 🔄 **Xoay màn hình (Portrait / Landscape)**: Đảm bảo các mô hình toán học và đồ thị co giãn chuẩn xác.
-3. **Kiểm thử Tương tác Sandbox**: Trực tiếp thao tác kéo thả (Drag & Drop), thanh trượt tham số (Sliders), và kiểm tra phản hồi sư phạm tự động.
+Không cần chạy build hoặc sync sau từng lần sửa. Learner tiếp tục thấy version
+đang published cho đến khi publish thành công.
 
----
+## Viewport
 
-## 2. Cách truy cập Studio
+Studio có Desktop Fluid, iPhone 15, iPhone SE và iPad Mini; mỗi thiết bị có
+portrait/landscape. Đây là preview cùng renderer với learner, nên lỗi block
+được bọc bằng ErrorBoundary và hiển thị trong block thay vì biến toàn bộ trang
+thành white page.
 
-### Truy cập nhanh qua URL:
-- Trang chủ Studio: [http://localhost:3000/studio](http://localhost:3000/studio)
-- Bài học cụ thể: `http://localhost:3000/studio/:courseSlug/:stepId`
-  - Ví dụ Bài 1 Mệnh đề: `http://localhost:3000/studio/menh-de/01-menh-de-va-tinh-dung-sai`
-  - Ví dụ Bài 1 Đạo hàm: `http://localhost:3000/studio/dao-ham/01-y-nghia-hinh-hoc`
+## JSON block mẫu
 
-> [!NOTE]
-> Đường dẫn cũ `/preview` và `/preview/:courseSlug/:stepId` đã được tự động chuyển hướng (redirect) về `/studio`.
-
----
-
-## 3. Cấu trúc bài học Content-as-Code (MDX)
-
-Mỗi bài học được lưu dưới dạng file `.mdx` trong thư mục:
-`frontend/src/content/courses/<course-slug>/<step-id>.mdx`
-
-### 3.1. Frontmatter bắt buộc
-```yaml
----
-id: '01-menh-de-va-tinh-dung-sai'
-title: 'Mệnh đề và tính đúng sai'
-description: 'Nhận diện câu là mệnh đề logic, phân biệt câu hỏi/cảm thán và đánh giá tính đúng sai theo chuẩn GDPT 2018.'
-courseSlug: 'menh-de'
-chapterSlug: 'menh-de'
-order: 0
-xp: 120
----
+```json
+{
+  "id": "s01-text-1",
+  "block_type": "text",
+  "content": {
+    "heading": "Mệnh đề là gì?",
+    "paragraphs": ["Một mệnh đề có chân trị đúng hoặc sai."]
+  }
+}
 ```
 
-### 3.2. Các khối thành phần chính
-1. **Khối Slide**:
-   ```mdx
-   <Slide title="Tiêu đề Slide">
-     Nội dung giải thích, định lý và công thức LaTeX ($x^2 + y^2 = 1$).
-   </Slide>
-   ```
+Interaction phải là manifest khai báo trong `content`; không đưa function,
+import, event handler hoặc JavaScript executable vào JSON. Các block
+`drag_drop`, `interactive_graph`, `fill_blank`, `ordering` có fallback
+preview-only nếu chưa có grading contract.
 
-2. **Khối Hộp ghi nhớ (Callout)**:
-   ```mdx
-   <Callout variant="theorem" title="Định lý / Khái niệm">
-     Nội dung quan trọng...
-   </Callout>
-   ```
-   *(Các biến thể hỗ trợ: `theorem`, `tip`, `warning`, `info`)*
+## Version history
 
-3. **Khối Phòng thí nghiệm Toán học (Sandbox)**:
-   ```mdx
-   <Slide title="Thực hành Phân loại">
-     <Sandbox manifest={{
-       "archetypeId": "logic.proposition",
-       "config": {
-         "mode": "proposition_classifier",
-         "activity": {
-           "items": [ ... ]
-         }
-       }
-     }} />
-   </Slide>
-   ```
+Mỗi lần publish tạo version immutable. Version cũ được archive và vẫn giữ trong
+history. `Rollback` chọn một version archive để phục hồi published pointer;
+progress tiếp tục gắn với slide `content_key` ổn định.
 
-4. **Khối Câu hỏi Trắc nghiệm (Quiz Pool)**:
-   ```json
-   ```json
-   {
-     "id": "b4_quiz_pool",
-     "block_type": "assessment_pool",
-     "content": { ... }
-   }
-   ```
-   ```
+## Kiểm thử trước review
 
----
+```bash
+cd frontend
+npm run validate:lessons
+npm run test:run
+npx tsc --noEmit
+npm run build
+```
 
-## 4. Quy chuẩn Thiết kế UI (/less-is-more-ui & /calculus-ui-system)
+Backend cần chạy Alembic trước khi mở Studio:
 
-Khi tạo mới hoặc cập nhật các tương tác trong Studio, tác giả cần tuân thủ các nguyên tắc:
-- **Tối giản & Trọng tâm (Less is More)**: Tránh lồng quá nhiều khung viền (Anti-Nesting), tránh các nút bấm trùng lặp.
-- **Kích thước gọn gàng**: Chiều cao của Sandbox trên desktop nên duy trì trong khoảng **420px – 480px** để vừa vặn trong màn hình mà không cần cuộn trang liên tục.
-- **Bóng cứng 2.5D**: Dùng bóng cứng không mờ (`0 2px 0 ...` hoặc `0 4px 0 ...`) cho các thẻ tương tác và nút bấm xúc giác.
-- **Phản hồi sư phạm tức thì**: Mỗi tương tác cần cung cấp giải thích toán học cụ thể thay vì các mã lỗi máy móc chung chung.
-
----
-
-## 5. Quy trình Kiểm thử & Phát hành
-1. Chạy frontend: `npm run dev` (hoặc `just host`).
-2. Mở `/studio` và chọn khóa học đang biên soạn.
-3. Chuyển đổi qua lại giữa **Desktop Fluid** và **iPhone 15** để kiểm tra layout.
-4. Chạy kiểm thử tự động: `npm test` trong thư mục `frontend`.
-5. Kiểm tra build hoàn thiện: `npm run build`.
+```bash
+cd backend
+python -m alembic -c alembic.ini upgrade head
+```

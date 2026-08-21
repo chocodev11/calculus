@@ -6,6 +6,9 @@ from app.database import Base
 
 class LessonVersion(Base):
     __tablename__ = "lesson_versions"
+    __table_args__ = (
+        UniqueConstraint("step_id", "version", name="uq_lesson_version_step_version"),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     step_id = Column(Integer, ForeignKey("steps.id"), nullable=False, index=True)

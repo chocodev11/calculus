@@ -29,7 +29,12 @@ export function formatErrorDetail(detail) {
   }
 
   if (detail && typeof detail === 'object') {
-    return detail.message || detail.msg || 'Request thất bại'
+    if (detail.message || detail.msg) return detail.message || detail.msg
+    if (detail.code && detail.errors) {
+      return `${detail.code}: ${formatErrorDetail(detail.errors)}`
+    }
+    if (detail.code) return detail.code
+    return 'Request thất bại'
   }
 
   return 'Request thất bại'
@@ -122,6 +127,9 @@ const api = {
   },
   put(endpoint, data, options) {
     return request('PUT', endpoint, data, options)
+  },
+  patch(endpoint, data, options) {
+    return request('PATCH', endpoint, data, options)
   },
   delete(endpoint, options) {
     return request('DELETE', endpoint, undefined, options)

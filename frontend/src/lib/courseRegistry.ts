@@ -1,15 +1,12 @@
 /**
  * Course Registry (Content-as-Code)
  *
- * Uses Vite's import.meta.glob for zero-latency indexing and dynamic loading of MDX lessons.
- * Provides instant HMR during authoring.
+ * Uses Vite's import.meta.glob for zero-latency course metadata indexing.
+ * Lesson JSON is delivered by the draft/published content API.
  */
 
 // Glob all course metadata JSON files
 const courseMetaModules = import.meta.glob('../content/courses/*/meta.json', { eager: true })
-
-// Glob all MDX lesson step files (lazy loaded on demand for optimal bundle splitting)
-const stepModules = import.meta.glob('../content/courses/*/*.mdx')
 
 export interface StepMeta {
   id: string
@@ -117,30 +114,4 @@ export function getFallbackLearningPaths() {
       courses: grade10Courses.length > 0 ? grade10Courses : courses
     }
   ]
-}
-
-export async function getStep(courseSlug: string, stepId: string) {
-  // Find step module in glob
-  // Path pattern: ../content/courses/{courseSlug}/{stepId}.mdx
-  const matchKey = Object.keys(stepModules).find(path => {
-    return path.includes(`/content/courses/${courseSlug}/`) && 
-           (path.endsWith(`/${stepId}.mdx`) || path.endsWith(`/${stepId}`))
-  })
-
-  if (!matchKey) {
-    throw new Error(`Step MDX not found for course: ${courseSlug}, stepId: ${stepId}`)
-  }
-
-  const moduleLoader = stepModules[matchKey]
-  const module = await moduleLoader() as any
-
-  return {
-    Component: module.default,
-    frontmatter: module.frontmatter || {},
-    meta: {
-      id: stepId,
-      courseSlug,
-      ...(module.frontmatter || {})
-    }
-  }
 }

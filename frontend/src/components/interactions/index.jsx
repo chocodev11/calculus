@@ -130,8 +130,8 @@ function StatementPopup({ text, isSandbox }) {
  * InteractionSlide — renders the correct engine for a given interactionType.
  */
 export default function InteractionSlide({ interactionType, lesson, content }) {
-  const resolvedType = interactionType || content?.interactionType || content?.interaction_type
-  const resolvedLesson = lesson || content?.lesson || content?.manifest
+  const resolvedType = interactionType || content?.interactionType || content?.interaction_type || content?.type
+  const resolvedLesson = lesson || content?.lesson || content?.manifest || content
   const normalizedType = String(resolvedType || '')
   const Component = TYPE_MAP[resolvedType]
     || TYPE_MAP[normalizedType.toUpperCase()]
