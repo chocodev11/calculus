@@ -241,7 +241,7 @@
                 "explanation": "Mệnh đề $P \\Rightarrow Q$ đúng (mọi hình thoi đều có 2 đường chéo vuông góc). Nhưng chiều ngược lại $Q \\Rightarrow P$ sai (tứ giác có 2 đường chéo vuông góc chưa chắc là hình thoi, ví dụ hình cánh diều). Do đó $P$ là điều kiện đủ để có $Q$.",
                 "id": "mc_01",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C1"
@@ -253,8 +253,15 @@
                   "archetypeIds": [
                     "A01"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "mc_02",
@@ -281,7 +288,7 @@
                 "correct": "B",
                 "explanation": "Một số chia hết cho 6 khi và chỉ khi chia hết cho cả 2 và 3.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C19"
@@ -293,8 +300,265 @@
                   "archetypeIds": [
                     "A15"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 14
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "multiple_choice",
+                "question": "Cho hai mệnh đề $P$: \"Tứ giác $ABCD$ là hình thoi\" và $Q$: \"Tứ giác $ABCD$ có hai đường chéo vuông góc\". Khẳng định nào sau đây là **đúng**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P$ là điều kiện cần để có $Q$."
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P$ là điều kiện đủ để có $Q$."
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P$ là điều kiện cần và đủ để có $Q$."
+                  },
+                  {
+                    "id": "D",
+                    "text": "$Q$ là điều kiện đủ để có $P$."
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Mệnh đề $P \\Rightarrow Q$ đúng (mọi hình thoi đều có 2 đường chéo vuông góc). Nhưng chiều ngược lại $Q \\Rightarrow P$ sai (tứ giác có 2 đường chéo vuông góc chưa chắc là hình thoi, ví dụ hình cánh diều). Do đó $P$ là điều kiện đủ để có $Q$.",
+                "id": "mc_01_v01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C1"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12,
+                  "derivedFromQuestionIds": [
+                    "C1"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_02_v01",
+                "quiz_type": "multiple_choice",
+                "question": "Với $P: a\\vdots6$ và $Q: (a\\vdots2\\text{ và }a\\vdots3)$ trên $\\mathbb{Z}$, khẳng định nào đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P\\Rightarrow Q$ chỉ"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P\\Leftrightarrow Q$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$Q\\Rightarrow P$ chỉ"
+                  },
+                  {
+                    "id": "D",
+                    "text": "Không có chiều nào đúng"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Một số chia hết cho 6 khi và chỉ khi chia hết cho cả 2 và 3.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C19"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A15"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 14,
+                  "derivedFromQuestionIds": [
+                    "C19"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "multiple_choice",
+                "question": "Cho hai mệnh đề $P$: \"Tứ giác $ABCD$ là hình thoi\" và $Q$: \"Tứ giác $ABCD$ có hai đường chéo vuông góc\". Khẳng định nào sau đây là **đúng**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P$ là điều kiện cần để có $Q$."
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P$ là điều kiện đủ để có $Q$."
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P$ là điều kiện cần và đủ để có $Q$."
+                  },
+                  {
+                    "id": "D",
+                    "text": "$Q$ là điều kiện đủ để có $P$."
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Mệnh đề $P \\Rightarrow Q$ đúng (mọi hình thoi đều có 2 đường chéo vuông góc). Nhưng chiều ngược lại $Q \\Rightarrow P$ sai (tứ giác có 2 đường chéo vuông góc chưa chắc là hình thoi, ví dụ hình cánh diều). Do đó $P$ là điều kiện đủ để có $Q$.",
+                "id": "mc_01_v02",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C1"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12,
+                  "derivedFromQuestionIds": [
+                    "C1"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_02_v02",
+                "quiz_type": "multiple_choice",
+                "question": "Với $P: a\\vdots6$ và $Q: (a\\vdots2\\text{ và }a\\vdots3)$ trên $\\mathbb{Z}$, khẳng định nào đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P\\Rightarrow Q$ chỉ"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P\\Leftrightarrow Q$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$Q\\Rightarrow P$ chỉ"
+                  },
+                  {
+                    "id": "D",
+                    "text": "Không có chiều nào đúng"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Một số chia hết cho 6 khi và chỉ khi chia hết cho cả 2 và 3.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C19"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A15"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 14,
+                  "derivedFromQuestionIds": [
+                    "C19"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "multiple_choice",
+                "question": "Cho hai mệnh đề $P$: \"Tứ giác $ABCD$ là hình thoi\" và $Q$: \"Tứ giác $ABCD$ có hai đường chéo vuông góc\". Khẳng định nào sau đây là **đúng**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P$ là điều kiện cần để có $Q$."
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P$ là điều kiện đủ để có $Q$."
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P$ là điều kiện cần và đủ để có $Q$."
+                  },
+                  {
+                    "id": "D",
+                    "text": "$Q$ là điều kiện đủ để có $P$."
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Mệnh đề $P \\Rightarrow Q$ đúng (mọi hình thoi đều có 2 đường chéo vuông góc). Nhưng chiều ngược lại $Q \\Rightarrow P$ sai (tứ giác có 2 đường chéo vuông góc chưa chắc là hình thoi, ví dụ hình cánh diều). Do đó $P$ là điều kiện đủ để có $Q$.",
+                "id": "mc_01_v03",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C1"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12,
+                  "derivedFromQuestionIds": [
+                    "C1"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "mc_03",
@@ -321,7 +585,7 @@
                 "correct": "A",
                 "explanation": "Đảo mệnh đề bằng cách đổi vị trí giả thiết và kết luận; mệnh đề đảo này không luôn đúng.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C39"
@@ -333,8 +597,15 @@
                   "archetypeIds": [
                     "A14"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 16
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "mc_04",
@@ -361,7 +632,7 @@
                 "correct": "A",
                 "explanation": "Điều kiện cần của Q phải được Q kéo theo.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C38"
@@ -373,8 +644,265 @@
                   "archetypeIds": [
                     "A16"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 15
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_03_v01",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề đảo của “Nếu tam giác đều thì tam giác cân” là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Nếu tam giác cân thì tam giác đều."
+                  },
+                  {
+                    "id": "B",
+                    "text": "Nếu tam giác không đều thì không cân."
+                  },
+                  {
+                    "id": "C",
+                    "text": "Nếu tam giác đều thì không cân."
+                  },
+                  {
+                    "id": "D",
+                    "text": "Nếu tam giác không cân thì đều."
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Đảo mệnh đề bằng cách đổi vị trí giả thiết và kết luận; mệnh đề đảo này không luôn đúng.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C39"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S11"
+                  ],
+                  "archetypeIds": [
+                    "A14"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 16,
+                  "derivedFromQuestionIds": [
+                    "C39"
+                  ]
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_04_v01",
+                "quiz_type": "multiple_choice",
+                "question": "Câu “$P$ là điều kiện cần của $Q$” tương đương với mệnh đề nào?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$Q\\Rightarrow P$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P\\Rightarrow Q$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P\\Leftrightarrow Q$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\neg P\\Rightarrow Q$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Điều kiện cần của Q phải được Q kéo theo.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C38"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S13"
+                  ],
+                  "archetypeIds": [
+                    "A16"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 15,
+                  "derivedFromQuestionIds": [
+                    "C38"
+                  ]
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_03_v02",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề đảo của “Nếu tam giác đều thì tam giác cân” là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Nếu tam giác cân thì tam giác đều."
+                  },
+                  {
+                    "id": "B",
+                    "text": "Nếu tam giác không đều thì không cân."
+                  },
+                  {
+                    "id": "C",
+                    "text": "Nếu tam giác đều thì không cân."
+                  },
+                  {
+                    "id": "D",
+                    "text": "Nếu tam giác không cân thì đều."
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Đảo mệnh đề bằng cách đổi vị trí giả thiết và kết luận; mệnh đề đảo này không luôn đúng.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C39"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S11"
+                  ],
+                  "archetypeIds": [
+                    "A14"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 16,
+                  "derivedFromQuestionIds": [
+                    "C39"
+                  ]
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_04_v02",
+                "quiz_type": "multiple_choice",
+                "question": "Câu “$P$ là điều kiện cần của $Q$” tương đương với mệnh đề nào?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$Q\\Rightarrow P$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$P\\Rightarrow Q$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P\\Leftrightarrow Q$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\neg P\\Rightarrow Q$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Điều kiện cần của Q phải được Q kéo theo.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C38"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S13"
+                  ],
+                  "archetypeIds": [
+                    "A16"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 15,
+                  "derivedFromQuestionIds": [
+                    "C38"
+                  ]
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_03_v03",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề đảo của “Nếu tam giác đều thì tam giác cân” là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Nếu tam giác cân thì tam giác đều."
+                  },
+                  {
+                    "id": "B",
+                    "text": "Nếu tam giác không đều thì không cân."
+                  },
+                  {
+                    "id": "C",
+                    "text": "Nếu tam giác đều thì không cân."
+                  },
+                  {
+                    "id": "D",
+                    "text": "Nếu tam giác không cân thì đều."
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Đảo mệnh đề bằng cách đổi vị trí giả thiết và kết luận; mệnh đề đảo này không luôn đúng.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C39"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S11"
+                  ],
+                  "archetypeIds": [
+                    "A14"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 16,
+                  "derivedFromQuestionIds": [
+                    "C39"
+                  ]
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "mc_05",
@@ -401,7 +929,7 @@
                 "correct": "D",
                 "explanation": "Cộng cùng một số vào hai vế là phép biến đổi tương đương.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C12",
@@ -414,8 +942,15 @@
                   "archetypeIds": [
                     "A15"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 13
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "mc_06",
@@ -442,7 +977,7 @@
                 "correct": "B",
                 "explanation": "Điều kiện đủ Q bảo đảm P, nên Q kéo theo P.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C38"
@@ -454,8 +989,271 @@
                   "archetypeIds": [
                     "A16"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 15
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_05_v01",
+                "quiz_type": "multiple_choice",
+                "question": "Cặp mệnh đề nào tương đương trên $\\mathbb{R}$?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$a=b$ và $a^2=b^2$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$x>0$ và $x^2>0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$x=2$ và $x^2=4$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$a=b$ và $a+c=b+c$"
+                  }
+                ],
+                "correct": "D",
+                "explanation": "Cộng cùng một số vào hai vế là phép biến đổi tương đương.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C12",
+                    "C19"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A15"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 13,
+                  "derivedFromQuestionIds": [
+                    "C12",
+                    "C19"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_06_v01",
+                "quiz_type": "multiple_choice",
+                "question": "Khẳng định “$Q$ là điều kiện đủ để có $P$” được viết bằng ký hiệu là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P\\Rightarrow Q$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$Q\\Rightarrow P$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P\\Leftrightarrow Q$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\neg Q\\Rightarrow P$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Điều kiện đủ Q bảo đảm P, nên Q kéo theo P.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C38"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S13"
+                  ],
+                  "archetypeIds": [
+                    "A16"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 15,
+                  "derivedFromQuestionIds": [
+                    "C38"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_05_v02",
+                "quiz_type": "multiple_choice",
+                "question": "Cặp mệnh đề nào tương đương trên $\\mathbb{R}$?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$a=b$ và $a^2=b^2$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$x>0$ và $x^2>0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$x=2$ và $x^2=4$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$a=b$ và $a+c=b+c$"
+                  }
+                ],
+                "correct": "D",
+                "explanation": "Cộng cùng một số vào hai vế là phép biến đổi tương đương.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C12",
+                    "C19"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A15"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 13,
+                  "derivedFromQuestionIds": [
+                    "C12",
+                    "C19"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_06_v02",
+                "quiz_type": "multiple_choice",
+                "question": "Khẳng định “$Q$ là điều kiện đủ để có $P$” được viết bằng ký hiệu là gì?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$P\\Rightarrow Q$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$Q\\Rightarrow P$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$P\\Leftrightarrow Q$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\neg Q\\Rightarrow P$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Điều kiện đủ Q bảo đảm P, nên Q kéo theo P.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C38"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S13"
+                  ],
+                  "archetypeIds": [
+                    "A16"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 15,
+                  "derivedFromQuestionIds": [
+                    "C38"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_05_v03",
+                "quiz_type": "multiple_choice",
+                "question": "Cặp mệnh đề nào tương đương trên $\\mathbb{R}$?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$a=b$ và $a^2=b^2$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$x>0$ và $x^2>0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$x=2$ và $x^2=4$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$a=b$ và $a+c=b+c$"
+                  }
+                ],
+                "correct": "D",
+                "explanation": "Cộng cùng một số vào hai vế là phép biến đổi tương đương.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C12",
+                    "C19"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A15"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 13,
+                  "derivedFromQuestionIds": [
+                    "C12",
+                    "C19"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               }
             ]
           }
@@ -563,7 +1361,7 @@
                 "explanation": "Ý a đúng (định nghĩa tam giác đều). Ý b đúng (tận cùng bằng 0 chắc chắn chia hết cho 5). Ý c sai vì $a^2=b^2 \\Leftrightarrow a=\\pm b$. Ý d đúng vì hình vuông bắt buộc phải có 4 góc vuông (4 góc bằng nhau), nên đó là điều kiện cần.",
                 "id": "tf_01",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C52"
@@ -575,8 +1373,121 @@
                   "archetypeIds": [
                     "A02"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 17
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "true_false_group",
+                "question": "Xét tính đúng sai của các khẳng định về điều kiện cần và đủ sau:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "a) Tam giác ABC có 3 cạnh bằng nhau là điều kiện cần và đủ để tam giác ABC đều.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "b) Số tự nhiên a có chữ số tận cùng bằng 0 là điều kiện đủ để a chia hết cho 5.",
+                    "correct": true
+                  },
+                  {
+                    "id": "c",
+                    "label": "c) a = b là điều kiện cần và đủ để a² = b² (với a, b ∈ R).",
+                    "correct": false
+                  },
+                  {
+                    "id": "d",
+                    "label": "d) Tứ giác ABCD có 4 góc bằng nhau là điều kiện cần để ABCD là hình vuông.",
+                    "correct": true
+                  }
+                ],
+                "explanation": "Ý a đúng (định nghĩa tam giác đều). Ý b đúng (tận cùng bằng 0 chắc chắn chia hết cho 5). Ý c sai vì $a^2=b^2 \\Leftrightarrow a=\\pm b$. Ý d đúng vì hình vuông bắt buộc phải có 4 góc vuông (4 góc bằng nhau), nên đó là điều kiện cần.",
+                "id": "tf_01_v01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C52"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A02"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 17,
+                  "derivedFromQuestionIds": [
+                    "C52"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "true_false_group",
+                "question": "Xét tính đúng sai của các khẳng định về điều kiện cần và đủ sau:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "a) Tam giác ABC có 3 cạnh bằng nhau là điều kiện cần và đủ để tam giác ABC đều.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "b) Số tự nhiên a có chữ số tận cùng bằng 0 là điều kiện đủ để a chia hết cho 5.",
+                    "correct": true
+                  },
+                  {
+                    "id": "c",
+                    "label": "c) a = b là điều kiện cần và đủ để a² = b² (với a, b ∈ R).",
+                    "correct": false
+                  },
+                  {
+                    "id": "d",
+                    "label": "d) Tứ giác ABCD có 4 góc bằng nhau là điều kiện cần để ABCD là hình vuông.",
+                    "correct": true
+                  }
+                ],
+                "explanation": "Ý a đúng (định nghĩa tam giác đều). Ý b đúng (tận cùng bằng 0 chắc chắn chia hết cho 5). Ý c sai vì $a^2=b^2 \\Leftrightarrow a=\\pm b$. Ý d đúng vì hình vuông bắt buộc phải có 4 góc vuông (4 góc bằng nhau), nên đó là điều kiện cần.",
+                "id": "tf_01_v02",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C52"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A02"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 17,
+                  "derivedFromQuestionIds": [
+                    "C52"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "tf_02",
@@ -606,7 +1517,7 @@
                 ],
                 "explanation": "Tương đương cần hai chiều; điều kiện đủ và cần được đọc theo chiều của mệnh đề kéo theo.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C38",
@@ -621,8 +1532,129 @@
                     "A14",
                     "A16"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 15
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "tf_02_v01",
+                "quiz_type": "true_false_group",
+                "question": "Xét các phát biểu về điều kiện cần và đủ:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "Muốn $P\\Leftrightarrow Q$ đúng thì cả $P\\Rightarrow Q$ và $Q\\Rightarrow P$ phải đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "$P$ là điều kiện đủ của $Q$ nghĩa là $Q\\Rightarrow P$.",
+                    "correct": false
+                  },
+                  {
+                    "id": "c",
+                    "label": "$Q$ là điều kiện cần của $P$ nghĩa là $P\\Rightarrow Q$.",
+                    "correct": true
+                  },
+                  {
+                    "id": "d",
+                    "label": "Chỉ cần một chiều đúng là đủ kết luận $P\\Leftrightarrow Q$.",
+                    "correct": false
+                  }
+                ],
+                "explanation": "Tương đương cần hai chiều; điều kiện đủ và cần được đọc theo chiều của mệnh đề kéo theo.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C38",
+                    "C39"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S11",
+                    "S13"
+                  ],
+                  "archetypeIds": [
+                    "A14",
+                    "A16"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 15,
+                  "derivedFromQuestionIds": [
+                    "C38",
+                    "C39"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "tf_02_v02",
+                "quiz_type": "true_false_group",
+                "question": "Xét các phát biểu về điều kiện cần và đủ:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "Muốn $P\\Leftrightarrow Q$ đúng thì cả $P\\Rightarrow Q$ và $Q\\Rightarrow P$ phải đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "$P$ là điều kiện đủ của $Q$ nghĩa là $Q\\Rightarrow P$.",
+                    "correct": false
+                  },
+                  {
+                    "id": "c",
+                    "label": "$Q$ là điều kiện cần của $P$ nghĩa là $P\\Rightarrow Q$.",
+                    "correct": true
+                  },
+                  {
+                    "id": "d",
+                    "label": "Chỉ cần một chiều đúng là đủ kết luận $P\\Leftrightarrow Q$.",
+                    "correct": false
+                  }
+                ],
+                "explanation": "Tương đương cần hai chiều; điều kiện đủ và cần được đọc theo chiều của mệnh đề kéo theo.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C38",
+                    "C39"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S11",
+                    "S13"
+                  ],
+                  "archetypeIds": [
+                    "A14",
+                    "A16"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 15,
+                  "derivedFromQuestionIds": [
+                    "C38",
+                    "C39"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               }
             ]
           }
@@ -661,7 +1693,7 @@
                 "explanation": "Có đúng 2 cặp tương đương đúng là (2) (tính chất đại số) và (4) (dấu hiệu chia hết cho 6). Cặp (1) sai chiều ngược ($x=-2$). Cặp (3) sai chiều ngược ($x=-2$).",
                 "id": "short_01",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C3"
@@ -673,8 +1705,15 @@
                   "archetypeIds": [
                     "A01"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "short_02",
@@ -686,7 +1725,7 @@
                 ],
                 "explanation": "Chỉ chiều $P\\Rightarrow Q$ đúng.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C12",
@@ -701,8 +1740,15 @@
                     "A14",
                     "A15"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 13
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "short_03",
@@ -714,7 +1760,7 @@
                 ],
                 "explanation": "Đây là tính chất chia hết: $6=2\\cdot3$ và 2, 3 nguyên tố cùng nhau.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C19"
@@ -726,8 +1772,124 @@
                   "archetypeIds": [
                     "A15"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 14
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "short_answer",
+                "question": "Cho các cặp mệnh đề sau: (1) $P: x > 1$ và $Q: x^2 > 1$. (2) $P: a=b$ và $Q: a+c=b+c$. (3) $P: x=2$ và $Q: x^2=4$. (4) $P: a \\;\\vdots\\; 6$ và $Q: (a \\;\\vdots\\; 2 \\text{ và } a \\;\\vdots\\; 3)$. Hỏi có bao nhiêu cặp thỏa mãn **$P \\Leftrightarrow Q$ là mệnh đề đúng**?",
+                "correct": "2",
+                "correct_answers": [
+                  "2"
+                ],
+                "explanation": "Có đúng 2 cặp tương đương đúng là (2) (tính chất đại số) và (4) (dấu hiệu chia hết cho 6). Cặp (1) sai chiều ngược ($x=-2$). Cặp (3) sai chiều ngược ($x=-2$).",
+                "id": "short_01_v01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C3"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12,
+                  "derivedFromQuestionIds": [
+                    "C3"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "short_02_v01",
+                "quiz_type": "short_answer",
+                "question": "Nếu $P\\Rightarrow Q$ đúng nhưng $Q\\Rightarrow P$ sai, có bao nhiêu chiều của $P\\Leftrightarrow Q$ đúng?",
+                "correct": "1",
+                "correct_answers": [
+                  "1"
+                ],
+                "explanation": "Chỉ chiều $P\\Rightarrow Q$ đúng.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C12",
+                    "C39"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S11",
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A14",
+                    "A15"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 13,
+                  "derivedFromQuestionIds": [
+                    "C12",
+                    "C39"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "short_03_v01",
+                "quiz_type": "short_answer",
+                "question": "Trên $\\mathbb{Z}$, mệnh đề “$a\\vdots6$ khi và chỉ khi $a$ chia hết cho 2 và 3” là Đúng hay Sai?",
+                "correct": "Đúng",
+                "correct_answers": [
+                  "1"
+                ],
+                "explanation": "Đây là tính chất chia hết: $6=2\\cdot3$ và 2, 3 nguyên tố cùng nhau.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C19"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S12"
+                  ],
+                  "archetypeIds": [
+                    "A15"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 14,
+                  "derivedFromQuestionIds": [
+                    "C19"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.equivalence.conditions"
+                ],
+                "misconceptionIds": []
               }
             ]
           }
@@ -773,6 +1935,14 @@
             "variant": "info",
             "title": "Tổng kết Bài học 5",
             "body": "Bạn đã làm chủ các thuật ngữ định lý: Đảo, Tương đương, Cần & Đủ. Ở bài tiếp theo, chúng ta sẽ khảo sát công cụ biểu diễn toán học mạnh nhất: **Lượng từ $\\forall, \\exists$ và Mệnh đề nhiều biến**."
+          }
+        },
+        {
+          "id": "05-dao-tuong-duong-dieu-kien-can-du-adaptive-assessment",
+          "block_type": "adaptive_assessment",
+          "content": {
+            "sessionType": "lesson",
+            "questionCount": 9
           }
         }
       ]

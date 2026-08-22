@@ -13,7 +13,7 @@
 Tái thiết kế toàn bộ course **`Mệnh đề và Logic Toán 10`** theo hướng interactive-first, nhưng phải bám sát tài liệu nguồn:
 
 ```text
-chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf
+chuyen-de-menh-de-va-tap-hop-toan-10.pdf
 ```
 
 Phạm vi core của spec này là **Bài 1. MỆNH ĐỀ** trong PDF.
@@ -167,7 +167,8 @@ Mọi activity core phải có metadata:
 ```json
 {
   "sourceMapping": {
-    "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+    "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+    "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
     "section": "Bài 1. Mệnh đề",
     "sourcePages": [7, 8],
     "sourceQuestionIds": ["C53", "C58"],

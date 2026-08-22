@@ -23,7 +23,8 @@ STEPS_DIR = ROOT / "data/raw_courses/menh-de/chapters/menh-de/steps"
 
 def mapping(source_ids: list[str], skills: list[str], archetypes: list[str]) -> dict[str, Any]:
     return {
-        "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+        "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+        "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
         "section": "Bài 1. Mệnh đề",
         "sourceQuestionIds": source_ids,
         "derivation": "variant",

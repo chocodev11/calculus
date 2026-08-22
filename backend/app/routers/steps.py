@@ -11,8 +11,24 @@ from app.auth import get_current_user
 from app.routers.quests import tick_quest_progress
 from app.hearts import sync_hearts, deduct_heart, seconds_until_next_heart
 from app.content_service import get_published_version
+from app.lesson_contract import _strip_answer_fields
 
 router = APIRouter(prefix="/steps", tags=["steps"])
+
+
+def _learner_safe_blocks(blocks: list | None) -> list:
+    """Keep legacy slides answer-free until their next server-side publish."""
+
+    safe: list = []
+    for block in blocks or []:
+        block_type = block.get("block_type") or block.get("type") if isinstance(block, dict) else None
+        if block_type in {"assessment_pool", "assessment_ref"}:
+            continue
+        if block_type == "quiz" and isinstance(block, dict):
+            block = dict(block)
+            block["content"] = _strip_answer_fields(block.get("content") or block.get("block_data") or {})
+        safe.append(block)
+    return safe
 
 
 async def check_and_award_user_achievements(db: AsyncSession, user: User) -> list[dict]:
@@ -177,7 +193,15 @@ async def get_slides(step_id: int, db: AsyncSession = Depends(get_db)):
     )
     slides = result.scalars().all()
     
-    return [SlideResponse.model_validate(s) for s in slides]
+    return [
+        SlideResponse(
+            id=slide.id,
+            content_key=slide.content_key,
+            order_index=slide.order_index,
+            blocks=_learner_safe_blocks(slide.blocks),
+        )
+        for slide in slides
+    ]
 
 @router.post("/{step_id}/complete")
 async def complete_step(

@@ -157,19 +157,31 @@ def _fraction(value: Any) -> Fraction:
     raise ValueError("Invalid fraction")
 
 
+def _normalized_text(value: Any) -> str:
+    if not isinstance(value, str):
+        value = str(value)
+    return " ".join(value.strip().casefold().split())
+
+
 def grade_answer(item_type: str, answer: Any, answer_key: Any) -> dict[str, Any]:
     try:
         if item_type == "choice":
-            normalized = str(answer).strip()
-            correct = normalized == str(answer_key).strip()
+            normalized = _normalized_text(answer)
+            expected = answer_key.get("value") if isinstance(answer_key, dict) else answer_key
+            correct = normalized == _normalized_text(expected)
         elif item_type in {"boolean_group", "truth_table"}:
-            if not isinstance(answer, list) or not isinstance(answer_key, list):
+            expected_values = answer_key.get("values") if isinstance(answer_key, dict) else answer_key
+            if not isinstance(answer, list) or not isinstance(expected_values, list):
                 raise ValueError("Expected a boolean list")
-            if any(not isinstance(value, bool) for value in answer + answer_key):
+            if any(not isinstance(value, bool) for value in answer + expected_values):
                 raise ValueError("Boolean group values must be boolean")
             normalized = list(answer)
-            expected = list(answer_key)
+            expected = list(expected_values)
             correct = len(normalized) == len(expected) and normalized == expected
+        elif item_type in {"short_answer", "text_input"}:
+            accepted = answer_key.get("accepted", []) if isinstance(answer_key, dict) else [answer_key]
+            normalized = _normalized_text(answer)
+            correct = normalized in {_normalized_text(value) for value in accepted}
         elif item_type == "set":
             normalized = canonical_set(answer)
             correct = normalized == canonical_set(answer_key)

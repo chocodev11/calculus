@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import api, { ApiError, normalizeListPayload } from '../lib/api'
 import { useAuthStore } from '../lib/store'
 import { decodeStepId, encodeStepId, cn } from '../lib/utils'
-import { materializeAssessmentPools } from '../lib/lessonScheme'
 import { cleanLessonCopy, isLastReaderSection, prepareReaderSlides } from '../lib/lessonPresentation'
 import 'katex/dist/katex.min.css'
 import * as ReactKatexModule from 'react-katex'
@@ -21,6 +20,7 @@ import { MathText } from '../components/interactions/MathText'
 import soundFX from '../lib/soundEffects'
 import { fireConfetti, fireLessonCompleteConfetti } from '../lib/confetti'
 import ErrorBoundary from '../components/ErrorBoundary'
+import AdaptiveAssessment from '../components/AdaptiveAssessment'
 
 const ReactKatex = ReactKatexModule.default || ReactKatexModule
 const { InlineMath, BlockMath } = ReactKatex
@@ -54,6 +54,9 @@ export default function Step() {
   const [quizSubmitted, setQuizSubmitted] = useState({})
   const [quizResults, setQuizResults] = useState({})
   const [totalXpEarned, setTotalXpEarned] = useState(0)
+  const [adaptiveSession, setAdaptiveSession] = useState(null)
+  const [adaptiveProgress, setAdaptiveProgress] = useState(null)
+  const [adaptiveFinished, setAdaptiveFinished] = useState(false)
 
   const [showCompleteScreen, setShowCompleteScreen] = useState(false)
   const [completionError, setCompletionError] = useState(null)
@@ -126,22 +129,21 @@ export default function Step() {
       if (!stepData || typeof stepData !== 'object' || !Array.isArray(normalizedSlides)) {
         throw new ApiError('Nội dung bài học không đúng định dạng', { status: 200, endpoint: `/steps/${id}` })
       }
-      let materializedSlides
-      try {
-        materializedSlides = materializeAssessmentPools(normalizedSlides)
-      } catch (error) {
-        throw new ApiError(`Nội dung bài học không hợp lệ: ${error?.message || String(error)}`, {
-          status: 422,
-          endpoint: `/steps/${id}/slides`,
-          payload: error,
-        })
-      }
+      const hasAdaptiveBlock = normalizedSlides.some(slide => (
+        slide.blocks || []
+      ).some(block => (block.type || block.block_type) === 'adaptive_assessment'))
+      const adaptiveData = hasAdaptiveBlock
+        ? await api.post('/adaptive/sessions', { step_id: id }, { signal, redirectOnUnauthorized: false })
+        : null
 
       const boost = Array.isArray(invData) && invData.find(i => i.item?.item_type === 'xp_boost' && i.quantity > 0)
       setHasXpBoost(!!boost)
 
       setStep({ ...stepData, description: cleanLessonCopy(stepData.description) })
-      setSlides(prepareReaderSlides(materializedSlides))
+      setSlides(prepareReaderSlides(normalizedSlides))
+      setAdaptiveSession(adaptiveData)
+      setAdaptiveProgress(adaptiveData?.progress || null)
+      setAdaptiveFinished(adaptiveData?.status === 'completed' || !adaptiveData?.current_item)
       setCurrentSlideIndex(0)
       completedSlideIdsRef.current = new Set()
       slideAwardRequestsRef.current.clear()
@@ -229,6 +231,10 @@ export default function Step() {
     return currentSlide.blocks.filter(b => (b.type || b.block_type) === 'quiz')
   }, [currentSlide])
 
+  const hasAdaptiveAssessment = useMemo(() => {
+    return Boolean(currentSlide?.blocks?.some(block => (block.type || block.block_type) === 'adaptive_assessment'))
+  }, [currentSlide])
+
   const isTrueFalseOnlySlide = currentQuizBlocks.length > 0 && currentQuizBlocks.every((block) => {
     const content = block.content || block.block_data || {}
     return (content.quiz_type || (content.items ? 'true_false_group' : 'multiple_choice')) === 'true_false_group'
@@ -308,15 +314,20 @@ export default function Step() {
     setCompletionError(null)
     try {
       const timeSpent = Math.round((Date.now() - stepStartTimeRef.current) / 1000)
-      const quizEntries = Object.values(quizResults)
-      const quizzesTotal = quizEntries.length
-      const quizzesCorrect = quizEntries.filter(r => r.correct).length
-      const result = await api.post(`/steps/${id}/complete`, {
-        score: quizzesTotal > 0 ? Math.round((quizzesCorrect / quizzesTotal) * 100) : 100,
-        time_spent_seconds: timeSpent,
-        quizzes_correct: quizzesCorrect,
-        quizzes_total: quizzesTotal,
-      })
+      let result
+      if (adaptiveSession?.session_id) {
+        result = await api.post(`/adaptive/sessions/${adaptiveSession.session_id}/complete`, {}, { redirectOnUnauthorized: false })
+      } else {
+        const quizEntries = Object.values(quizResults)
+        const quizzesTotal = quizEntries.length
+        const quizzesCorrect = quizEntries.filter(r => r.correct).length
+        result = await api.post(`/steps/${id}/complete`, {
+          score: quizzesTotal > 0 ? Math.round((quizzesCorrect / quizzesTotal) * 100) : 100,
+          time_spent_seconds: timeSpent,
+          quizzes_correct: quizzesCorrect,
+          quizzes_total: quizzesTotal,
+        })
+      }
 
       if (result) {
         updateUserStats(result)
@@ -367,6 +378,15 @@ export default function Step() {
   }
 
   const handleFooterAction = async () => {
+    if (hasAdaptiveAssessment && !adaptiveFinished) return
+    if (hasAdaptiveAssessment && adaptiveFinished) {
+      if (isLastSlide) {
+        if (await awardSlideXp(currentSourceSlideId)) handleComplete()
+      } else {
+        await goNext()
+      }
+      return
+    }
     if (hasQuiz && !allQuizzesAnswered) {
       currentQuizBlocks.forEach(b => {
         if (!quizSubmitted[b.id] && isQuizBlockSelected(b)) {
@@ -634,6 +654,12 @@ export default function Step() {
                         onQuizAnswer={(ans) => handleQuizAnswer(block.id, ans)}
                         onQuizSubmit={(correct, explanation) => handleQuizSubmit(block.id, correct, explanation)}
                         onQuizRetry={() => handleQuizRetry(block.id)}
+                        adaptiveSession={adaptiveSession}
+                        onAdaptiveProgress={(response) => setAdaptiveProgress(response?.progress || null)}
+                        onAdaptiveFinished={(response) => {
+                          setAdaptiveProgress(response?.progress || null)
+                          setAdaptiveFinished(true)
+                        }}
                       />
                     </ErrorBoundary>
                   ))}
@@ -711,7 +737,11 @@ export default function Step() {
           ) : (
             <>
               <div className="text-xs font-semibold text-slate-400 hidden sm:block">
-                {hasQuiz ? 'Chọn câu trả lời và nhấn kiểm tra' : 'Đọc và tiếp tục bài học'}
+                {hasAdaptiveAssessment && !adaptiveFinished
+                  ? 'Hoàn thành 9 câu ở phần bài tập phía trên'
+                  : hasQuiz
+                  ? 'Chọn câu trả lời và nhấn kiểm tra'
+                  : 'Đọc và tiếp tục bài học'}
               </div>
 
               <div className="ml-auto w-full sm:w-auto">
@@ -719,10 +749,12 @@ export default function Step() {
                   variant={hasQuiz ? 'primary' : 'primary'}
                   size="lg"
                   onClick={handleFooterAction}
-                  disabled={hasQuiz && !allQuizzesSelected}
+                  disabled={(hasQuiz && !allQuizzesSelected) || (hasAdaptiveAssessment && !adaptiveFinished)}
                   className="w-full sm:w-auto min-w-[160px]"
                 >
-                  {hasQuiz && !allQuizzesAnswered ? (
+                  {hasAdaptiveAssessment && !adaptiveFinished ? (
+                    'Hoàn thành 9 câu'
+                  ) : hasQuiz && !allQuizzesAnswered ? (
                     'Kiểm tra đáp án'
                   ) : isLastSlide ? (
                     'Hoàn thành bài học'
@@ -859,7 +891,18 @@ function BlockFailure({ onRetry }) {
 // BLOCK RENDERERS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export function BlockRenderer({ block, quizAnswer, quizSubmitted, quizResult, onQuizAnswer, onQuizSubmit, onQuizRetry }) {
+export function BlockRenderer({
+  block,
+  quizAnswer,
+  quizSubmitted,
+  quizResult,
+  onQuizAnswer,
+  onQuizSubmit,
+  onQuizRetry,
+  adaptiveSession,
+  onAdaptiveProgress,
+  onAdaptiveFinished,
+}) {
   const type = block.type || block.block_type
 
   switch (type) {
@@ -875,6 +918,13 @@ export function BlockRenderer({ block, quizAnswer, quizSubmitted, quizResult, on
         onAnswer={onQuizAnswer}
         onSubmit={onQuizSubmit}
         onRetry={onQuizRetry}
+      />
+    )
+    case 'adaptive_assessment': return (
+      <AdaptiveAssessment
+        session={adaptiveSession}
+        onProgress={onAdaptiveProgress}
+        onFinished={onAdaptiveFinished}
       />
     )
     case 'code': return <CodeBlock block={block} />

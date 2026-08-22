@@ -18,7 +18,7 @@
           "id": "s01-text-1",
           "block_type": "text",
           "content": {
-                    "heading": "Lượng từ với mọi (∀) và tồn tại (∃)",
+            "heading": "Lượng từ với mọi (∀) và tồn tại (∃)",
             "paragraphs": [
               "Trong toán học, để khẳng định một tính chất $P(x)$ đúng với mọi phần tử hoặc tồn tại ít nhất một phần tử, ta dùng các **lượng từ logic**:",
               "- **Lượng từ với mọi ($\\forall$)**: \"$\\forall x \\in X,\\; P(x)$\" có nghĩa là $P(x)$ đúng với **tất cả** các giá trị $x \\in X$.\n- **Lượng từ tồn tại ($\\exists$)**: \"$\\exists x \\in X,\\; P(x)$\" có nghĩa là có **ít nhất một** giá trị $x \\in X$ làm cho $P(x)$ đúng."
@@ -295,7 +295,7 @@
                 "explanation": "Câu A đúng: Một số chính phương $n^2$ khi chia cho 3 chỉ có số dư là 0 hoặc 1. Do đó $n^2 + 1$ chia cho 3 chỉ có thể dư 1 hoặc 2, không bao giờ chia hết cho 3. (Câu B sai tại $x=0$, câu C sai vì $\\pm\\sqrt{3}$ vô tỉ, câu D sai tại $n=3$ vì $2^3+1=9$ hợp số).",
                 "id": "mc_01",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C1"
@@ -307,8 +307,15 @@
                   "archetypeIds": [
                     "A01"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "mc_02",
@@ -335,7 +342,7 @@
                 "correct": "A",
                 "explanation": "Nhân chứng $x=2$ hoặc $x=-2$ làm mệnh đề tồn tại đúng.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C15",
@@ -348,8 +355,269 @@
                   "archetypeIds": [
                     "A07"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 13
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "multiple_choice",
+                "question": "Trong các mệnh đề sau, mệnh đề nào là **mệnh đề đúng**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\forall n \\in \\mathbb{N},\\; n^2 + 1 \\text{ không chia hết cho } 3$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x \\in \\mathbb{R},\\; x^2 > 0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x \\in \\mathbb{Q},\\; x^2 = 3$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\forall n \\in \\mathbb{N},\\; 2^n + 1 \\text{ là số nguyên tố}$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Câu A đúng: Một số chính phương $n^2$ khi chia cho 3 chỉ có số dư là 0 hoặc 1. Do đó $n^2 + 1$ chia cho 3 chỉ có thể dư 1 hoặc 2, không bao giờ chia hết cho 3. (Câu B sai tại $x=0$, câu C sai vì $\\pm\\sqrt{3}$ vô tỉ, câu D sai tại $n=3$ vì $2^3+1=9$ hợp số).",
+                "id": "mc_01_v01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C1"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12,
+                  "derivedFromQuestionIds": [
+                    "C1"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_02_v01",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây là đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\exists x\\in\\mathbb{Q},\\;x^2=4$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;x^2>0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x\\in\\mathbb{R},\\;x^2+1=0$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\forall n\\in\\mathbb{N},\\;n^2+1\\text{ chia hết cho }3$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Nhân chứng $x=2$ hoặc $x=-2$ làm mệnh đề tồn tại đúng.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C15",
+                    "C42"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S5"
+                  ],
+                  "archetypeIds": [
+                    "A07"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 13,
+                  "derivedFromQuestionIds": [
+                    "C15",
+                    "C42"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "multiple_choice",
+                "question": "Trong các mệnh đề sau, mệnh đề nào là **mệnh đề đúng**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\forall n \\in \\mathbb{N},\\; n^2 + 1 \\text{ không chia hết cho } 3$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x \\in \\mathbb{R},\\; x^2 > 0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x \\in \\mathbb{Q},\\; x^2 = 3$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\forall n \\in \\mathbb{N},\\; 2^n + 1 \\text{ là số nguyên tố}$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Câu A đúng: Một số chính phương $n^2$ khi chia cho 3 chỉ có số dư là 0 hoặc 1. Do đó $n^2 + 1$ chia cho 3 chỉ có thể dư 1 hoặc 2, không bao giờ chia hết cho 3. (Câu B sai tại $x=0$, câu C sai vì $\\pm\\sqrt{3}$ vô tỉ, câu D sai tại $n=3$ vì $2^3+1=9$ hợp số).",
+                "id": "mc_01_v02",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C1"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12,
+                  "derivedFromQuestionIds": [
+                    "C1"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_02_v02",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây là đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\exists x\\in\\mathbb{Q},\\;x^2=4$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;x^2>0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x\\in\\mathbb{R},\\;x^2+1=0$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\forall n\\in\\mathbb{N},\\;n^2+1\\text{ chia hết cho }3$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Nhân chứng $x=2$ hoặc $x=-2$ làm mệnh đề tồn tại đúng.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C15",
+                    "C42"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S5"
+                  ],
+                  "archetypeIds": [
+                    "A07"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 13,
+                  "derivedFromQuestionIds": [
+                    "C15",
+                    "C42"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "multiple_choice",
+                "question": "Trong các mệnh đề sau, mệnh đề nào là **mệnh đề đúng**?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\forall n \\in \\mathbb{N},\\; n^2 + 1 \\text{ không chia hết cho } 3$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x \\in \\mathbb{R},\\; x^2 > 0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x \\in \\mathbb{Q},\\; x^2 = 3$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\forall n \\in \\mathbb{N},\\; 2^n + 1 \\text{ là số nguyên tố}$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Câu A đúng: Một số chính phương $n^2$ khi chia cho 3 chỉ có số dư là 0 hoặc 1. Do đó $n^2 + 1$ chia cho 3 chỉ có thể dư 1 hoặc 2, không bao giờ chia hết cho 3. (Câu B sai tại $x=0$, câu C sai vì $\\pm\\sqrt{3}$ vô tỉ, câu D sai tại $n=3$ vì $2^3+1=9$ hợp số).",
+                "id": "mc_01_v03",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C1"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12,
+                  "derivedFromQuestionIds": [
+                    "C1"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "mc_03",
@@ -376,7 +644,7 @@
                 "correct": "B",
                 "explanation": "Với mọi số thực, giá trị tuyệt đối không nhỏ hơn số đó.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C20",
@@ -389,8 +657,15 @@
                   "archetypeIds": [
                     "A07"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 14
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "mc_04",
@@ -417,7 +692,7 @@
                 "correct": "C",
                 "explanation": "Bình phương số thực luôn không âm nên không thể bằng $-1$.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C47",
@@ -430,8 +705,275 @@
                   "archetypeIds": [
                     "A07"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 17
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_03_v01",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây là đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;|x|<x$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;|x|\\ge x$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x\\in\\mathbb{Q},\\;x^2=3$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\exists n\\in\\mathbb{N},\\;n(n+1)\\text{ là số lẻ}$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Với mọi số thực, giá trị tuyệt đối không nhỏ hơn số đó.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C20",
+                    "C49"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S5"
+                  ],
+                  "archetypeIds": [
+                    "A07"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 14,
+                  "derivedFromQuestionIds": [
+                    "C20",
+                    "C49"
+                  ]
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_04_v01",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây là sai?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\exists x\\in\\mathbb{R},\\;x^2=0$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;x^2+1>0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x\\in\\mathbb{R},\\;x^2+1=0$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\exists x\\in\\mathbb{Q},\\;4x^2-1=0$"
+                  }
+                ],
+                "correct": "C",
+                "explanation": "Bình phương số thực luôn không âm nên không thể bằng $-1$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C47",
+                    "C48"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S5"
+                  ],
+                  "archetypeIds": [
+                    "A07"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 17,
+                  "derivedFromQuestionIds": [
+                    "C47",
+                    "C48"
+                  ]
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_03_v02",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây là đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;|x|<x$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;|x|\\ge x$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x\\in\\mathbb{Q},\\;x^2=3$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\exists n\\in\\mathbb{N},\\;n(n+1)\\text{ là số lẻ}$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Với mọi số thực, giá trị tuyệt đối không nhỏ hơn số đó.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C20",
+                    "C49"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S5"
+                  ],
+                  "archetypeIds": [
+                    "A07"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 14,
+                  "derivedFromQuestionIds": [
+                    "C20",
+                    "C49"
+                  ]
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_04_v02",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây là sai?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\exists x\\in\\mathbb{R},\\;x^2=0$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;x^2+1>0$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x\\in\\mathbb{R},\\;x^2+1=0$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\exists x\\in\\mathbb{Q},\\;4x^2-1=0$"
+                  }
+                ],
+                "correct": "C",
+                "explanation": "Bình phương số thực luôn không âm nên không thể bằng $-1$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C47",
+                    "C48"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S5"
+                  ],
+                  "archetypeIds": [
+                    "A07"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 17,
+                  "derivedFromQuestionIds": [
+                    "C47",
+                    "C48"
+                  ]
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_03_v03",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây là đúng?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;|x|<x$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\forall x\\in\\mathbb{R},\\;|x|\\ge x$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\exists x\\in\\mathbb{Q},\\;x^2=3$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\exists n\\in\\mathbb{N},\\;n(n+1)\\text{ là số lẻ}$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Với mọi số thực, giá trị tuyệt đối không nhỏ hơn số đó.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C20",
+                    "C49"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S5"
+                  ],
+                  "archetypeIds": [
+                    "A07"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 14,
+                  "derivedFromQuestionIds": [
+                    "C20",
+                    "C49"
+                  ]
+                },
+                "difficulty": "medium",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "mc_05",
@@ -458,7 +1000,7 @@
                 "correct": "A",
                 "explanation": "Với mỗi x, chọn nhân chứng $y=x+1$.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C42",
@@ -473,8 +1015,15 @@
                     "A06",
                     "A17"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 16
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "mc_06",
@@ -501,7 +1050,7 @@
                 "correct": "B",
                 "explanation": "Chọn nhân chứng $x=1$, khi đó $xy=y$ với mọi y.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C59",
@@ -514,8 +1063,281 @@
                   "archetypeIds": [
                     "A17"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 18
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_05_v01",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây đúng trên $\\mathbb{R}$?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\forall x\\;\\exists y: y=x+1$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\exists y\\;\\forall x: y=x+1$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\forall x\\;\\forall y: x+y=1$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\exists x\\;\\forall y: xy=0$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Với mỗi x, chọn nhân chứng $y=x+1$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C42",
+                    "C59"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S4",
+                    "S14"
+                  ],
+                  "archetypeIds": [
+                    "A06",
+                    "A17"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 16,
+                  "derivedFromQuestionIds": [
+                    "C42",
+                    "C59"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_06_v01",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây đúng trên $\\mathbb{R}$?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\exists x\\;\\forall y: xy=0$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\exists x\\;\\forall y: xy=y$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\forall x\\;\\exists y: xy=1$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\forall x\\;\\forall y: xy=y$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Chọn nhân chứng $x=1$, khi đó $xy=y$ với mọi y.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C59",
+                    "C62"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S14"
+                  ],
+                  "archetypeIds": [
+                    "A17"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 18,
+                  "derivedFromQuestionIds": [
+                    "C59",
+                    "C62"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_05_v02",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây đúng trên $\\mathbb{R}$?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\forall x\\;\\exists y: y=x+1$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\exists y\\;\\forall x: y=x+1$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\forall x\\;\\forall y: x+y=1$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\exists x\\;\\forall y: xy=0$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Với mỗi x, chọn nhân chứng $y=x+1$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C42",
+                    "C59"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S4",
+                    "S14"
+                  ],
+                  "archetypeIds": [
+                    "A06",
+                    "A17"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 16,
+                  "derivedFromQuestionIds": [
+                    "C42",
+                    "C59"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_06_v02",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây đúng trên $\\mathbb{R}$?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\exists x\\;\\forall y: xy=0$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\exists x\\;\\forall y: xy=y$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\forall x\\;\\exists y: xy=1$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\forall x\\;\\forall y: xy=y$"
+                  }
+                ],
+                "correct": "B",
+                "explanation": "Chọn nhân chứng $x=1$, khi đó $xy=y$ với mọi y.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C59",
+                    "C62"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S14"
+                  ],
+                  "archetypeIds": [
+                    "A17"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 18,
+                  "derivedFromQuestionIds": [
+                    "C59",
+                    "C62"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "mc_05_v03",
+                "quiz_type": "multiple_choice",
+                "question": "Mệnh đề nào sau đây đúng trên $\\mathbb{R}$?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "$\\forall x\\;\\exists y: y=x+1$"
+                  },
+                  {
+                    "id": "B",
+                    "text": "$\\exists y\\;\\forall x: y=x+1$"
+                  },
+                  {
+                    "id": "C",
+                    "text": "$\\forall x\\;\\forall y: x+y=1$"
+                  },
+                  {
+                    "id": "D",
+                    "text": "$\\exists x\\;\\forall y: xy=0$"
+                  }
+                ],
+                "correct": "A",
+                "explanation": "Với mỗi x, chọn nhân chứng $y=x+1$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C42",
+                    "C59"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S4",
+                    "S14"
+                  ],
+                  "archetypeIds": [
+                    "A06",
+                    "A17"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 16,
+                  "derivedFromQuestionIds": [
+                    "C42",
+                    "C59"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               }
             ]
           }
@@ -623,7 +1445,7 @@
                 "explanation": "Ý a đúng vì $x^2-2x+3=(x-1)^2+2 \\ge 2 > 0$. Ý b sai vì tích 2 số tự nhiên liên tiếp luôn là số chẵn. Ý c đúng vì $x = \\pm 1/2 \\in \\mathbb{Q}$. Ý d đúng theo tính chất giá trị tuyệt đối.",
                 "id": "tf_01",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C52"
@@ -635,8 +1457,121 @@
                   "archetypeIds": [
                     "A02"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 17
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "true_false_group",
+                "question": "Xét tính đúng sai của các mệnh đề lượng từ sau:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "a) ∀x ∈ R, x² - 2x + 3 > 0.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "b) ∃n ∈ N, n(n + 1) là số lẻ.",
+                    "correct": false
+                  },
+                  {
+                    "id": "c",
+                    "label": "c) ∃x ∈ Q, 4x² - 1 = 0.",
+                    "correct": true
+                  },
+                  {
+                    "id": "d",
+                    "label": "d) ∀x ∈ R, |x| ≥ x.",
+                    "correct": true
+                  }
+                ],
+                "explanation": "Ý a đúng vì $x^2-2x+3=(x-1)^2+2 \\ge 2 > 0$. Ý b sai vì tích 2 số tự nhiên liên tiếp luôn là số chẵn. Ý c đúng vì $x = \\pm 1/2 \\in \\mathbb{Q}$. Ý d đúng theo tính chất giá trị tuyệt đối.",
+                "id": "tf_01_v01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C52"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A02"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 17,
+                  "derivedFromQuestionIds": [
+                    "C52"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "true_false_group",
+                "question": "Xét tính đúng sai của các mệnh đề lượng từ sau:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "a) ∀x ∈ R, x² - 2x + 3 > 0.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "b) ∃n ∈ N, n(n + 1) là số lẻ.",
+                    "correct": false
+                  },
+                  {
+                    "id": "c",
+                    "label": "c) ∃x ∈ Q, 4x² - 1 = 0.",
+                    "correct": true
+                  },
+                  {
+                    "id": "d",
+                    "label": "d) ∀x ∈ R, |x| ≥ x.",
+                    "correct": true
+                  }
+                ],
+                "explanation": "Ý a đúng vì $x^2-2x+3=(x-1)^2+2 \\ge 2 > 0$. Ý b sai vì tích 2 số tự nhiên liên tiếp luôn là số chẵn. Ý c đúng vì $x = \\pm 1/2 \\in \\mathbb{Q}$. Ý d đúng theo tính chất giá trị tuyệt đối.",
+                "id": "tf_01_v02",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C52"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S2"
+                  ],
+                  "archetypeIds": [
+                    "A02"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 17,
+                  "derivedFromQuestionIds": [
+                    "C52"
+                  ]
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "tf_02",
@@ -666,7 +1601,7 @@
                 ],
                 "explanation": "Cần chú ý thứ tự lượng từ: với (c) chọn x=1; với (d), mỗi x có thể chọn y=-x.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C59",
@@ -680,8 +1615,129 @@
                   "archetypeIds": [
                     "A17"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 18
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "tf_02_v01",
+                "quiz_type": "true_false_group",
+                "question": "Xét các mệnh đề nhiều biến trên $\\mathbb{R}$:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "$\\forall x\\forall y, x+y=1$ là mệnh đề sai.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "$\\exists x\\exists y, x+y=2$ là mệnh đề đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "c",
+                    "label": "$\\exists x\\forall y, xy=y$ là mệnh đề đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "d",
+                    "label": "$\\forall x\\exists y, x+y=0$ là mệnh đề sai.",
+                    "correct": false
+                  }
+                ],
+                "explanation": "Cần chú ý thứ tự lượng từ: với (c) chọn x=1; với (d), mỗi x có thể chọn y=-x.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C59",
+                    "C62",
+                    "C63"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S14"
+                  ],
+                  "archetypeIds": [
+                    "A17"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 18,
+                  "derivedFromQuestionIds": [
+                    "C59",
+                    "C62",
+                    "C63"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "tf_02_v02",
+                "quiz_type": "true_false_group",
+                "question": "Xét các mệnh đề nhiều biến trên $\\mathbb{R}$:",
+                "items": [
+                  {
+                    "id": "a",
+                    "label": "$\\forall x\\forall y, x+y=1$ là mệnh đề sai.",
+                    "correct": true
+                  },
+                  {
+                    "id": "b",
+                    "label": "$\\exists x\\exists y, x+y=2$ là mệnh đề đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "c",
+                    "label": "$\\exists x\\forall y, xy=y$ là mệnh đề đúng.",
+                    "correct": true
+                  },
+                  {
+                    "id": "d",
+                    "label": "$\\forall x\\exists y, x+y=0$ là mệnh đề sai.",
+                    "correct": false
+                  }
+                ],
+                "explanation": "Cần chú ý thứ tự lượng từ: với (c) chọn x=1; với (d), mỗi x có thể chọn y=-x.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C59",
+                    "C62",
+                    "C63"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S14"
+                  ],
+                  "archetypeIds": [
+                    "A17"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 18,
+                  "derivedFromQuestionIds": [
+                    "C59",
+                    "C62",
+                    "C63"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               }
             ]
           }
@@ -737,7 +1793,7 @@
                 "explanation": "Phương trình $n^2 - 10n + 21 = 0 \\Leftrightarrow (n-3)(n-7) = 0 \\Leftrightarrow n = 3$ hoặc $n = 7$. Số tự nhiên $n$ nhỏ nhất là $n = 3$.",
                 "id": "short_01",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C3"
@@ -749,8 +1805,15 @@
                   "archetypeIds": [
                     "A01"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "short_02",
@@ -762,7 +1825,7 @@
                 ],
                 "explanation": "Có ba ký hiệu lượng từ: $\\forall,\\exists,\\forall$.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C42",
@@ -777,8 +1840,15 @@
                     "A06",
                     "A17"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 16
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               },
               {
                 "id": "short_03",
@@ -790,7 +1860,7 @@
                 ],
                 "explanation": "$x=1$ là một nhân chứng hợp lệ.",
                 "sourceMapping": {
-                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
                   "section": "Bài 1. Mệnh đề",
                   "sourceQuestionIds": [
                     "C59"
@@ -802,8 +1872,124 @@
                   "archetypeIds": [
                     "A17"
                   ],
-                  "contentTier": "core"
-                }
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 18
+                },
+                "difficulty": "easy",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "quiz_type": "short_answer",
+                "question": "Tìm số tự nhiên $n$ nhỏ nhất thỏa mãn mệnh đề: $\\exists n \\in \\mathbb{N}: n^2 - 10n + 21 = 0$.",
+                "correct": "3",
+                "correct_answers": [
+                  "3"
+                ],
+                "explanation": "Phương trình $n^2 - 10n + 21 = 0 \\Leftrightarrow (n-3)(n-7) = 0 \\Leftrightarrow n = 3$ hoặc $n = 7$. Số tự nhiên $n$ nhỏ nhất là $n = 3$.",
+                "id": "short_01_v01",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C3"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S1"
+                  ],
+                  "archetypeIds": [
+                    "A01"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 12,
+                  "derivedFromQuestionIds": [
+                    "C3"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "short_02_v01",
+                "quiz_type": "short_answer",
+                "question": "Trong biểu thức $\\forall x\\in\\mathbb{R},\\;\\exists y\\in\\mathbb{R},\\;\\forall z\\in\\mathbb{R},\\;P(x,y,z)$ có bao nhiêu lượng từ?",
+                "correct": "3",
+                "correct_answers": [
+                  "3"
+                ],
+                "explanation": "Có ba ký hiệu lượng từ: $\\forall,\\exists,\\forall$.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C42",
+                    "C59"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S4",
+                    "S14"
+                  ],
+                  "archetypeIds": [
+                    "A06",
+                    "A17"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 16,
+                  "derivedFromQuestionIds": [
+                    "C42",
+                    "C59"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
+              },
+              {
+                "id": "short_03_v01",
+                "quiz_type": "short_answer",
+                "question": "Chọn một nhân chứng dương cho mệnh đề $\\exists x\\in\\mathbb{Z}: x^2=1$. Nhập giá trị x.",
+                "correct": "1",
+                "correct_answers": [
+                  "1"
+                ],
+                "explanation": "$x=1$ là một nhân chứng hợp lệ.",
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C59"
+                  ],
+                  "derivation": "variant",
+                  "skillIds": [
+                    "S14"
+                  ],
+                  "archetypeIds": [
+                    "A17"
+                  ],
+                  "contentTier": "core",
+                  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+                  "page": 18,
+                  "derivedFromQuestionIds": [
+                    "C59"
+                  ]
+                },
+                "difficulty": "hard",
+                "outcomeIds": [
+                  "logic.quantifier.evaluate"
+                ],
+                "misconceptionIds": []
               }
             ]
           }
@@ -849,6 +2035,14 @@
             "variant": "info",
             "title": "Tổng kết Bài học 6",
             "body": "Lượng từ $\\forall$ và $\\exists$ giúp hình thức hóa toàn bộ các định lý giải tích và hình học. Ở bài học cuối cùng, chúng ta sẽ bước vào thử thách đỉnh cao: **Bài toán logic chứa tham số $m$ và Vận dụng cao (VDC)**."
+          }
+        },
+        {
+          "id": "06-voi-moi-ton-tai-va-nhieu-bien-adaptive-assessment",
+          "block_type": "adaptive_assessment",
+          "content": {
+            "sessionType": "lesson",
+            "questionCount": 9
           }
         }
       ]

@@ -1,0 +1,550 @@
+{
+  "document": "chuyen-de-menh-de-va-tap-hop-toan-10.pdf",
+  "sha256": "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3",
+  "section": "Bài 1. Mệnh đề",
+  "lessons": [
+    "01-menh-de-va-tinh-dung-sai",
+    "02-menh-de-chua-bien",
+    "03-phu-dinh-menh-de",
+    "04-menh-de-keo-theo",
+    "05-dao-tuong-duong-dieu-kien-can-du",
+    "06-voi-moi-ton-tai-va-nhieu-bien",
+    "07-tong-hop-tham-so-phan-vi-du-vdc"
+  ],
+  "questions": {
+    "C1": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        12
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C2": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        12
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C3": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        12
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C4": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        12
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C5": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        12
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C6": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        12
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C7": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        12
+      ],
+      "poolTypes": [
+        "true_false_group"
+      ],
+      "masteryPool": true
+    },
+    "C8": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        12
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C9": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        12
+      ],
+      "poolTypes": [
+        "true_false_group"
+      ],
+      "masteryPool": true
+    },
+    "C10": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C11": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C12": {
+      "lesson": "05-dao-tuong-duong-dieu-kien-can-du",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C13": {
+      "lesson": "07-tong-hop-tham-so-phan-vi-du-vdc",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "true_false_group"
+      ],
+      "masteryPool": true
+    },
+    "C14": {
+      "lesson": "02-menh-de-chua-bien",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C15": {
+      "lesson": "06-voi-moi-ton-tai-va-nhieu-bien",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C16": {
+      "lesson": "04-menh-de-keo-theo",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C18": {
+      "lesson": "04-menh-de-keo-theo",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C19": {
+      "lesson": "05-dao-tuong-duong-dieu-kien-can-du",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C20": {
+      "lesson": "06-voi-moi-ton-tai-va-nhieu-bien",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C21": {
+      "lesson": "04-menh-de-keo-theo",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "true_false_group",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C22": {
+      "lesson": "03-phu-dinh-menh-de",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C23": {
+      "lesson": "03-phu-dinh-menh-de",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C26": {
+      "lesson": "03-phu-dinh-menh-de",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C27": {
+      "lesson": "03-phu-dinh-menh-de",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C29": {
+      "lesson": "03-phu-dinh-menh-de",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C30": {
+      "lesson": "03-phu-dinh-menh-de",
+      "sourcePages": [
+        15
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C31": {
+      "lesson": "03-phu-dinh-menh-de",
+      "sourcePages": [
+        15
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "true_false_group",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C32": {
+      "lesson": "03-phu-dinh-menh-de",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C33": {
+      "lesson": "03-phu-dinh-menh-de",
+      "sourcePages": [
+        15
+      ],
+      "poolTypes": [
+        "true_false_group",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C34": {
+      "lesson": "03-phu-dinh-menh-de",
+      "sourcePages": [
+        15
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C38": {
+      "lesson": "05-dao-tuong-duong-dieu-kien-can-du",
+      "sourcePages": [
+        15
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "true_false_group"
+      ],
+      "masteryPool": true
+    },
+    "C39": {
+      "lesson": "04-menh-de-keo-theo",
+      "sourcePages": [
+        16
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "true_false_group",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C40": {
+      "lesson": "04-menh-de-keo-theo",
+      "sourcePages": [
+        16
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C41": {
+      "lesson": "04-menh-de-keo-theo",
+      "sourcePages": [
+        16
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C42": {
+      "lesson": "06-voi-moi-ton-tai-va-nhieu-bien",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C43": {
+      "lesson": "02-menh-de-chua-bien",
+      "sourcePages": [
+        16
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C47": {
+      "lesson": "06-voi-moi-ton-tai-va-nhieu-bien",
+      "sourcePages": [
+        17
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C48": {
+      "lesson": "06-voi-moi-ton-tai-va-nhieu-bien",
+      "sourcePages": [
+        17
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C49": {
+      "lesson": "06-voi-moi-ton-tai-va-nhieu-bien",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    },
+    "C52": {
+      "lesson": "01-menh-de-va-tinh-dung-sai",
+      "sourcePages": [
+        17
+      ],
+      "poolTypes": [
+        "true_false_group"
+      ],
+      "masteryPool": true
+    },
+    "C53": {
+      "lesson": "02-menh-de-chua-bien",
+      "sourcePages": [
+        17
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "true_false_group"
+      ],
+      "masteryPool": true
+    },
+    "C58": {
+      "lesson": "02-menh-de-chua-bien",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "true_false_group"
+      ],
+      "masteryPool": true
+    },
+    "C59": {
+      "lesson": "06-voi-moi-ton-tai-va-nhieu-bien",
+      "sourcePages": [
+        16
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "true_false_group",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C62": {
+      "lesson": "06-voi-moi-ton-tai-va-nhieu-bien",
+      "sourcePages": [
+        18
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "true_false_group"
+      ],
+      "masteryPool": true
+    },
+    "C63": {
+      "lesson": "06-voi-moi-ton-tai-va-nhieu-bien",
+      "sourcePages": [
+        18
+      ],
+      "poolTypes": [
+        "true_false_group"
+      ],
+      "masteryPool": true
+    },
+    "C64": {
+      "lesson": "04-menh-de-keo-theo",
+      "sourcePages": [
+        14
+      ],
+      "poolTypes": [
+        "true_false_group",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C65": {
+      "lesson": "02-menh-de-chua-bien",
+      "sourcePages": [
+        19
+      ],
+      "poolTypes": [
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C66": {
+      "lesson": "07-tong-hop-tham-so-phan-vi-du-vdc",
+      "sourcePages": [
+        19
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C67": {
+      "lesson": "07-tong-hop-tham-so-phan-vi-du-vdc",
+      "sourcePages": [
+        19
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C68": {
+      "lesson": "07-tong-hop-tham-so-phan-vi-du-vdc",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "multiple_choice",
+        "true_false_group",
+        "short_answer"
+      ],
+      "masteryPool": true
+    },
+    "C70": {
+      "lesson": "07-tong-hop-tham-so-phan-vi-du-vdc",
+      "sourcePages": [
+        13
+      ],
+      "poolTypes": [
+        "multiple_choice"
+      ],
+      "masteryPool": true
+    }
+  }
+}

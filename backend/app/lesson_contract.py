@@ -15,6 +15,14 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 LESSON_SCHEMA_VERSION = "lesson-1"
+SOURCE_DOCUMENT = "chuyen-de-menh-de-va-tap-hop-toan-10.pdf"
+SOURCE_SHA256 = "6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3"
+ADAPTIVE_QUESTION_COUNT = 9
+ADAPTIVE_POOL_REQUIREMENTS = {
+    "multiple_choice": {"minimum": 21, "difficulty_counts": {"easy": 7, "medium": 7, "hard": 7}},
+    "true_false_group": {"minimum": 6, "difficulty_counts": {"easy": 3, "hard": 3}},
+    "short_answer": {"minimum": 6, "difficulty_counts": {"easy": 3, "hard": 3}},
+}
 
 ALLOWED_BLOCK_TYPES = frozenset(
     {
@@ -25,6 +33,7 @@ ALLOWED_BLOCK_TYPES = frozenset(
         "quiz",
         "assessment_pool",
         "assessment_ref",
+        "adaptive_assessment",
         "interaction",
         "video",
         "code",
@@ -102,6 +111,7 @@ class LessonDocument(BaseModel):
 
         pools: dict[str, dict[str, Any]] = {}
         references: list[LessonBlock] = []
+        adaptive_blocks: list[LessonBlock] = []
         for slide in self.slides:
             block_ids: set[str] = set()
             for block in slide.blocks:
@@ -128,6 +138,78 @@ class LessonDocument(BaseModel):
                     pools[pool_id] = content
                 elif block.block_type == "assessment_ref":
                     references.append(block)
+                elif block.block_type == "adaptive_assessment":
+                    adaptive_blocks.append(block)
+
+        if pools:
+            if len(adaptive_blocks) != 1:
+                raise ValueError("an adaptive lesson must contain exactly one adaptive_assessment block")
+            question_count = adaptive_blocks[0].content.get("questionCount", ADAPTIVE_QUESTION_COUNT)
+            if question_count != ADAPTIVE_QUESTION_COUNT:
+                raise ValueError(f"adaptive_assessment questionCount must be {ADAPTIVE_QUESTION_COUNT}")
+
+            pool_types: dict[str, dict[str, Any]] = {}
+            for pool_id, pool in pools.items():
+                quiz_type = pool.get("quiz_type") or pool.get("item_type")
+                if quiz_type not in ADAPTIVE_POOL_REQUIREMENTS:
+                    raise ValueError(f"assessment_pool {pool_id} has unsupported adaptive quiz_type")
+                if quiz_type in pool_types:
+                    raise ValueError(f"adaptive lesson contains more than one {quiz_type} pool")
+                pool_types[quiz_type] = pool
+
+                requirement = ADAPTIVE_POOL_REQUIREMENTS[quiz_type]
+                items = pool.get("items", [])
+                if len(items) < requirement["minimum"]:
+                    raise ValueError(
+                        f"assessment_pool {pool_id} needs at least {requirement['minimum']} items"
+                    )
+                difficulty_counts = {difficulty: 0 for difficulty in requirement["difficulty_counts"]}
+                for item in items:
+                    difficulty = item.get("difficulty")
+                    if difficulty not in requirement["difficulty_counts"]:
+                        allowed = ", ".join(requirement["difficulty_counts"])
+                        raise ValueError(f"item {item.get('id')} in {pool_id} has invalid difficulty; expected {allowed}")
+                    difficulty_counts[difficulty] += 1
+                    outcome_ids = item.get("outcomeIds")
+                    if not isinstance(outcome_ids, list) or not outcome_ids or not all(
+                        isinstance(outcome_id, str) and outcome_id for outcome_id in outcome_ids
+                    ):
+                        raise ValueError(f"item {item.get('id')} in {pool_id} needs outcomeIds")
+                    misconception_ids = item.get("misconceptionIds")
+                    if not isinstance(misconception_ids, list) or not all(
+                        isinstance(value, str) and value for value in misconception_ids
+                    ):
+                        raise ValueError(f"item {item.get('id')} in {pool_id} needs misconceptionIds")
+                    source_mapping = item.get("sourceMapping")
+                    if not isinstance(source_mapping, dict):
+                        raise ValueError(f"item {item.get('id')} in {pool_id} needs sourceMapping")
+                    if source_mapping.get("document") != SOURCE_DOCUMENT:
+                        raise ValueError(f"item {item.get('id')} has an unexpected source document")
+                    if source_mapping.get("sha256") != SOURCE_SHA256:
+                        raise ValueError(f"item {item.get('id')} has an unexpected source checksum")
+                    source_ids = source_mapping.get("sourceQuestionIds")
+                    if not isinstance(source_ids, list) or not source_ids or not all(
+                        isinstance(source_id, str) and source_id for source_id in source_ids
+                    ):
+                        raise ValueError(f"item {item.get('id')} needs sourceQuestionIds")
+                    if not isinstance(source_mapping.get("page"), int) or source_mapping["page"] < 1:
+                        raise ValueError(f"item {item.get('id')} needs a positive PDF page")
+                    if not isinstance(source_mapping.get("section"), str) or not source_mapping["section"]:
+                        raise ValueError(f"item {item.get('id')} needs a source section")
+
+                missing = [
+                    difficulty
+                    for difficulty, minimum in requirement["difficulty_counts"].items()
+                    if difficulty_counts[difficulty] < minimum
+                ]
+                if missing:
+                    raise ValueError(f"assessment_pool {pool_id} is missing difficulty coverage: {', '.join(missing)}")
+
+            missing_types = sorted(set(ADAPTIVE_POOL_REQUIREMENTS) - set(pool_types))
+            if missing_types:
+                raise ValueError(f"adaptive lesson is missing pools: {', '.join(missing_types)}")
+        elif adaptive_blocks:
+            raise ValueError("adaptive_assessment requires assessment pools")
 
         for reference in references:
             content = reference.content
@@ -167,47 +249,52 @@ def document_payload(content: LessonDocument | dict[str, Any]) -> dict[str, Any]
     return document.model_dump(mode="json", exclude_none=True)
 
 
-def public_document_payload(content: LessonDocument | dict[str, Any]) -> dict[str, Any]:
-    """Return learner-safe content while retaining the existing quiz contract.
+def _strip_answer_fields(value: Any) -> Any:
+    if isinstance(value, list):
+        return [_strip_answer_fields(item) for item in value]
+    if not isinstance(value, dict):
+        return value
+    answer_fields = {
+        "correct",
+        "correct_answers",
+        "answer_key",
+        "acceptedPaths",
+        "accepted_paths",
+        "expected",
+    }
+    return {
+        key: _strip_answer_fields(item)
+        for key, item in value.items()
+        if key not in answer_fields
+    }
 
-    Assessment pools are authoring data and are never delivered.  Until the
-    server-assessment UI is fully switched over, assessment references are
-    materialized from their pool into the existing quiz shape.  This helper is
-    intentionally the single boundary where that transformation occurs.
-    """
+
+def public_document_payload(content: LessonDocument | dict[str, Any]) -> dict[str, Any]:
+    """Return learner-safe content without materializing answer-bearing pools."""
 
     document = document_payload(content)
-    pools: dict[str, dict[str, Any]] = {}
-    for slide in document["slides"]:
-        for block in slide.get("blocks", []):
-            if block.get("block_type") == "assessment_pool":
-                pool_content = block.get("content", {})
-                pools[str(pool_content["poolId"])] = pool_content
-
     public = deepcopy(document)
     for slide in public["slides"]:
         blocks: list[dict[str, Any]] = []
         for block in slide.get("blocks", []):
             block_type = block.get("block_type")
-            if block_type == "assessment_pool":
+            if block_type in {"assessment_pool", "assessment_ref"}:
                 continue
-            if block_type == "assessment_ref":
-                content = block.get("content", {})
-                pool = pools[str(content["poolId"])]
-                item = next(item for item in pool["items"] if item["id"] == content["itemId"])
+            if block_type == "adaptive_assessment":
                 blocks.append(
                     {
                         "id": block["id"],
-                        "block_type": "quiz",
+                        "block_type": "adaptive_assessment",
                         "content": {
-                            **item,
-                            "phase": content["phase"],
-                            "poolId": content["poolId"],
-                            "poolItemId": content["itemId"],
+                            "sessionType": "lesson",
+                            "questionCount": ADAPTIVE_QUESTION_COUNT,
                         },
                     }
                 )
                 continue
+            if block_type == "quiz":
+                block = deepcopy(block)
+                block["content"] = _strip_answer_fields(block.get("content", {}))
             blocks.append(block)
         slide["blocks"] = blocks
     return public

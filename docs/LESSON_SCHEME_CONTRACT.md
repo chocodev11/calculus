@@ -49,14 +49,20 @@ Block ID chỉ cần duy nhất trong cùng slide.
 ## Block types
 
 Contract hiện cho phép `text`, `math`, `callout`, `image`, `quiz`,
-`assessment_pool`, `assessment_ref`, `interaction`, `video`, `code`, `reveal`,
-`fill_blank`, `ordering`, `drag_drop` và `interactive_graph`.
+`assessment_pool`, `assessment_ref`, `adaptive_assessment`, `interaction`,
+`video`, `code`, `reveal`, `fill_blank`, `ordering`, `drag_drop` và
+`interactive_graph`.
 
-`assessment_pool` chỉ dành cho authoring. `assessment_ref` phải trỏ tới pool và
-item tồn tại, có `phase`; trước khi giao learner, backend projection bỏ pool và
-materialize ref thành quiz contract hiện tại. Answer key hiện vẫn nằm trong
-projection để giữ tương thích renderer cũ; khi server-side grading hoàn tất,
-projection sẽ loại answer key khỏi learner response.
+`assessment_pool` chỉ dành cho authoring. Với lesson adaptive, phải có đúng ba
+pool có nguồn PDF và metadata `difficulty`, `outcomeIds`, `misconceptionIds`,
+`sourceMapping` (21 câu trắc nghiệm 7/7/7, 6 nhóm Đúng/Sai 3/3 và 6 câu ngắn
+3/3). `adaptive_assessment` là block learner-facing duy nhất; backend tạo
+`AssessmentItem` khi publish và không đưa `correct`, `correct_answers` hay
+answer key vào projection. `assessment_ref` vẫn được kiểm tra để giữ tính hợp
+lệ của authoring data nhưng không được materialize ở learner.
+
+Nguồn hiện tại là `chuyen-de-menh-de-va-tap-hop-toan-10.pdf`, SHA-256
+`6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3`.
 
 Block legacy chưa có grading contract vẫn phải render fallback đọc được và ghi
 rõ preview-only, không được làm crash trang.
@@ -78,6 +84,20 @@ với `detail.code=lesson_validation_error`; draft conflict trả HTTP 409.
 Learner `/steps/{id}/slides` chỉ trả slide của step có published version.
 Response là bare array; frontend vẫn nhận envelope cũ trong thời gian chuyển
 tiếp nhưng báo lỗi rõ nếu payload không phải array hợp lệ.
+
+### Adaptive assessment API
+
+```text
+POST /adaptive/sessions
+GET  /adaptive/sessions/{session_id}
+POST /adaptive/sessions/{session_id}/attempts
+POST /adaptive/sessions/{session_id}/complete
+```
+
+Client chỉ gửi `step_id`, item hiện tại, sequence, answer và một
+`client_attempt_id`. Server chọn câu, chấm điểm, cập nhật mastery, band,
+StepProgress và XP. Mỗi session có đúng 9 câu theo quota 5/2/2; completion và
+attempt đều idempotent.
 
 ## Artifact migration
 

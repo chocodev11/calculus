@@ -70,6 +70,23 @@ by the current route.
 the existing row by this key, so slide progress remains attached to the same
 content identity.
 
+### Adaptive learning
+
+Adaptive lessons expose no answer key through `/steps/{id}/slides`. The client
+starts or resumes a server-owned nine-question session:
+
+```text
+POST /adaptive/sessions
+GET  /adaptive/sessions/{session_id}
+POST /adaptive/sessions/{session_id}/attempts
+POST /adaptive/sessions/{session_id}/complete
+```
+
+The attempt body contains `assessment_item_id`, `sequence`, `answer`, and a
+unique `client_attempt_id`. The server owns selection, grading, mastery, band
+transitions, XP and completion; repeated client IDs return the original result
+without awarding XP again.
+
 ### Lesson authoring API
 
 These endpoints require an admin/editor token. In local debug, the authenticated

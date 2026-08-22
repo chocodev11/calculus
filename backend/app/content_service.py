@@ -18,6 +18,8 @@ from app.lesson_contract import (
 )
 from app.models import Chapter, Slide, Step
 from app.sandbox_models import LessonVersion
+from app.sandbox_models import AssessmentItem
+from app.sandbox_grading import GRADER_VERSION
 
 
 def validation_error(error: Exception) -> HTTPException:
@@ -105,6 +107,96 @@ def _slide_key(step: Step, slide: dict[str, Any], index: int) -> str:
     )
 
 
+def _assessment_item_type(quiz_type: str) -> str:
+    return {
+        "multiple_choice": "choice",
+        "true_false_group": "boolean_group",
+        "short_answer": "short_answer",
+    }.get(quiz_type, quiz_type)
+
+
+def _boolean_value(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().casefold() in {"true", "đúng", "dung", "1", "yes"}
+
+
+def _assessment_answer_key(item: dict[str, Any], quiz_type: str) -> Any:
+    explanation = item.get("explanation", "")
+    if quiz_type == "multiple_choice":
+        return {"value": item.get("correct"), "explanation": explanation}
+    if quiz_type == "true_false_group":
+        return {
+            "values": [_boolean_value(statement.get("correct")) for statement in item.get("items", [])],
+            "explanation": explanation,
+        }
+    accepted = item.get("correct_answers")
+    if not isinstance(accepted, list):
+        accepted = [item.get("correct")]
+    return {
+        "accepted": [value for value in accepted if value is not None],
+        "explanation": explanation,
+    }
+
+
+def _assessment_public_payload(item: dict[str, Any], quiz_type: str) -> dict[str, Any]:
+    answer_fields = {"correct", "correct_answers", "expected", "explanation", "answer_key"}
+
+    def strip(value: Any) -> Any:
+        if isinstance(value, list):
+            return [strip(child) for child in value]
+        if not isinstance(value, dict):
+            return value
+        return {key: strip(child) for key, child in value.items() if key not in answer_fields}
+
+    payload = strip(item)
+    payload["quiz_type"] = quiz_type
+    return payload
+
+
+async def materialize_assessment_items(
+    db: AsyncSession,
+    version_id: int,
+    document: dict[str, Any],
+) -> None:
+    """Persist answer keys privately and expose only answer-free item payloads."""
+
+    existing_result = await db.execute(
+        select(AssessmentItem).where(AssessmentItem.lesson_version_id == version_id)
+    )
+    existing_by_key = {item.item_key: item for item in existing_result.scalars().all()}
+    seen_keys: set[str] = set()
+    for slide in document.get("slides", []):
+        for block in slide.get("blocks", []):
+            if block.get("block_type") != "assessment_pool":
+                continue
+            content = block.get("content", {})
+            pool_id = str(content["poolId"])
+            quiz_type = str(content.get("quiz_type") or content.get("item_type"))
+            item_type = _assessment_item_type(quiz_type)
+            for item in content.get("items", []):
+                item_key = f"{pool_id}:{item['id']}"
+                seen_keys.add(item_key)
+                row = existing_by_key.get(item_key)
+                if row is None:
+                    row = AssessmentItem(lesson_version_id=version_id, item_key=item_key)
+                    db.add(row)
+                row.pool_id = pool_id
+                row.item_type = item_type
+                row.difficulty = item["difficulty"]
+                row.public_payload = _assessment_public_payload(item, quiz_type)
+                row.answer_key = _assessment_answer_key(item, quiz_type)
+                row.grader_version = GRADER_VERSION
+                row.outcome_ids = list(item.get("outcomeIds", []))
+                row.misconception_ids = list(item.get("misconceptionIds", []))
+                row.source_mapping = dict(item["sourceMapping"])
+                row.is_active = True
+
+    for item_key, row in existing_by_key.items():
+        if item_key not in seen_keys:
+            row.is_active = False
+
+
 async def materialize_published_step(
     db: AsyncSession,
     step: Step,
@@ -130,6 +222,7 @@ async def materialize_published_step(
     step.xp_reward = document.get("xp_reward", step.xp_reward)
     step.coin_reward = document.get("coin_reward", step.coin_reward)
     step.published_version_id = version_id
+    await materialize_assessment_items(db, version_id, document)
 
     existing_result = await db.execute(
         select(Slide).where(Slide.step_id == step.id).order_by(Slide.order_index)

@@ -7,8 +7,15 @@ type JsonRecord = Record<string, any>
 const ALLOWED_BLOCK_TYPES = new Set([
   'text', 'math', 'callout', 'image', 'quiz', 'assessment_pool',
   'assessment_ref', 'interaction', 'video', 'code', 'reveal',
-  'fill_blank', 'ordering', 'drag_drop', 'interactive_graph',
+  'fill_blank', 'ordering', 'drag_drop', 'interactive_graph', 'adaptive_assessment',
 ])
+const SOURCE_DOCUMENT = 'chuyen-de-menh-de-va-tap-hop-toan-10.pdf'
+const SOURCE_SHA256 = '6f41eaf9891d0d35cf567a9b1503e5f5c26376d24406c8b687d83ac7bb4d58f3'
+const POOL_REQUIREMENTS: Record<string, { minimum: number; difficulties: Record<string, number> }> = {
+  multiple_choice: { minimum: 21, difficulties: { easy: 7, medium: 7, hard: 7 } },
+  true_false_group: { minimum: 6, difficulties: { easy: 3, hard: 3 } },
+  short_answer: { minimum: 6, difficulties: { easy: 3, hard: 3 } },
+}
 
 function isRecord(value: unknown): value is JsonRecord {
   return Boolean(value && typeof value === 'object' && !Array.isArray(value))
@@ -24,8 +31,9 @@ function validateStep(step: JsonRecord, file: string): number {
   if (!Array.isArray(step.slides) || step.slides.length === 0) fail(file, 'step must contain slides')
 
   const slideIds = new Set<string>()
-  const pools = new Map<string, Set<string>>()
+  const pools = new Map<string, { itemIds: Set<string>; quizType: string; items: JsonRecord[] }>()
   const refs: JsonRecord[] = []
+  let adaptiveBlockCount = 0
 
   for (const [slideIndex, slide] of step.slides.entries()) {
     if (!isRecord(slide)) fail(file, `slide ${slideIndex} must be an object`)
@@ -49,21 +57,58 @@ function validateStep(step: JsonRecord, file: string): number {
         if (pools.has(content.poolId)) fail(file, `duplicate assessment pool ${content.poolId}`)
         if (!Array.isArray(content.items) || content.items.length === 0) fail(file, `pool ${content.poolId} has no items`)
         const items = new Set<string>()
+        const rawItems: JsonRecord[] = []
         for (const item of content.items) {
           if (!isRecord(item) || typeof item.id !== 'string' || !item.id) fail(file, `pool ${content.poolId} contains an invalid item`)
           if (items.has(item.id)) fail(file, `pool ${content.poolId} duplicates item ${item.id}`)
           items.add(item.id)
+          rawItems.push(item)
         }
-        pools.set(content.poolId, items)
+        pools.set(content.poolId, {
+          itemIds: items,
+          quizType: String(content.quiz_type || content.item_type || ''),
+          items: rawItems,
+        })
       }
       if (type === 'assessment_ref') refs.push(content)
+      if (type === 'adaptive_assessment') adaptiveBlockCount += 1
     }
   }
 
   for (const reference of refs) {
     if (!pools.has(reference.poolId)) fail(file, `assessment_ref points to unknown pool ${reference.poolId}`)
-    if (!pools.get(reference.poolId)?.has(reference.itemId)) fail(file, `assessment_ref points to unknown item ${reference.itemId}`)
+    if (!pools.get(reference.poolId)?.itemIds.has(reference.itemId)) fail(file, `assessment_ref points to unknown item ${reference.itemId}`)
     if (typeof reference.phase !== 'string' || !reference.phase) fail(file, 'assessment_ref is missing phase')
+  }
+  if (pools.size > 0) {
+    if (adaptiveBlockCount !== 1) fail(file, 'adaptive lessons require exactly one adaptive_assessment block')
+    const presentTypes = new Set<string>()
+    for (const [poolId, pool] of pools.entries()) {
+      const requirement = POOL_REQUIREMENTS[pool.quizType]
+      if (!requirement) fail(file, `pool ${poolId} has unsupported adaptive quiz_type ${pool.quizType}`)
+      if (pool.items.length < requirement.minimum) fail(file, `pool ${poolId} needs at least ${requirement.minimum} items`)
+      presentTypes.add(pool.quizType)
+      const counts: Record<string, number> = {}
+      for (const item of pool.items) {
+        const difficulty = item.difficulty
+        if (typeof difficulty !== 'string' || !(difficulty in requirement.difficulties)) fail(file, `pool ${poolId} has invalid difficulty`)
+        counts[difficulty] = (counts[difficulty] || 0) + 1
+        if (!Array.isArray(item.outcomeIds) || item.outcomeIds.length === 0) fail(file, `item ${item.id} needs outcomeIds`)
+        if (!Array.isArray(item.misconceptionIds)) fail(file, `item ${item.id} needs misconceptionIds`)
+        const mapping = item.sourceMapping
+        if (!isRecord(mapping) || mapping.document !== SOURCE_DOCUMENT || mapping.sha256 !== SOURCE_SHA256) fail(file, `item ${item.id} has invalid sourceMapping`)
+        if (!Array.isArray(mapping.sourceQuestionIds) || mapping.sourceQuestionIds.length === 0) fail(file, `item ${item.id} needs sourceQuestionIds`)
+        if (typeof mapping.page !== 'number' || mapping.page < 1 || typeof mapping.section !== 'string' || !mapping.section) fail(file, `item ${item.id} needs source page and section`)
+      }
+      for (const [difficulty, minimum] of Object.entries(requirement.difficulties)) {
+        if ((counts[difficulty] || 0) < minimum) fail(file, `pool ${poolId} is missing ${difficulty} coverage`)
+      }
+    }
+    for (const requiredType of Object.keys(POOL_REQUIREMENTS)) {
+      if (!presentTypes.has(requiredType)) fail(file, `adaptive lesson is missing ${requiredType} pool`)
+    }
+  } else if (adaptiveBlockCount > 0) {
+    fail(file, 'adaptive_assessment requires assessment pools')
   }
   return step.slides.length
 }

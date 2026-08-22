@@ -28,23 +28,31 @@ class AssessmentItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     lesson_version_id = Column(Integer, ForeignKey("lesson_versions.id"), nullable=False, index=True)
     item_key = Column(String(120), nullable=False)
+    pool_id = Column(String(160), nullable=True, index=True)
     item_type = Column(String(40), nullable=False)
+    difficulty = Column(String(20), nullable=False, default="easy", server_default="easy")
     public_payload = Column(JSON, nullable=False)
     answer_key = Column(JSON, nullable=False)
     grader_version = Column(String(40), nullable=False)
     outcome_ids = Column(JSON, nullable=False, default=list)
     misconception_ids = Column(JSON, nullable=False, default=list)
+    source_mapping = Column(JSON, nullable=False, default=dict)
     is_active = Column(Boolean, nullable=False, default=True)
 
 
 class AssessmentAttempt(Base):
     __tablename__ = "assessment_attempts"
-    __table_args__ = (UniqueConstraint("user_id", "client_attempt_id", name="uq_assessment_attempt_client_id"),)
+    __table_args__ = (
+        UniqueConstraint("user_id", "client_attempt_id", name="uq_assessment_attempt_client_id"),
+        UniqueConstraint("adaptive_session_id", "sequence", name="uq_adaptive_attempt_sequence"),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     assessment_item_id = Column(Integer, ForeignKey("assessment_items.id"), nullable=False, index=True)
     lesson_version_id = Column(Integer, ForeignKey("lesson_versions.id"), nullable=False, index=True)
+    adaptive_session_id = Column(Integer, ForeignKey("adaptive_sessions.id"), nullable=True, index=True)
+    sequence = Column(Integer, nullable=True)
     client_attempt_id = Column(String(120), nullable=False)
     answer = Column(JSON, nullable=False)
     normalized_answer = Column(JSON, nullable=True)
@@ -52,6 +60,40 @@ class AssessmentAttempt(Base):
     score = Column(Integer, nullable=False, default=0)
     grader_version = Column(String(40), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
+
+
+class AdaptiveSession(Base):
+    __tablename__ = "adaptive_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    step_id = Column(Integer, ForeignKey("steps.id"), nullable=False, index=True)
+    lesson_version_id = Column(Integer, ForeignKey("lesson_versions.id"), nullable=False, index=True)
+    band = Column(Integer, nullable=False, default=0, server_default="0")
+    status = Column(String(20), nullable=False, default="active", server_default="active", index=True)
+    target_counts = Column(JSON, nullable=False, default=dict)
+    state = Column(JSON, nullable=False, default=dict)
+    started_at = Column(DateTime, server_default=func.now())
+    last_activity_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    completed_at = Column(DateTime, nullable=True)
+
+
+class AdaptiveSessionItem(Base):
+    __tablename__ = "adaptive_session_items"
+    __table_args__ = (
+        UniqueConstraint("session_id", "sequence", name="uq_adaptive_session_sequence"),
+        UniqueConstraint("session_id", "assessment_item_id", name="uq_adaptive_session_item"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(Integer, ForeignKey("adaptive_sessions.id"), nullable=False, index=True)
+    assessment_item_id = Column(Integer, ForeignKey("assessment_items.id"), nullable=False, index=True)
+    sequence = Column(Integer, nullable=False)
+    difficulty = Column(String(20), nullable=False)
+    item_type = Column(String(40), nullable=False)
+    served_at = Column(DateTime, server_default=func.now())
+    answered_at = Column(DateTime, nullable=True)
+    is_correct = Column(Boolean, nullable=True)
 
 
 class SandboxEvent(Base):
