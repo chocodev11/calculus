@@ -7,6 +7,7 @@ import {
 import api, { formatErrorDetail } from '../lib/api'
 import { getAllCourses } from '../lib/courseRegistry'
 import { materializeAssessmentPools } from '../lib/lessonScheme'
+import { cleanLessonCopy, prepareReaderSlides } from '../lib/lessonPresentation'
 import { BlockRenderer } from './Step'
 import soundFX from '../lib/soundEffects'
 import ErrorBoundary from '../components/ErrorBoundary'
@@ -27,7 +28,10 @@ function stepMatches(step, requestedId) {
 }
 
 function PreviewLesson({ content }) {
-  const slides = useMemo(() => materializeAssessmentPools(content?.slides || []), [content])
+  const slides = useMemo(
+    () => prepareReaderSlides(materializeAssessmentPools(content?.slides || [])),
+    [content]
+  )
   const [slideIndex, setSlideIndex] = useState(0)
   const [quizAnswers, setQuizAnswers] = useState({})
 
@@ -44,7 +48,10 @@ function PreviewLesson({ content }) {
       <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
           <p className="text-xs font-extrabold uppercase tracking-wider text-indigo-600">
-            Slide {slideIndex + 1}/{slides.length}
+            {slide.presentationKind === 'theory' ? 'Lý thuyết' : 'Bài tập'}
+            {slide.readerSection?.total > 1
+              ? ` · Phần ${slide.readerSection.index}/${slide.readerSection.total}`
+              : ` · ${slideIndex + 1}/${slides.length}`}
           </p>
           <h2 className="mt-1 text-xl font-extrabold text-slate-900">{slide.title || slide.id}</h2>
         </div>
@@ -309,7 +316,7 @@ export default function StudioPreview() {
                     <span>{courseData?.title || selectedCourse}</span><ChevronRight className="h-3.5 w-3.5" /><span>{stepData?.content_key || selectedStepId}</span>
                   </div>
                   <h1 className="mt-1 text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">{content.title || stepData?.title}</h1>
-                  {content.description && <p className="mt-1 max-w-2xl text-xs leading-relaxed text-slate-500 sm:text-sm">{content.description}</p>}
+                  {content.description && <p className="mt-1 max-w-2xl text-xs leading-relaxed text-slate-500 sm:text-sm">{cleanLessonCopy(content.description)}</p>}
                 </div>
                 <span className={cn(
                   'shrink-0 rounded-xl border px-2.5 py-1 text-xs font-extrabold',

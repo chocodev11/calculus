@@ -2,7 +2,7 @@
   "id": "04-menh-de-keo-theo",
   "content_key": "menh-de/menh-de/04-menh-de-keo-theo",
   "title": "Mệnh đề kéo theo",
-  "description": "Hiểu cấu trúc mệnh đề kéo theo P ⇒ Q, định lý toán học, bảng chân trị và phương pháp tìm phản ví dụ bác bỏ theo chuẩn GDPT 2018.",
+  "description": "Hiểu cấu trúc mệnh đề kéo theo P ⇒ Q, định lý toán học, bảng chân trị và phương pháp tìm phản ví dụ bác bỏ.",
   "xp_reward": 120,
   "order_index": 3,
   "course_slug": "menh-de",
@@ -12,7 +12,7 @@
       "id": "s01",
       "content_key": "menh-de/menh-de/04-menh-de-keo-theo/s01",
       "order_index": 0,
-      "title": "Khái niệm Mệnh đề Kéo theo",
+      "title": "Định nghĩa mệnh đề kéo theo",
       "blocks": [
         {
           "id": "s01-text-1",
@@ -768,7 +768,7 @@
       "id": "s11",
       "content_key": "menh-de/menh-de/04-menh-de-keo-theo/s11",
       "order_index": 10,
-      "title": "Tổng kết & Cầu nối Sư phạm",
+      "title": "Tóm tắt bài học",
       "blocks": [
         {
           "id": "callout-1",
@@ -776,7 +776,7 @@
           "content": {
             "variant": "info",
             "title": "Tổng kết Bài học 4",
-            "body": "Ta đã hiểu bản chất kéo theo và cách dùng phản ví dụ để bác bỏ một mệnh đề sai. Ở bài tiếp theo, chúng ta sẽ mở rộng sang **Mệnh đề đảo $Q \\Rightarrow P$** và chuẩn hóa thuật ngữ **Điều kiện cần, Điều kiện đủ, Tương đương**."
+            "body": "Ta đã hiểu bản chất kéo theo và cách dùng phản ví dụ để bác bỏ một mệnh đề sai. Ở bài tiếp theo, chúng ta sẽ mở rộng sang **Mệnh đề đảo $Q \\Rightarrow P$** và dùng các thuật ngữ **Điều kiện cần, Điều kiện đủ, Tương đương**."
           }
         }
       ]

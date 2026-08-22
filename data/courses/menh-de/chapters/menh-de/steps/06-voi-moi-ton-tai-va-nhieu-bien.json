@@ -2,7 +2,7 @@
   "id": "06-voi-moi-ton-tai-va-nhieu-bien",
   "content_key": "menh-de/menh-de/06-voi-moi-ton-tai-va-nhieu-bien",
   "title": "Lượng từ ∀, ∃ và mệnh đề nhiều biến",
-  "description": "Làm chủ lượng từ với mọi ∀, tồn tại ∃, phủ định lượng từ và mở rộng mệnh đề nhiều biến theo chuẩn GDPT 2018.",
+  "description": "Làm chủ lượng từ với mọi ∀, tồn tại ∃, phủ định lượng từ và mở rộng mệnh đề nhiều biến.",
   "xp_reward": 120,
   "order_index": 5,
   "course_slug": "menh-de",
@@ -12,13 +12,13 @@
       "id": "s01",
       "content_key": "menh-de/menh-de/06-voi-moi-ton-tai-va-nhieu-bien/s01",
       "order_index": 0,
-      "title": "Khái niệm Lượng từ ∀ và ∃",
+      "title": "Kí hiệu với mọi và tồn tại",
       "blocks": [
         {
           "id": "s01-text-1",
           "block_type": "text",
           "content": {
-            "heading": "Lượng từ Với mọi (∀) & Tồn tại (∃)",
+                    "heading": "Lượng từ với mọi (∀) và tồn tại (∃)",
             "paragraphs": [
               "Trong toán học, để khẳng định một tính chất $P(x)$ đúng với mọi phần tử hoặc tồn tại ít nhất một phần tử, ta dùng các **lượng từ logic**:",
               "- **Lượng từ với mọi ($\\forall$)**: \"$\\forall x \\in X,\\; P(x)$\" có nghĩa là $P(x)$ đúng với **tất cả** các giá trị $x \\in X$.\n- **Lượng từ tồn tại ($\\exists$)**: \"$\\exists x \\in X,\\; P(x)$\" có nghĩa là có **ít nhất một** giá trị $x \\in X$ làm cho $P(x)$ đúng."
@@ -30,7 +30,7 @@
           "block_type": "callout",
           "content": {
             "variant": "theorem",
-            "title": "Mệnh đề nhiều biến (Multivariable Logic)",
+            "title": "Mệnh đề nhiều biến",
             "body": "Khi xét vị từ $P(x, y)$, thứ tự lượng từ có ý nghĩa quyết định:\n\n- \"$\\forall x, \\forall y,\\; P(x, y)$\": Đúng với mọi cặp $(x, y)$.\n- \"$\\exists x, \\forall y,\\; P(x, y)$\": Tồn tại một phần tử $x_0$ cố định phục vụ cho tất cả $y$ (ví dụ: $x=1$ là phần tử trung hòa của phép nhân)."
           }
         }
@@ -840,7 +840,7 @@
       "id": "s12",
       "content_key": "menh-de/menh-de/06-voi-moi-ton-tai-va-nhieu-bien/s12",
       "order_index": 11,
-      "title": "Tổng kết & Cầu nối Sư phạm",
+      "title": "Tóm tắt bài học",
       "blocks": [
         {
           "id": "callout-1",

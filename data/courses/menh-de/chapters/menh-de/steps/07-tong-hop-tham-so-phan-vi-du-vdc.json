@@ -2,7 +2,7 @@
   "id": "07-tong-hop-tham-so-phan-vi-du-vdc",
   "content_key": "menh-de/menh-de/07-tong-hop-tham-so-phan-vi-du-vdc",
   "title": "Tổng hợp tham số · Phản ví dụ và VDC",
-  "description": "Giải quyết trọn vẹn các bài toán logic chứa tham số m, biện luận nghiệm tam thức và hệ vị từ phối hợp theo chuẩn GDPT 2018.",
+  "description": "Giải quyết các bài toán logic chứa tham số m, biện luận nghiệm tam thức và hệ vị từ phối hợp.",
   "xp_reward": 150,
   "order_index": 6,
   "course_slug": "menh-de",

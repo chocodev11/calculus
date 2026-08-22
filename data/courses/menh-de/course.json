@@ -35,7 +35,7 @@
           "id": "01-menh-de-va-tinh-dung-sai",
           "content_key": "menh-de/menh-de/01-menh-de-va-tinh-dung-sai",
           "title": "Mệnh đề và tính đúng sai",
-          "description": "Nhận diện câu là mệnh đề logic, phân biệt câu hỏi/cảm thán và đánh giá tính đúng sai theo chuẩn GDPT 2018.",
+          "description": "Nhận diện câu là mệnh đề logic, phân biệt câu hỏi/cảm thán và đánh giá tính đúng sai.",
           "xp_reward": 120,
           "order_index": 0,
           "course_slug": "menh-de",
@@ -45,7 +45,7 @@
               "id": "s01",
               "content_key": "menh-de/menh-de/01-menh-de-va-tinh-dung-sai/s01",
               "order_index": 0,
-              "title": "Khái niệm Mệnh đề",
+              "title": "Định nghĩa mệnh đề",
               "blocks": [
                 {
                   "id": "s01-text-1",
@@ -64,7 +64,7 @@
                   "block_type": "callout",
                   "content": {
                     "variant": "theorem",
-                    "title": "Đặc trưng cốt lõi của Mệnh đề (SGK Toán 10)",
+                    "title": "Đặc trưng cốt lõi của mệnh đề",
                     "body": "1. **Chân trị xác định:** Mỗi mệnh đề chỉ nhận một trong hai giá trị chân lý: **Đúng** (ký hiệu là $\\text{Đ}$ hoặc $1$) hoặc **Sai** (ký hiệu là $\\text{S}$ hoặc $0$).\n2. **Khẳng định sai vẫn là mệnh đề:** Một câu như *\"Số 15 là số nguyên tố\"* hay *\"$4 > 7$\"* là một khẳng định sai, nhưng nó **vẫn là một mệnh đề** (mệnh đề sai).\n3. **Không phải mệnh đề:** Các câu hỏi, câu cảm thán, câu cầu khiến hay câu mệnh lệnh (ví dụ: *\"Bạn mấy tuổi?\"*, *\"Học toán vui quá!\"*, *\"Hãy giải phương trình!\"*) không khẳng định tính đúng sai nên **không phải là mệnh đề**."
                   }
                 }
@@ -90,7 +90,7 @@
                       "domainId": "logic",
                       "level": "recognition",
                       "recipe": "logic.proposition",
-                      "prompt": "Trong toán học và thực tế, các câu khẳng định có thể có tính đúng/sai rõ ràng, có thể chứa biến hoặc là câu cảm xúc. Hãy phân loại các câu dưới đây vào đúng 3 nhóm chuẩn SGK Toán 10:",
+                      "prompt": "Trong toán học và thực tế, các câu khẳng định có thể có tính đúng/sai rõ ràng, có thể chứa biến hoặc là câu cảm xúc. Hãy phân loại các câu dưới đây vào đúng 3 nhóm:",
                       "outcomeIds": [
                         "M10-LOGIC-01"
                       ],
@@ -204,7 +204,7 @@
                       "goals": [
                         {
                           "id": "classify_propositions",
-                          "label": "Phân loại chính xác 4 câu vào 3 nhóm theo định nghĩa SGK",
+                          "label": "Phân loại chính xác 4 câu vào 3 nhóm theo định nghĩa mệnh đề",
                           "evidence": "logic.classifier_complete"
                         }
                       ],
@@ -799,7 +799,7 @@
               "id": "s09",
               "content_key": "menh-de/menh-de/01-menh-de-va-tinh-dung-sai/s09",
               "order_index": 8,
-              "title": "Tổng kết & Cầu nối Sư phạm",
+              "title": "Tóm tắt bài học",
               "blocks": [
                 {
                   "id": "callout-1",
@@ -818,7 +818,7 @@
           "id": "02-menh-de-chua-bien",
           "content_key": "menh-de/menh-de/02-menh-de-chua-bien",
           "title": "Mệnh đề chứa biến",
-          "description": "Hiểu cấu trúc vị từ P(x), thao tác thế biến P(a), tìm miền xác định và đếm số nghiệm thỏa mãn theo chuẩn GDPT 2018.",
+          "description": "Hiểu cấu trúc vị từ P(x), thao tác thế biến P(a), tìm miền xác định và đếm số nghiệm thỏa mãn.",
           "xp_reward": 120,
           "order_index": 1,
           "course_slug": "menh-de",
@@ -828,7 +828,7 @@
               "id": "s01",
               "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s01",
               "order_index": 0,
-              "title": "Khái niệm Mệnh đề chứa biến",
+              "title": "Định nghĩa mệnh đề chứa biến",
               "blocks": [
                 {
                   "id": "s01-text-1",
@@ -1591,7 +1591,7 @@
               "id": "s10",
               "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s10",
               "order_index": 9,
-              "title": "Tổng kết & Cầu nối Sư phạm",
+              "title": "Tóm tắt bài học",
               "blocks": [
                 {
                   "id": "callout-1",
@@ -1610,7 +1610,7 @@
           "id": "03-phu-dinh-menh-de",
           "content_key": "menh-de/menh-de/03-phu-dinh-menh-de",
           "title": "Phủ định của mệnh đề",
-          "description": "Nắm vững quy tắc phủ định mệnh đề thông thường, phủ định vị từ toán học và lượng từ theo chuẩn GDPT 2018.",
+          "description": "Nắm vững quy tắc phủ định mệnh đề thông thường, phủ định vị từ toán học và lượng từ.",
           "xp_reward": 120,
           "order_index": 2,
           "course_slug": "menh-de",
@@ -1620,7 +1620,7 @@
               "id": "s01",
               "content_key": "menh-de/menh-de/03-phu-dinh-menh-de/s01",
               "order_index": 0,
-              "title": "Khái niệm Mệnh đề Phủ định",
+              "title": "Định nghĩa mệnh đề phủ định",
               "blocks": [
                 {
                   "id": "s01-text-1",
@@ -1640,7 +1640,7 @@
                   "content": {
                     "variant": "theorem",
                     "title": "Bảng quy tắc phủ định quan hệ toán học",
-                    "body": "Khi phủ định các quan hệ so sánh, cần lưu ý chuyển đổi bù đầy đủ:\n\n- Phủ định của $>$ là $\\le$ (ngược lại, của $\\le$ là $>$).\n- Phủ định của $<$ là $\\ge$ (ngược lại, của $\\ge$ là $<$).\n- Phủ định của $=$ là $\\neq$ (ngược lại, của $\\neq$ là $=$)."
+                    "body": "Khi phủ định các quan hệ so sánh, cần lưu ý chuyển đổi bù đầy đủ:\n\n- Phủ định của $>$ là $\\le$ (ngược lại, của $\\le$ là $>$).\n- Phủ định của $<$ là $\\ge$ (ngược lại, của $\\ge$ là $<$).\n- Phủ định của $=$ là $\\neq$ (ngược lại, của $\\neq$ là $=$).\n\nPhủ định lượng từ cũng đổi cả lượng từ lẫn mệnh đề phía sau:\n\n- $\\forall x \\in X, P(x)$ trở thành $\\exists x \\in X, \\overline{P(x)}$.\n- $\\exists x \\in X, P(x)$ trở thành $\\forall x \\in X, \\overline{P(x)}$."
                   }
                 }
               ]
@@ -2441,7 +2441,7 @@
               "id": "s12",
               "content_key": "menh-de/menh-de/03-phu-dinh-menh-de/s12",
               "order_index": 11,
-              "title": "Tổng kết & Cầu nối Sư phạm",
+              "title": "Tóm tắt bài học",
               "blocks": [
                 {
                   "id": "callout-1",
@@ -2460,7 +2460,7 @@
           "id": "04-menh-de-keo-theo",
           "content_key": "menh-de/menh-de/04-menh-de-keo-theo",
           "title": "Mệnh đề kéo theo",
-          "description": "Hiểu cấu trúc mệnh đề kéo theo P ⇒ Q, định lý toán học, bảng chân trị và phương pháp tìm phản ví dụ bác bỏ theo chuẩn GDPT 2018.",
+          "description": "Hiểu cấu trúc mệnh đề kéo theo P ⇒ Q, định lý toán học, bảng chân trị và phương pháp tìm phản ví dụ bác bỏ.",
           "xp_reward": 120,
           "order_index": 3,
           "course_slug": "menh-de",
@@ -2470,7 +2470,7 @@
               "id": "s01",
               "content_key": "menh-de/menh-de/04-menh-de-keo-theo/s01",
               "order_index": 0,
-              "title": "Khái niệm Mệnh đề Kéo theo",
+              "title": "Định nghĩa mệnh đề kéo theo",
               "blocks": [
                 {
                   "id": "s01-text-1",
@@ -3226,7 +3226,7 @@
               "id": "s11",
               "content_key": "menh-de/menh-de/04-menh-de-keo-theo/s11",
               "order_index": 10,
-              "title": "Tổng kết & Cầu nối Sư phạm",
+              "title": "Tóm tắt bài học",
               "blocks": [
                 {
                   "id": "callout-1",
@@ -3234,7 +3234,7 @@
                   "content": {
                     "variant": "info",
                     "title": "Tổng kết Bài học 4",
-                    "body": "Ta đã hiểu bản chất kéo theo và cách dùng phản ví dụ để bác bỏ một mệnh đề sai. Ở bài tiếp theo, chúng ta sẽ mở rộng sang **Mệnh đề đảo $Q \\Rightarrow P$** và chuẩn hóa thuật ngữ **Điều kiện cần, Điều kiện đủ, Tương đương**."
+                    "body": "Ta đã hiểu bản chất kéo theo và cách dùng phản ví dụ để bác bỏ một mệnh đề sai. Ở bài tiếp theo, chúng ta sẽ mở rộng sang **Mệnh đề đảo $Q \\Rightarrow P$** và dùng các thuật ngữ **Điều kiện cần, Điều kiện đủ, Tương đương**."
                   }
                 }
               ]
@@ -3245,7 +3245,7 @@
           "id": "05-dao-tuong-duong-dieu-kien-can-du",
           "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du",
           "title": "Mệnh đề đảo · Tương đương · Điều kiện cần và đủ",
-          "description": "Thành thạo mệnh đề đảo, mệnh đề tương đương, chuẩn hóa thuật ngữ điều kiện cần, điều kiện đủ và điều kiện cần và đủ theo chuẩn GDPT 2018.",
+          "description": "Thành thạo mệnh đề đảo, mệnh đề tương đương và các điều kiện cần, điều kiện đủ.",
           "xp_reward": 120,
           "order_index": 4,
           "course_slug": "menh-de",
@@ -3255,7 +3255,7 @@
               "id": "s01",
               "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s01",
               "order_index": 0,
-              "title": "Mệnh đề Đảo & Mệnh đề Tương đương",
+              "title": "Mệnh đề đảo và mệnh đề tương đương",
               "blocks": [
                 {
                   "id": "s01-text-1",
@@ -3264,6 +3264,7 @@
                     "heading": "Mệnh đề đảo & Tương đương",
                     "paragraphs": [
                       "Cho mệnh đề kéo theo $P \\Rightarrow Q$. Mệnh đề $Q \\Rightarrow P$ được gọi là **mệnh đề đảo** của $P \\Rightarrow Q$.",
+                      "Mệnh đề đảo của một mệnh đề đúng không nhất thiết là mệnh đề đúng.",
                       "Nếu cả hai mệnh đề $P \\Rightarrow Q$ và $Q \\Rightarrow P$ đều đúng, ta nói $P$ và $Q$ là **hai mệnh đề tương đương**, ký hiệu là $P \\Leftrightarrow Q$ (đọc là \"$P$ tương đương $Q$\" hoặc \"$P$ khi và chỉ khi $Q$\")."
                     ]
                   }
@@ -3273,7 +3274,7 @@
                   "block_type": "callout",
                   "content": {
                     "variant": "theorem",
-                    "title": "Chuẩn hóa Thuật ngữ Cần & Đủ",
+                    "title": "Điều kiện cần và đủ",
                     "body": "Khi định lý $P \\Rightarrow Q$ đúng:\n\n- $P$ là **điều kiện đủ** để có $Q$.\n- $Q$ là **điều kiện cần** để có $P$.\n\nKhi $P \\Leftrightarrow Q$ đúng: $P$ là **điều kiện cần và đủ** để có $Q$."
                   }
                 }
@@ -4006,7 +4007,7 @@
               "id": "s11",
               "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s11",
               "order_index": 10,
-              "title": "Tổng kết & Cầu nối Sư phạm",
+              "title": "Tóm tắt bài học",
               "blocks": [
                 {
                   "id": "callout-1",
@@ -4025,7 +4026,7 @@
           "id": "06-voi-moi-ton-tai-va-nhieu-bien",
           "content_key": "menh-de/menh-de/06-voi-moi-ton-tai-va-nhieu-bien",
           "title": "Lượng từ ∀, ∃ và mệnh đề nhiều biến",
-          "description": "Làm chủ lượng từ với mọi ∀, tồn tại ∃, phủ định lượng từ và mở rộng mệnh đề nhiều biến theo chuẩn GDPT 2018.",
+          "description": "Làm chủ lượng từ với mọi ∀, tồn tại ∃, phủ định lượng từ và mở rộng mệnh đề nhiều biến.",
           "xp_reward": 120,
           "order_index": 5,
           "course_slug": "menh-de",
@@ -4035,13 +4036,13 @@
               "id": "s01",
               "content_key": "menh-de/menh-de/06-voi-moi-ton-tai-va-nhieu-bien/s01",
               "order_index": 0,
-              "title": "Khái niệm Lượng từ ∀ và ∃",
+              "title": "Kí hiệu với mọi và tồn tại",
               "blocks": [
                 {
                   "id": "s01-text-1",
                   "block_type": "text",
                   "content": {
-                    "heading": "Lượng từ Với mọi (∀) & Tồn tại (∃)",
+                    "heading": "Lượng từ với mọi (∀) và tồn tại (∃)",
                     "paragraphs": [
                       "Trong toán học, để khẳng định một tính chất $P(x)$ đúng với mọi phần tử hoặc tồn tại ít nhất một phần tử, ta dùng các **lượng từ logic**:",
                       "- **Lượng từ với mọi ($\\forall$)**: \"$\\forall x \\in X,\\; P(x)$\" có nghĩa là $P(x)$ đúng với **tất cả** các giá trị $x \\in X$.\n- **Lượng từ tồn tại ($\\exists$)**: \"$\\exists x \\in X,\\; P(x)$\" có nghĩa là có **ít nhất một** giá trị $x \\in X$ làm cho $P(x)$ đúng."
@@ -4053,7 +4054,7 @@
                   "block_type": "callout",
                   "content": {
                     "variant": "theorem",
-                    "title": "Mệnh đề nhiều biến (Multivariable Logic)",
+                    "title": "Mệnh đề nhiều biến",
                     "body": "Khi xét vị từ $P(x, y)$, thứ tự lượng từ có ý nghĩa quyết định:\n\n- \"$\\forall x, \\forall y,\\; P(x, y)$\": Đúng với mọi cặp $(x, y)$.\n- \"$\\exists x, \\forall y,\\; P(x, y)$\": Tồn tại một phần tử $x_0$ cố định phục vụ cho tất cả $y$ (ví dụ: $x=1$ là phần tử trung hòa của phép nhân)."
                   }
                 }
@@ -4863,7 +4864,7 @@
               "id": "s12",
               "content_key": "menh-de/menh-de/06-voi-moi-ton-tai-va-nhieu-bien/s12",
               "order_index": 11,
-              "title": "Tổng kết & Cầu nối Sư phạm",
+              "title": "Tóm tắt bài học",
               "blocks": [
                 {
                   "id": "callout-1",
@@ -4882,7 +4883,7 @@
           "id": "07-tong-hop-tham-so-phan-vi-du-vdc",
           "content_key": "menh-de/menh-de/07-tong-hop-tham-so-phan-vi-du-vdc",
           "title": "Tổng hợp tham số · Phản ví dụ và VDC",
-          "description": "Giải quyết trọn vẹn các bài toán logic chứa tham số m, biện luận nghiệm tam thức và hệ vị từ phối hợp theo chuẩn GDPT 2018.",
+          "description": "Giải quyết các bài toán logic chứa tham số m, biện luận nghiệm tam thức và hệ vị từ phối hợp.",
           "xp_reward": 150,
           "order_index": 6,
           "course_slug": "menh-de",

@@ -10,6 +10,7 @@ import api, { ApiError, normalizeListPayload } from '../lib/api'
 import { useAuthStore } from '../lib/store'
 import { decodeStepId, encodeStepId, cn } from '../lib/utils'
 import { materializeAssessmentPools } from '../lib/lessonScheme'
+import { cleanLessonCopy, isLastReaderSection, prepareReaderSlides } from '../lib/lessonPresentation'
 import 'katex/dist/katex.min.css'
 import * as ReactKatexModule from 'react-katex'
 import { TactileButton } from '../components/ui/tactile-button'
@@ -103,7 +104,11 @@ export default function Step() {
 
       const steps = []
       fullStory.chapters?.forEach(ch => {
-        ch.steps?.forEach(s => steps.push({ ...s, chapter_id: ch.id }))
+        ch.steps?.forEach(s => steps.push({
+          ...s,
+          chapter_id: ch.id,
+          chapter_title: ch.title,
+        }))
       })
       setAllSteps(steps)
 
@@ -135,8 +140,8 @@ export default function Step() {
       const boost = Array.isArray(invData) && invData.find(i => i.item?.item_type === 'xp_boost' && i.quantity > 0)
       setHasXpBoost(!!boost)
 
-      setStep(stepData)
-      setSlides(materializedSlides)
+      setStep({ ...stepData, description: cleanLessonCopy(stepData.description) })
+      setSlides(prepareReaderSlides(materializedSlides))
       setCurrentSlideIndex(0)
       completedSlideIdsRef.current = new Set()
       slideAwardRequestsRef.current.clear()
@@ -166,8 +171,13 @@ export default function Step() {
   }
 
   const currentSlide = slides[currentSlideIndex]
-  const progress = slides.length > 0 ? (currentSlideIndex / slides.length) * 100 : 0
+  const progress = slides.length > 0 ? ((currentSlideIndex + 1) / slides.length) * 100 : 0
   const isLastSlide = currentSlideIndex === slides.length - 1
+  const currentSourceSlideId = currentSlide?.sourceSlideId || currentSlide?.id
+  const nextStep = useMemo(() => {
+    const currentStepIndex = allSteps.findIndex(candidate => String(candidate.id) === String(step?.id))
+    return currentStepIndex >= 0 ? allSteps[currentStepIndex + 1] || null : null
+  }, [allSteps, step?.id])
 
   const awardSlideXp = useCallback(async (slideId) => {
     if (!slideId || completedSlideIdsRef.current.has(slideId)) return true
@@ -202,11 +212,12 @@ export default function Step() {
   const goNext = useCallback(async () => {
     if (isNavigating || currentSlideIndex >= slides.length - 1) return false
     setIsNavigating(true)
-    const awarded = await awardSlideXp(currentSlide?.id)
+    const shouldAward = isLastReaderSection(slides, currentSlideIndex)
+    const awarded = shouldAward ? await awardSlideXp(currentSourceSlideId) : true
     if (awarded) setCurrentSlideIndex(index => index + 1)
     setIsNavigating(false)
     return awarded
-  }, [awardSlideXp, currentSlide, currentSlideIndex, isNavigating, slides.length])
+  }, [awardSlideXp, currentSourceSlideId, currentSlideIndex, isNavigating, slides])
 
   const isInteractionSlide = useMemo(() => {
     const blocks = currentSlide?.blocks || []
@@ -288,8 +299,6 @@ export default function Step() {
     const correctCount = Object.values(quizResults).filter(r => r.correct).length
     const baseXp = (step?.xp_reward || 0) + correctCount * 15
     setTotalXpEarned(hasXpBoost ? baseXp * 2 : baseXp)
-    soundFX.play('lesson-complete')
-    fireLessonCompleteConfetti()
     setShowCompleteScreen(true)
   }
 
@@ -314,6 +323,9 @@ export default function Step() {
         if (result.hearts != null) setLocalHearts(result.hearts)
       }
 
+      soundFX.play('lesson-complete')
+      fireLessonCompleteConfetti()
+
       const unlocked = result?.newly_earned_achievements || []
       if (unlocked.length > 0) {
         setNewAchievements(unlocked)
@@ -335,7 +347,10 @@ export default function Step() {
   }
 
   const doNavigateNext = () => {
-    navigate(`/course/${slug}`)
+    const destination = nextStep?.id
+      ? `/course/${slug}/step/${encodeStepId(nextStep.id)}`
+      : `/course/${slug}`
+    navigate(destination)
     fetchUser().catch(() => {})
   }
 
@@ -380,7 +395,7 @@ export default function Step() {
     }
     if (hasQuiz && allQuizzesAnswered && isTrueFalseOnlySlide) {
       if (isLastSlide) {
-        if (await awardSlideXp(currentSlide?.id)) handleComplete()
+        if (await awardSlideXp(currentSourceSlideId)) handleComplete()
       } else {
         await goNext()
       }
@@ -393,7 +408,7 @@ export default function Step() {
       return
     }
     if (isLastSlide) {
-      if (await awardSlideXp(currentSlide?.id)) handleComplete()
+      if (await awardSlideXp(currentSourceSlideId)) handleComplete()
     } else {
       await goNext()
     }
@@ -462,6 +477,7 @@ export default function Step() {
       <CompleteScreen
         xpEarned={totalXpEarned || (step?.xp_reward || 10)}
         stepTitle={step?.title}
+        nextStep={nextStep}
         onContinue={handleCompleteAndNavigate}
         error={completionError}
         isSubmitting={isCompleting}
@@ -513,15 +529,26 @@ export default function Step() {
         </button>
 
         {/* Progress Bar */}
-        <div className="w-1/2 max-w-md mx-4">
-          <div className="h-3.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200">
+        <div className="flex w-1/2 max-w-md mx-4 items-center gap-2.5">
+          <div
+            className="relative h-3.5 min-w-0 flex-1 bg-slate-100 rounded-full overflow-hidden border border-slate-200"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={slides.length}
+            aria-valuenow={currentSlideIndex + 1}
+            aria-valuetext={`${currentSlideIndex + 1}/${slides.length}`}
+            aria-label="Tiến độ bài học"
+          >
             <motion.div
-              className="h-full bg-emerald-500 rounded-full"
+              className="absolute inset-y-0 left-0 bg-emerald-500 rounded-full"
               initial={false}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
             />
           </div>
+          <span className="shrink-0 text-xs font-bold tabular-nums text-slate-400">
+            {currentSlideIndex + 1}/{slides.length}
+          </span>
         </div>
 
         {/* Status Indicators (Hearts & Boosters) */}
@@ -578,6 +605,13 @@ export default function Step() {
           // Standard slide content (only scrolls when viewport is insufficient, vertically centered)
           <div className="h-full overflow-y-auto flex flex-col px-4 sm:px-8 py-4 sm:py-6">
             <div className="w-full max-w-2xl mx-auto my-auto space-y-6">
+              {currentSlide?.title && (
+                <div className="flex items-end justify-between gap-4 border-b border-slate-100 pb-4">
+                  <h1 className="min-w-0 text-xl sm:text-2xl font-extrabold tracking-tight leading-snug text-slate-900">
+                    {currentSlide.title}
+                  </h1>
+                </div>
+              )}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlideIndex}
@@ -877,19 +911,19 @@ function TextBlock({ block }) {
   const content = block.content || block.block_data || {}
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {content.heading && (
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
+        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-snug">
           <MathText text={content.heading} />
         </h2>
       )}
       {content.paragraphs?.map((p, idx) => (
-        <p key={idx} className="text-base text-slate-700 leading-relaxed font-medium">
+        <p key={idx} className="whitespace-pre-line text-base text-slate-700 leading-8 font-medium">
           <MathText text={p} />
         </p>
       ))}
       {content.content && (
-        <div className="text-base text-slate-700 leading-relaxed font-medium">
+        <div className="whitespace-pre-line text-base text-slate-700 leading-8 font-medium">
           <MathText text={content.content} />
         </div>
       )}
@@ -1021,7 +1055,7 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
   const question = content.question || ''
   const qType = content.quiz_type || (content.items ? 'true_false_group' : 'multiple_choice')
 
-  // ─── Dạng II: Đúng / Sai 4 ý (GDPT 2018 Standard) ─────────────────────────
+  // ─── Dạng II: Đúng / Sai 4 ý ──────────────────────────────────────────────
   if (qType === 'true_false_group' || content.items) {
     const items = content.items || []
     const currentMap = typeof answer === 'object' && answer !== null ? answer : {}
@@ -1305,12 +1339,12 @@ function CalloutBlock({ block }) {
             <MathText text={content.title || cfg.title} />
           </p>
           {content.body && (
-            <div className="text-sm sm:text-base text-slate-800 font-medium leading-relaxed">
+            <div className="whitespace-pre-line text-sm sm:text-base text-slate-800 font-medium leading-relaxed">
               <MathText text={content.body} />
             </div>
           )}
           {content.content && (
-            <div className="text-sm sm:text-base text-slate-800 font-medium leading-relaxed">
+            <div className="whitespace-pre-line text-sm sm:text-base text-slate-800 font-medium leading-relaxed">
               <MathText text={content.content} />
             </div>
           )}
@@ -1472,58 +1506,95 @@ function LegacyBlockFallback({ block }) {
 // COMPLETE SCREEN & ACHIEVEMENTS POPUPS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function CompleteScreen({ xpEarned, stepTitle, onContinue, error, isSubmitting }) {
+function CompleteScreen({ xpEarned, stepTitle, nextStep, onContinue, error, isSubmitting }) {
+  const headingRef = useRef(null)
+  const hasNextStep = Boolean(nextStep?.id)
+
+  useEffect(() => {
+    headingRef.current?.focus()
+  }, [error])
+
   return (
-    <main className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 sm:p-8 font-sans">
+    <main
+      className="min-h-[100dvh] bg-slate-50 flex flex-col items-center justify-center px-4 py-8 font-sans sm:p-10"
+      aria-busy={isSubmitting}
+    >
       <section
         aria-labelledby="lesson-complete-title"
-        className="w-full max-w-2xl overflow-hidden rounded-[2rem] bg-white border border-slate-800 animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-xl rounded-3xl border border-slate-200 bg-white p-6 animate-in fade-in duration-200 sm:p-10"
       >
-        <div className="bg-indigo-700 px-6 py-10 text-white sm:px-10 sm:py-14">
-          <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400 text-emerald-950">
-              <Check className="h-7 w-7 stroke-[3]" aria-hidden="true" />
-            </span>
-            <span className="text-xs font-extrabold uppercase tracking-[0.16em] text-indigo-100">
-              Bài học đã hoàn tất
-            </span>
-          </div>
-          <h1 id="lesson-complete-title" className="mt-8 text-4xl font-black tracking-tight sm:text-5xl">
-            Hoàn thành!
-          </h1>
-          <p className="mt-3 max-w-xl text-base font-semibold leading-relaxed text-indigo-100 sm:text-lg">
-            {stepTitle}
+        <div
+          role="status"
+          aria-live="polite"
+          className={`flex items-center gap-2 text-sm font-bold ${error ? 'text-rose-700' : 'text-emerald-700'}`}
+        >
+          {error ? (
+            <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+          ) : (
+            <Check className="h-4 w-4" aria-hidden="true" />
+          )}
+          {isSubmitting ? 'Đang lưu kết quả…' : error ? 'Chưa lưu được kết quả' : 'Bài học đã hoàn tất'}
+        </div>
+
+        <h1
+          ref={headingRef}
+          id="lesson-complete-title"
+          tabIndex="-1"
+          className="mt-8 text-4xl font-black tracking-tight text-slate-900 outline-none sm:text-5xl"
+        >
+          Hoàn thành.
+        </h1>
+        <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-slate-600 sm:text-lg">
+          {stepTitle || 'Bài học hiện tại'}
+        </p>
+
+        <div className="mt-10 flex items-baseline justify-between gap-4 border-y border-slate-200 py-5">
+          <p className="text-sm font-semibold text-slate-500">Phần thưởng</p>
+          <p className="text-3xl font-black tabular-nums text-amber-600 sm:text-4xl">
+            +{xpEarned} <span className="text-xl">XP</span>
           </p>
         </div>
 
-        <div className="px-6 py-7 sm:px-10 sm:py-9">
-          <div className="flex flex-col gap-6 border-b-2 border-slate-100 pb-7 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-slate-500">
-                Phần thưởng
-              </p>
-              <p className="mt-1 text-5xl font-black tabular-nums text-amber-600">
-                +{xpEarned} <span className="text-2xl">XP</span>
-              </p>
-            </div>
-            <p className="inline-flex items-center gap-2 text-sm font-extrabold text-emerald-700">
-              <Check className="h-5 w-5" aria-hidden="true" />
-              {error ? 'Chưa ghi nhận kết quả' : 'Sẵn sàng ghi nhận'}
-            </p>
+        {error && (
+          <div role="alert" className="mt-6 bg-rose-50 p-4 text-sm font-semibold text-rose-800">
+            <p>{error.message}</p>
+            <p className="mt-1 text-xs text-rose-700">Kiểm tra kết nối rồi thử lại.</p>
           </div>
+        )}
 
-          {error && (
-            <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-800">
-              <p>{error.message}</p>
-              {error.status && <p className="mt-1 text-xs text-rose-600">HTTP {error.status} · kiểm tra kết nối rồi thử lại.</p>}
-            </div>
-          )}
-
-          <TactileButton variant="primary" size="lg" onClick={onContinue} disabled={isSubmitting} className="mt-7 w-full text-base sm:text-lg">
-            <span>{isSubmitting ? 'Đang ghi nhận…' : error ? 'Thử ghi nhận lại' : 'Tiếp tục học'}</span>
-            <ArrowRight className="ml-1.5 h-5 w-5" />
-          </TactileButton>
+        <div className="mt-8 flex items-start justify-between gap-5 border-b border-slate-200 pb-6">
+          <div className="min-w-0">
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+              {hasNextStep ? 'Bài học tiếp theo' : 'Khóa học đã hoàn tất'}
+            </p>
+            <p className="mt-2 text-base font-extrabold leading-snug text-slate-900">
+              {hasNextStep ? nextStep.title : 'Xem lại tiến độ và các bài đã hoàn thành'}
+            </p>
+            {hasNextStep && nextStep.chapter_title && (
+              <p className="mt-1 text-sm font-medium text-slate-500">{nextStep.chapter_title}</p>
+            )}
+          </div>
+          {hasNextStep && <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-indigo-600" aria-hidden="true" />}
         </div>
+
+        <TactileButton
+          variant="primary"
+          size="lg"
+          onClick={onContinue}
+          disabled={isSubmitting}
+          className="mt-8 w-full text-base sm:text-lg"
+        >
+          <span>
+            {isSubmitting
+              ? 'Đang lưu kết quả…'
+              : error
+              ? 'Thử ghi nhận lại'
+              : hasNextStep
+              ? 'Lưu và học bài tiếp theo'
+              : 'Lưu và về khóa học'}
+          </span>
+          <ArrowRight className="ml-1.5 h-5 w-5" />
+        </TactileButton>
       </section>
     </main>
   )

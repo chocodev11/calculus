@@ -2,7 +2,7 @@
   "id": "03-phu-dinh-menh-de",
   "content_key": "menh-de/menh-de/03-phu-dinh-menh-de",
   "title": "Phủ định của mệnh đề",
-  "description": "Nắm vững quy tắc phủ định mệnh đề thông thường, phủ định vị từ toán học và lượng từ theo chuẩn GDPT 2018.",
+  "description": "Nắm vững quy tắc phủ định mệnh đề thông thường, phủ định vị từ toán học và lượng từ.",
   "xp_reward": 120,
   "order_index": 2,
   "course_slug": "menh-de",
@@ -12,7 +12,7 @@
       "id": "s01",
       "content_key": "menh-de/menh-de/03-phu-dinh-menh-de/s01",
       "order_index": 0,
-      "title": "Khái niệm Mệnh đề Phủ định",
+      "title": "Định nghĩa mệnh đề phủ định",
       "blocks": [
         {
           "id": "s01-text-1",
@@ -32,7 +32,7 @@
           "content": {
             "variant": "theorem",
             "title": "Bảng quy tắc phủ định quan hệ toán học",
-            "body": "Khi phủ định các quan hệ so sánh, cần lưu ý chuyển đổi bù đầy đủ:\n\n- Phủ định của $>$ là $\\le$ (ngược lại, của $\\le$ là $>$).\n- Phủ định của $<$ là $\\ge$ (ngược lại, của $\\ge$ là $<$).\n- Phủ định của $=$ là $\\neq$ (ngược lại, của $\\neq$ là $=$)."
+          "body": "Khi phủ định các quan hệ so sánh, cần lưu ý chuyển đổi bù đầy đủ:\n\n- Phủ định của $>$ là $\\le$ (ngược lại, của $\\le$ là $>$).\n- Phủ định của $<$ là $\\ge$ (ngược lại, của $\\ge$ là $<$).\n- Phủ định của $=$ là $\\neq$ (ngược lại, của $\\neq$ là $=$).\n\nPhủ định lượng từ cũng đổi cả lượng từ lẫn mệnh đề phía sau:\n\n- $\\forall x \\in X, P(x)$ trở thành $\\exists x \\in X, \\overline{P(x)}$.\n- $\\exists x \\in X, P(x)$ trở thành $\\forall x \\in X, \\overline{P(x)}$."
           }
         }
       ]
@@ -833,7 +833,7 @@
       "id": "s12",
       "content_key": "menh-de/menh-de/03-phu-dinh-menh-de/s12",
       "order_index": 11,
-      "title": "Tổng kết & Cầu nối Sư phạm",
+      "title": "Tóm tắt bài học",
       "blocks": [
         {
           "id": "callout-1",

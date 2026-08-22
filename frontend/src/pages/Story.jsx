@@ -17,6 +17,7 @@ import api from '../lib/api'
 import { t } from '../lib/locale'
 import { TactileButton } from '../components/ui/tactile-button'
 import { encodeStepId } from '../lib/utils'
+import { cleanLessonCopy } from '../lib/lessonPresentation'
 import soundFX from '../lib/soundEffects'
 
 export default function Story() {
@@ -33,11 +34,11 @@ export default function Story() {
   const { totalLessons, completedLessons } = useMemo(() => {
     const allSteps = (story?.chapters || []).flatMap(ch => ch.steps || [])
     const total = allSteps.length
-    const completed = allSteps.filter(s => s.is_completed).length
+    const completed = user ? allSteps.filter(s => s.is_completed).length : 0
     return { totalLessons: total, completedLessons: completed }
-  }, [story])
+  }, [story, user])
 
-  const needsEnrollment = Boolean(story && !story.is_enrolled)
+  const needsEnrollment = Boolean(story && !(user && story.is_enrolled))
 
   useEffect(() => {
     loadStory()
@@ -46,12 +47,28 @@ export default function Story() {
   const loadStory = async () => {
     try {
       const data = await api.get(`/courses/${slug}`)
-      setStory(data)
+      const visibleData = !user && data?.is_enrolled
+        ? {
+            ...data,
+            progress: 0,
+            is_enrolled: false,
+            is_completed: false,
+            chapters: (data.chapters || []).map(chapter => ({
+              ...chapter,
+              steps: (chapter.steps || []).map(step => ({
+                ...step,
+                is_completed: false,
+                is_current: false,
+              })),
+            })),
+          }
+        : data
+      setStory(visibleData)
 
       // Find current active lesson
-      if (data && data.chapters) {
+      if (visibleData && visibleData.chapters) {
         let found = null
-        for (const ch of data.chapters) {
+        for (const ch of visibleData.chapters) {
           for (const st of ch.steps || []) {
             if (st.is_current) {
               found = { chapter: ch, step: st }
@@ -61,7 +78,7 @@ export default function Story() {
           if (found) break
         }
         if (!found) {
-          for (const ch of data.chapters) {
+          for (const ch of visibleData.chapters) {
             for (const st of ch.steps || []) {
               if (!st.is_completed) {
                 found = { chapter: ch, step: st }
@@ -71,8 +88,8 @@ export default function Story() {
             if (found) break
           }
         }
-        if (!found && data.chapters.length > 0) {
-          const firstCh = data.chapters[0]
+        if (!found && visibleData.chapters.length > 0) {
+          const firstCh = visibleData.chapters[0]
           if (firstCh.steps && firstCh.steps.length > 0) {
             found = { chapter: firstCh, step: firstCh.steps[0] }
           }
@@ -190,7 +207,7 @@ export default function Story() {
                 key={chapter.id}
                 chapter={chapter}
                 index={index}
-                isEnrolled={story.is_enrolled}
+                isEnrolled={Boolean(user && story.is_enrolled)}
                 currentLesson={currentLesson}
                 storySlug={story.slug}
               />
@@ -243,7 +260,7 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
           {story.title}
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-          {story.description || 'Làm chủ các khái niệm toán học thông qua mô phỏng trực quan và bài tập tương tác.'}
+          {cleanLessonCopy(story.description) || 'Làm chủ các khái niệm toán học thông qua mô phỏng trực quan và bài tập tương tác.'}
         </p>
       </div>
 
@@ -311,7 +328,7 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
 function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }) {
   const [selectedLesson, setSelectedLesson] = useState(null)
   const steps = chapter.steps || []
-  const completedCount = steps.filter(s => s.is_completed).length
+  const completedCount = isEnrolled ? steps.filter(s => s.is_completed).length : 0
 
   return (
     <section className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-7 space-y-4">
@@ -334,8 +351,8 @@ function ChapterSection({ chapter, index, isEnrolled, currentLesson, storySlug }
       {/* Clean Step List (No Card-in-Card Nesting) */}
       <div className="space-y-1">
         {steps.map((step, stepIndex) => {
-          const isCurrentStep = currentLesson?.step?.id === step.id
-          const isCompleted = step.is_completed
+          const isCurrentStep = isEnrolled && currentLesson?.step?.id === step.id
+          const isCompleted = isEnrolled && step.is_completed
           const isLocked = !isEnrolled || (!isCompleted && !isCurrentStep)
 
           return (
@@ -468,7 +485,7 @@ function LessonModal({ lesson, isLocked, onClose, storySlug }) {
             {lesson.title}
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-            {lesson.description || 'Thực hành các câu hỏi trực quan để nắm vững trực giác toán học.'}
+            {cleanLessonCopy(lesson.description) || 'Thực hành các câu hỏi trực quan để nắm vững trực giác toán học.'}
           </p>
         </div>
 

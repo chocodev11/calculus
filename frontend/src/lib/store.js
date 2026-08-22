@@ -2,11 +2,14 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import api from './api'
 
+let authInitialization = null
+
 export const useAuthStore = create(
   persist(
     (set, get) => ({
       user: null,
       token: null,
+      authReady: false,
       isLoading: false,
       error: null,
 
@@ -17,6 +20,7 @@ export const useAuthStore = create(
           set({
             user: data.user || null,
             token: data.token || null,
+            authReady: true,
             isLoading: false,
             error: null
           })
@@ -39,6 +43,7 @@ export const useAuthStore = create(
           set({
             user: data.user,
             token: data.token,
+            authReady: true,
             isLoading: false,
             error: null
           })
@@ -52,12 +57,27 @@ export const useAuthStore = create(
       fetchUser: async () => {
         try {
           const user = await api.get('/auth/me')
-          set({ user })
+          set({ user, authReady: true })
           return user
         } catch (error) {
-          set({ user: null, token: null })
+          try {
+            await api.post('/auth/logout', {}, { redirectOnUnauthorized: false })
+          } catch {
+            // The local auth state is still cleared when the server is unavailable.
+          }
+          set({ user: null, token: null, authReady: true })
           return null
         }
+      },
+
+      initializeAuth: () => {
+        if (get().authReady) return Promise.resolve(get().user)
+        if (!authInitialization) {
+          authInitialization = get().fetchUser().finally(() => {
+            authInitialization = null
+          })
+        }
+        return authInitialization
       },
 
       updateProfile: async (profileData) => {
@@ -90,11 +110,11 @@ export const useAuthStore = create(
         } catch (e) {
           // ignore network errors
         }
-        set({ user: null, token: null, error: null })
+        set({ user: null, token: null, authReady: true, error: null })
         localStorage.removeItem('auth-storage')
       },
 
-      isAuthenticated: () => !!get().user || !!get().token,
+      isAuthenticated: () => get().authReady && !!get().user,
 
       clearError: () => set({ error: null }),
 

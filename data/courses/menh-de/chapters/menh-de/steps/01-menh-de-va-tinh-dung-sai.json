@@ -2,7 +2,7 @@
   "id": "01-menh-de-va-tinh-dung-sai",
   "content_key": "menh-de/menh-de/01-menh-de-va-tinh-dung-sai",
   "title": "Mệnh đề và tính đúng sai",
-  "description": "Nhận diện câu là mệnh đề logic, phân biệt câu hỏi/cảm thán và đánh giá tính đúng sai theo chuẩn GDPT 2018.",
+  "description": "Nhận diện câu là mệnh đề logic, phân biệt câu hỏi/cảm thán và đánh giá tính đúng sai.",
   "xp_reward": 120,
   "order_index": 0,
   "course_slug": "menh-de",
@@ -12,7 +12,7 @@
       "id": "s01",
       "content_key": "menh-de/menh-de/01-menh-de-va-tinh-dung-sai/s01",
       "order_index": 0,
-      "title": "Khái niệm Mệnh đề",
+      "title": "Định nghĩa mệnh đề",
       "blocks": [
         {
           "id": "s01-text-1",
@@ -31,7 +31,7 @@
           "block_type": "callout",
           "content": {
             "variant": "theorem",
-            "title": "Đặc trưng cốt lõi của Mệnh đề (SGK Toán 10)",
+            "title": "Đặc trưng cốt lõi của mệnh đề",
             "body": "1. **Chân trị xác định:** Mỗi mệnh đề chỉ nhận một trong hai giá trị chân lý: **Đúng** (ký hiệu là $\\text{Đ}$ hoặc $1$) hoặc **Sai** (ký hiệu là $\\text{S}$ hoặc $0$).\n2. **Khẳng định sai vẫn là mệnh đề:** Một câu như *\"Số 15 là số nguyên tố\"* hay *\"$4 > 7$\"* là một khẳng định sai, nhưng nó **vẫn là một mệnh đề** (mệnh đề sai).\n3. **Không phải mệnh đề:** Các câu hỏi, câu cảm thán, câu cầu khiến hay câu mệnh lệnh (ví dụ: *\"Bạn mấy tuổi?\"*, *\"Học toán vui quá!\"*, *\"Hãy giải phương trình!\"*) không khẳng định tính đúng sai nên **không phải là mệnh đề**."
           }
         }
@@ -57,7 +57,7 @@
               "domainId": "logic",
               "level": "recognition",
               "recipe": "logic.proposition",
-              "prompt": "Trong toán học và thực tế, các câu khẳng định có thể có tính đúng/sai rõ ràng, có thể chứa biến hoặc là câu cảm xúc. Hãy phân loại các câu dưới đây vào đúng 3 nhóm chuẩn SGK Toán 10:",
+              "prompt": "Trong toán học và thực tế, các câu khẳng định có thể có tính đúng/sai rõ ràng, có thể chứa biến hoặc là câu cảm xúc. Hãy phân loại các câu dưới đây vào đúng 3 nhóm:",
               "outcomeIds": [
                 "M10-LOGIC-01"
               ],
@@ -171,7 +171,7 @@
               "goals": [
                 {
                   "id": "classify_propositions",
-                  "label": "Phân loại chính xác 4 câu vào 3 nhóm theo định nghĩa SGK",
+                  "label": "Phân loại chính xác 4 câu vào 3 nhóm theo định nghĩa mệnh đề",
                   "evidence": "logic.classifier_complete"
                 }
               ],
@@ -766,7 +766,7 @@
       "id": "s09",
       "content_key": "menh-de/menh-de/01-menh-de-va-tinh-dung-sai/s09",
       "order_index": 8,
-      "title": "Tổng kết & Cầu nối Sư phạm",
+      "title": "Tóm tắt bài học",
       "blocks": [
         {
           "id": "callout-1",

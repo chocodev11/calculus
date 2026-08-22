@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
@@ -23,13 +24,34 @@ import AdminCourseEditor from './admin/CourseEditor'
 import AdminDataManager from './admin/DataManager'
 import AdminServerStatus from './admin/ServerStatus'
 import AdminSettings from './admin/Settings'
+import { useAuthStore } from './lib/store'
+
+function AuthBootstrap({ children }) {
+  const authReady = useAuthStore(state => state.authReady)
+  const initializeAuth = useAuthStore(state => state.initializeAuth)
+
+  useEffect(() => {
+    initializeAuth()
+  }, [initializeAuth])
+
+  if (!authReady) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4" role="status">
+        <span className="text-xs font-bold text-slate-500">Đang kiểm tra phiên đăng nhập...</span>
+      </div>
+    )
+  }
+
+  return children
+}
 
 export default function App() {
   return (
-    <>
-      <VerificationBlocker />
-      {DEV_TERMINAL_ENABLED && <DevTerminal />}
-      <Routes>
+    <AuthBootstrap>
+      <>
+        <VerificationBlocker />
+        {DEV_TERMINAL_ENABLED && <DevTerminal />}
+        <Routes>
       {/* Main App */}
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
@@ -59,7 +81,8 @@ export default function App() {
       </Route>
 
       <Route path="*" element={<NotFound />} />
-    </Routes>
-    </>
+        </Routes>
+      </>
+    </AuthBootstrap>
   )
 }

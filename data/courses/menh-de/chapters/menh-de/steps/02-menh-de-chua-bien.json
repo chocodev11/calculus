@@ -2,7 +2,7 @@
   "id": "02-menh-de-chua-bien",
   "content_key": "menh-de/menh-de/02-menh-de-chua-bien",
   "title": "Mệnh đề chứa biến",
-  "description": "Hiểu cấu trúc vị từ P(x), thao tác thế biến P(a), tìm miền xác định và đếm số nghiệm thỏa mãn theo chuẩn GDPT 2018.",
+  "description": "Hiểu cấu trúc vị từ P(x), thao tác thế biến P(a), tìm miền xác định và đếm số nghiệm thỏa mãn.",
   "xp_reward": 120,
   "order_index": 1,
   "course_slug": "menh-de",
@@ -12,7 +12,7 @@
       "id": "s01",
       "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s01",
       "order_index": 0,
-      "title": "Khái niệm Mệnh đề chứa biến",
+      "title": "Định nghĩa mệnh đề chứa biến",
       "blocks": [
         {
           "id": "s01-text-1",
@@ -775,7 +775,7 @@
       "id": "s10",
       "content_key": "menh-de/menh-de/02-menh-de-chua-bien/s10",
       "order_index": 9,
-      "title": "Tổng kết & Cầu nối Sư phạm",
+      "title": "Tóm tắt bài học",
       "blocks": [
         {
           "id": "callout-1",

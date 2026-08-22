@@ -2,7 +2,7 @@
   "id": "05-dao-tuong-duong-dieu-kien-can-du",
   "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du",
   "title": "Mệnh đề đảo · Tương đương · Điều kiện cần và đủ",
-  "description": "Thành thạo mệnh đề đảo, mệnh đề tương đương, chuẩn hóa thuật ngữ điều kiện cần, điều kiện đủ và điều kiện cần và đủ theo chuẩn GDPT 2018.",
+  "description": "Thành thạo mệnh đề đảo, mệnh đề tương đương và các điều kiện cần, điều kiện đủ.",
   "xp_reward": 120,
   "order_index": 4,
   "course_slug": "menh-de",
@@ -12,7 +12,7 @@
       "id": "s01",
       "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s01",
       "order_index": 0,
-      "title": "Mệnh đề Đảo & Mệnh đề Tương đương",
+      "title": "Mệnh đề đảo và mệnh đề tương đương",
       "blocks": [
         {
           "id": "s01-text-1",
@@ -21,6 +21,7 @@
             "heading": "Mệnh đề đảo & Tương đương",
             "paragraphs": [
               "Cho mệnh đề kéo theo $P \\Rightarrow Q$. Mệnh đề $Q \\Rightarrow P$ được gọi là **mệnh đề đảo** của $P \\Rightarrow Q$.",
+              "Mệnh đề đảo của một mệnh đề đúng không nhất thiết là mệnh đề đúng.",
               "Nếu cả hai mệnh đề $P \\Rightarrow Q$ và $Q \\Rightarrow P$ đều đúng, ta nói $P$ và $Q$ là **hai mệnh đề tương đương**, ký hiệu là $P \\Leftrightarrow Q$ (đọc là \"$P$ tương đương $Q$\" hoặc \"$P$ khi và chỉ khi $Q$\")."
             ]
           }
@@ -30,7 +31,7 @@
           "block_type": "callout",
           "content": {
             "variant": "theorem",
-            "title": "Chuẩn hóa Thuật ngữ Cần & Đủ",
+            "title": "Điều kiện cần và đủ",
             "body": "Khi định lý $P \\Rightarrow Q$ đúng:\n\n- $P$ là **điều kiện đủ** để có $Q$.\n- $Q$ là **điều kiện cần** để có $P$.\n\nKhi $P \\Leftrightarrow Q$ đúng: $P$ là **điều kiện cần và đủ** để có $Q$."
           }
         }
@@ -763,7 +764,7 @@
       "id": "s11",
       "content_key": "menh-de/menh-de/05-dao-tuong-duong-dieu-kien-can-du/s11",
       "order_index": 10,
-      "title": "Tổng kết & Cầu nối Sư phạm",
+      "title": "Tóm tắt bài học",
       "blocks": [
         {
           "id": "callout-1",
