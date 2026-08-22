@@ -4,6 +4,7 @@ export type SandboxRepresentation =
   | 'text'
   | 'truth_table'
   | 'condition_graph'
+  | 'predicate_playground'
   | 'set_roster'
   | 'set_builder'
   | 'interval'
@@ -35,6 +36,13 @@ const logic: SandboxArchetype[] = [
     misconceptions: ['logic.variable_sentence_is_proposition', 'logic.question_is_proposition'],
     representations: ['text', 'condition_graph'], expectedAnswerTypes: ['choice', 'boolean_group'],
     strategies: ['classify_sentence', 'check_truth_value'],
+  },
+  {
+    id: 'logic.variable_evaluator', domainId: 'logic', title: 'Thay biến, nhân chứng và tập chân lý',
+    outcomeIds: ['M10-LOGIC-02'], levels: ['understanding', 'application'], prerequisites: ['M10-SET-01'],
+    misconceptions: ['logic.variable_sentence_is_proposition', 'logic.witness_outside_domain', 'logic.evaluate_without_substitution'],
+    representations: ['text', 'predicate_playground', 'number_line', 'table'], expectedAnswerTypes: ['numeric', 'fraction', 'structured_reasoning'],
+    strategies: ['substitute_value', 'validate_domain', 'find_true_false_witness'],
   },
   {
     id: 'logic.truth_value', domainId: 'logic', title: 'Xác định giá trị đúng hoặc sai',

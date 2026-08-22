@@ -52,150 +52,119 @@
               "kind": "math.sandbox",
               "id": "menh_de_02_variable",
               "version": "1",
-              "archetypeId": "logic.proposition",
+              "archetypeId": "logic.variable_evaluator",
               "domainId": "logic",
               "level": "understanding",
-              "recipe": "logic.proposition",
+              "recipe": "logic.variable_evaluator",
               "outcomeIds": [
                 "M10-LOGIC-02"
               ],
               "prerequisites": [],
-              "misconceptions": [],
+              "misconceptions": [
+                "logic.variable_sentence_is_proposition",
+                "logic.witness_outside_domain",
+                "logic.evaluate_without_substitution"
+              ],
               "scene": {
                 "objects": [],
-                "space": "condition_graph"
+                "space": "predicate_playground"
               },
               "config": {
-                "mode": "proposition_classifier",
-                "activity": {
-                  "items": [
-                    {
-                      "id": "p1",
-                      "label": "P(x): x^2 - 4 = 0 khi x = 2",
-                      "controlId": "c_x1",
-                      "expectedType": "proposition"
-                    },
-                    {
-                      "id": "p2",
-                      "label": "P(x): x^2 - 4 = 0 khi x = 3",
-                      "controlId": "c_x2",
-                      "expectedType": "proposition"
-                    },
-                    {
-                      "id": "p3",
-                      "label": "Q(n): 2n + 1 chia hết cho 3",
-                      "controlId": "c_x3",
-                      "expectedType": "open_sentence"
-                    },
-                    {
-                      "id": "p4",
-                      "label": "Tìm x để x > 5",
-                      "controlId": "c_x4",
-                      "expectedType": "not_proposition"
-                    }
+                "mode": "variable_playground",
+                "variable": "x",
+                "expression": "x > x^3",
+                "expressionLabel": "P(x): x > x^3",
+                "domain": {
+                  "kind": "finite",
+                  "label": "D = {0, 1/3, 1}",
+                  "values": [
+                    0,
+                    "1/3",
+                    1
                   ]
+                },
+                "activity": {
+                  "probeControlId": "probe_value",
+                  "trueWitnessControlId": "true_witness",
+                  "falseWitnessControlId": "false_witness"
+                },
+                "sourceMapping": {
+                  "document": "chuyen-de-menh-de-va-tap-hop-toan-10(1).pdf",
+                  "section": "Bài 1. Mệnh đề",
+                  "sourceQuestionIds": [
+                    "C53",
+                    "C58"
+                  ],
+                  "sourceArchetypeIds": [
+                    "A03"
+                  ],
+                  "derivation": "variant",
+                  "contentTier": "core"
                 }
               },
               "controls": [
                 {
-                  "id": "c_x1",
-                  "type": "choice",
-                  "label": "P(2): 2^2 - 4 = 0",
-                  "initial": "open_sentence",
-                  "options": [
-                    "proposition",
-                    "open_sentence",
-                    "not_proposition"
-                  ],
-                  "optionLabels": {
-                    "proposition": "Mệnh đề đúng",
-                    "open_sentence": "Chứa biến",
-                    "not_proposition": "Không phải"
-                  }
+                  "id": "probe_value",
+                  "type": "math_input",
+                  "label": "Giá trị thử x = a",
+                  "initial": "1"
                 },
                 {
-                  "id": "c_x2",
-                  "type": "choice",
-                  "label": "P(3): 3^2 - 4 = 0",
-                  "initial": "open_sentence",
-                  "options": [
-                    "proposition",
-                    "open_sentence",
-                    "not_proposition"
-                  ],
-                  "optionLabels": {
-                    "proposition": "Mệnh đề sai",
-                    "open_sentence": "Chứa biến",
-                    "not_proposition": "Không phải"
-                  }
+                  "id": "true_witness",
+                  "type": "math_input",
+                  "label": "Nhân chứng làm P(a) đúng",
+                  "initial": ""
                 },
                 {
-                  "id": "c_x3",
-                  "type": "choice",
-                  "label": "Q(n): 2n+1 chia hết cho 3",
-                  "initial": "proposition",
-                  "options": [
-                    "proposition",
-                    "open_sentence",
-                    "not_proposition"
-                  ],
-                  "optionLabels": {
-                    "proposition": "Mệnh đề",
-                    "open_sentence": "Mệnh đề chứa biến",
-                    "not_proposition": "Không phải"
-                  }
-                },
-                {
-                  "id": "c_x4",
-                  "type": "choice",
-                  "label": "Tìm x để x > 5",
-                  "initial": "open_sentence",
-                  "options": [
-                    "proposition",
-                    "open_sentence",
-                    "not_proposition"
-                  ],
-                  "optionLabels": {
-                    "proposition": "Mệnh đề",
-                    "open_sentence": "Chứa biến",
-                    "not_proposition": "Câu mệnh lệnh"
-                  }
+                  "id": "false_witness",
+                  "type": "math_input",
+                  "label": "Nhân chứng làm P(a) sai",
+                  "initial": ""
                 }
               ],
               "goals": [
                 {
                   "id": "classify_variables",
-                  "label": "Phân loại mệnh đề chứa biến và mệnh đề sau khi thế giá trị",
-                  "evidence": "logic.classifier_complete"
+                  "label": "Thay biến và tìm đủ nhân chứng đúng, sai trong miền",
+                  "evidence": "logic.variable_complete"
                 }
               ],
               "solutionGraph": {
                 "steps": [
                   {
                     "id": "check_substitution",
-                    "label": "Kiểm tra phép thế biến",
+                    "label": "Thế một giá trị vào P(x)",
                     "kind": "check",
-                    "hint": "Sau khi thế x=2 hoặc x=3, câu trở thành mệnh đề có chân trị xác định."
+                    "hint": "Thử x = 1 rồi viết P(1) bằng cách thay mọi x trong biểu thức."
                   },
                   {
-                    "id": "distinguish_unbound_variable",
-                    "label": "Nhận diện biến tự do",
-                    "kind": "simplify",
+                    "id": "find_true_witness",
+                    "label": "Tìm nhân chứng đúng",
+                    "kind": "calculate",
                     "dependsOn": [
                       "check_substitution"
                     ],
-                    "hint": "Biến n chưa được gán giá trị thì câu vẫn là mệnh đề chứa biến."
+                    "hint": "Trong D, thử x = 1/3 và kiểm tra P(1/3)."
+                  },
+                  {
+                    "id": "find_false_witness",
+                    "label": "Tìm nhân chứng sai",
+                    "kind": "calculate",
+                    "dependsOn": [
+                      "find_true_witness"
+                    ],
+                    "hint": "Một nhân chứng sai phải vẫn thuộc D nhưng làm cho P(a) sai."
                   }
                 ],
                 "terminalStepIds": [
-                  "distinguish_unbound_variable"
+                  "find_false_witness"
                 ]
               },
               "assessment": [
                 {
                   "id": "check-variable-propositions",
                   "type": "structured_reasoning",
-                  "prompt": "Phân biệt mệnh đề chứa biến và mệnh đề sau khi thế.",
+                  "prompt": "Thế một giá trị vào P(x), rồi nêu một nhân chứng làm P(a) đúng và một nhân chứng làm P(a) sai trong miền D.",
                   "outcomeIds": [
                     "M10-LOGIC-02"
                   ]
@@ -203,7 +172,7 @@
               ],
               "accessibility": {
                 "keyboardControls": true,
-                "textAlternative": "Khảo sát thế biến: P(2) đúng, P(3) sai, Q(n) chứa biến.",
+                "textAlternative": "Phòng thí nghiệm P(x): thay giá trị vào vị từ, đọc chân trị và tìm nhân chứng đúng, sai trong miền D.",
                 "highContrast": true
               }
             }

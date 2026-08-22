@@ -20,6 +20,7 @@ import {
   implicationPlugin,
   necessarySufficientPlugin,
   parameterTruthPlugin,
+  variableEvaluatorPlugin,
 } from './plugins/logic'
 import { setPlugin, setBuilderPlugin, setVennPlugin, setNumberLinePlugin } from './plugins/set'
 import {
@@ -39,6 +40,7 @@ export const defaultSandboxRegistry = createRegistry([
   implicationPlugin,
   necessarySufficientPlugin,
   parameterTruthPlugin,
+  variableEvaluatorPlugin,
   setPlugin,
   setBuilderPlugin,
   setVennPlugin,

@@ -7,6 +7,7 @@ type LogicMode =
   | 'proposition_builder'
   | 'condition_graph'
   | 'proposition_classifier'
+  | 'variable_playground'
   | 'quantifier_negation'
   | 'implication'
   | 'parameter_implication'
@@ -47,14 +48,105 @@ interface LogicActivity {
   strategyControlId?: string
   expectedParameter?: number
   expectedStrategy?: string
+  probeControlId?: string
+  trueWitnessControlId?: string
+  falseWitnessControlId?: string
+}
+
+interface VariableDomainSpec {
+  kind?: 'finite' | 'probe'
+  label?: string
+  values?: Array<number | string>
+  min?: number
+  max?: number
 }
 
 interface LogicConfig {
   mode?: LogicMode
   variables?: string[]
   expression?: string
+  expressionLabel?: string
+  variable?: string
+  domain?: VariableDomainSpec
   initialValues?: JsonObject
   activity?: LogicActivity
+}
+
+const MATH_INPUT_PATTERN = /^[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+))(?:\/[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+)))?$/
+
+export function parseMathInput(value: unknown): number | null {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null
+  if (typeof value !== 'string') return null
+  const normalized = value.trim().replaceAll('−', '-').replace(/\s+/g, '')
+  if (!normalized || !MATH_INPUT_PATTERN.test(normalized)) return null
+  const slashIndex = normalized.indexOf('/')
+  if (slashIndex < 0) {
+    const result = Number(normalized)
+    return Number.isFinite(result) ? result : null
+  }
+  const numerator = Number(normalized.slice(0, slashIndex))
+  const denominator = Number(normalized.slice(slashIndex + 1))
+  if (!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator === 0) return null
+  const result = numerator / denominator
+  return Number.isFinite(result) ? result : null
+}
+
+function sameNumber(left: number, right: number): boolean {
+  return Math.abs(left - right) < 1e-9
+}
+
+function variableDomain(config: LogicConfig): VariableDomainSpec {
+  return config.domain || { kind: 'probe' }
+}
+
+function parsedDomainValues(domain: VariableDomainSpec): Array<{ input: string; value: number }> {
+  if (!Array.isArray(domain.values)) return []
+  return domain.values.flatMap(raw => {
+    const value = parseMathInput(raw)
+    return value === null ? [] : [{ input: String(raw), value }]
+  })
+}
+
+function isInVariableDomain(value: number, domain: VariableDomainSpec): boolean {
+  const values = parsedDomainValues(domain)
+  if (domain.kind === 'finite' || values.length > 0) return values.some(item => sameNumber(item.value, value))
+  if (typeof domain.min === 'number' && value < domain.min) return false
+  if (typeof domain.max === 'number' && value > domain.max) return false
+  return true
+}
+
+function substitutionText(expression: string, variable: string, input: string): string {
+  return expression.replace(new RegExp(`\\b${variable}\\b`, 'g'), `(${input})`)
+}
+
+function variableScope(variable: string, value: number): Record<string, number> {
+  return { [variable]: value, x: value, n: value }
+}
+
+function evaluateVariableInput(
+  predicate: ReturnType<typeof compilePredicate>,
+  expression: string,
+  variable: string,
+  domain: VariableDomainSpec,
+  raw: unknown,
+): JsonObject {
+  const input = typeof raw === 'string' ? raw.trim() : String(raw ?? '').trim()
+  const result: JsonObject = { input, parsed: false, inDomain: false }
+  const value = parseMathInput(input)
+  if (value === null) {
+    if (input) result.error = 'Nhập một số hoặc phân số như 1/3.'
+    return result
+  }
+  result.parsed = true
+  result.value = value
+  result.inDomain = isInVariableDomain(value, domain)
+  if (!result.inDomain) {
+    result.error = `Giá trị này không thuộc ${domain.label || 'miền đã chọn'}.`
+    return result
+  }
+  result.truthValue = predicate.evaluate(variableScope(variable, value))
+  result.substitution = substitutionText(expression, variable, input)
+  return result
 }
 
 function configOf(manifest: SandboxManifest): LogicConfig {
@@ -77,7 +169,11 @@ function rowsFor(variables: string[], expression: ReturnType<typeof compilePredi
 function renderModel(rows: JsonObject[], mode: LogicMode, extra: JsonObject = {}): RenderModel {
   return {
     kind: 'logic',
-    space: mode === 'truth_table' ? 'truth_table' : 'condition_graph',
+    space: mode === 'truth_table'
+      ? 'truth_table'
+      : mode === 'variable_playground'
+        ? 'predicate_playground'
+        : 'condition_graph',
     elements: rows,
     labels: [mode],
     ...extra,
@@ -220,6 +316,81 @@ function recomputeQuantifier(manifest: SandboxManifest, state: PrimitiveState): 
   }
 }
 
+function recomputeVariable(manifest: SandboxManifest, state: PrimitiveState): RecomputeResult {
+  const config = configOf(manifest)
+  const activity = config.activity || {}
+  const variable = config.variable || 'x'
+  const expression = config.expression || ''
+  const domain = variableDomain(config)
+  const predicate = compilePredicate(expression)
+  const probeControlId = activity.probeControlId || 'probe_value'
+  const trueWitnessControlId = activity.trueWitnessControlId || 'true_witness'
+  const falseWitnessControlId = activity.falseWitnessControlId || 'false_witness'
+  const probe = evaluateVariableInput(predicate, expression, variable, domain, state[probeControlId])
+  const trueWitness = evaluateVariableInput(predicate, expression, variable, domain, state[trueWitnessControlId])
+  const falseWitness = evaluateVariableInput(predicate, expression, variable, domain, state[falseWitnessControlId])
+  const domainRows = parsedDomainValues(domain).map(item => ({
+    input: item.input,
+    value: item.value,
+    truthValue: predicate.evaluate(variableScope(variable, item.value)),
+    isProbe: probe.parsed === true && sameNumber(Number(probe.value), item.value),
+    isTrueWitness: trueWitness.parsed === true && sameNumber(Number(trueWitness.value), item.value),
+    isFalseWitness: falseWitness.parsed === true && sameNumber(Number(falseWitness.value), item.value),
+  }))
+  const probeReady = probe.parsed === true && probe.inDomain === true && typeof probe.truthValue === 'boolean'
+  const trueWitnessCorrect = trueWitness.parsed === true && trueWitness.inDomain === true && trueWitness.truthValue === true
+  const falseWitnessCorrect = falseWitness.parsed === true && falseWitness.inDomain === true && falseWitness.truthValue === false
+  const complete = probeReady && trueWitnessCorrect && falseWitnessCorrect
+  const incorrect: Array<{ id: string; message: string; misconceptionId?: string }> = []
+  const addInputFeedback = (id: string, input: JsonObject, message: string, misconceptionId: string) => {
+    if (input.input !== '' && input.error) {
+      incorrect.push({ id, message: input.error ? String(input.error) : message, misconceptionId })
+    }
+  }
+  addInputFeedback('probe', probe, 'Thay giá trị vào P(x), rồi đọc chân trị của P(a).', 'logic.evaluate_without_substitution')
+  if (trueWitness.input !== '' && !trueWitnessCorrect) {
+    incorrect.push({
+      id: 'true-witness',
+      message: trueWitness.error ? String(trueWitness.error) : 'Nhân chứng đúng phải thuộc miền và làm cho P(a) đúng.',
+      misconceptionId: 'logic.witness_outside_domain',
+    })
+  }
+  if (falseWitness.input !== '' && !falseWitnessCorrect) {
+    incorrect.push({
+      id: 'false-witness',
+      message: falseWitness.error ? String(falseWitness.error) : 'Nhân chứng sai phải thuộc miền và làm cho P(a) sai.',
+      misconceptionId: 'logic.witness_outside_domain',
+    })
+  }
+  const truthSet = domainRows.filter(row => row.truthValue).map(row => row.input)
+  const derivedState = {
+    variable,
+    expression,
+    expressionLabel: config.expressionLabel || `P(${variable}): ${expression}`,
+    domainLabel: domain.label || 'Miền xác định',
+    probe,
+    trueWitness,
+    falseWitness,
+    domainRows,
+    truthSet,
+    complete,
+  }
+  return {
+    state: structuredClone(state),
+    derivedState,
+    goals: goalResults(manifest, complete, { probe, trueWitness, falseWitness, truthSet }),
+    feedback: activityFeedback(complete, incorrect),
+    renderModel: renderModel(domainRows, 'variable_playground', {
+      expression,
+      expressionLabel: config.expressionLabel || `P(${variable}): ${expression}`,
+      variable,
+      domainLabel: domain.label || 'Miền xác định',
+      truthSet,
+      complete,
+    }),
+  }
+}
+
 function predicateRows(activity: LogicActivity): JsonObject[] {
   if (!activity.pExpression || !activity.qExpression || !Array.isArray(activity.domainValues)) return []
   const p = compilePredicate(activity.pExpression)
@@ -331,6 +502,7 @@ export const logicPlugin: SandboxPlugin = {
     const supportedGoalEvidence = new Set([
       'structured_steps',
       'logic.classifier_complete',
+      'logic.variable_complete',
       'logic.quantifier_complete',
       'logic.implication_complete',
       'logic.parameter_complete',
@@ -340,8 +512,39 @@ export const logicPlugin: SandboxPlugin = {
         issues.push(`Unsupported logic goal evidence: ${goal.evidence}`)
       }
     })
-    const activityModes = new Set(['proposition_classifier', 'quantifier_negation', 'implication', 'parameter_implication'])
+    const activityModes = new Set(['proposition_classifier', 'quantifier_negation', 'implication', 'parameter_implication', 'variable_playground'])
     if (activityModes.has(mode)) {
+      if (mode === 'variable_playground') {
+        if (manifest.scene.space !== 'predicate_playground') issues.push('logic.variable_playground requires a predicate_playground scene')
+        if (typeof config.variable !== 'string' || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(config.variable)) {
+          issues.push('logic.variable_playground requires a valid variable name')
+        }
+        if (typeof config.expression !== 'string' || !config.expression.trim()) {
+          issues.push('logic.variable_playground requires expression')
+        } else {
+          try {
+            compilePredicate(config.expression)
+          } catch (error) {
+            issues.push(`logic.variable_playground expression is invalid: ${error instanceof Error ? error.message : 'unable to compile'}`)
+          }
+        }
+        const domain = config.domain
+        if (!domain || (domain.kind !== 'finite' && domain.kind !== 'probe')) {
+          issues.push('logic.variable_playground requires a finite or probe domain')
+        }
+        if (domain?.kind === 'finite' && (!Array.isArray(domain.values) || domain.values.length === 0)) {
+          issues.push('logic.variable_playground finite domains require values')
+        }
+        if (Array.isArray(domain?.values) && domain.values.some(value => parseMathInput(value) === null)) {
+          issues.push('logic.variable_playground domain values must be numbers or fractions')
+        }
+        const activity = config.activity
+        const controlIds = new Set(manifest.controls.map(control => control.id))
+        for (const id of [activity?.probeControlId || 'probe_value', activity?.trueWitnessControlId || 'true_witness', activity?.falseWitnessControlId || 'false_witness']) {
+          if (!controlIds.has(id)) issues.push(`logic.variable_playground is missing control ${id}`)
+        }
+        return issues
+      }
       if (!config.activity || !Array.isArray(config.activity.items) && mode !== 'implication' && mode !== 'parameter_implication') {
         issues.push(`logic.${mode} requires activity.items`)
       }
@@ -365,7 +568,7 @@ export const logicPlugin: SandboxPlugin = {
   createInitialState(manifest): PrimitiveState {
     const config = configOf(manifest)
     const mode = config.mode || 'truth_table'
-    if (mode === 'proposition_classifier' || mode === 'quantifier_negation' || mode === 'implication' || mode === 'parameter_implication') {
+    if (mode === 'proposition_classifier' || mode === 'variable_playground' || mode === 'quantifier_negation' || mode === 'implication' || mode === 'parameter_implication') {
       return stateInitials(manifest)
     }
     const assignment: JsonObject = {}
@@ -378,6 +581,7 @@ export const logicPlugin: SandboxPlugin = {
   recompute(manifest, state): RecomputeResult {
     const mode = configOf(manifest).mode || 'truth_table'
     if (mode === 'proposition_classifier') return recomputeClassifier(manifest, state)
+    if (mode === 'variable_playground') return recomputeVariable(manifest, state)
     if (mode === 'quantifier_negation') return recomputeQuantifier(manifest, state)
     if (mode === 'implication') return recomputeImplication(manifest, state)
     if (mode === 'parameter_implication') return recomputeParameter(manifest, state)
@@ -415,7 +619,17 @@ export const logicPlugin: SandboxPlugin = {
   },
 
   render(manifest, derivedState) {
-    return renderModel((derivedState.rows || []) as JsonObject[], configOf(manifest).mode || 'truth_table')
+    const config = configOf(manifest)
+    const mode = config.mode || 'truth_table'
+    if (mode === 'variable_playground') {
+      return renderModel((derivedState.domainRows || []) as JsonObject[], mode, {
+        expression: config.expression || '',
+        expressionLabel: config.expressionLabel || `P(${config.variable || 'x'}): ${config.expression || ''}`,
+        variable: config.variable || 'x',
+        domainLabel: config.domain?.label || 'Miền xác định',
+      })
+    }
+    return renderModel((derivedState.rows || []) as JsonObject[], mode)
   },
 
   getConstraints(manifest) {
@@ -423,6 +637,7 @@ export const logicPlugin: SandboxPlugin = {
     if (mode === 'implication') return { finiteDomainRequired: true, counterexampleRequired: true }
     if (mode === 'quantifier_negation') return { quantifierNegation: true, domainRequired: true }
     if (mode === 'parameter_implication') return { parameterCasesRequired: true, counterexampleRequired: true }
+    if (mode === 'variable_playground') return { variableSubstitution: true, witnessRequired: true, domainRequired: true }
     return { maxVariables: 8, assignmentValues: [false, true] }
   },
 
@@ -439,3 +654,4 @@ export const quantifierPlugin: SandboxPlugin = { ...logicPlugin, id: 'logic.quan
 export const implicationPlugin: SandboxPlugin = { ...logicPlugin, id: 'logic.implication' }
 export const necessarySufficientPlugin: SandboxPlugin = { ...logicPlugin, id: 'logic.necessary_sufficient' }
 export const parameterTruthPlugin: SandboxPlugin = { ...logicPlugin, id: 'logic.parameter_truth' }
+export const variableEvaluatorPlugin: SandboxPlugin = { ...logicPlugin, id: 'logic.variable_evaluator' }

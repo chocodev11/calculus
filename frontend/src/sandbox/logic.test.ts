@@ -16,7 +16,7 @@ function manifest(config: JsonObject, recipe: string, controls: SandboxManifest[
     outcomeIds: ['M10-SET-01'],
     prerequisites: [],
     misconceptions: [],
-    scene: { space: 'condition_graph' },
+    scene: { space: config.mode === 'variable_playground' ? 'predicate_playground' : 'condition_graph' },
     controls,
     goals: [{ id: 'complete', evidence: 'structured_steps' }],
     assessment: [],
@@ -39,6 +39,57 @@ describe('logic sandbox activities', () => {
     const session = createSession(lesson, defaultSandboxRegistry)
     session.dispatch({ type: 'set_control', controlId: 'class:a', value: 'open_sentence' })
     expect(session.snapshot().goals[0].reached).toBe(true)
+  })
+
+  it('evaluates substitutions and validates true and false witnesses in a finite domain', () => {
+    const lesson = manifest({
+      mode: 'variable_playground',
+      variable: 'x',
+      expression: 'x > x^3',
+      expressionLabel: 'P(x): x > x^3',
+      domain: { kind: 'finite', label: 'D = {0, 1/3, 1}', values: [0, '1/3', 1] },
+      activity: {
+        probeControlId: 'probe',
+        trueWitnessControlId: 'true-witness',
+        falseWitnessControlId: 'false-witness',
+      },
+    }, 'logic.variable_evaluator', [
+      { id: 'probe', type: 'math_input', label: 'Giá trị thử', initial: '' },
+      { id: 'true-witness', type: 'math_input', label: 'Nhân chứng đúng', initial: '' },
+      { id: 'false-witness', type: 'math_input', label: 'Nhân chứng sai', initial: '' },
+    ])
+    const session = createSession(lesson, defaultSandboxRegistry)
+    session.dispatch({ type: 'set_control', controlId: 'probe', value: '1' })
+    session.dispatch({ type: 'set_control', controlId: 'true-witness', value: '1/3' })
+    session.dispatch({ type: 'set_control', controlId: 'false-witness', value: '0' })
+    const snapshot = session.snapshot()
+    expect(snapshot.derivedState.probe).toMatchObject({ input: '1', truthValue: false, inDomain: true })
+    expect(snapshot.derivedState.trueWitness).toMatchObject({ input: '1/3', truthValue: true, inDomain: true })
+    expect(snapshot.derivedState.falseWitness).toMatchObject({ input: '0', truthValue: false, inDomain: true })
+    expect(snapshot.derivedState.truthSet).toEqual(['1/3'])
+    expect(snapshot.goals[0].reached).toBe(true)
+  })
+
+  it('rejects a witness outside the declared domain', () => {
+    const lesson = manifest({
+      mode: 'variable_playground',
+      variable: 'x',
+      expression: 'x > 0',
+      domain: { kind: 'finite', label: 'D = {0, 1}', values: [0, 1] },
+      activity: {
+        probeControlId: 'probe',
+        trueWitnessControlId: 'true-witness',
+        falseWitnessControlId: 'false-witness',
+      },
+    }, 'logic.variable_evaluator', [
+      { id: 'probe', type: 'math_input', label: 'Giá trị thử', initial: '1' },
+      { id: 'true-witness', type: 'math_input', label: 'Nhân chứng đúng', initial: '2' },
+      { id: 'false-witness', type: 'math_input', label: 'Nhân chứng sai', initial: '0' },
+    ])
+    const snapshot = createSession(lesson, defaultSandboxRegistry).snapshot()
+    expect(snapshot.goals[0].reached).toBe(false)
+    expect(snapshot.derivedState.trueWitness).toMatchObject({ parsed: true, inDomain: false })
+    expect(snapshot.feedback[0].message).toContain('không thuộc')
   })
 
   it('requires both implication direction and a counterexample', () => {

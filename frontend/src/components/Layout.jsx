@@ -7,6 +7,7 @@ import AnimatedOutlet from './AnimatedOutlet'
 import { t } from '../lib/locale'
 import { GamifyBadge } from './ui/gamify-badge'
 import { TactileButton } from './ui/tactile-button'
+import { REWARD_PATHS, REWARD_TAB_ROUTES } from '../lib/rewardNavigation'
 
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import {
@@ -68,7 +69,9 @@ export default function Layout() {
           {/* Desktop Navigation (Center) */}
           <nav className="hidden md:flex items-center gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200/80 shrink-0">
             {navItems.map(({ path, icon: Icon, label }) => {
-              const isActive = location.pathname === path
+              const isActive = path === '/quests'
+                ? REWARD_PATHS.includes(location.pathname)
+                : location.pathname === path
               return (
                 <Link
                   key={path}
@@ -101,7 +104,7 @@ export default function Layout() {
                   <GamifyBadge 
                     type="coins" 
                     value={user.coins || 0} 
-                    onClick={() => navigate('/shop')} 
+                    onClick={() => navigate(REWARD_TAB_ROUTES.shop)}
                   />
                   <GamifyBadge type="hearts" value={user.hearts ?? 5} max={5} />
                 </div>
@@ -130,12 +133,6 @@ export default function Layout() {
                       <Link to="/profile" className="flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors">
                         <User className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
                         <span>{t.layout?.dropdown?.profile || 'Hồ sơ cá nhân'}</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/quests" className="flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors">
-                        <ScrollText className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
-                        <span>{t.layout?.dropdown?.quests || 'Nhiệm vụ & Cửa hàng'}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -184,7 +181,9 @@ export default function Layout() {
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 md:hidden">
         <div className="flex justify-around items-center py-1.5 px-2">
           {navItems.map(({ path, icon: Icon, label }) => {
-            const isActive = location.pathname === path
+            const isActive = path === '/quests'
+              ? REWARD_PATHS.includes(location.pathname)
+              : location.pathname === path
             return (
               <Link
                 key={path}

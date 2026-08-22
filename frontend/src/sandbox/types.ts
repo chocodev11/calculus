@@ -72,12 +72,12 @@ export type GoalEvidence =
 export type PrimitiveState = JsonObject
 
 export interface SceneSpec {
-  space: 'truth_table' | 'condition_graph' | 'venn_plane' | 'number_line' | 'unit_circle' | 'triangle_scene'
+  space: 'truth_table' | 'condition_graph' | 'predicate_playground' | 'venn_plane' | 'number_line' | 'unit_circle' | 'triangle_scene'
 }
 
 export interface ControlSpec {
   id: string
-  type: 'slider' | 'numeric_input' | 'choice' | 'toggle' | 'drag_item' | 'reset'
+  type: 'slider' | 'numeric_input' | 'math_input' | 'choice' | 'toggle' | 'drag_item' | 'reset'
   label: string
   min?: number
   max?: number
@@ -197,6 +197,10 @@ export interface RenderModel {
   expectedPToQ?: boolean
   expectedQToP?: boolean
   parameter?: number | string
+  expression?: string
+  expressionLabel?: string
+  variable?: string
+  domainLabel?: string
 }
 
 export interface RecomputeResult {

@@ -49,7 +49,7 @@ function validateControl(value: unknown, index: number): ValidationIssue[] {
   const issues: ValidationIssue[] = []
   if (!stringAt(value, 'id')) issues.push(issue(`${path}.id`, 'missing_id', 'Control id is required'))
   if (!stringAt(value, 'label')) issues.push(issue(`${path}.label`, 'missing_label', 'Control label is required'))
-  const allowed = new Set(['slider', 'numeric_input', 'choice', 'toggle', 'drag_item', 'reset'])
+  const allowed = new Set(['slider', 'numeric_input', 'math_input', 'choice', 'toggle', 'drag_item', 'reset'])
   if (typeof value.type !== 'string' || !allowed.has(value.type)) {
     issues.push(issue(`${path}.type`, 'invalid_control_type', 'Unsupported control type'))
   }
@@ -204,6 +204,11 @@ export function normalizeControlValue(control: ControlSpec, value: unknown): Jso
       result = Number(result.toFixed(12))
     }
     return result
+  }
+  if (control.type === 'math_input') {
+    if (typeof value !== 'string') throw new Error(`Control ${control.id} expects a text math input`)
+    if (value.length > 64) throw new Error(`Control ${control.id} input is too long`)
+    return value
   }
   return value as JsonObject[keyof JsonObject]
 }

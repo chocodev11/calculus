@@ -18,6 +18,7 @@ import { TactileSelect } from '../ui/tactile-select'
 const ARCHETYPE_NAMES = {
   'logic.proposition_identification': 'Nhận diện Mệnh đề & Biến',
   'logic.proposition': 'Nhận diện Mệnh đề & Biến',
+  'logic.variable_evaluator': 'Phòng thí nghiệm P(x)',
   'logic.quantifier_negation': 'Phủ định Mệnh đề & Lượng từ',
   'logic.negation': 'Phủ định Mệnh đề & Lượng từ',
   'logic.compound_truth_table': 'Bảng chân trị Mệnh đề ghép',
@@ -482,6 +483,209 @@ function Control({ control, value, onChange }) {
   )
 }
 
+function MathInputField({ control, value, onChange, evaluation, expectedTruth }) {
+  const current = String(value ?? control.initial ?? '')
+  const hasInput = current.trim() !== ''
+  const isParsed = evaluation?.parsed === true
+  const isInDomain = evaluation?.inDomain === true
+  const isEvaluated = isParsed && isInDomain && typeof evaluation?.truthValue === 'boolean'
+  const isCorrect = isEvaluated && (expectedTruth === undefined || evaluation.truthValue === expectedTruth)
+  const isWrongExpectation = isEvaluated && expectedTruth !== undefined && !isCorrect
+  const status = !hasInput
+    ? 'Chưa nhập'
+    : evaluation?.error
+      ? evaluation.error
+      : expectedTruth === undefined
+        ? `P(a) = ${evaluation.truthValue ? 'Đúng' : 'Sai'}`
+        : isCorrect
+          ? `Nhân chứng ${expectedTruth ? 'đúng' : 'sai'} hợp lệ`
+          : `Giá trị này làm P(a) ${evaluation.truthValue ? 'đúng' : 'sai'}`
+
+  return (
+    <div className="space-y-2">
+      <label htmlFor={`sandbox-${control.id}`} className="block text-xs font-bold text-slate-800 leading-snug">
+        <MathText text={control.label} />
+      </label>
+      <input
+        id={`sandbox-${control.id}`}
+        type="text"
+        inputMode="text"
+        autoComplete="off"
+        value={current}
+        onChange={event => onChange(event.target.value)}
+        className="w-full h-11 px-3 bg-white border border-slate-300 focus:border-sky-600 focus:ring-2 focus:ring-sky-200 rounded-lg text-sm font-bold text-slate-900 outline-none transition-colors"
+        aria-label={control.label}
+        aria-describedby={`sandbox-${control.id}-status`}
+      />
+      <div
+        id={`sandbox-${control.id}-status`}
+        aria-live="polite"
+        className={`min-h-5 flex items-start gap-1.5 text-[11px] font-semibold ${
+          !hasInput ? 'text-slate-500' : evaluation?.error || isWrongExpectation ? 'text-rose-700' : isCorrect || (expectedTruth === undefined && isEvaluated) ? 'text-emerald-700' : 'text-slate-600'
+        }`}
+      >
+        {hasInput && (evaluation?.error || isWrongExpectation) ? <XIcon className="w-3.5 h-3.5 shrink-0 mt-0.5" /> : hasInput && isCorrect ? <Check className="w-3.5 h-3.5 shrink-0 mt-0.5" /> : null}
+        <span>{status}</span>
+      </div>
+    </div>
+  )
+}
+
+function TruthNumberLine({ rows, onSelect, selectedValue }) {
+  if (!rows.length) {
+    return <p className="text-xs text-slate-500">Miền khảo sát chưa có giá trị để hiển thị.</p>
+  }
+  const values = rows.map(row => Number(row.value)).filter(Number.isFinite)
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+  const span = Math.max(max - min, 1)
+
+  return (
+    <div className="space-y-3" role="group" aria-label="Trục số chân trị trong miền khảo sát">
+      <div className="relative h-28 mx-3 sm:mx-8">
+        <div className="absolute left-0 right-0 top-12 h-0.5 bg-slate-400" aria-hidden="true" />
+        <div className="absolute right-0 top-[39px] border-y-[5px] border-y-transparent border-l-[8px] border-l-slate-400" aria-hidden="true" />
+        {rows.map(row => {
+          const position = `${((Number(row.value) - min) / span) * 100}%`
+          const isTrue = row.truthValue === true
+          const isSelected = selectedValue !== undefined && Math.abs(Number(selectedValue) - Number(row.value)) < 1e-9
+          return (
+            <button
+              key={row.input}
+              type="button"
+              onClick={() => onSelect(row.input)}
+              style={{ left: position }}
+              className="absolute top-12 -translate-x-1/2 -translate-y-1/2 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 rounded-full"
+              aria-label={`${row.input}: P(a) ${isTrue ? 'đúng' : 'sai'}. Nhấn để thử giá trị này.`}
+              title={`Thử ${row.input}`}
+            >
+              <span className={`block rounded-full bg-white ${isSelected ? 'w-6 h-6 border-[4px] ring-2 ring-sky-200' : 'w-4 h-4 border-[3px]'} ${isTrue ? 'border-emerald-600' : 'border-rose-600'}`} />
+              <span className={`absolute top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] font-bold ${isTrue ? 'text-emerald-700' : 'text-rose-700'}`}>
+                {row.input}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-semibold text-slate-600" aria-label="Chú giải trục số">
+        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-full border-[2px] border-emerald-600" />P(a) đúng</span>
+        <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-full border-[2px] border-rose-600" />P(a) sai</span>
+        <span className="text-slate-500">Nhấn một điểm để đưa vào ô thử.</span>
+      </div>
+    </div>
+  )
+}
+
+function VariableEvaluatorWorkspace({ manifest, state, dispatch, snapshot }) {
+  const config = manifest.config || {}
+  const activity = config.activity || {}
+  const controls = manifest.controls || []
+  const findControl = id => controls.find(control => control.id === id) || { id, type: 'math_input', label: id, initial: '' }
+  const probeControlId = activity.probeControlId || 'probe_value'
+  const trueWitnessControlId = activity.trueWitnessControlId || 'true_witness'
+  const falseWitnessControlId = activity.falseWitnessControlId || 'false_witness'
+  const derived = snapshot.derivedState || {}
+  const probe = derived.probe || {}
+  const trueWitness = derived.trueWitness || {}
+  const falseWitness = derived.falseWitness || {}
+  const rows = Array.isArray(derived.domainRows) ? derived.domainRows : []
+  const domainLabel = derived.domainLabel || config.domain?.label || 'Miền khảo sát'
+  const expressionLabel = derived.expressionLabel || config.expressionLabel || `P(${config.variable || 'x'}): ${config.expression || ''}`
+  const setControl = (controlId, value) => dispatch({ type: 'set_control', controlId, value: jsonValue(value) })
+
+  return (
+    <div className="space-y-5" aria-label="Phòng thí nghiệm thay biến và kiểm tra nhân chứng">
+      <section className="border border-sky-200 bg-sky-50/50 rounded-2xl p-4 sm:p-5 space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 border-b border-sky-100 pb-4">
+          <div className="space-y-1">
+            <p className="text-[11px] uppercase tracking-wider font-extrabold text-sky-700">Thay biến và đọc chân trị</p>
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900"><MathText text={expressionLabel} /></h3>
+          </div>
+          <span className="inline-flex self-start px-2.5 py-1 rounded-md border border-sky-200 bg-white text-[11px] font-bold text-sky-800">
+            <MathText text={domainLabel} />
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs font-extrabold text-slate-900">1. Chọn một giá trị để thử</p>
+              <p className="mt-1 text-[11px] text-slate-600">Có thể nhập số thập phân hoặc phân số, ví dụ <MathText text="$1/3$" />.</p>
+            </div>
+            <MathInputField
+              control={findControl(probeControlId)}
+              value={state[probeControlId]}
+              onChange={value => setControl(probeControlId, value)}
+              evaluation={probe}
+            />
+            {probe.substitution && (
+              <div className="border-l-2 border-sky-500 pl-3 text-xs text-slate-700 space-y-1" aria-live="polite">
+                <p className="font-bold text-sky-800">Phép thế</p>
+                <p><MathText text={`${probe.substitution}  ⇒  P(a) = ${probe.truthValue ? 'Đúng' : 'Sai'}`} /></p>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs font-extrabold text-slate-900">2. Tìm hai nhân chứng trong miền</p>
+              <p className="mt-1 text-[11px] text-slate-600">Một giá trị làm P(a) đúng và một giá trị làm P(a) sai.</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <MathInputField
+                control={findControl(trueWitnessControlId)}
+                value={state[trueWitnessControlId]}
+                onChange={value => setControl(trueWitnessControlId, value)}
+                evaluation={trueWitness}
+                expectedTruth
+              />
+              <MathInputField
+                control={findControl(falseWitnessControlId)}
+                value={state[falseWitnessControlId]}
+                onChange={value => setControl(falseWitnessControlId, value)}
+                evaluation={falseWitness}
+                expectedTruth={false}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-sky-100 pt-4 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1">
+            <div>
+              <p className="text-xs font-extrabold text-slate-900">Miền khảo sát trên trục số</p>
+              <p className="text-[11px] text-slate-600">Mỗi điểm cho biết chân trị của P(a) sau khi thế.</p>
+            </div>
+            <span className="text-[11px] font-bold text-emerald-700">Tập đúng: {'{'}{Array.isArray(derived.truthSet) && derived.truthSet.length ? derived.truthSet.join(', ') : '∅'}{'}'}</span>
+          </div>
+          <TruthNumberLine
+            rows={rows}
+            selectedValue={probe.value}
+            onSelect={value => setControl(probeControlId, value)}
+          />
+        </div>
+      </section>
+
+      <div
+        role="status"
+        aria-live="polite"
+        className={`flex items-start gap-2 rounded-xl border p-3 text-xs font-semibold ${
+          snapshot.derivedState?.complete
+            ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+            : 'bg-slate-50 border-slate-200 text-slate-700'
+        }`}
+      >
+        {snapshot.derivedState?.complete ? <Check className="w-4 h-4 shrink-0 mt-0.5" /> : <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />}
+        <span>
+          {snapshot.derivedState?.complete
+            ? 'Bạn đã thay biến, xác định chân trị và tìm đủ một nhân chứng đúng cùng một nhân chứng sai.'
+            : 'Hoàn thành ba việc: thử một giá trị, chọn nhân chứng đúng và chọn nhân chứng sai; mọi giá trị phải thuộc miền khảo sát.'}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 function DerivedSummary({ snapshot }) {
   const derived = snapshot?.derivedState || {}
   const rows = []
@@ -520,6 +724,7 @@ export default function SandboxInteraction({ lesson }) {
   const [activeHint, setActiveHint] = useState(null)
 
   const isClassifierMode = manifest?.config?.mode === 'proposition_classifier'
+  const isVariableEvaluatorMode = manifest?.config?.mode === 'variable_playground'
 
   useEffect(() => {
     if (!manifest) {
@@ -567,7 +772,7 @@ export default function SandboxInteraction({ lesson }) {
     )
   }
 
-  const svg = renderSceneSvg(snapshot.renderModel)
+  const svg = isVariableEvaluatorMode ? '' : renderSceneSvg(snapshot.renderModel)
   const state = snapshot.state || {}
   const steps = manifest.solutionGraph?.steps || []
   const humanTitle = ARCHETYPE_NAMES[manifest.archetypeId] || manifest.archetypeId || 'Mô hình Toán học'
@@ -625,6 +830,13 @@ export default function SandboxInteraction({ lesson }) {
       {/* ─── Main Workspace: Clean Minimal Classifier OR SVG Scene ──── */}
       {isClassifierMode ? (
         <MinimalPropositionClassifier
+          manifest={manifest}
+          state={state}
+          dispatch={dispatch}
+          snapshot={snapshot}
+        />
+      ) : isVariableEvaluatorMode ? (
+        <VariableEvaluatorWorkspace
           manifest={manifest}
           state={state}
           dispatch={dispatch}

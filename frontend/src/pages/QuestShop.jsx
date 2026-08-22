@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   ScrollText,
   ShoppingBag,
@@ -17,9 +17,12 @@ import { useAuthStore, useQuestStore, useShopStore, useUIStore } from '../lib/st
 import { TactileButton } from '../components/ui/tactile-button'
 import { SegmentedControl } from '../components/ui/segmented-control'
 import { QuestIcon } from '../components/ui/semantic-icon'
+import { REWARD_TAB_BY_PATH, REWARD_TAB_ROUTES } from '../lib/rewardNavigation'
 
 export default function QuestShop() {
-  const [activeTab, setActiveTab] = useState('quests') // 'quests' | 'shop' | 'inventory'
+  const location = useLocation()
+  const navigate = useNavigate()
+  const activeTab = REWARD_TAB_BY_PATH[location.pathname] || 'quests'
 
   const tabOptions = [
     { value: 'quests', label: 'Nhiệm vụ', icon: ScrollText },
@@ -50,7 +53,10 @@ export default function QuestShop() {
       <SegmentedControl
         options={tabOptions}
         value={activeTab}
-        onChange={setActiveTab}
+        onChange={(tab) => {
+          const nextPath = REWARD_TAB_ROUTES[tab]
+          if (nextPath && nextPath !== location.pathname) navigate(nextPath)
+        }}
         size="md"
       />
 

@@ -58,7 +58,7 @@
       "required": ["id", "type", "label"],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
-        "type": { "enum": ["slider", "numeric_input", "choice", "toggle", "drag_item", "reset"] },
+        "type": { "enum": ["slider", "numeric_input", "math_input", "choice", "toggle", "drag_item", "reset"] },
         "label": { "type": "string", "minLength": 1 },
         "min": { "type": "number" },
         "max": { "type": "number" },

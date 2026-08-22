@@ -60,6 +60,7 @@ export default function App() {
         <Route path="profile" element={<Profile />} />
         <Route path="quests" element={<QuestShop />} />
         <Route path="shop" element={<QuestShop />} />
+        <Route path="inventory" element={<QuestShop />} />
       </Route>
       <Route path="/course/:slug/step/:encodedId" element={<Step />} />
       <Route path="/studio" element={<StudioPreview />} />

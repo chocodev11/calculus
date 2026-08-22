@@ -387,6 +387,30 @@ function numberLine(model: RenderModel): string {
   return shell(`<line x1="64" y1="160" x2="576" y2="160" stroke="#334155" stroke-width="4"/><path d="M64 160l12-7v14zM576 160l-12-7v14z" fill="#334155"/><text x="64" y="132" text-anchor="middle" fill="#334155">${escapeText(left)}</text><text x="576" y="132" text-anchor="middle" fill="#334155">${escapeText(right)}</text><text x="64" y="188" text-anchor="middle" font-size="28" fill="#4f46e5">${leftClosed}</text><text x="576" y="188" text-anchor="middle" font-size="28" fill="#db2777">${rightClosed}</text><text x="320" y="250" text-anchor="middle" fill="#334155">Khoảng nghiệm</text>`, 'Trục số biểu diễn khoảng')
 }
 
+function predicatePlayground(model: RenderModel): string {
+  const rows = (model.elements || []).map(record)
+  const values = rows.map(row => number(row.value)).filter(Number.isFinite)
+  const min = values.length ? Math.min(...values) : -1
+  const max = values.length ? Math.max(...values) : 1
+  const span = Math.max(max - min, 1)
+  const xFor = (value: number) => 72 + ((value - min) / span) * 496
+  const markers = rows.map(row => {
+    const value = number(row.value)
+    const x = xFor(value)
+    const truthValue = row.truthValue === true
+    const isProbe = row.isProbe === true
+    const color = truthValue ? '#059669' : '#dc2626'
+    const label = `${row.input ?? value}${truthValue ? ': Đúng' : ': Sai'}`
+    return `<g><line x1="${x.toFixed(2)}" y1="154" x2="${x.toFixed(2)}" y2="186" stroke="${color}" stroke-width="2"/><circle cx="${x.toFixed(2)}" cy="170" r="${isProbe ? 10 : 7}" fill="white" stroke="${color}" stroke-width="${isProbe ? 4 : 3}"/><text x="${x.toFixed(2)}" y="215" text-anchor="middle" fill="#334155" font-size="11" font-weight="700">${escapeText(label)}</text>${isProbe ? `<text x="${x.toFixed(2)}" y="142" text-anchor="middle" fill="#0369a1" font-size="10" font-weight="800">đang thử</text>` : ''}</g>`
+  }).join('')
+  const truthSet = rows.filter(row => row.truthValue === true).map(row => String(row.input ?? row.value)).join(', ')
+  const expression = model.expressionLabel || model.expression || 'P(x)'
+  return shell(
+    `<text x="320" y="26" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="800">${escapeText(expression)}</text><text x="320" y="48" text-anchor="middle" fill="#475569" font-size="11" font-weight="600">${escapeText(model.domainLabel || 'Miền khảo sát')}</text><line x1="72" y1="170" x2="568" y2="170" stroke="#334155" stroke-width="3"/><path d="M568 170l-11-6v12z" fill="#334155"/>${markers}<text x="320" y="270" text-anchor="middle" fill="#047857" font-size="12" font-weight="800">Tập đúng trong miền khảo sát: { ${escapeText(truthSet || '∅')} }</text><text x="320" y="294" text-anchor="middle" fill="#64748b" font-size="10" font-weight="600">Chấm xanh: P(a) đúng · chấm đỏ: P(a) sai · vòng đậm: giá trị đang thử</text>`,
+    'Trục số thay biến và kiểm tra chân trị của vị từ',
+  )
+}
+
 function unitCircle(model: RenderModel): string {
   const value = record(model.elements?.[0])
   const degrees = number(value.degrees)
@@ -407,6 +431,7 @@ function triangle(model: RenderModel): string {
 export function renderSceneSvg(model: RenderModel): string {
   if (model.space === 'truth_table') return truthTable(model)
   if (model.space === 'condition_graph') return conditionGraph(model)
+  if (model.space === 'predicate_playground') return predicatePlayground(model)
   if (model.space === 'venn_plane') return venn(model)
   if (model.space === 'number_line') return numberLine(model)
   if (model.space === 'unit_circle') return unitCircle(model)
@@ -417,6 +442,7 @@ export function renderSceneSvg(model: RenderModel): string {
 export function renderTextAlternative(model: RenderModel): string {
   if (model.space === 'truth_table') return `Bảng chân trị gồm ${(model.elements || []).length} dòng.`
   if (model.space === 'condition_graph') return `Sơ đồ điều kiện gồm ${(model.elements || []).length} trường hợp cần kiểm tra.`
+  if (model.space === 'predicate_playground') return `Trục số hiển thị ${(model.elements || []).length} giá trị đã thay vào vị từ và chân trị tương ứng.`
   if (model.space === 'venn_plane') return 'Biểu đồ Venn biểu diễn hai tập hợp và vùng kết quả.'
   if (model.space === 'number_line') return 'Trục số biểu diễn các đầu mút và tính đóng mở của khoảng.'
   if (model.space === 'unit_circle') return 'Đường tròn lượng giác biểu diễn góc, sin và cos.'
