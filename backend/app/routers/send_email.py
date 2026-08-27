@@ -13,7 +13,7 @@ def build_verification_email_html(display_name: str, verify_url: str) -> str:
         <div style="max-width:520px; margin:auto; background:white; border-radius:12px; padding:32px; box-shadow:0 4px 16px rgba(0,0,0,0.05);">
 
             <h2 style="margin-top:0; color:#111827;">
-            Verify Calculus Account
+            Verify {settings.brand_name} Account
             </h2>
 
             <p style="color:#374151;">
@@ -21,7 +21,7 @@ def build_verification_email_html(display_name: str, verify_url: str) -> str:
             </p>
 
             <p style="color:#374151;">
-            Thank you for signing up for <strong>Calculus</strong>.  
+            Thank you for signing up for <strong>{settings.brand_name}</strong>.  
             Please click the button below to verify your email address.
             </p>
 
@@ -46,7 +46,7 @@ def build_verification_email_html(display_name: str, verify_url: str) -> str:
             <hr style="border:none; border-top:1px solid #e5e7eb; margin:24px 0;">
 
             <p style="font-size:13px; color:#9ca3af; margin:0;">
-            This email was automatically sent from the Calculus system.
+            This email was automatically sent from the {settings.brand_name} system.
             </p>
 
         </div>

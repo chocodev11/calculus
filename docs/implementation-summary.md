@@ -2,7 +2,7 @@
 
 ## Current architecture
 
-Calculus dùng lesson JSON/DSL khai báo làm nguồn nội dung runtime. LLM hoặc
+TiaMath dùng lesson JSON/DSL khai báo làm nguồn nội dung runtime. LLM hoặc
 editor tạo một document, backend validate và lưu vào `lesson_versions` dưới
 dạng draft. Studio đọc draft để preview; learner chỉ đọc published version qua
 `steps.published_version_id`.

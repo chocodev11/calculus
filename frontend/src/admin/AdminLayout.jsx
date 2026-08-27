@@ -8,10 +8,10 @@ import {
   Menu,
   X,
   ArrowLeft,
-  Sigma
 } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '../lib/utils'
+import { BRAND } from '../lib/brand'
 
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
@@ -34,8 +34,8 @@ export default function AdminLayout() {
         <div className="flex items-center justify-between h-16 px-4 border-b border-slate-800">
           {sidebarOpen && (
             <span className="flex items-center gap-2 text-xl font-bold">
-              <Sigma size={20} aria-hidden="true" />
-              Admin
+              <img src={BRAND.icon} alt="" className="h-6 w-6 rounded-lg" />
+              {BRAND.name} Studio
             </span>
           )}
           <button 
@@ -85,7 +85,7 @@ export default function AdminLayout() {
       )}>
         <header className="h-16 bg-white border-b border-slate-200 flex items-center px-6">
           <h1 className="text-xl font-semibold text-slate-900">
-            Calculus Admin Panel
+            {BRAND.name} Studio
           </h1>
         </header>
         

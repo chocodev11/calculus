@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Compass, User, LogOut, ScrollText, Sparkles, Sigma } from 'lucide-react'
+import { Home, Compass, User, LogOut, ScrollText, Sparkles } from 'lucide-react'
 import { useAuthStore, useUIStore, useQuestStore } from '../lib/store'
 import Toast from './Toast'
 import AnimatedOutlet from './AnimatedOutlet'
@@ -8,6 +8,7 @@ import { t } from '../lib/locale'
 import { GamifyBadge } from './ui/gamify-badge'
 import { TactileButton } from './ui/tactile-button'
 import { REWARD_PATHS, REWARD_TAB_ROUTES } from '../lib/rewardNavigation'
+import { BRAND } from '../lib/brand'
 
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import {
@@ -54,16 +55,18 @@ export default function Layout() {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 h-16">
           
-          {/* Left: Brand Identity with Mathematical Integral Icon */}
-          <Link to="/" className="flex items-center gap-2.5 group select-none shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white group-hover:scale-105 transition-transform shrink-0">
-              <Sigma className="w-6 h-6 stroke-[2.5]" aria-hidden="true" />
+          {/* Left: TiaMath brand identity */}
+          <Link to="/" className="flex items-center gap-2.5 group select-none shrink-0" aria-label={`${BRAND.name} - Trang chủ`}>
+            <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shadow-xs overflow-hidden shrink-0 transition-transform group-hover:scale-105">
+              <img
+                src={BRAND.logo}
+                alt={BRAND.name}
+                className="w-full h-full object-cover"
+              />
             </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-xl tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
-                Calculus<span className="text-indigo-600">.app</span>
-              </span>
-            </div>
+            <span className="text-xl font-extrabold tracking-tight leading-none text-slate-900 font-sans">
+              Tia<span className="text-indigo-600">Math</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation (Center) */}
@@ -76,16 +79,16 @@ export default function Layout() {
                 <Link
                   key={path}
                   to={path}
-                  className={`relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors duration-150 select-none border ${
+                  className={`relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-bold transition-all duration-150 select-none border ${
                     isActive
-                      ? 'bg-white text-indigo-600 border-slate-200/80'
+                      ? 'bg-white text-indigo-600 border-slate-200/90 shadow-xs'
                       : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600 stroke-[2.5]' : 'text-slate-400'}`} />
                   <span>{label}</span>
                   {path === '/quests' && claimableCount > 0 && (
-                    <span className="w-5 h-5 bg-amber-500 text-white text-[10px] rounded-full flex items-center justify-center font-extrabold shrink-0">
+                    <span className="w-5 h-5 bg-amber-500 text-white text-[10px] rounded-full flex items-center justify-center font-extrabold shrink-0 shadow-xs">
                       {claimableCount}
                     </span>
                   )}
@@ -100,6 +103,7 @@ export default function Layout() {
               <>
                 {/* Gamification stat capsules */}
                 <div className="hidden sm:flex items-center gap-2 shrink-0">
+                  <GamifyBadge type="streak" value={user.streak || user.current_streak || 0} />
                   <GamifyBadge type="xp" value={user.xp || 0} />
                   <GamifyBadge 
                     type="coins" 
@@ -112,10 +116,10 @@ export default function Layout() {
                 {/* User Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="relative h-10 w-10 rounded-full border-2 border-slate-200 hover:border-indigo-400 transition-colors p-0.5 outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer shrink-0">
+                    <button className="relative h-9 w-9 rounded-full border border-slate-200 hover:border-indigo-400 transition-colors p-0.5 outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer shrink-0">
                       <Avatar className="h-full w-full">
                         <AvatarImage src={user.avatar_url} alt={user.display_name || user.username} />
-                        <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold text-sm">
+                        <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold text-xs">
                           {getInitials(user.display_name || user.username)}
                         </AvatarFallback>
                       </Avatar>
@@ -152,7 +156,7 @@ export default function Layout() {
                   variant="secondary" 
                   size="sm" 
                   onClick={() => navigate('/login')}
-                  className="h-8 sm:h-9 px-2.5 sm:px-3.5 text-xs sm:text-sm font-bold text-slate-700 hover:text-indigo-600"
+                  className="h-9 px-3 sm:px-4 text-xs sm:text-sm font-bold text-slate-700 hover:text-indigo-600"
                 >
                   {t.layout?.auth?.login || 'Đăng nhập'}
                 </TactileButton>
@@ -160,11 +164,10 @@ export default function Layout() {
                   variant="primary" 
                   size="sm" 
                   onClick={() => navigate('/register')}
-                  className="h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm font-extrabold"
+                  className="h-9 px-3.5 sm:px-5 text-xs sm:text-sm font-extrabold"
                 >
-                  <Sparkles className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
-                  <span className="hidden sm:inline">{t.layout?.auth?.register || 'Bắt đầu miễn phí'}</span>
-                  <span className="sm:hidden">Đăng ký</span>
+                  <Sparkles className="w-3.5 h-3.5 mr-1.5 hidden sm:inline" />
+                  <span>{t.layout?.auth?.register || 'Bắt đầu học'}</span>
                 </TactileButton>
               </div>
             )}
@@ -178,8 +181,8 @@ export default function Layout() {
       </main>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 md:hidden">
-        <div className="flex justify-around items-center py-1.5 px-2">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 md:hidden">
+        <div className="flex justify-around items-center h-15 px-2">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = path === '/quests'
               ? REWARD_PATHS.includes(location.pathname)
@@ -188,12 +191,12 @@ export default function Layout() {
               <Link
                 key={path}
                 to={path}
-                className={`relative flex flex-col items-center gap-1 py-1.5 px-4 rounded-xl text-xs font-bold transition-colors ${
+                className={`relative flex flex-col items-center justify-center gap-1 py-1 px-3 rounded-xl text-[11px] font-bold transition-colors ${
                   isActive ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
                 <div className="relative">
-                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : ''}`} />
+                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
                   {path === '/quests' && claimableCount > 0 && (
                     <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 text-white text-[8px] rounded-full flex items-center justify-center font-extrabold">
                       {claimableCount}
@@ -207,21 +210,21 @@ export default function Layout() {
           {user ? (
             <Link
               to="/profile"
-              className={`flex flex-col items-center gap-1 py-1.5 px-4 rounded-xl text-xs font-bold transition-colors ${
+              className={`flex flex-col items-center justify-center gap-1 py-1 px-3 rounded-xl text-[11px] font-bold transition-colors ${
                 location.pathname === '/profile' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
-              <User className={`w-5 h-5 ${location.pathname === '/profile' ? 'stroke-[2.5]' : ''}`} />
+              <User className={`w-5 h-5 ${location.pathname === '/profile' ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
               <span>{t.layout?.nav?.profile || 'Hồ sơ'}</span>
             </Link>
           ) : (
             <Link
               to="/login"
-              className={`flex flex-col items-center gap-1 py-1.5 px-4 rounded-xl text-xs font-bold transition-colors ${
+              className={`flex flex-col items-center justify-center gap-1 py-1 px-3 rounded-xl text-[11px] font-bold transition-colors ${
                 location.pathname === '/login' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
-              <User className={`w-5 h-5 ${location.pathname === '/login' ? 'stroke-[2.5]' : ''}`} />
+              <User className={`w-5 h-5 ${location.pathname === '/login' ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
               <span>Đăng nhập</span>
             </Link>
           )}

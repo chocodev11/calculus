@@ -1,4 +1,4 @@
-# Calculus Studio
+# TiaMath Studio
 
 Studio là nơi review nội dung JSON/DSL trước khi publish. Nó không compile
 lesson trong browser và chỉ đọc draft/published từ API.

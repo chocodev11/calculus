@@ -48,7 +48,8 @@ class Settings(BaseSettings):
         validate_default=True,
     )
 
-    app_name: str = "Calculus API"
+    brand_name: str = "TiaMath"
+    app_name: str = "TiaMath API"
     app_env: Literal["local", "production"] = "local"
     debug: bool = True
 

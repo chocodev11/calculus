@@ -2,7 +2,7 @@
 ## Chuyên đề Mệnh đề và Tập hợp Toán 10 — Bài 1. MỆNH ĐỀ
 ### Tài liệu nguồn: `chuyen-de-menh-de-va-tap-hop-toan-10.pdf` (Trang 1 – 19)
 
-> **Mục tiêu:** 100% 70 câu hỏi (C1–C70) và toàn bộ 6 mục lý thuyết, 3 dạng bài tập chuẩn trong tài liệu nguồn được ánh xạ đầy đủ vào hệ thống kỹ năng, bài học và ngân hàng đánh giá năng lực của Calculus.
+> **Mục tiêu:** 100% 70 câu hỏi (C1–C70) và toàn bộ 6 mục lý thuyết, 3 dạng bài tập chuẩn trong tài liệu nguồn được ánh xạ đầy đủ vào hệ thống kỹ năng, bài học và ngân hàng đánh giá năng lực của TiaMath.
 
 ---
 

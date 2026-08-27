@@ -4,6 +4,7 @@ import { CheckCircle2, XCircle, Loader2, Mail, ArrowRight } from 'lucide-react'
 import api from '../lib/api'
 import { useAuthStore } from '../lib/store'
 import { TactileButton } from '../components/ui/tactile-button'
+import { BRAND } from '../lib/brand'
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams()
@@ -127,7 +128,7 @@ export default function VerifyEmail() {
 
           <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-xs font-semibold text-slate-400">
             <Mail className="w-4 h-4" />
-            <span>Calculus.app • Nền tảng học toán tương tác</span>
+            <span>{BRAND.name} • {BRAND.tagline}</span>
           </div>
 
         </div>

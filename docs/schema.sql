@@ -1,5 +1,5 @@
 -- ============================================
--- CALCULUS INTERACTIVE LEARNING PLATFORM
+-- TIAMATH INTERACTIVE LEARNING PLATFORM
 -- Database Schema (PostgreSQL/SQLite compatible)
 -- ============================================
 

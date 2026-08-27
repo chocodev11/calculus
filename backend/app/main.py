@@ -58,7 +58,7 @@ app.include_router(sandbox_router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
-    return {"message": "Calculus API", "version": "1.0.0"}
+    return {"message": f"{settings.brand_name} API", "version": "1.0.0"}
 
 
 @app.get("/health")

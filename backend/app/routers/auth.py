@@ -34,7 +34,7 @@ async def _send_verification_email(user: User):
     await asyncio.to_thread(
         send_html_email,
         user.email,
-        "Verify Calculus Account",
+        f"Verify {settings.brand_name} Account",
         html,
     )
 

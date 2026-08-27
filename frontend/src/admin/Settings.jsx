@@ -1,4 +1,5 @@
 import { Save } from 'lucide-react'
+import { BRAND } from '../lib/brand'
 
 export default function AdminSettings() {
   return (
@@ -15,7 +16,7 @@ export default function AdminSettings() {
             </label>
             <input
               type="text"
-              defaultValue="Calculus App"
+              defaultValue={BRAND.name}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>

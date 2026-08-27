@@ -1,4 +1,4 @@
-# Calculus Interactive Learning Platform - API Documentation
+# TiaMath Interactive Learning Platform - API Documentation
 
 > Runtime contract updated 2026-08-21: examples later in this document may be
 > legacy envelopes. New learner code uses the response shapes in this section.

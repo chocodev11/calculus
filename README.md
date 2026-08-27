@@ -1,8 +1,12 @@
-# Calculus
+# TiaMath
 
-Nền tảng học toán tương tác gồm React/Vite ở frontend và FastAPI/SQLAlchemy ở
-backend. Nội dung bài học là JSON/DSL khai báo, được lưu theo version trong
-database; frontend không thực thi JavaScript do LLM sinh ra.
+TiaMath là nền tảng học Toán tương tác cho học sinh lớp 10–12 theo chương trình
+GDPT 2018. Ứng dụng gồm React/Vite ở frontend và FastAPI/SQLAlchemy ở backend.
+Nội dung bài học là JSON/DSL khai báo, được lưu theo version trong database;
+frontend không thực thi JavaScript do LLM sinh ra.
+
+Các định danh nội bộ như `calculus.db`, package name và API path được giữ lại
+trong giai đoạn migration để bảo toàn dữ liệu và deep link cũ.
 
 ## Chạy local
 

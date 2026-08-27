@@ -8,15 +8,15 @@ web
 
 ## Users
 
-High school and undergraduate STEM students, self-taught calculus enthusiasts, and exam preppers (AP Calculus, university entrance, Vietnamese high school national exam) who need deep geometric intuition and consistent daily study habits rather than rote formula memorization.
+Học sinh Việt Nam lớp 10–12, giáo viên và người tự học cần hiểu bản chất Toán học theo chương trình GDPT 2018 thay vì học thuộc công thức.
 
 ## Product Purpose
 
-Transform abstract, intimidating calculus (Limits, Derivatives, Integrals, Optimization) into intuitive, hands-on, and deeply engaging learning experiences. The platform combines the interactive discovery and visual proofs of Brilliant.org with the habit-forming gamification, tactile micro-interactions, and bite-sized progression of Duolingo.
+Biến các khái niệm Toán học trừu tượng thành trải nghiệm trực quan, có tương tác và có lộ trình. TiaMath kết hợp khám phá bằng mô phỏng, bài học ngắn, phản hồi tức thì và tiến bộ được ghi nhận.
 
 ## Positioning
 
-Unlike static video lectures (Khan Academy, YouTube) or dry textbook problem sets, Calculus makes mathematical intuition tactile: every derivative is a live secant line you physically drag to the limit, every chain rule is a time-stepped geometric gear, and every step rewards daily momentum with XP, streaks, quests, and visual mastery badges.
+TiaMath giúp người học chuyển qua lại giữa hình ảnh, ký hiệu và bài tập: kéo thả mô phỏng, kiểm tra giả thuyết, đọc lời giải và luyện tập theo chủ điểm. Mỗi bước học có thể đóng góp vào XP, streak, nhiệm vụ và tiến độ mastery.
 
 ## Operating Context
 
@@ -32,12 +32,13 @@ Modern desktop and mobile web browsers. Students interact via touch and mouse dr
 
 ## Brand Commitments
 
-- **Name**: Calculus (Calculus.app)
-- **Aesthetic Direction**: "Calculus Kinetic" (Academic Tactile) — an authentic synthesis of academic mathematical precision and playful tactile gamification. Replaces generic gradient noise and disparate styling with a dedicated mathematical design system (Euler Indigo, Tangent Cyan, Kinetic Amber, Vector Emerald) and 2.5D tactile interaction physics.
+- **Name**: TiaMath
+- **Positioning**: Nền tảng học Toán hiểu bản chất cho Lớp 10–12 theo GDPT 2018.
+- **Aesthetic Direction**: "TiaMath Kinetic" (Academic Tactile) — mathematical precision combined with restrained tactile interaction. The system uses Euler Indigo, Tangent Cyan, Kinetic Amber, Vector Emerald and 2.5D interaction physics.
 
 ## Evidence on Hand
 
-- Complete course content in `data/courses/` (`dao-ham` 3 chapters & 9 lessons, `gioi-han.json`, `tich-phan.json`).
+- A published Toán 10 course artifact in `data/courses/` covering Mệnh đề và Logic.
 - 4 production-tested interactive engine prototypes in `data/interaction_data/` and `frontend/src/components/interactions/`.
 - 17 structured achievements in `data/achievements.json`.
 - Working FastAPI backend with database sync in `backend/`.

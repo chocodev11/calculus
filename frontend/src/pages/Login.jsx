@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore, useUIStore } from '../lib/store'
 import { Eye, EyeOff, Loader2, Check, X, Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react'
 import { TactileButton } from '../components/ui/tactile-button'
+import { BRAND } from '../lib/brand'
 
 /* ─── Reusable Input Field ─────────────────────────────────────────── */
 function InputField({ icon: Icon, label, hint, right, ...props }) {
@@ -360,13 +361,12 @@ export default function Login() {
         
         {/* Brand Header */}
         <div className="text-center mb-6 space-y-2">
-          <Link to="/" className="inline-flex items-center gap-2 group mb-1">
-            <div className="w-11 h-11 rounded-2xl bg-indigo-600 border-b-2 border-indigo-800 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
-              <span className="font-serif italic font-extrabold text-2xl leading-none">∫</span>
-            </div>
-            <span className="font-extrabold text-2xl tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
-              Calculus<span className="text-indigo-600">.app</span>
-            </span>
+          <Link to="/" className="inline-flex items-center gap-2 group mb-1" aria-label={`${BRAND.name} - Trang chủ`}>
+            <img
+              src={BRAND.logo}
+              alt={BRAND.name}
+              className="h-11 w-auto max-w-[190px] object-contain transition-transform group-hover:scale-[1.02]"
+            />
           </Link>
           <p className="text-slate-500 text-xs sm:text-sm font-semibold">
             {tab === 'login' 

@@ -1,6 +1,6 @@
-# Calculus Kinetic: Interactive Control Taxonomy & Tactile Design System
+# TiaMath Kinetic: Interactive Control Taxonomy & Tactile Design System
 
-Tài liệu quy chuẩn hóa kiến trúc điều khiển tương tác và ngôn ngữ thiết kế **Calculus Kinetic (Academic Tactile)** cho toàn bộ ứng dụng và Math Sandbox của Calculus.app.
+Tài liệu quy chuẩn hóa kiến trúc điều khiển tương tác và ngôn ngữ thiết kế **TiaMath Kinetic (Academic Tactile)** cho toàn bộ ứng dụng và Math Sandbox của TiaMath.
 
 ---
 
