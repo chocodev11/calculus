@@ -43,3 +43,19 @@ install:
 # Chạy kiểm tra toàn bộ dữ liệu khóa học
 validate:
     just lesson-validate
+
+# Chụp ảnh preview màn hình web nhanh (~2s, không tốn token mở browser)
+preview route="":
+    node tools/preview.mjs {{route}}
+
+# Chụp toàn bộ chiều dài trang web (full-page)
+preview-full route="":
+    node tools/preview.mjs {{route}} --full
+
+# Chụp preview trên giao diện mobile (390x844)
+preview-mobile route="":
+    node tools/preview.mjs {{route}} --viewport mobile
+
+# Tự động chụp lại preview mỗi khi code frontend thay đổi
+preview-watch route="":
+    node tools/preview.mjs {{route}} --watch

@@ -176,13 +176,13 @@ export default function Layout() {
       </header>
 
       {/* Main Page Body */}
-      <main className="flex-1 w-full pb-20 md:pb-6">
+      <main className="flex-1 w-full pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:pb-6">
         <AnimatedOutlet />
       </main>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 md:hidden">
-        <div className="flex justify-around items-center h-15 px-2">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 md:hidden pb-[env(safe-area-inset-bottom,0px)] shadow-[0_-2px_10px_rgba(0,0,0,0.04)]">
+        <div className="flex items-stretch h-16 px-1">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = path === '/quests'
               ? REWARD_PATHS.includes(location.pathname)
@@ -191,41 +191,41 @@ export default function Layout() {
               <Link
                 key={path}
                 to={path}
-                className={`relative flex flex-col items-center justify-center gap-1 py-1 px-3 rounded-xl text-[11px] font-bold transition-colors ${
-                  isActive ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+                className={`flex-1 h-full flex flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-bold transition-colors select-none ${
+                  isActive ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600 active:text-slate-800'
                 }`}
               >
-                <div className="relative">
-                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
+                <div className="relative flex items-center justify-center">
+                  <Icon className={`w-6 h-6 ${isActive ? 'stroke-[2.4]' : 'stroke-[1.8]'}`} />
                   {path === '/quests' && claimableCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 text-white text-[8px] rounded-full flex items-center justify-center font-extrabold">
+                    <span className="absolute -top-1 -right-2 w-4 h-4 bg-amber-500 text-white text-[9px] rounded-full flex items-center justify-center font-extrabold shadow-xs">
                       {claimableCount}
                     </span>
                   )}
                 </div>
-                <span>{label}</span>
+                <span className="leading-tight tracking-tight">{label}</span>
               </Link>
             )
           })}
           {user ? (
             <Link
               to="/profile"
-              className={`flex flex-col items-center justify-center gap-1 py-1 px-3 rounded-xl text-[11px] font-bold transition-colors ${
-                location.pathname === '/profile' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+              className={`flex-1 h-full flex flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-bold transition-colors select-none ${
+                location.pathname === '/profile' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600 active:text-slate-800'
               }`}
             >
-              <User className={`w-5 h-5 ${location.pathname === '/profile' ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
-              <span>{t.layout?.nav?.profile || 'Hồ sơ'}</span>
+              <User className={`w-6 h-6 ${location.pathname === '/profile' ? 'stroke-[2.4]' : 'stroke-[1.8]'}`} />
+              <span className="leading-tight tracking-tight">{t.layout?.nav?.profile || 'Hồ sơ'}</span>
             </Link>
           ) : (
             <Link
               to="/login"
-              className={`flex flex-col items-center justify-center gap-1 py-1 px-3 rounded-xl text-[11px] font-bold transition-colors ${
-                location.pathname === '/login' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+              className={`flex-1 h-full flex flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-bold transition-colors select-none ${
+                location.pathname === '/login' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600 active:text-slate-800'
               }`}
             >
-              <User className={`w-5 h-5 ${location.pathname === '/login' ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
-              <span>Đăng nhập</span>
+              <User className={`w-6 h-6 ${location.pathname === '/login' ? 'stroke-[2.4]' : 'stroke-[1.8]'}`} />
+              <span className="leading-tight tracking-tight">Đăng nhập</span>
             </Link>
           )}
         </div>

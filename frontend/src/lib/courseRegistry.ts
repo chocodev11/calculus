@@ -25,6 +25,7 @@ export interface Chapter {
   description?: string
   order?: number
   step_ids?: string[]
+  step_titles?: Record<string, string>
   steps?: StepMeta[]
 }
 
@@ -65,9 +66,10 @@ export function getAllCourses(): Course[] {
     // Enrich steps in chapters
     const chapters = (data.chapters || []).map((ch: any) => {
       const stepIds = ch.step_ids || []
+      const stepTitles = ch.step_titles || {}
       const steps: StepMeta[] = stepIds.map((stepId: string, idx: number) => ({
         id: stepId,
-        title: stepId.replace(/^\d+-/, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        title: stepTitles[stepId] || stepId.replace(/^\d+-/, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
         order: idx,
         courseSlug,
         chapterSlug: ch.slug || ch.id || 'default'

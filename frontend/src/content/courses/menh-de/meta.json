@@ -29,7 +29,16 @@
         "05-dao-tuong-duong-dieu-kien-can-du",
         "06-voi-moi-ton-tai-va-nhieu-bien",
         "07-tong-hop-tham-so-phan-vi-du-vdc"
-      ]
+      ],
+      "step_titles": {
+        "01-menh-de-va-tinh-dung-sai": "Mệnh đề và tính đúng sai",
+        "02-menh-de-chua-bien": "Mệnh đề chứa biến",
+        "03-phu-dinh-menh-de": "Phủ định của mệnh đề",
+        "04-menh-de-keo-theo": "Mệnh đề kéo theo",
+        "05-dao-tuong-duong-dieu-kien-can-du": "Mệnh đề đảo · Tương đương · Điều kiện cần và đủ",
+        "06-voi-moi-ton-tai-va-nhieu-bien": "Lượng từ ∀, ∃ và mệnh đề nhiều biến",
+        "07-tong-hop-tham-so-phan-vi-du-vdc": "Tổng hợp tham số · Phản ví dụ và VDC"
+      }
     }
   ]
 }

@@ -236,7 +236,7 @@ function CourseOverviewCard({ story, totalLessons, completedLessons, needsEnroll
     <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 space-y-5">
       
       {/* Icon / Illustration */}
-      <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center p-2.5">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center p-2.5 overflow-hidden">
         {illustrationUrl ? (
           <img
             src={illustrationUrl}

@@ -9,6 +9,7 @@ import {
   Compass,
   Lightbulb,
   Sparkles,
+  Zap,
 } from 'lucide-react'
 import * as ReactKatexModule from 'react-katex'
 import 'katex/dist/katex.min.css'
@@ -36,22 +37,34 @@ export default function Landing() {
   return (
     <div className="w-full overflow-hidden bg-slate-50 font-sans text-slate-900">
       <main>
-        <section className="mx-auto w-full max-w-7xl px-4 pb-20 pt-14 sm:px-6 lg:pb-28 lg:pt-20" aria-labelledby="landing-title">
-          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[0.83fr_1.17fr] lg:gap-16">
+        {/* ── HERO SECTION (Chỉ tinh chỉnh phần này) ─────────────────── */}
+        <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-10 sm:px-6 lg:pb-24 lg:pt-16" aria-labelledby="landing-title">
+          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
             <motion.div
-              initial={{ opacity: 0, y: 18 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="max-w-xl"
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              className="lg:col-span-5"
             >
-              <h1 id="landing-title" className="text-4xl font-extrabold leading-[1.08] tracking-[-0.035em] sm:text-5xl lg:text-6xl">
-                <span className="block">Chạm để hiểu,</span>
-                <span className="block text-indigo-600">Nhìn để tin.</span>
+              {/* Eyebrow Badge */}
+              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200/80 bg-indigo-50 px-3.5 py-1.5 text-xs font-extrabold text-indigo-700 shadow-xs">
+                <Sparkles className="h-3.5 w-3.5 text-indigo-600" aria-hidden="true" />
+                <span>Nền tảng Toán học trực quan chuẩn GDPT 2018</span>
+              </div>
+
+              {/* Natural, Balanced Headline */}
+              <h1 id="landing-title" className="mt-5 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-[3.5rem] leading-[1.08]">
+                Chạm để hiểu.<br />
+                <span className="text-indigo-600">Nhìn để tin.</span>
               </h1>
-              <p className="mt-6 max-w-lg text-base leading-relaxed text-slate-600 sm:text-lg">
-                Tạm biệt học vẹt. Khám phá bản chất chương trình Toán THPT qua các mô phỏng tương tác, kéo thả trực quan và phản hồi tức thì chuẩn GDPT 2018.
+
+              {/* Subtitle */}
+              <p className="mt-5 max-w-lg text-base leading-relaxed text-slate-600 sm:text-lg">
+                Khám phá bản chất Toán THPT qua các mô phỏng tương tác kéo thả và phản hồi trực quan tức thì.
               </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+
+              {/* CTAs */}
+              <div className="mt-8 flex flex-col gap-3.5 sm:flex-row sm:items-center">
                 <TactileButton
                   as={Link}
                   to={firstCourse ? `/course/${firstCourse.slug}` : '/explore'}
@@ -62,30 +75,45 @@ export default function Landing() {
                   Thử bài đầu tiên
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </TactileButton>
-                <TactileButton
-                  as={Link}
+                <Link
                   to="/explore"
-                  variant="secondary"
-                  size="lg"
-                  className="w-full sm:w-auto"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-100 hover:text-indigo-600 sm:justify-start"
                 >
-                  <Compass className="h-4 w-4 text-slate-500" aria-hidden="true" />
-                  Xem các chủ điểm
-                </TactileButton>
+                  <Compass className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <span>Xem các chủ điểm</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 text-slate-400" aria-hidden="true" />
+                </Link>
+              </div>
+
+              {/* Micro-Trust Chips */}
+              <div className="mt-8 flex flex-wrap items-center gap-2 pt-2 text-xs font-bold text-slate-500">
+                <span className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/70 bg-white px-3 py-1.5 shadow-xs">
+                  <Zap className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
+                  100% Trực quan
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/70 bg-white px-3 py-1.5 shadow-xs">
+                  <Check className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+                  Chuẩn SGK mới
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/70 bg-white px-3 py-1.5 shadow-xs">
+                  <Sparkles className="h-3.5 w-3.5 text-indigo-600" aria-hidden="true" />
+                  Miễn phí trải nghiệm
+                </span>
               </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.55, delay: 0.08, ease: 'easeOut' }}
-              className="flex justify-center lg:justify-end"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.08, ease: 'easeOut' }}
+              className="flex justify-center lg:col-span-7 lg:justify-end"
             >
               <LandingMathStage />
             </motion.div>
           </div>
         </section>
 
+        {/* ── CÁC PHẦN DƯỚI GIỮ NGUYÊN HOÀN TOÀN ─────────────────────── */}
         <section className="border-y border-slate-200 bg-white" aria-label="Thông tin về TiaMath">
           <div className="mx-auto grid max-w-7xl grid-cols-1 sm:grid-cols-3">
             <ProofItem value="3" label="mô phỏng để thử ngay" />
@@ -150,9 +178,8 @@ export default function Landing() {
                     type="button"
                     aria-pressed={isActive}
                     onClick={() => setSelectedGrade(grade)}
-                    className={`min-h-11 flex-1 rounded-xl px-4 text-sm font-extrabold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 md:flex-none ${
-                      isActive ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-                    }`}
+                    className={`min-h-11 flex-1 rounded-xl px-4 text-sm font-extrabold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 md:flex-none ${isActive ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                      }`}
                   >
                     THPT {grade}
                   </button>
@@ -201,7 +228,6 @@ export default function Landing() {
               <div className="flex flex-wrap gap-x-6 gap-y-2">
                 <Link to="/explore" className="transition-colors hover:text-white">Khám phá</Link>
                 <Link to="/login" className="transition-colors hover:text-white">Đăng nhập</Link>
-                <span>Học qua mô phỏng và bài học ngắn</span>
               </div>
             </footer>
           </div>

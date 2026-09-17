@@ -107,7 +107,7 @@ export default function DevTerminal() {
       <button
         onClick={() => setOpen(o => !o)}
         title="Dev Terminal"
-        className={`fixed bottom-5 right-5 z-[9999] w-12 h-12 rounded-full flex items-center justify-center
+        className={`fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] md:bottom-5 right-4 sm:right-5 z-[9999] w-12 h-12 rounded-full flex items-center justify-center
           font-mono font-bold text-sm border border-[#313244] transition-all duration-200
           ${open
             ? 'bg-[#1e1e2e] text-[#a6e3a1] ring-2 ring-[#a6e3a1]/40 rotate-45'
@@ -120,8 +120,8 @@ export default function DevTerminal() {
       {/* Panel */}
       {open && (
         <div
-          className="fixed bottom-20 right-5 z-[9998] flex flex-col
-            w-[420px] h-[520px] max-h-[80vh]
+          className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] md:bottom-20 right-4 sm:right-5 z-[9998] flex flex-col
+            w-[420px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[75vh]
             rounded-2xl overflow-hidden
             border border-[#313244]"
           style={{ background: '#1e1e2e' }}

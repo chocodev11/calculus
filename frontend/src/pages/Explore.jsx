@@ -211,16 +211,17 @@ function CourseCard({ course }) {
       {/* Visual & Info */}
       <div className="flex items-start gap-4 mb-4">
         {course.illustration ? (
-          <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-indigo-50/50 border border-indigo-100 p-2 shrink-0 flex items-center justify-center transition-transform group-hover:scale-105 duration-150">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-indigo-50/50 border border-indigo-100 p-2 shrink-0 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 duration-150">
             <img 
               src={course.illustration} 
               className="w-full h-full object-contain"
               alt={course.title}
+              onError={e => { e.target.style.display = 'none' }}
             />
           </div>
         ) : (
-          <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0 transition-transform group-hover:scale-105 duration-150">
-            <GraduationCap className="w-9 h-9" />
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0 transition-transform group-hover:scale-105 duration-150">
+            <GraduationCap className="w-8 h-8 sm:w-9 sm:h-9" />
           </div>
         )}
 

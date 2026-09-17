@@ -1,0 +1,14 @@
+{
+  "name": "calculus-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "node tools/preview.mjs",
+    "preview:full": "node tools/preview.mjs --full",
+    "preview:mobile": "node tools/preview.mjs --viewport mobile",
+    "preview:watch": "node tools/preview.mjs --watch"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.11.0"
+  }
+}
