@@ -53,8 +53,8 @@ export function createSession(
   const manifest = loadManifest(rawManifest)
   const plugin = assertPluginManifest(manifest, registry)
   const id = sessionId()
-  let state = clone(plugin.createInitialState(manifest))
-  let result = plugin.recompute(manifest, state)
+  let result = plugin.recompute(manifest, clone(plugin.createInitialState(manifest)))
+  let state = result.state
   const history: PrimitiveState[] = []
   const emitted: RuntimeEvent[] = []
   let sequence = 0
@@ -76,24 +76,43 @@ export function createSession(
 
   const currentSnapshot = (): SandboxSnapshot => snapshotFromResult(manifest, result, history.length)
 
+  // Plugins may normalize state (e.g. record visited rows), so their output becomes the source of truth.
   const recompute = (nextState: PrimitiveState) => {
-    state = clone(nextState)
-    result = plugin.recompute(manifest, state)
+    result = plugin.recompute(manifest, clone(nextState))
+    state = result.state
+    return currentSnapshot()
+  }
+
+  // State captured before the first transient update of a gesture; one undo returns to it.
+  let gestureBase: PrimitiveState | null = null
+
+  // Recompute first: when a plugin throws, state, history and the event log stay untouched.
+  const commit = (nextState: PrimitiveState, transient: boolean | undefined, type: string, payload: JsonObject) => {
+    const before = gestureBase ?? clone(state)
+    recompute(nextState)
+    if (transient) {
+      gestureBase = before
+      return currentSnapshot()
+    }
+    history.push(before)
+    gestureBase = null
+    emit(type, payload)
     return currentSnapshot()
   }
 
   const dispatch = (action: SandboxAction): SandboxSnapshot => {
     if (action.type === 'undo') {
-      const previous = history.pop()
+      const previous = gestureBase ?? history[history.length - 1]
       if (!previous) return currentSnapshot()
+      recompute(previous)
+      if (gestureBase) gestureBase = null
+      else history.pop()
       emit('undo')
-      return recompute(previous)
+      return currentSnapshot()
     }
 
     if (action.type === 'reset') {
-      history.push(clone(state))
-      emit('reset')
-      return recompute(plugin.createInitialState(manifest))
+      return commit(plugin.createInitialState(manifest), false, 'reset', {})
     }
 
     if (action.type === 'show_hint') {
@@ -102,23 +121,22 @@ export function createSession(
     }
 
     if (action.type === 'submit_step') {
-      history.push(clone(state))
-      emit('solution_step_submitted', { stepId: action.stepId, value: action.value })
-      return recompute({ ...state, [`step:${action.stepId}`]: action.value })
+      return commit({ ...state, [`step:${action.stepId}`]: action.value }, false, 'solution_step_submitted', { stepId: action.stepId, value: action.value })
     }
 
     if (action.type === 'select') {
-      history.push(clone(state))
-      emit('selection_changed', { targetId: action.targetId, value: action.value })
-      return recompute({ ...state, [`selection:${action.targetId}`]: action.value })
+      return commit({ ...state, [`selection:${action.targetId}`]: action.value }, false, 'selection_changed', { targetId: action.targetId, value: action.value })
+    }
+
+    if (action.type === 'manipulate') {
+      if (!plugin.manipulableKeys?.includes(action.key)) throw new Error(`Scene key is not manipulable: ${action.key}`)
+      return commit({ ...state, [action.key]: action.value }, action.transient, 'scene_manipulated', { key: action.key, value: action.value })
     }
 
     const control = manifest.controls.find(item => item.id === action.controlId)
     if (!control) throw new Error(`Unknown control: ${action.controlId}`)
     const value = normalizeControlValue(control, action.value) as JsonValue
-    history.push(clone(state))
-    emit('control_changed', { controlId: action.controlId, value })
-    return recompute({ ...state, [control.id]: value })
+    return commit({ ...state, [control.id]: value }, action.transient, 'control_changed', { controlId: action.controlId, value })
   }
 
   emit('sandbox_loaded')

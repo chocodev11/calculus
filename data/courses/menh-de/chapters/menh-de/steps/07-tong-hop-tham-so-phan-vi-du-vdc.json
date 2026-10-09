@@ -51,7 +51,7 @@
               "schemaVersion": "1.0",
               "kind": "math.sandbox",
               "id": "menh_de_07_parameter",
-              "version": "1",
+              "version": "2",
               "archetypeId": "logic.parameter_truth",
               "domainId": "logic",
               "level": "advanced_application",
@@ -99,7 +99,6 @@
                   "id": "c_conclude",
                   "type": "choice",
                   "label": "Khi m = 0, mệnh đề Pm ⇒ Q có đúng không?",
-                  "initial": "false",
                   "options": [
                     "true",
                     "false"

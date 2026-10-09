@@ -84,6 +84,7 @@ export interface ControlSpec {
   step?: number
   initial?: JsonValue
   options?: JsonValue[]
+  optionLabels?: Record<string, string>
 }
 
 export interface GoalSpec {
@@ -217,8 +218,11 @@ export interface SandboxSnapshot extends RecomputeResult {
   historyDepth: number
 }
 
+// `transient` marks an in-progress gesture: state updates live, but history and
+// events are written once when the gesture commits with a non-transient action.
 export type SandboxAction =
-  | { type: 'set_control'; controlId: string; value: JsonValue }
+  | { type: 'set_control'; controlId: string; value: JsonValue; transient?: boolean }
+  | { type: 'manipulate'; key: string; value: JsonValue; transient?: boolean }
   | { type: 'select'; targetId: string; value: JsonValue }
   | { type: 'submit_step'; stepId: string; value: JsonValue }
   | { type: 'show_hint'; hintId?: string }

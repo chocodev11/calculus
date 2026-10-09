@@ -10,6 +10,8 @@ import type {
 export interface SandboxPlugin {
   readonly id: string
   readonly domainId: SandboxManifest['domainId']
+  /** State keys the learner may change by manipulating the scene directly. */
+  readonly manipulableKeys?: readonly string[]
   validateManifest(manifest: SandboxManifest): string[]
   createInitialState(manifest: SandboxManifest): PrimitiveState
   recompute(manifest: SandboxManifest, state: PrimitiveState): RecomputeResult

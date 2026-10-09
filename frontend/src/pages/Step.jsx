@@ -57,6 +57,9 @@ export default function Step() {
   const [adaptiveSession, setAdaptiveSession] = useState(null)
   const [adaptiveProgress, setAdaptiveProgress] = useState(null)
   const [adaptiveFinished, setAdaptiveFinished] = useState(false)
+  // Sandbox slides report completion; leaving one unfinished asks for a single confirmation.
+  const [sandboxComplete, setSandboxComplete] = useState({})
+  const [skipPromptSlide, setSkipPromptSlide] = useState(null)
 
   const [showCompleteScreen, setShowCompleteScreen] = useState(false)
   const [completionError, setCompletionError] = useState(null)
@@ -151,6 +154,8 @@ export default function Step() {
       setQuizAnswers({})
       setQuizSubmitted({})
       setQuizResults({})
+      setSandboxComplete({})
+      setSkipPromptSlide(null)
       setTotalXpEarned(0)
       setShowCompleteScreen(false)
       setCompletionError(null)
@@ -225,6 +230,13 @@ export default function Step() {
     const blocks = currentSlide?.blocks || []
     return blocks.some(b => (b.type || b.block_type) === 'interaction')
   }, [currentSlide])
+
+  const isSandboxSlide = useMemo(() => {
+    const blocks = currentSlide?.blocks || []
+    return blocks.some(b => (b.type || b.block_type) === 'interaction'
+      && String((b.content || b.block_data || {}).interactionType || '').toLowerCase() === 'sandbox')
+  }, [currentSlide])
+  const showSkipPrompt = isSandboxSlide && skipPromptSlide === currentSlideIndex && !sandboxComplete[currentSlideIndex]
 
   const currentQuizBlocks = useMemo(() => {
     if (!currentSlide?.blocks) return []
@@ -378,6 +390,10 @@ export default function Step() {
   }
 
   const handleFooterAction = async () => {
+    if (isSandboxSlide && !sandboxComplete[currentSlideIndex] && skipPromptSlide !== currentSlideIndex) {
+      setSkipPromptSlide(currentSlideIndex)
+      return
+    }
     if (hasAdaptiveAssessment && !adaptiveFinished) return
     if (hasAdaptiveAssessment && adaptiveFinished) {
       if (isLastSlide) {
@@ -612,6 +628,9 @@ export default function Step() {
                         <InteractionSlide
                           interactionType={content.interactionType}
                           lesson={content.lesson}
+                          onCompletionChange={complete => setSandboxComplete(previous => (
+                            previous[currentSlideIndex] === complete ? previous : { ...previous, [currentSlideIndex]: complete }
+                          ))}
                         />
                       </ErrorBoundary>
                     </div>
@@ -681,7 +700,22 @@ export default function Step() {
       )}>
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
           
-          {quizIsAnswered ? (
+          {showSkipPrompt ? (
+            <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div role="status">
+                <p className="text-base font-extrabold text-slate-900">Bạn chưa làm xong phần thử nghiệm</p>
+                <p className="text-sm font-semibold text-slate-600">Bỏ qua thì vẫn học tiếp được, nhưng em sẽ lỡ phần tự khám phá.</p>
+              </div>
+              <div className="flex gap-3">
+                <TactileButton variant="secondary" size="lg" onClick={handleFooterAction} className="flex-1 sm:flex-none">
+                  Bỏ qua
+                </TactileButton>
+                <TactileButton variant="primary" size="lg" onClick={() => setSkipPromptSlide(null)} className="flex-1 sm:flex-none">
+                  Làm tiếp
+                </TactileButton>
+              </div>
+            </div>
+          ) : quizIsAnswered ? (
             <>
               {/* Feedback Message */}
               <div className="flex items-center gap-3.5">
@@ -1129,7 +1163,7 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
             <MathText text={question} />
           </p>
           <p className="text-xs sm:text-sm font-semibold text-slate-500">
-            Chọn <strong className="text-emerald-700 font-extrabold">Đúng</strong> hoặc <strong className="text-rose-700 font-extrabold">Sai</strong> cho từng khẳng định bên dưới:
+            Chọn <strong className="font-extrabold text-slate-900">Đúng</strong> hoặc <strong className="font-extrabold text-slate-900">Sai</strong> cho từng khẳng định bên dưới:
           </p>
         </div>
 
@@ -1178,39 +1212,23 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
 
                 {/* Dual Tactile 2.5D Action Buttons */}
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                  <button
-                    type="button"
-                    onClick={() => handleSelect(itemKey, true)}
-                    disabled={submitted}
-                    aria-pressed={selectedVal === true}
-                    className={cn(
-                      'px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer select-none min-h-[38px] transition-all',
-                      selectedVal === true
-                        ? 'btn-tactile-success'
-                        : 'btn-tactile-secondary',
-                      submitted && 'cursor-default pointer-events-none opacity-85'
-                    )}
-                  >
-                    <Check className={cn('w-4 h-4 stroke-[3]', selectedVal === true ? 'text-white' : 'text-emerald-600')} />
-                    <span>Đúng</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleSelect(itemKey, false)}
-                    disabled={submitted}
-                    aria-pressed={selectedVal === false}
-                    className={cn(
-                      'px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer select-none min-h-[38px] transition-all',
-                      selectedVal === false
-                        ? 'btn-tactile-danger'
-                        : 'btn-tactile-secondary',
-                      submitted && 'cursor-default pointer-events-none opacity-85'
-                    )}
-                  >
-                    <XIcon className={cn('w-4 h-4 stroke-[3]', selectedVal === false ? 'text-white' : 'text-rose-600')} />
-                    <span>Sai</span>
-                  </button>
+                  {[[true, 'Đúng'], [false, 'Sai']].map(([value, label]) => {
+                    const chosen = selectedVal === value
+                    const state = chosen ? (isItemSubmitted ? (isItemCorrect ? 'correct' : 'incorrect') : 'selected') : 'idle'
+                    return (
+                      <button
+                        key={label}
+                        type="button"
+                        onClick={() => handleSelect(itemKey, value)}
+                        disabled={submitted}
+                        aria-pressed={chosen}
+                        data-state={state}
+                        className="choice-option min-h-[40px] px-4 py-1.5 text-sm"
+                      >
+                        {label}
+                      </button>
+                    )
+                  })}
 
                   {/* Submission Feedback Tag */}
                   {isItemSubmitted && (
@@ -1325,39 +1343,22 @@ function QuizBlock({ block, answer, submitted, result, onAnswer }) {
           const showWrongMark = submitted && result && !result.correct && isSelected
 
           return (
-            <motion.button
+            <button
               key={optValue}
+              type="button"
               onClick={() => !submitted && onAnswer(optValue)}
               disabled={submitted}
-              whileHover={!submitted ? { scale: 1.01 } : {}}
-              whileTap={!submitted ? { scale: 0.99 } : {}}
-              className={cn(
-                'relative w-full min-h-[72px] sm:min-h-[84px] rounded-2xl border-2 flex flex-col items-start justify-center p-3.5 sm:p-5 cursor-pointer text-left transition-colors',
-                showCorrectMark
-                  ? 'bg-emerald-50 border-emerald-500 text-emerald-900'
-                  : showWrongMark
-                  ? 'bg-rose-50 border-rose-500 text-rose-900'
-                  : isSelected
-                  ? 'bg-indigo-50/80 border-indigo-600 text-indigo-950'
-                  : 'bg-white border-slate-200 text-slate-800 hover:border-indigo-300'
-              )}
+              aria-pressed={isSelected}
+              data-state={showCorrectMark ? 'correct' : showWrongMark ? 'incorrect' : isSelected ? 'selected' : 'idle'}
+              className="choice-option w-full min-h-[72px] p-3.5 sm:min-h-[84px] sm:p-5"
             >
-              {/* Option Letter Chip */}
-              <span className={cn(
-                'text-xs font-extrabold mb-1 px-2.5 py-0.5 rounded-lg border transition-colors',
-                showCorrectMark ? 'bg-emerald-200 border-emerald-300 text-emerald-900' :
-                showWrongMark ? 'bg-rose-200 border-rose-300 text-rose-900' :
-                isSelected ? 'bg-indigo-600 border-indigo-700 text-white' :
-                'bg-slate-100 border-slate-200 text-slate-600'
-              )}>
-                {String.fromCharCode(65 + idx)}
-              </span>
-
-              {/* Option Text */}
-              <span className="text-sm sm:text-base font-bold leading-snug">
+              <span className="choice-key">{String.fromCharCode(65 + idx)}</span>
+              <span className="min-w-0 flex-1 text-sm font-bold leading-snug sm:text-base">
                 <MathText text={typeof optLabel === 'string' ? optLabel : String(optLabel)} />
               </span>
-            </motion.button>
+              {showCorrectMark && <Check aria-hidden className="h-5 w-5 shrink-0 stroke-[3] text-emerald-600" />}
+              {showWrongMark && <XIcon aria-hidden className="h-5 w-5 shrink-0 stroke-[3] text-rose-600" />}
+            </button>
           )
         })}
       </div>

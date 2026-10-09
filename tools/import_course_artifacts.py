@@ -1,8 +1,10 @@
-"""One-time import of generated lesson JSON into published LessonVersions.
+"""Import generated lesson JSON into published LessonVersions.
 
 This is a migration tool, not part of the authoring loop.  It is dry-run by
 default and only mirrors existing stable slide keys, so user progress remains
-attached to the same Slide rows.
+attached to the same Slide rows.  Steps that already have a different
+published version are refused unless --republish is given, which publishes the
+artifact as the next version through the same path as the admin publish.
 """
 
 from __future__ import annotations
@@ -28,6 +30,7 @@ from app.content_service import (  # noqa: E402
     lesson_checksum,
     materialize_published_step,
     parse_lesson_content,
+    publish_version,
 )
 from app.lesson_contract import document_payload  # noqa: E402
 from app.models import Step  # noqa: E402
@@ -44,6 +47,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--course", help="Only import one course slug")
     parser.add_argument("--apply", action="store_true", help="Write imported versions")
+    parser.add_argument(
+        "--republish",
+        action="store_true",
+        help="Publish changed artifacts as a new version instead of refusing them",
+    )
     return parser.parse_args()
 
 
@@ -65,6 +73,7 @@ async def run(args: argparse.Namespace) -> None:
     engine = create_async_engine(settings.database_url, echo=False)
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
     imported = 0
+    republished = 0
     skipped = 0
     errors: list[str] = []
 
@@ -83,10 +92,26 @@ async def run(args: argparse.Namespace) -> None:
                 if published is not None and published.checksum == checksum:
                     skipped += 1
                     continue
-                if published is not None:
+                if published is not None and not args.republish:
                     raise ValueError(
-                        f"step already has a different published version: {document.content_key}"
+                        f"step already has a different published version: {document.content_key} "
+                        "(use --republish to publish it as a new version)"
                     )
+                if published is not None:
+                    # The draft only carries the content into publish_version; it is never stored,
+                    # so no orphan draft rows are left behind.
+                    draft = LessonVersion(
+                        step_id=step.id,
+                        manifest_id=document.content_key,
+                        version="draft",
+                        checksum=checksum,
+                        content=document_payload(document),
+                        status="draft",
+                    )
+                    version = await publish_version(db, step, draft)
+                    republished += 1
+                    print(f"{'REPUBLISH' if args.apply else 'PLAN'} {path.relative_to(REPO_ROOT)} -> v{version.version}")
+                    continue
 
                 version = LessonVersion(
                     step_id=step.id,
@@ -117,7 +142,7 @@ async def run(args: argparse.Namespace) -> None:
             await db.rollback()
 
     await engine.dispose()
-    print(f"imported={imported} skipped={skipped} apply={args.apply}")
+    print(f"imported={imported} republished={republished} skipped={skipped} apply={args.apply}")
     if not args.apply:
         print("dry-run only; no database rows were written")
 

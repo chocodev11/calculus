@@ -51,7 +51,7 @@
               "schemaVersion": "1.0",
               "kind": "math.sandbox",
               "id": "menh_de_06_multivariable",
-              "version": "1",
+              "version": "2",
               "archetypeId": "logic.quantifier",
               "domainId": "logic",
               "level": "application",
@@ -75,7 +75,35 @@
                       "expectedVerdict": "true",
                       "expectedNegation": "exists_pair_not_equal",
                       "controlId": "c_v1",
-                      "negationControlId": "c_n1"
+                      "negationControlId": "c_n1",
+                      "visual": {
+                        "variables": [
+                          "x",
+                          "y"
+                        ],
+                        "quantifiers": [
+                          "forall",
+                          "forall"
+                        ],
+                        "expression": "(x+y)^2 == x^2 + 2*x*y + y^2",
+                        "values": {
+                          "x": [
+                            -2,
+                            -1,
+                            0,
+                            1,
+                            2
+                          ],
+                          "y": [
+                            -2,
+                            -1,
+                            0,
+                            1,
+                            2
+                          ]
+                        },
+                        "insight": "Hình vuông cạnh x + y ghép đúng từ x², y² và hai hình chữ nhật xy, nên đẳng thức đúng với mọi cặp chứ không riêng các ô đã thử."
+                      }
                     },
                     {
                       "id": "item2",
@@ -83,7 +111,46 @@
                       "expectedVerdict": "false",
                       "expectedWitness": "x0_y0",
                       "controlId": "c_v2",
-                      "witnessControlId": "c_n2"
+                      "witnessControlId": "c_n2",
+                      "visual": {
+                        "variables": [
+                          "x",
+                          "y"
+                        ],
+                        "quantifiers": [
+                          "forall",
+                          "forall"
+                        ],
+                        "expression": "x^2 + y^2 > 0",
+                        "measure": "x^2 + y^2",
+                        "values": {
+                          "x": [
+                            -2,
+                            -1,
+                            0,
+                            1,
+                            2
+                          ],
+                          "y": [
+                            -2,
+                            -1,
+                            0,
+                            1,
+                            2
+                          ]
+                        },
+                        "witnessOptions": {
+                          "x0_y0": {
+                            "x": 0,
+                            "y": 0
+                          },
+                          "x1_y1": {
+                            "x": 1,
+                            "y": 1
+                          }
+                        },
+                        "insight": "Chỉ một ô (0; 0) cho x² + y² = 0 là đủ bác bỏ khẳng định “với mọi”."
+                      }
                     },
                     {
                       "id": "item3",
@@ -91,7 +158,43 @@
                       "expectedVerdict": "true",
                       "expectedWitness": "x_equals_1",
                       "controlId": "c_v3",
-                      "witnessControlId": "c_n3"
+                      "witnessControlId": "c_n3",
+                      "visual": {
+                        "variables": [
+                          "x",
+                          "y"
+                        ],
+                        "quantifiers": [
+                          "exists",
+                          "forall"
+                        ],
+                        "expression": "x*y == y",
+                        "values": {
+                          "x": [
+                            -2,
+                            -1,
+                            0,
+                            1,
+                            2
+                          ],
+                          "y": [
+                            -2,
+                            -1,
+                            0,
+                            1,
+                            2
+                          ]
+                        },
+                        "witnessOptions": {
+                          "x_equals_1": {
+                            "x": 1
+                          },
+                          "x_equals_0": {
+                            "x": 0
+                          }
+                        },
+                        "insight": "Cột x = 1 sáng trọn vẹn: một giá trị x dùng được cho mọi y. Đảo thứ tự thành ∀y∃x là một khẳng định khác."
+                      }
                     }
                   ]
                 }
@@ -101,7 +204,6 @@
                   "id": "c_v1",
                   "type": "choice",
                   "label": "Chân trị của (1) Hằng đẳng thức (x+y)²",
-                  "initial": "false",
                   "options": [
                     "true",
                     "false"
@@ -115,7 +217,6 @@
                   "id": "c_n1",
                   "type": "choice",
                   "label": "Phủ định của (1)",
-                  "initial": "exists_pair_not_equal",
                   "options": [
                     "exists_pair_not_equal",
                     "forall_pair_not_equal"
@@ -129,7 +230,6 @@
                   "id": "c_v2",
                   "type": "choice",
                   "label": "Chân trị của (2) x² + y² > 0",
-                  "initial": "true",
                   "options": [
                     "true",
                     "false"
@@ -143,7 +243,6 @@
                   "id": "c_n2",
                   "type": "choice",
                   "label": "Phản ví dụ chứng minh (2) sai",
-                  "initial": "none",
                   "options": [
                     "none",
                     "x0_y0",
@@ -159,7 +258,6 @@
                   "id": "c_v3",
                   "type": "choice",
                   "label": "Chân trị của (3) ∃x, ∀y: x.y = y",
-                  "initial": "false",
                   "options": [
                     "true",
                     "false"
@@ -173,7 +271,6 @@
                   "id": "c_n3",
                   "type": "choice",
                   "label": "Nhân chứng x chứng minh (3) đúng",
-                  "initial": "none",
                   "options": [
                     "none",
                     "x_equals_1",

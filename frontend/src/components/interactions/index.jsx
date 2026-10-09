@@ -129,7 +129,7 @@ function StatementPopup({ text, isSandbox }) {
 /**
  * InteractionSlide — renders the correct engine for a given interactionType.
  */
-export default function InteractionSlide({ interactionType, lesson, content }) {
+export default function InteractionSlide({ interactionType, lesson, content, onCompletionChange }) {
   const resolvedType = interactionType || content?.interactionType || content?.interaction_type || content?.type
   const resolvedLesson = lesson || content?.lesson || content?.manifest || content
   const normalizedType = String(resolvedType || '')
@@ -150,7 +150,7 @@ export default function InteractionSlide({ interactionType, lesson, content }) {
 
   return (
     <div className="w-full h-full relative flex flex-col flex-1">
-      <Component lesson={resolvedLesson} />
+      <Component lesson={resolvedLesson} onCompletionChange={onCompletionChange} />
       {prompt && !isSandbox && <StatementPopup text={prompt} isSandbox={isSandbox} />}
     </div>
   )

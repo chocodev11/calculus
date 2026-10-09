@@ -57,14 +57,6 @@
   background-size: 24px 24px;
 }
 
-.math-grid-dense {
-  background-color: #F8FAFC;
-  background-image: 
-    linear-gradient(to right, #F1F5F9 1px, transparent 1px),
-    linear-gradient(to bottom, #F1F5F9 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
@@ -195,6 +187,43 @@
     transform: translateY(2px);
     box-shadow: 0 1px 0 #CBD5E1;
   }
+
+  /* Answer choice: one state grammar for every quiz, sandbox and landing choice.
+     data-state: idle | selected | correct | incorrect. Selection is always Euler Indigo;
+     emerald and crimson appear only after grading, always with a check/cross glyph. */
+  .choice-option {
+    --choice-shadow: #E2E8F0;
+    @apply relative flex items-center gap-3 rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-left font-bold text-slate-800
+           select-none cursor-pointer transition-[transform,box-shadow,background-color,border-color,color] duration-100 ease-out
+           hover:border-indigo-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-100
+           disabled:cursor-default;
+    box-shadow: 0 3px 0 var(--choice-shadow);
+  }
+  .choice-option:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--choice-shadow);
+  }
+  .choice-option[data-state='selected'] {
+    --choice-shadow: #4F46E5;
+    @apply border-indigo-600 bg-indigo-50 text-indigo-950 hover:border-indigo-600;
+  }
+  .choice-option[data-state='correct'] {
+    --choice-shadow: #10B981;
+    @apply border-emerald-500 bg-emerald-50 text-emerald-900 hover:border-emerald-500;
+  }
+  .choice-option[data-state='incorrect'] {
+    --choice-shadow: #EF4444;
+    @apply border-rose-500 bg-rose-50 text-rose-900 hover:border-rose-500;
+  }
+
+  /* Letter / glyph badge inside a choice, tinted by the parent state. */
+  .choice-key {
+    @apply flex h-8 min-w-[32px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-2 text-sm font-extrabold transition-colors;
+    color: theme('colors.slate.700');
+  }
+  .choice-option[data-state='selected'] .choice-key { @apply border-indigo-600 bg-indigo-600 text-white; }
+  .choice-option[data-state='correct'] .choice-key { @apply border-emerald-500 bg-emerald-500 text-white; }
+  .choice-option[data-state='incorrect'] .choice-key { @apply border-rose-500 bg-rose-500 text-white; }
 }
 
 /* Mobile Safe Area & Gamification Utilities */

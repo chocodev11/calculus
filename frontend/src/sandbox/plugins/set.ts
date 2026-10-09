@@ -44,10 +44,11 @@ function interval(value: unknown): IntervalValue {
   }
 }
 
+// Learners start from the whole real line so the target interval is never pre-drawn.
+const REAL_LINE: JsonObject = { kind: 'interval', left: null, right: null, leftClosed: false, rightClosed: false }
+
 function intervalFromState(state: PrimitiveState, config: SetConfig): IntervalValue {
-  const source = (state.interval || config.initialInterval || config.target) as JsonObject | undefined
-  if (!source) throw new Error('number_line mode requires an interval')
-  return interval(source)
+  return interval(state.interval || config.initialInterval || REAL_LINE)
 }
 
 function model(mode: string, result: FiniteSetValue | IntervalValue, universe: unknown[] = []): RenderModel {
@@ -62,6 +63,7 @@ function model(mode: string, result: FiniteSetValue | IntervalValue, universe: u
 export const setPlugin: SandboxPlugin = {
   id: 'set.operator',
   domainId: 'set',
+  manipulableKeys: ['selected', 'interval'],
 
   validateManifest(manifest) {
     const config = configOf(manifest)
@@ -81,7 +83,7 @@ export const setPlugin: SandboxPlugin = {
       selected: config.initial || [],
       left: config.left || [],
       right: config.right || [],
-      ...(config.initialInterval ? { interval: config.initialInterval } : {}),
+      ...(config.mode === 'number_line' ? { interval: config.initialInterval || REAL_LINE } : {}),
     }
   },
 
@@ -98,7 +100,9 @@ export const setPlugin: SandboxPlugin = {
     const targetIsInterval = Boolean(target && typeof target === 'object' && !Array.isArray(target) && (target as JsonObject).kind === 'interval')
     const goals = manifest.goals.map(goal => {
       if (goal.evidence === 'set_equal' && target !== undefined) {
-        return { id: goal.id, required: goal.required !== false, reached: !targetIsInterval && setsEqual(result, target), evidence: result }
+        // Operator mode derives the true result; the learner's answer is always the selection.
+        const answer = finiteSet(state.selected || [])
+        return { id: goal.id, required: goal.required !== false, reached: !targetIsInterval && setsEqual(answer, target), evidence: answer }
       }
       if (goal.evidence === 'interval_equal' && targetIsInterval) {
         return { id: goal.id, required: goal.required !== false, reached: intervalsEqual(result, target), evidence: result }
@@ -112,7 +116,7 @@ export const setPlugin: SandboxPlugin = {
     }))
     return {
       state: structuredClone(state),
-      derivedState: { left, right, result },
+      derivedState: { left, right, result, selected: finiteSet(state.selected || []) },
       goals,
       feedback,
       renderModel: model(config.mode || 'builder', result, config.universe || []),

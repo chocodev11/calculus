@@ -1,6 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createSession, defaultSandboxRegistry } from '../frontend/src/sandbox'
 
 type JsonRecord = Record<string, any>
 
@@ -23,6 +24,19 @@ function isRecord(value: unknown): value is JsonRecord {
 
 function fail(file: string, message: string): never {
   throw new Error(`${file}: ${message}`)
+}
+
+// Loads a sandbox through the real engine, so plugin rules (e.g. graded marks need a truthValue) apply here too.
+function validateSandbox(manifest: JsonRecord, file: string, blockId: string) {
+  let snapshot: ReturnType<ReturnType<typeof createSession>['snapshot']>
+  try {
+    snapshot = createSession(manifest, defaultSandboxRegistry).snapshot()
+  } catch (error) {
+    fail(file, `sandbox ${blockId}: ${error instanceof Error ? error.message : String(error)}`)
+  }
+  if (snapshot.goals.length > 0 && snapshot.goals.every(goal => goal.reached || !goal.required)) {
+    fail(file, `sandbox ${blockId} is already complete before the learner acts`)
+  }
 }
 
 function validateStep(step: JsonRecord, file: string): number {
@@ -70,6 +84,7 @@ function validateStep(step: JsonRecord, file: string): number {
           items: rawItems,
         })
       }
+      if (type === 'interaction' && isRecord(content.lesson) && content.lesson.kind === 'math.sandbox') validateSandbox(content.lesson, file, block.id)
       if (type === 'assessment_ref') refs.push(content)
       if (type === 'adaptive_assessment') adaptiveBlockCount += 1
     }
@@ -119,7 +134,7 @@ async function collectStepFiles(root: string): Promise<string[]> {
   for (const entry of entries.sort((left, right) => left.name.localeCompare(right.name))) {
     const path = resolve(root, entry.name)
     if (entry.isDirectory()) result.push(...await collectStepFiles(path))
-    else if (entry.isFile() && path.includes('/steps/') && path.endsWith('.json')) result.push(path)
+    else if (entry.isFile() && /[\\/]steps[\\/]/.test(path) && path.endsWith('.json')) result.push(path)
   }
   return result
 }

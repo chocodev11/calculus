@@ -1,4 +1,4 @@
-import { compilePredicate } from '../evaluator'
+import { compileExpression, compilePredicate } from '../evaluator'
 import type { JsonObject, PrimitiveState, RecomputeResult, RenderModel, SandboxManifest } from '../types'
 import type { SandboxPlugin } from '../registry'
 
@@ -27,6 +27,21 @@ interface LogicActivityItem {
   misconceptionId?: string
   explanation?: string
   misconceptionFeedback?: string
+  truthValue?: boolean
+  probe?: { variable: string; expression: string; values: Array<number | string> }
+  opinions?: Array<{ name: string; mark: boolean }>
+  visual?: QuantifierVisual
+}
+
+interface QuantifierVisual {
+  variables: string[]
+  quantifiers: Array<'forall' | 'exists'>
+  expression: string
+  values: Record<string, Array<number | string>>
+  measure?: string
+  plot?: string
+  witnessOptions?: Record<string, Record<string, number>>
+  insight?: string
 }
 
 interface LogicActivity {
@@ -48,6 +63,8 @@ interface LogicActivity {
   strategyControlId?: string
   expectedParameter?: number
   expectedStrategy?: string
+  expectedRoots?: number[]
+  qTemplate?: string
   probeControlId?: string
   trueWitnessControlId?: string
   falseWitnessControlId?: string
@@ -119,12 +136,39 @@ function substitutionText(expression: string, variable: string, input: string): 
   return expression.replace(new RegExp(`\\b${variable}\\b`, 'g'), `(${input})`)
 }
 
+type CompiledExpression = ReturnType<typeof compileExpression>
+
+// Splits a single top-level comparison so both sides can be drawn as quantities.
+function comparisonSides(expression: string): { left: CompiledExpression; right: CompiledExpression; operator: string; labels: [string, string] } | null {
+  if (/&&|\|\|/.test(expression)) return null
+  let depth = 0
+  for (let index = 0; index < expression.length; index += 1) {
+    const char = expression[index]
+    if (char === '(') depth += 1
+    if (char === ')') depth -= 1
+    if (depth !== 0) continue
+    const operator = ['<=', '>=', '==', '!=', '<', '>'].find(item => expression.startsWith(item, index))
+    if (!operator) continue
+    const labels: [string, string] = [expression.slice(0, index).trim(), expression.slice(index + operator.length).trim()]
+    return { operator, labels, left: compileExpression(labels[0]), right: compileExpression(labels[1]) }
+  }
+  return null
+}
+
+function numericValues(values: Array<number | string> = []): number[] {
+  return values.flatMap(raw => {
+    const value = parseMathInput(raw)
+    return value === null ? [] : [value]
+  })
+}
+
 function variableScope(variable: string, value: number): Record<string, number> {
   return { [variable]: value, x: value, n: value }
 }
 
 function evaluateVariableInput(
   predicate: ReturnType<typeof compilePredicate>,
+  sides: ReturnType<typeof comparisonSides>,
   expression: string,
   variable: string,
   domain: VariableDomainSpec,
@@ -144,8 +188,13 @@ function evaluateVariableInput(
     result.error = `Giá trị này không thuộc ${domain.label || 'miền đã chọn'}.`
     return result
   }
-  result.truthValue = predicate.evaluate(variableScope(variable, value))
+  const scope = variableScope(variable, value)
+  result.truthValue = predicate.evaluate(scope)
   result.substitution = substitutionText(expression, variable, input)
+  if (sides) {
+    result.left = Number(sides.left.evaluate(scope))
+    result.right = Number(sides.right.evaluate(scope))
+  }
   return result
 }
 
@@ -180,10 +229,12 @@ function renderModel(rows: JsonObject[], mode: LogicMode, extra: JsonObject = {}
   }
 }
 
+// Graded answers (choice controls) always start unanswered: a pre-filled `initial`
+// would show feedback, or an answer, before the learner has decided anything.
 function stateInitials(manifest: SandboxManifest): PrimitiveState {
   const state: PrimitiveState = {}
   for (const control of manifest.controls) {
-    if (control.initial !== undefined) state[control.id] = control.initial
+    if (control.initial !== undefined && control.type !== 'choice') state[control.id] = control.initial
   }
   return state
 }
@@ -245,7 +296,13 @@ function recomputeClassifier(manifest: SandboxManifest, state: PrimitiveState): 
   const rows = items.map(item => {
     const selected = state[item.controlId || `class:${item.id}`]
     const hasSelected = selected !== undefined && selected !== ''
-    const correct = sameChoice(selected, item.expectedType)
+    // A graded proposition carries the learner's truth mark: "proposition:true" / "proposition:false".
+    const [selectedType, rawMark] = String(selected ?? '').split(':')
+    const mark = rawMark === 'true' ? true : rawMark === 'false' ? false : undefined
+    const typeCorrect = sameChoice(selectedType, item.expectedType)
+    // Propositions must be graded with the right mark; a missing mark never passes.
+    const markCorrect = item.expectedType !== 'proposition' || mark === item.truthValue
+    const correct = typeCorrect && markCorrect
     if (!correct && hasSelected) {
       incorrect.push({
         id: item.id,
@@ -257,10 +314,24 @@ function recomputeClassifier(manifest: SandboxManifest, state: PrimitiveState): 
       id: item.id,
       statement: item.label,
       selected: selected ?? '',
+      selectedType,
+      typeCorrect,
+      markCorrect,
       correct,
     }
+    if (mark !== undefined) row.mark = mark
     if (item.explanation !== undefined) row.explanation = item.explanation
     if (item.expectedType !== undefined) row.expectedType = item.expectedType
+    if (item.truthValue !== undefined) row.truthValue = item.truthValue
+    if (item.opinions) row.opinions = item.opinions
+    if (item.probe) {
+      const { variable, expression, values } = item.probe
+      const predicate = compilePredicate(expression)
+      row.probe = values.map(raw => ({
+        input: String(raw),
+        truth: predicate.evaluate({ [variable]: parseMathInput(raw) ?? Number.NaN }),
+      }))
+    }
     return row
   })
   const complete = items.length > 0 && rows.every(row => row.correct)
@@ -272,6 +343,49 @@ function recomputeClassifier(manifest: SandboxManifest, state: PrimitiveState): 
     feedback: activityFeedback(complete, incorrect),
     renderModel: render,
   }
+}
+
+function quantifiedHolds(
+  visual: QuantifierVisual,
+  axes: number[][],
+  test: (scope: Record<string, number>) => boolean,
+  depth = 0,
+  scope: Record<string, number> = {},
+): boolean {
+  if (depth === visual.variables.length) return test(scope)
+  const check = (value: number) => quantifiedHolds(visual, axes, test, depth + 1, { ...scope, [visual.variables[depth]]: value })
+  return visual.quantifiers[depth] === 'exists' ? axes[depth].some(check) : axes[depth].every(check)
+}
+
+// Evaluates the claim on a finite sample grid; samples illustrate a claim, they never prove a ∀.
+function quantifierSamples(visual: QuantifierVisual): JsonObject {
+  const predicate = compilePredicate(visual.expression)
+  const measure = visual.measure ? compileExpression(visual.measure) : null
+  const axes = visual.variables.map(name => numericValues(visual.values[name]))
+  let scopes: Array<Record<string, number>> = [{}]
+  visual.variables.forEach((name, index) => {
+    scopes = scopes.flatMap(scope => axes[index].map(value => ({ ...scope, [name]: value })))
+  })
+  const cells = scopes.map(scope => ({
+    ...scope,
+    truth: predicate.evaluate(scope),
+    ...(measure ? { measure: Number(measure.evaluate(scope)) } : {}),
+  }))
+  const samples: JsonObject = {
+    axes,
+    cells,
+    sampleVerdict: quantifiedHolds(visual, axes, scope => predicate.evaluate(scope)),
+  }
+  if (visual.plot && axes[0]?.length) {
+    const plot = compileExpression(visual.plot)
+    const min = Math.min(...axes[0])
+    const max = Math.max(...axes[0])
+    samples.plot = Array.from({ length: 49 }, (_, index) => {
+      const x = min + (max - min) * index / 48
+      return { x, y: Number(plot.evaluate({ [visual.variables[0]]: x })) }
+    })
+  }
+  return samples
 }
 
 function recomputeQuantifier(manifest: SandboxManifest, state: PrimitiveState): RecomputeResult {
@@ -289,7 +403,8 @@ function recomputeQuantifier(manifest: SandboxManifest, state: PrimitiveState): 
     const evidence = item.expectedEvidence === undefined
       ? true
       : sameChoice(state[item.evidenceControlId || `evidence:${item.id}`], item.expectedEvidence)
-    const correct = sameChoice(verdict, item.expectedVerdict) && negation && witness && evidence
+    const verdictCorrect = sameChoice(verdict, item.expectedVerdict)
+    const correct = verdictCorrect && negation && witness && evidence
     if (!correct) {
       incorrect.push({
         id: item.id,
@@ -304,6 +419,8 @@ function recomputeQuantifier(manifest: SandboxManifest, state: PrimitiveState): 
       negation: state[item.negationControlId || `negation:${item.id}`] ?? '',
       witness: state[item.witnessControlId || `witness:${item.id}`] ?? '',
       correct,
+      parts: { verdict: verdictCorrect, negation, witness, evidence },
+      ...(item.visual ? { samples: quantifierSamples(item.visual) } : {}),
     }
   })
   const complete = items.length > 0 && rows.every(row => row.correct)
@@ -323,16 +440,21 @@ function recomputeVariable(manifest: SandboxManifest, state: PrimitiveState): Re
   const expression = config.expression || ''
   const domain = variableDomain(config)
   const predicate = compilePredicate(expression)
+  const sides = comparisonSides(expression)
   const probeControlId = activity.probeControlId || 'probe_value'
   const trueWitnessControlId = activity.trueWitnessControlId || 'true_witness'
   const falseWitnessControlId = activity.falseWitnessControlId || 'false_witness'
-  const probe = evaluateVariableInput(predicate, expression, variable, domain, state[probeControlId])
-  const trueWitness = evaluateVariableInput(predicate, expression, variable, domain, state[trueWitnessControlId])
-  const falseWitness = evaluateVariableInput(predicate, expression, variable, domain, state[falseWitnessControlId])
+  const probe = evaluateVariableInput(predicate, sides, expression, variable, domain, state[probeControlId])
+  const trueWitness = evaluateVariableInput(predicate, sides, expression, variable, domain, state[trueWitnessControlId])
+  const falseWitness = evaluateVariableInput(predicate, sides, expression, variable, domain, state[falseWitnessControlId])
   const domainRows = parsedDomainValues(domain).map(item => ({
     input: item.input,
     value: item.value,
     truthValue: predicate.evaluate(variableScope(variable, item.value)),
+    ...(sides ? {
+      left: Number(sides.left.evaluate(variableScope(variable, item.value))),
+      right: Number(sides.right.evaluate(variableScope(variable, item.value))),
+    } : {}),
     isProbe: probe.parsed === true && sameNumber(Number(probe.value), item.value),
     isTrueWitness: trueWitness.parsed === true && sameNumber(Number(trueWitness.value), item.value),
     isFalseWitness: falseWitness.parsed === true && sameNumber(Number(falseWitness.value), item.value),
@@ -368,6 +490,7 @@ function recomputeVariable(manifest: SandboxManifest, state: PrimitiveState): Re
     expression,
     expressionLabel: config.expressionLabel || `P(${variable}): ${expression}`,
     domainLabel: domain.label || 'Miền xác định',
+    comparison: sides ? { operator: sides.operator, left: sides.labels[0], right: sides.labels[1] } : null,
     probe,
     trueWitness,
     falseWitness,
@@ -415,27 +538,41 @@ function recomputeImplication(manifest: SandboxManifest, state: PrimitiveState):
   const pToQCounterexampleControlId = activity.pToQCounterexampleControlId || 'p-to-q-counterexample'
   const qToPCounterexampleControlId = activity.qToPCounterexampleControlId || 'q-to-p-counterexample'
   const contrapositiveControlId = activity.contrapositiveControlId || 'contrapositive'
-  const pToQCorrect = sameChoice(state[pToQControlId], expectedPToQ ? 'Đúng' : 'Sai')
-    && (activity.expectedPToQCounterexample === undefined
-      || sameChoice(state[pToQCounterexampleControlId], activity.expectedPToQCounterexample))
-  const qToPCorrect = sameChoice(state[qToPControlId], expectedQToP ? 'Đúng' : 'Sai')
-    && (activity.expectedQToPCounterexample === undefined
-      || sameChoice(state[qToPCounterexampleControlId], activity.expectedQToPCounterexample))
+  const verdicts = {
+    pToQ: sameChoice(state[pToQControlId], expectedPToQ ? 'Đúng' : 'Sai'),
+    qToP: sameChoice(state[qToPControlId], expectedQToP ? 'Đúng' : 'Sai'),
+  }
+  // A true direction has no counterexample to find, so leaving it unanswered counts as "none".
+  const counterexampleCorrect = (controlId: string, expected: unknown) => {
+    if (expected === undefined) return true
+    const answer = state[controlId]
+    return sameChoice(answer, expected) || (expected === 'none' && (answer === undefined || answer === ''))
+  }
+  const counterexamples = {
+    pToQ: counterexampleCorrect(pToQCounterexampleControlId, activity.expectedPToQCounterexample),
+    qToP: counterexampleCorrect(qToPCounterexampleControlId, activity.expectedQToPCounterexample),
+  }
+  const pToQCorrect = verdicts.pToQ && counterexamples.pToQ
+  const qToPCorrect = verdicts.qToP && counterexamples.qToP
   const hasContrapositive = activity.expectedContrapositive !== undefined || activity.contrapositiveControlId !== undefined
   const expectedContrapositive = activity.expectedContrapositive ?? expectedPToQ
   const contrapositiveCorrect = !hasContrapositive || sameChoice(state[contrapositiveControlId], expectedContrapositive ? 'Đúng' : 'Sai')
-  const necessary = expectedQToP && !expectedPToQ
-  const sufficient = expectedPToQ && !expectedQToP
+  const necessary = expectedQToP
+  const sufficient = expectedPToQ
   const rowsWithResult = implicationRows.map(row => ({
     ...row,
     pImpliesQ: !row.P || row.Q,
     qImpliesP: !row.Q || row.P,
   }))
-  const complete = pToQCorrect && qToPCorrect && contrapositiveCorrect
+  const conclusionControl = manifest.controls.find(control => control.options?.includes('sufficient_only'))
+  const conclusion = expectedPToQ && expectedQToP ? 'necessary_and_sufficient' : expectedPToQ ? 'sufficient_only' : expectedQToP ? 'necessary_only' : 'none'
+  const conclusionCorrect = !conclusionControl || state[conclusionControl.id] === conclusion
+  const complete = pToQCorrect && qToPCorrect && contrapositiveCorrect && conclusionCorrect
   const incorrect = []
   if (!pToQCorrect) incorrect.push({ id: 'p-to-q', message: 'Kiểm tra dòng P đúng nhưng Q sai; đó là điều kiện làm mệnh đề kéo theo sai.', misconceptionId: 'logic.reverse_implication' })
   if (!qToPCorrect) incorrect.push({ id: 'q-to-p', message: 'Mệnh đề đảo phải được kiểm tra độc lập; không được suy ra chỉ bằng cách đổi tên P và Q.', misconceptionId: 'logic.confuse_converse_with_contrapositive' })
   if (!contrapositiveCorrect) incorrect.push({ id: 'contrapositive', message: 'Phản đảo của P ⇒ Q là ¬Q ⇒ ¬P và luôn tương đương với mệnh đề ban đầu.', misconceptionId: 'logic.confuse_converse_with_contrapositive' })
+  if (!conclusionCorrect) incorrect.push({ id: 'condition', message: 'P ⇒ Q cho biết P là điều kiện đủ của Q và Q là điều kiện cần của P. Xét thêm chiều đảo trước khi kết luận tương đương.', misconceptionId: 'logic.swap_necessary_sufficient' })
   return {
     state: structuredClone(state),
     derivedState: {
@@ -448,6 +585,9 @@ function recomputeImplication(manifest: SandboxManifest, state: PrimitiveState):
       sufficient,
       pToQCounterexamples,
       qToPCounterexamples,
+      verdicts,
+      counterexamples,
+      conclusion: conclusionControl ? { controlId: conclusionControl.id, correct: conclusionCorrect } : null,
     },
     goals: goalResults(manifest, complete, { pToQ: expectedPToQ, qToP: expectedQToP, necessary, sufficient }),
     feedback: activityFeedback(complete, incorrect),
@@ -472,20 +612,26 @@ function recomputeParameter(manifest: SandboxManifest, state: PrimitiveState): R
   const parameterCorrect = Number.isFinite(parameter) && expectedParameter !== undefined && parameter === expectedParameter
   const strategyCorrect = activity.expectedStrategy === undefined || sameChoice(state[strategyControlId], activity.expectedStrategy)
   const complete = parameterCorrect && strategyCorrect
-  const roots = [1, parameter]
+  const fixedRoot = activity.expectedRoots?.find(root => root !== expectedParameter) ?? 1
+  const roots = [fixedRoot, parameter]
+  // Keep the requested checkpoint separate from the mathematical truth at other m values.
+  const conclusionExpression = activity.qTemplate?.replace(/≥/g, '>=').replace(/≤/g, '<=')
+  const implication = conclusionExpression
+    ? roots.every(x => compilePredicate(conclusionExpression).evaluate({ x }))
+    : parameterCorrect
   const rows = [{
     parameter: Number.isFinite(parameter) ? parameter : '',
     roots: roots.map(root => (Number.isFinite(root) ? root : '?')).join(', '),
-    implication: parameterCorrect ? 'Đúng' : 'Sai',
-    counterexample: parameterCorrect ? 'không có' : parameter,
+    implication: implication ? 'Đúng' : 'Sai',
+    counterexample: implication ? 'không có' : parameter,
   }]
   const incorrect = []
   if (!parameterCorrect) incorrect.push({ id: 'parameter', message: 'Phân tích nghiệm tổng quát trước, rồi mới chọn giá trị tham số.', misconceptionId: 'logic.forget_all_parameter_cases' })
   if (!strategyCorrect) incorrect.push({ id: 'strategy', message: 'Thử vài giá trị không đủ để chứng minh mệnh đề với mọi x; cần phân tích nghiệm hoặc tìm phản ví dụ.', misconceptionId: 'logic.single_example_proves_claim' })
   return {
     state: structuredClone(state),
-    derivedState: { rows, complete, parameter, roots, implication: parameterCorrect },
-    goals: goalResults(manifest, complete, { parameter, roots, implication: parameterCorrect }),
+    derivedState: { rows, complete, parameter, roots, implication },
+    goals: goalResults(manifest, complete, { parameter, roots, implication }),
     feedback: activityFeedback(complete, incorrect),
     renderModel: renderModel(rows, 'parameter_implication', { parameter, roots, complete, parameterCorrect }),
   }
@@ -555,6 +701,23 @@ export const logicPlugin: SandboxPlugin = {
       if (mode === 'parameter_implication' && config.activity?.expectedParameter === undefined) {
         issues.push('logic.parameter_implication requires expectedParameter')
       }
+      for (const item of config.activity?.items || []) {
+        if (mode === 'proposition_classifier' && item.expectedType === 'proposition' && typeof item.truthValue !== 'boolean') {
+          issues.push(`logic.proposition_classifier item ${item.id} needs truthValue to grade the Đ/S mark`)
+        }
+        for (const source of [item.probe?.expression, item.visual?.expression, item.visual?.measure, item.visual?.plot]) {
+          if (source === undefined) continue
+          try {
+            compileExpression(source)
+          } catch (error) {
+            issues.push(`logic.${mode} item ${item.id} expression is invalid: ${error instanceof Error ? error.message : 'unable to compile'}`)
+          }
+        }
+        const visual = item.visual
+        if (visual && (visual.variables.length === 0 || visual.variables.length > 2 || visual.quantifiers.length !== visual.variables.length)) {
+          issues.push(`logic.${mode} item ${item.id} visual needs one quantifier per variable (1–2 variables)`)
+        }
+      }
       return issues
     }
     if (!Array.isArray(config.variables) || config.variables.length === 0 || config.variables.length > 8) {
@@ -594,7 +757,9 @@ export const logicPlugin: SandboxPlugin = {
     }
     const truthValue = expression.evaluate(assignment)
     const rows = rowsFor(config.variables || [], expression)
-    const completedRows = Array.isArray(state.completedRows) ? state.completedRows : []
+    const rowKey = (config.variables || []).map(variable => (assignment[variable] ? '1' : '0')).join('')
+    const visited = Array.isArray(state.completedRows) ? state.completedRows.map(String) : []
+    const completedRows = visited.includes(rowKey) ? visited : [...visited, rowKey]
     const goals = manifest.goals.map(goal => {
       if (goal.evidence === 'truth_value') {
         return { id: goal.id, required: goal.required !== false, reached: goal.target === truthValue, evidence: truthValue }
@@ -610,8 +775,8 @@ export const logicPlugin: SandboxPlugin = {
       message: 'Mệnh đề đạt điều kiện của hoạt động.',
     }))
     return {
-      state: structuredClone(state),
-      derivedState: { assignment, truthValue, rows },
+      state: { ...structuredClone(state), completedRows },
+      derivedState: { assignment, truthValue, rows, rowKey, completedRows },
       goals,
       feedback,
       renderModel: renderModel(rows, mode),

@@ -41,6 +41,60 @@ describe('logic sandbox activities', () => {
     expect(session.snapshot().goals[0].reached).toBe(true)
   })
 
+  it('grades a truth mark on propositions separately from the classification', () => {
+    const lesson = manifest({
+      mode: 'proposition_classifier',
+      activity: { items: [{ id: 'a', label: '15 là số nguyên tố', controlId: 'class:a', expectedType: 'proposition', truthValue: false }] },
+    }, 'logic.proposition', [{ id: 'class:a', type: 'drag_item', label: 'a', initial: '' }])
+    const session = createSession(lesson, defaultSandboxRegistry)
+    session.dispatch({ type: 'set_control', controlId: 'class:a', value: 'proposition:true' })
+    expect(session.snapshot().derivedState.rows).toMatchObject([{ typeCorrect: true, markCorrect: false, correct: false }])
+    session.dispatch({ type: 'set_control', controlId: 'class:a', value: 'proposition:false' })
+    expect(session.snapshot().goals[0].reached).toBe(true)
+    for (const unmarked of ['proposition', 'proposition:']) {
+      session.dispatch({ type: 'set_control', controlId: 'class:a', value: unmarked })
+      expect(session.snapshot().goals[0].reached).toBe(false)
+    }
+  })
+
+  it('refuses a classifier proposition without a truth value to grade against', () => {
+    const lesson = manifest({
+      mode: 'proposition_classifier',
+      activity: { items: [{ id: 'a', label: 'Hà Nội là thủ đô', controlId: 'class:a', expectedType: 'proposition' }] },
+    }, 'logic.proposition', [{ id: 'class:a', type: 'drag_item', label: 'a', initial: '' }])
+    expect(() => createSession(lesson, defaultSandboxRegistry)).toThrow('needs truthValue')
+  })
+
+  it('starts graded choices unanswered even when the manifest pre-fills them', () => {
+    const lesson = manifest({
+      mode: 'proposition_classifier',
+      activity: { items: [{ id: 'a', label: 'x > 0', controlId: 'class:a', expectedType: 'open_sentence' }] },
+    }, 'logic.proposition', [{ id: 'class:a', type: 'choice', label: 'a', initial: 'open_sentence', options: ['open_sentence', 'not_proposition'] }])
+    const snapshot = createSession(lesson, defaultSandboxRegistry).snapshot()
+    expect(snapshot.state['class:a']).toBeUndefined()
+    expect(snapshot.goals[0].reached).toBe(false)
+  })
+
+  it('leaves state, history and events untouched when a recompute fails', () => {
+    const lesson = manifest({
+      mode: 'variable_playground',
+      variable: 'x',
+      expression: '1/x > 0',
+      domain: { kind: 'probe', label: 'x ∈ ℝ' },
+      activity: { probeControlId: 'probe', trueWitnessControlId: 'true-witness', falseWitnessControlId: 'false-witness' },
+    }, 'logic.variable_evaluator', [
+      { id: 'probe', type: 'math_input', label: 'Giá trị thử', initial: '1' },
+      { id: 'true-witness', type: 'math_input', label: 'Nhân chứng đúng', initial: '' },
+      { id: 'false-witness', type: 'math_input', label: 'Nhân chứng sai', initial: '' },
+    ])
+    const session = createSession(lesson, defaultSandboxRegistry)
+    const eventCount = session.events().length
+    expect(() => session.dispatch({ type: 'set_control', controlId: 'probe', value: '0' })).toThrow('Division by zero')
+    expect(session.snapshot().state.probe).toBe('1')
+    expect(session.snapshot().historyDepth).toBe(0)
+    expect(session.events()).toHaveLength(eventCount)
+  })
+
   it('evaluates substitutions and validates true and false witnesses in a finite domain', () => {
     const lesson = manifest({
       mode: 'variable_playground',
@@ -136,6 +190,10 @@ describe('logic sandbox activities', () => {
     ])
     const session = createSession(lesson, defaultSandboxRegistry)
     expect(session.snapshot().derivedState.contrapositive).toBe(true)
+    expect(session.snapshot().goals[0].reached).toBe(false)
+    session.dispatch({ type: 'set_control', controlId: 'p-to-q', value: 'Đúng' })
+    session.dispatch({ type: 'set_control', controlId: 'q-to-p', value: 'Sai' })
+    session.dispatch({ type: 'set_control', controlId: 'contra', value: 'Đúng' })
     expect(session.snapshot().goals[0].reached).toBe(true)
   })
 

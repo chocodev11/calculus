@@ -51,7 +51,7 @@
               "schemaVersion": "1.0",
               "kind": "math.sandbox",
               "id": "menh_de_02_variable",
-              "version": "1",
+              "version": "2",
               "archetypeId": "logic.variable_evaluator",
               "domainId": "logic",
               "level": "understanding",
@@ -108,7 +108,7 @@
                   "id": "probe_value",
                   "type": "math_input",
                   "label": "Giá trị thử x = a",
-                  "initial": "1"
+                  "initial": ""
                 },
                 {
                   "id": "true_witness",

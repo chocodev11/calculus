@@ -52,7 +52,7 @@
               "schemaVersion": "1.0",
               "kind": "math.sandbox",
               "id": "menh_de_03_negation",
-              "version": "1",
+              "version": "2",
               "archetypeId": "logic.quantifier",
               "domainId": "logic",
               "level": "understanding",
@@ -76,7 +76,31 @@
                       "expectedVerdict": "true",
                       "expectedNegation": "exists_not_divisible",
                       "controlId": "c_v1",
-                      "negationControlId": "c_n1"
+                      "negationControlId": "c_n1",
+                      "visual": {
+                        "variables": [
+                          "n"
+                        ],
+                        "quantifiers": [
+                          "forall"
+                        ],
+                        "expression": "divisible(n*(n^2-1), 3)",
+                        "measure": "n*(n^2-1)",
+                        "values": {
+                          "n": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8
+                          ]
+                        },
+                        "insight": "n(n² − 1) = (n − 1)·n·(n + 1) là tích ba số nguyên liên tiếp, nên luôn có một thừa số chia hết cho 3."
+                      }
                     },
                     {
                       "id": "item2",
@@ -84,7 +108,28 @@
                       "expectedVerdict": "false",
                       "expectedNegation": "forall_not_equal",
                       "controlId": "c_v2",
-                      "negationControlId": "c_n2"
+                      "negationControlId": "c_n2",
+                      "visual": {
+                        "variables": [
+                          "x"
+                        ],
+                        "quantifiers": [
+                          "exists"
+                        ],
+                        "expression": "x^2 == 2",
+                        "measure": "x^2",
+                        "values": {
+                          "x": [
+                            1,
+                            1.4,
+                            1.41,
+                            1.414,
+                            1.4142,
+                            1.5
+                          ]
+                        },
+                        "insight": "x² chỉ tiến sát 2 chứ không bao giờ bằng 2: √2 là số vô tỉ nên không có x hữu tỉ nào thỏa."
+                      }
                     },
                     {
                       "id": "item3",
@@ -92,7 +137,32 @@
                       "expectedVerdict": "true",
                       "expectedNegation": "exists_le_zero",
                       "controlId": "c_v3",
-                      "negationControlId": "c_n3"
+                      "negationControlId": "c_n3",
+                      "visual": {
+                        "variables": [
+                          "x"
+                        ],
+                        "quantifiers": [
+                          "forall"
+                        ],
+                        "expression": "x^2 - 6*x + 15 > 0",
+                        "measure": "x^2 - 6*x + 15",
+                        "plot": "x^2 - 6*x + 15",
+                        "values": {
+                          "x": [
+                            -1,
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7
+                          ]
+                        },
+                        "insight": "x² − 6x + 15 = (x − 3)² + 6 ≥ 6 > 0 với mọi x: đồ thị luôn nằm phía trên trục hoành."
+                      }
                     }
                   ]
                 }
@@ -102,7 +172,6 @@
                   "id": "c_v1",
                   "type": "choice",
                   "label": "Chân trị của P1: n(n²-1) chia hết cho 3",
-                  "initial": "false",
                   "options": [
                     "true",
                     "false"
@@ -116,7 +185,6 @@
                   "id": "c_n1",
                   "type": "choice",
                   "label": "Phủ định của P1",
-                  "initial": "forall_not_equal",
                   "options": [
                     "exists_not_divisible",
                     "forall_not_divisible",
@@ -132,7 +200,6 @@
                   "id": "c_v2",
                   "type": "choice",
                   "label": "Chân trị của P2: ∃x∈Q, x²=2",
-                  "initial": "true",
                   "options": [
                     "true",
                     "false"
@@ -146,7 +213,6 @@
                   "id": "c_n2",
                   "type": "choice",
                   "label": "Phủ định của P2",
-                  "initial": "exists_not_divisible",
                   "options": [
                     "forall_not_equal",
                     "exists_not_equal"
@@ -160,7 +226,6 @@
                   "id": "c_v3",
                   "type": "choice",
                   "label": "Chân trị của P3: ∀x∈R, x²-6x+15 > 0",
-                  "initial": "false",
                   "options": [
                     "true",
                     "false"
@@ -174,7 +239,6 @@
                   "id": "c_n3",
                   "type": "choice",
                   "label": "Phủ định của P3",
-                  "initial": "forall_not_equal",
                   "options": [
                     "exists_le_zero",
                     "forall_le_zero"

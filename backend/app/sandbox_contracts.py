@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -95,6 +95,14 @@ class SandboxEventInput(StrictModel):
     @classmethod
     def validate_payload_size(cls, value: dict[str, Any]) -> dict[str, Any]:
         return _bounded_json(value, max_nodes=256, max_string=2_000)
+
+    # Clients send ISO timestamps with an offset; event columns store naive UTC (asyncpg rejects mixing).
+    @field_validator("occurredAt")
+    @classmethod
+    def normalize_occurred_at(cls, value: datetime) -> datetime:
+        if value.tzinfo is None:
+            return value
+        return value.astimezone(timezone.utc).replace(tzinfo=None)
 
 
 class SandboxEventBatch(StrictModel):

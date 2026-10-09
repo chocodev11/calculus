@@ -52,7 +52,7 @@
               "schemaVersion": "1.0",
               "kind": "math.sandbox",
               "id": "menh_de_04_implication",
-              "version": "1",
+              "version": "2",
               "archetypeId": "logic.implication",
               "domainId": "logic",
               "level": "understanding",
@@ -73,9 +73,12 @@
                   "qExpression": "divisible(x, 2)",
                   "domainValues": [
                     2,
+                    3,
                     4,
                     6,
-                    12
+                    9,
+                    12,
+                    18
                   ],
                   "expectedPToQ": true,
                   "expectedQToP": false,
@@ -92,7 +95,6 @@
                   "id": "c_p_to_q",
                   "type": "choice",
                   "label": "Mệnh đề P ⇒ Q (Nếu a ⋮ 6 thì a ⋮ 2)",
-                  "initial": "Sai",
                   "options": [
                     "Đúng",
                     "Sai"
@@ -106,7 +108,6 @@
                   "id": "c_q_to_p",
                   "type": "choice",
                   "label": "Mệnh đề chiều ngược Q ⇒ P (Nếu a ⋮ 2 thì a ⋮ 6)",
-                  "initial": "Đúng",
                   "options": [
                     "Đúng",
                     "Sai"
@@ -120,7 +121,6 @@
                   "id": "c_counterexample",
                   "type": "choice",
                   "label": "Phản ví dụ chứng minh Q ⇒ P sai",
-                  "initial": "none",
                   "options": [
                     "none",
                     "2_or_4",

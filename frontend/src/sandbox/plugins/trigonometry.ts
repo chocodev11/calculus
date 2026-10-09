@@ -150,14 +150,16 @@ function withTriangleMetrics(result: TriangleResult): TriangleResult {
   return { ...result, inradius: area / semiperimeter, circumradius: (a * b * c) / (4 * area) }
 }
 
+// A manipulated triangle replaces the configured data instead of merging with it,
+// otherwise dragged sides would conflict with the configured angles.
 function triangleFromState(state: PrimitiveState, config: TrigConfig): NonNullable<TrigConfig['triangle']> {
-  const source = { ...((config.triangle || {}) as Record<string, number | undefined>) }
-  const triangleState = state.triangle && typeof state.triangle === 'object' ? state.triangle as Record<string, number | undefined> : {}
+  const base = state.triangle && typeof state.triangle === 'object' ? state.triangle : config.triangle || {}
+  const source = { ...(base as Record<string, number | undefined>) }
   for (const key of ['a', 'b', 'c', 'A', 'B', 'C']) {
     const value = state[key]
     if (typeof value === 'number') source[key] = value
   }
-  return { ...source, ...triangleState }
+  return source
 }
 
 function render(mode: string, derived: Record<string, unknown>): RenderModel {
@@ -172,6 +174,7 @@ function render(mode: string, derived: Record<string, unknown>): RenderModel {
 export const trigonometryPlugin: SandboxPlugin = {
   id: 'trigonometry.unit_circle',
   domainId: 'trigonometry',
+  manipulableKeys: ['degrees', 'triangle', 'measurement'],
 
   validateManifest(manifest) {
     const config = configOf(manifest)

@@ -16,6 +16,18 @@ describe('sandbox runtime', () => {
     expect(session.events().some(event => event.type === 'sandbox_loaded')).toBe(true)
   })
 
+  it('records a transient gesture as one undoable step and one event', () => {
+    const session = createSession(setOperatorFixture, defaultSandboxRegistry)
+    session.dispatch({ type: 'manipulate', key: 'selected', value: [1], transient: true })
+    session.dispatch({ type: 'manipulate', key: 'selected', value: [1, 2], transient: true })
+    session.dispatch({ type: 'manipulate', key: 'selected', value: [1, 2, 3] })
+    expect(session.snapshot().historyDepth).toBe(1)
+    expect(session.events().filter(event => event.type === 'scene_manipulated')).toHaveLength(1)
+    session.dispatch({ type: 'undo' })
+    expect(session.snapshot().state.selected).toEqual([])
+    expect(() => session.dispatch({ type: 'manipulate', key: 'left', value: [] })).toThrow()
+  })
+
   it('keeps recompute pure and independent from rendering/session history', () => {
     const state = { assignment: { p: true, q: false }, completedRows: [] }
     const first = recompute(propositionFixture, state, defaultSandboxRegistry)
@@ -27,6 +39,8 @@ describe('sandbox runtime', () => {
   it('runs set and triangle plugins through the same runtime contract', () => {
     const setSession = createSession(setOperatorFixture, defaultSandboxRegistry)
     expect(setSession.snapshot().derivedState.result).toEqual({ kind: 'finite_set', elements: [1, 2, 3, 4] })
+    expect(setSession.snapshot().goals[0].reached).toBe(false)
+    setSession.dispatch({ type: 'manipulate', key: 'selected', value: [4, 3, 2, 1] })
     expect(setSession.snapshot().goals[0].reached).toBe(true)
 
     const triangleSession = createSession(triangleFixture, defaultSandboxRegistry)

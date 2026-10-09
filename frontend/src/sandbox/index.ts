@@ -6,7 +6,6 @@ export * from './registry'
 export * from './runtime'
 export * from './rng'
 export * from './catalog'
-export * from './renderer'
 export * from './assessment'
 export * from './fixtures'
 

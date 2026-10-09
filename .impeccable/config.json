@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "frontend/src/components/interactions/LogicExperiments.jsx"
+        ],
+        "createdAt": "2026-09-28T16:24:47.284Z",
+        "reason": "Claude triage: slate-700 text only renders on the bg-white branch of a conditional class; colored branches use text-white"
+      }
+    ]
+  }
+}

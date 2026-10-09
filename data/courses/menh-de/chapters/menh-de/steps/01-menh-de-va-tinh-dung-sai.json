@@ -52,12 +52,12 @@
               "schemaVersion": "1.0",
               "kind": "math.sandbox",
               "id": "menh_de_01_classifier",
-              "version": "1",
+              "version": "2",
               "archetypeId": "logic.proposition",
               "domainId": "logic",
               "level": "recognition",
               "recipe": "logic.proposition",
-              "prompt": "Trong toán học và thực tế, các câu khẳng định có thể có tính đúng/sai rõ ràng, có thể chứa biến hoặc là câu cảm xúc. Hãy phân loại các câu dưới đây vào đúng 3 nhóm:",
+              "prompt": "Em là người chấm bài: câu nào chấm được Đ hoặc S?",
               "outcomeIds": [
                 "M10-LOGIC-01"
               ],
@@ -76,28 +76,58 @@
                       "label": "Hà Nội là thủ đô của Việt Nam",
                       "controlId": "c_p1",
                       "expectedType": "proposition",
-                      "explanation": "'Hà Nội là thủ đô của Việt Nam' là một câu khẳng định đúng, do đó là một Mệnh đề."
+                      "explanation": "Câu khẳng định một sự thật nên chấm Đ được: đây là mệnh đề.",
+                      "truthValue": true
                     },
                     {
                       "id": "p2",
                       "label": "Số 15 là số nguyên tố",
                       "controlId": "c_p2",
                       "expectedType": "proposition",
-                      "explanation": "'Số 15 là số nguyên tố' là câu khẳng định sai (15 chia hết cho 3 và 5). Vì có tính đúng sai rõ ràng nên đây vẫn là Mệnh đề (mệnh đề sai)."
-                    },
-                    {
-                      "id": "p3",
-                      "label": "Học toán vui quá!",
-                      "controlId": "c_p3",
-                      "expectedType": "not_proposition",
-                      "explanation": "'Học toán vui quá!' là câu cảm thán bộc lộ cảm xúc, không khẳng định sự thật đúng hay sai nên không phải mệnh đề."
+                      "explanation": "15 = 3 · 5 nên phải chấm S. Chấm S vẫn là chấm được: đây là mệnh đề sai.",
+                      "truthValue": false
                     },
                     {
                       "id": "p4",
                       "label": "2x + 1 = 5",
                       "controlId": "c_p4",
                       "expectedType": "open_sentence",
-                      "explanation": "'2x + 1 = 5' chứa biến số x chưa gán giá trị cụ thể, tính đúng sai phụ thuộc vào x nên là Mệnh đề chứa biến."
+                      "explanation": "Chưa biết x thì chưa chấm được: x = 2 thì Đ, x khác 2 thì S. Đây là mệnh đề chứa biến.",
+                      "probe": {
+                        "variable": "x",
+                        "expression": "2*x + 1 == 5",
+                        "values": [
+                          0,
+                          1,
+                          2,
+                          3,
+                          4
+                        ]
+                      }
+                    },
+                    {
+                      "id": "p5",
+                      "label": "Hoa hồng đẹp nhất trong các loài hoa",
+                      "controlId": "c_p5",
+                      "expectedType": "not_proposition",
+                      "opinions": [
+                        {
+                          "name": "An",
+                          "mark": true
+                        },
+                        {
+                          "name": "Khoa",
+                          "mark": false
+                        }
+                      ],
+                      "explanation": "Đẹp hay không là ý kiến riêng: An chấm Đ, Khoa chấm S và không ai sai. Câu này không phải mệnh đề."
+                    },
+                    {
+                      "id": "p3",
+                      "label": "Học toán vui quá!",
+                      "controlId": "c_p3",
+                      "expectedType": "not_proposition",
+                      "explanation": "Câu cảm thán chỉ bày tỏ cảm xúc, không khẳng định điều gì để chấm."
                     }
                   ]
                 }
@@ -136,9 +166,9 @@
                   }
                 },
                 {
-                  "id": "c_p3",
+                  "id": "c_p4",
                   "type": "drag_item",
-                  "label": "Học toán vui quá!",
+                  "label": "2x + 1 = 5",
                   "initial": "",
                   "options": [
                     "proposition",
@@ -152,9 +182,25 @@
                   }
                 },
                 {
-                  "id": "c_p4",
+                  "id": "c_p5",
                   "type": "drag_item",
-                  "label": "2x + 1 = 5",
+                  "label": "Hoa hồng đẹp nhất trong các loài hoa",
+                  "initial": "",
+                  "options": [
+                    "proposition",
+                    "open_sentence",
+                    "not_proposition"
+                  ],
+                  "optionLabels": {
+                    "proposition": "Mệnh đề",
+                    "open_sentence": "Chứa biến",
+                    "not_proposition": "Không phải"
+                  }
+                },
+                {
+                  "id": "c_p3",
+                  "type": "drag_item",
+                  "label": "Học toán vui quá!",
                   "initial": "",
                   "options": [
                     "proposition",
@@ -171,7 +217,7 @@
               "goals": [
                 {
                   "id": "classify_propositions",
-                  "label": "Phân loại chính xác 4 câu vào 3 nhóm theo định nghĩa mệnh đề",
+                  "label": "Chấm đúng cả 5 câu",
                   "evidence": "logic.classifier_complete"
                 }
               ],
@@ -179,18 +225,18 @@
                 "steps": [
                   {
                     "id": "check_factual_truth",
-                    "label": "Kiểm tra tính đúng / sai",
+                    "label": "Thử chấm Đ hoặc S",
                     "kind": "check",
-                    "hint": "Một câu khẳng định có tính đúng hoặc sai rõ ràng là Mệnh đề (kể cả khẳng định sai)."
+                    "hint": "Tự hỏi: có chấm được Đ hoặc S cho câu này không? Chấm được, kể cả chấm S, là mệnh đề."
                   },
                   {
                     "id": "separate_exclamations",
-                    "label": "Loại trừ câu cảm thán & câu hỏi",
+                    "label": "Loại ý kiến và cảm xúc",
                     "kind": "simplify",
                     "dependsOn": [
                       "check_factual_truth"
                     ],
-                    "hint": "Câu cảm thán (có dấu !) và câu hỏi (có dấu ?) không có tính chân lý nên không phải mệnh đề."
+                    "hint": "Nếu mỗi người chấm một kiểu vì đó là ý kiến hay cảm xúc riêng, câu đó không chấm được."
                   }
                 ],
                 "terminalStepIds": [
@@ -201,7 +247,7 @@
                 {
                   "id": "check-proposition-nature",
                   "type": "structured_reasoning",
-                  "prompt": "Phân loại chính xác 4 câu khẳng định vào 3 nhóm Mệnh đề, Mệnh đề chứa biến và Không phải mệnh đề.",
+                  "prompt": "Chấm đúng cả 5 câu, rồi xếp chúng vào 3 nhóm: mệnh đề, mệnh đề chứa biến và không phải mệnh đề.",
                   "outcomeIds": [
                     "M10-LOGIC-01"
                   ]
@@ -209,7 +255,7 @@
               ],
               "accessibility": {
                 "keyboardControls": true,
-                "textAlternative": "Phân loại câu vào 3 hộp: Mệnh đề, Mệnh đề chứa biến, Không phải mệnh đề.",
+                "textAlternative": "Chấm từng câu: Đúng, Sai, còn tùy giá trị của x, hoặc không chấm được.",
                 "highContrast": true
               }
             }

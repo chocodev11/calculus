@@ -95,6 +95,7 @@ async function request(method, endpoint, body, options = {}) {
       headers,
       credentials: 'include',
       signal: options.signal,
+      keepalive: options.keepalive,
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     })
   } catch (error) {

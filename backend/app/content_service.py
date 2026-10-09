@@ -272,7 +272,10 @@ async def publish_version(
     for existing in versions:
         if existing.status == "published":
             existing.status = "archived"
+    # Archived drafts must free the "draft" version label, otherwise (step_id, version)
+    # blocks the next draft of this step.
     draft.status = "archived"
+    draft.version = f"draft-{draft.id}" if draft.id is not None else draft.version
     await materialize_published_step(db, step, document, version.id)
     return version
 

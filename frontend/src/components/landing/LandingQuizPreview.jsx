@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, RotateCcw } from 'lucide-react'
+import { Check, RotateCcw, X } from 'lucide-react'
 import { TactileButton } from '../ui/tactile-button'
 import { TangentConvergenceLab } from './LandingMathStage'
 import { LANDING_QUIZ, evaluateLandingAnswer } from './landingQuiz'
@@ -50,10 +50,12 @@ export default function LandingQuizPreview() {
                 {LANDING_QUIZ.options.map((option, index) => {
                   const isSelected = answerId === option.id
                   const isCorrect = result?.correct && option.id === LANDING_QUIZ.correctOptionId
+                  const isWrong = result && !result.correct && isSelected
                   return (
                     <label
                       key={option.id}
-                      className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-3 text-sm font-semibold transition-colors focus-within:ring-2 focus-within:ring-indigo-300 focus-within:ring-offset-2 ${isCorrect ? 'border-emerald-300 bg-emerald-50 text-emerald-900' : isSelected ? 'border-indigo-400 bg-indigo-50 text-indigo-900' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'}`}
+                      data-state={isCorrect ? 'correct' : isWrong ? 'incorrect' : isSelected ? 'selected' : 'idle'}
+                      className="choice-option text-sm font-semibold focus-within:ring-4 focus-within:ring-indigo-100"
                     >
                       <input
                         type="radio"
@@ -66,8 +68,8 @@ export default function LandingQuizPreview() {
                         }}
                         className="sr-only"
                       />
-                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-extrabold ${isCorrect ? 'bg-emerald-500 text-white' : isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                        {isCorrect ? <Check className="h-4 w-4" aria-hidden="true" /> : String.fromCharCode(65 + index)}
+                      <span className="choice-key">
+                        {isCorrect ? <Check className="h-4 w-4" aria-hidden="true" /> : isWrong ? <X className="h-4 w-4" aria-hidden="true" /> : String.fromCharCode(65 + index)}
                       </span>
                       <span>{option.label}</span>
                     </label>

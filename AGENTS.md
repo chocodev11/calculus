@@ -73,7 +73,8 @@ Các lệnh được định nghĩa sẵn trong [justfile](file:///d:/calculus/j
 | `just preview-mobile [route]` | Chụp ảnh preview giao diện Mobile (390x844) | Kiểm tra responsive di động |
 | `just preview-full [route]` | Chụp ảnh toàn bộ chiều dài trang web (Full Page) | Xem tổng thể trang dài |
 | `just preview-watch [route]` | Tự động chụp lại preview khi code frontend thay đổi | Chế độ theo dõi liên tục |
-| `just lesson-validate` | Kiểm tra tính hợp lệ của toàn bộ file JSON bài học | Đối chiếu với JSON schema |
+| `just lesson-validate` | Kiểm tra tính hợp lệ của toàn bộ file JSON bài học | Đối chiếu với JSON schema, nạp thử mọi sandbox qua engine thật |
+| `just lesson-republish` | Xem trước việc publish artifact đã sửa thành version mới của bài đã publish | Thêm `-apply` để ghi; chạy `just db-upgrade` trước |
 | `just db-upgrade` | Cập nhật cấu trúc database qua Alembic | Chạy trên `backend/calculus.db` |
 | `npm run test:run` | Chạy bộ kiểm thử unit Vitest (chạy trong `frontend/`) | Đảm bảo logic không bị phá vỡ |
 | `npx tsc --noEmit` | Kiểm tra kiểu dữ liệu TypeScript (chạy trong `frontend/`) | Kiểm tra tính tương thích type |
@@ -81,6 +82,7 @@ Các lệnh được định nghĩa sẵn trong [justfile](file:///d:/calculus/j
 ---
 
 ## 4. Bản Đồ Thư Mục Cốt Lõi (Repository Directory Map)
+
 
 ```text
 d:/calculus/

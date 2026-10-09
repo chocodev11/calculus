@@ -31,6 +31,14 @@ lesson-import:
 lesson-import-apply:
     python tools/import_course_artifacts.py --apply
 
+# Preview publishing changed lesson artifacts as new versions of already published steps
+lesson-republish:
+    python tools/import_course_artifacts.py --republish
+
+# Publish changed lesson artifacts as new versions after reviewing the dry-run output
+lesson-republish-apply:
+    python tools/import_course_artifacts.py --republish --apply
+
 # Upgrade schema bằng Alembic
 db-upgrade:
     cd backend; python -m alembic -c alembic.ini upgrade head
